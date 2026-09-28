@@ -12,7 +12,6 @@ import {
   ShopByDevice,
   TechGrid,
   Testimonials,
-  VerifyBanner,
 } from "@/components/sections/home-sections";
 import { JsonLd, organizationJsonLd } from "@/lib/seo";
 import { getFeaturedProducts, getNavigationData } from "@/server/queries/catalog";
@@ -53,7 +52,6 @@ export default async function HomePage() {
       <ClarityCompare />
       <ShopByDevice devices={nav.devices} />
       <TechGrid />
-      <VerifyBanner />
       <Testimonials />
       <NewsletterBlock />
     </>

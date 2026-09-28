@@ -12,7 +12,6 @@ const staticRoutes = [
   "/installation",
   "/installation/iphone",
   "/installation/samsung",
-  "/verify",
   "/support",
   "/support/faq",
   "/support/warranty",

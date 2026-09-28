@@ -1,6 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, Droplets, Fingerprint, Layers, QrCode, ScanLine, Sparkles, Zap } from "lucide-react";
-import { ButtonLink } from "@/components/ui/button";
+import { ArrowRight, Droplets, Fingerprint, Layers, ScanLine, Sparkles, Zap } from "lucide-react";
 import { Rating, SectionHeading } from "@/components/ui/primitives";
 import { NewsletterForm } from "@/components/forms/newsletter-form";
 import { brands } from "@/config/site";
@@ -99,38 +98,10 @@ export function TechGrid() {
   );
 }
 
-export function VerifyBanner() {
-  return (
-    <section className="container-page py-12">
-      <div className="relative overflow-hidden rounded-3xl border border-line bg-[linear-gradient(120deg,#021a21,#050508_45%,#130a2a)] p-8 md:p-14">
-        <div className="bg-grid pointer-events-none absolute inset-0 opacity-60" />
-        <div className="relative grid items-center gap-10 md:grid-cols-[1.4fr_1fr]">
-          <div className="space-y-5">
-            <p className="font-mono text-[11px] uppercase tracking-[0.25em] text-accent">Anti-counterfeit</p>
-            <h2 className="text-3xl font-semibold tracking-tight text-balance md:text-5xl">Fakes look alike. Ours can prove it.</h2>
-            <p className="max-w-lg text-muted">
-              Scratch the label inside your box to reveal a unique code, or scan the QR. We&apos;ll confirm instantly if your HYDRA is genuine.
-            </p>
-            <ButtonLink href="/verify" size="lg">
-              Verify your product <ArrowRight size={18} />
-            </ButtonLink>
-          </div>
-          <div className="relative mx-auto grid size-52 place-items-center rounded-3xl border border-accent/30 bg-black/50 md:size-60">
-            <QrCode size={120} className="text-fg" strokeWidth={1} />
-            <div className="pointer-events-none absolute inset-4 overflow-hidden rounded-2xl">
-              <div className="h-1/2 w-full bg-gradient-to-b from-transparent via-accent/40 to-transparent animate-scan" />
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
 const testimonials = [
   { name: "Tahmid R.", device: "iPhone 17 Pro Max", text: "Honestly can't tell there's a protector on it. Dropped it on the stairs last week — glass cracked, screen perfect.", rating: 5 },
   { name: "Nusrat J.", device: "Galaxy S25 Ultra", text: "First protector that actually works with the ultrasonic fingerprint. The install kit made it idiot-proof.", rating: 5 },
-  { name: "Arif H.", device: "iPhone 16 Pro", text: "Privacy glass is a game changer on the metro. Verified mine on the site in 5 seconds.", rating: 4.5 },
+  { name: "Arif H.", device: "iPhone 16 Pro", text: "Privacy glass is a game changer on the metro. Delivered next day in Dhaka, installed in two minutes.", rating: 4.5 },
 ];
 
 export function Testimonials() {

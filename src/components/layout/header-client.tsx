@@ -4,7 +4,7 @@ import Link from "next/link";
 import Form from "next/form";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { ChevronDown, Menu, Search, ShieldCheck, ShoppingBag, X } from "lucide-react";
+import { ChevronDown, Menu, Search, ShoppingBag, X } from "lucide-react";
 import { useCart } from "@/components/cart/cart-provider";
 import { primaryNav, supportNav } from "@/config/navigation";
 import { cn } from "@/lib/utils";
@@ -99,9 +99,6 @@ export function HeaderClient({ nav }: { nav: NavigationData }) {
           >
             <Search size={19} />
           </button>
-          <Link href="/verify" className="hidden rounded-full p-2.5 text-muted hover:bg-white/5 hover:text-fg sm:block" aria-label="Verify product">
-            <ShieldCheck size={19} />
-          </Link>
           <button type="button" onClick={open} className="relative rounded-full p-2.5 text-muted hover:bg-white/5 hover:text-fg" aria-label={`Cart, ${count} items`}>
             <ShoppingBag size={19} />
             {hydrated && count > 0 && (
@@ -193,7 +190,7 @@ function MobileNav({ open, onClose, nav }: { open: boolean; onClose: () => void;
           ))}
         </div>
         <div className="flex flex-col divide-y divide-line border-y border-line">
-          {[...primaryNav.slice(1), { label: "Contact", href: "/contact" }].map((item) => (
+          {primaryNav.slice(1).map((item) => (
             <Link key={item.href} href={item.href} className="py-4 text-lg">
               {item.label}
             </Link>

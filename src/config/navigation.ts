@@ -3,9 +3,9 @@ export type NavLink = { label: string; href: string; description?: string };
 export const primaryNav: NavLink[] = [
   { label: "Shop", href: "/shop" },
   { label: "Installation", href: "/installation" },
-  { label: "Verify", href: "/verify" },
   { label: "Support", href: "/support" },
   { label: "About", href: "/about" },
+  { label: "Contact", href: "/contact" },
 ];
 
 export const supportNav: NavLink[] = [
@@ -24,7 +24,7 @@ export const footerNav: { title: string; links: NavLink[] }[] = [
       { label: "All Products", href: "/shop" },
       { label: "iPhone", href: "/shop/iphone" },
       { label: "Samsung Galaxy", href: "/shop/samsung" },
-      { label: "Verify Product", href: "/verify" },
+      { label: "Search", href: "/search" },
     ],
   },
   {

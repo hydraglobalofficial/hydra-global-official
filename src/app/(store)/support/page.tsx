@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowUpRight, HelpCircle, MessageCircle, RefreshCcw, ShieldCheck, Wrench } from "lucide-react";
+import { ArrowUpRight, Building2, HelpCircle, MessageCircle, RefreshCcw, ShieldCheck, Wrench } from "lucide-react";
 import { PageHeader } from "@/components/ui/primitives";
 import { siteConfig } from "@/config/site";
 import { faqGroups } from "@/content/faq";
@@ -16,7 +16,7 @@ const topics = [
   { href: "/installation", icon: Wrench, title: "Installation", text: "Guided, bubble-free fitting for every device." },
   { href: "/support/warranty", icon: ShieldCheck, title: "Warranty", text: "12-month coverage and how to claim." },
   { href: "/support/returns", icon: RefreshCcw, title: "Returns", text: "7-day returns and replacements." },
-  { href: "/verify", icon: ShieldCheck, title: "Verify product", text: "Check your HYDRA is authentic." },
+  { href: "/contact", icon: Building2, title: "Business enquiries", text: "Wholesale, corporate and partnership requests." },
   { href: "/support/contact", icon: MessageCircle, title: "Contact support", text: `Real humans, ${siteConfig.hours}.` },
 ];
 

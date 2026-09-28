@@ -20,15 +20,6 @@ export const newsletterSchema = z.object({
   email: z.email("Enter a valid email").trim().toLowerCase(),
 });
 
-export const verifySchema = z.object({
-  code: z
-    .string()
-    .trim()
-    .toUpperCase()
-    .transform((v) => v.replace(/[^A-Z0-9]/g, ""))
-    .pipe(z.string().min(8, "Codes are at least 8 characters").max(24)),
-});
-
 export const cartLineSchema = z.object({
   productId: z.string().min(1),
   variantId: z.string().min(1).nullable(),

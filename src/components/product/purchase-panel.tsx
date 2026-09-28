@@ -132,7 +132,7 @@ export function PurchasePanel({ product, variants }: Props) {
 
       <p className="flex items-center gap-2 text-xs text-muted">
         <ShieldCheck size={14} className="text-accent" />
-        Every HYDRA box carries a unique code — verify authenticity at hydra.com.bd/verify
+        100% genuine HYDRA — backed by a 12-month warranty
       </p>
     </div>
   );

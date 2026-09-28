@@ -63,7 +63,7 @@ export function SectionHeading({
       <div className={cn("max-w-2xl space-y-4", align === "center" && "mx-auto")}>
         {eyebrow && <Eyebrow>{eyebrow}</Eyebrow>}
         <h2 className="text-3xl font-semibold tracking-tight text-balance md:text-5xl">{title}</h2>
-        {description && <p className="text-base text-pretty text-muted md:text-lg">{description}</p>}
+        {description && <div className="text-base text-pretty text-muted md:text-lg">{description}</div>}
       </div>
       {action}
     </div>
@@ -110,7 +110,7 @@ export function PageHeader({
         <div className="max-w-3xl space-y-5 animate-fade-up">
           {eyebrow && <Eyebrow>{eyebrow}</Eyebrow>}
           <h1 className="text-4xl font-semibold tracking-tight text-balance md:text-6xl">{title}</h1>
-          {description && <p className="max-w-2xl text-lg text-pretty text-muted">{description}</p>}
+          {description && <div className="max-w-2xl text-lg text-pretty text-muted">{description}</div>}
           {children}
         </div>
       </div>

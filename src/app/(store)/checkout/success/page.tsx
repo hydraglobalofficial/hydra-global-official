@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { CheckCircle2, Package, Phone } from "lucide-react";
 import { ButtonLink } from "@/components/ui/button";
 import { ClearCart } from "@/components/cart/clear-cart";
+import { TrackEvent } from "@/components/analytics/track-event";
 import { db } from "@/lib/db";
 import { formatPrice } from "@/lib/utils";
 import { siteConfig } from "@/config/site";
@@ -15,20 +16,38 @@ export default async function CheckoutSuccessPage({ searchParams }: PageProps<"/
 
   const order = await db.order.findUnique({
     where: { number },
-    select: { number: true, customerName: true, total: true, paymentMethod: true, city: true, items: { select: { name: true, variantName: true, quantity: true } } },
+    select: {
+      number: true,
+      customerName: true,
+      total: true,
+      shippingFee: true,
+      paymentMethod: true,
+      city: true,
+      items: { select: { productId: true, name: true, variantName: true, unitPrice: true, quantity: true } },
+    },
   });
   if (!order) notFound();
 
   return (
     <div className="container-page max-w-3xl py-20">
       <ClearCart />
+      <TrackEvent
+        event="purchase"
+        onceKey={`purchase.${order.number}`}
+        payload={{
+          transactionId: order.number,
+          value: order.total,
+          shipping: order.shippingFee,
+          items: order.items.map((i) => ({ id: i.productId, name: i.name, variant: i.variantName, price: i.unitPrice, quantity: i.quantity })),
+        }}
+      />
       <div className="text-center">
         <div className="relative mx-auto mb-8 grid size-20 place-items-center">
           <div className="absolute inset-0 rounded-full bg-success/30 blur-xl animate-pulse-glow" />
           <CheckCircle2 size={56} className="relative text-success" />
         </div>
         <h1 className="text-4xl font-semibold tracking-tight md:text-5xl">Thank you, {order.customerName.split(" ")[0]}!</h1>
-        <p className="mt-4 text-lg text-muted">Your order is confirmed. We&apos;ll call you shortly to verify delivery details.</p>
+        <p className="mt-4 text-lg text-muted">Your order is confirmed. We&apos;ll call you shortly to confirm delivery details.</p>
       </div>
 
       <div className="glass mt-12 space-y-6 rounded-3xl p-8">

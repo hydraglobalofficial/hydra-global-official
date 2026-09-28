@@ -1,9 +1,9 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { getSession } from "@/lib/auth/session";
 import { db } from "@/lib/db";
-import { absoluteUrl, formatCode } from "@/lib/utils";
+import { formatCode } from "@/lib/utils";
 
-/** CSV for the packaging printer: code, formatted code, and QR target URL. */
+/** CSV for the packaging printer: code, formatted code and status. */
 export async function GET(request: NextRequest) {
   const session = await getSession();
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -19,11 +19,8 @@ export async function GET(request: NextRequest) {
   });
 
   const rows = [
-    "code,display_code,status,qr_url",
-    ...codes.map((c) => {
-      const display = formatCode(c.code);
-      return `${c.code},${display},${c.status},${absoluteUrl(`/verify?code=${display}`)}`;
-    }),
+    "code,display_code,status",
+    ...codes.map((c) => `${c.code},${formatCode(c.code)},${c.status}`),
   ];
 
   return new NextResponse(rows.join("\n"), {

@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 
 const values = [
   { icon: Cpu, title: "Engineering first", text: "Every product starts in CAD against real device scans, not generic templates." },
-  { icon: ShieldCheck, title: "Radical authenticity", text: "Unique, verifiable codes on every box. If it isn't verifiable, it isn't HYDRA." },
+  { icon: ShieldCheck, title: "Radical authenticity", text: "Genuine materials, sealed packaging and a unique authenticity code on every box." },
   { icon: Users, title: "Customer obsessed", text: "Local support team, 12-month warranty, and replacements shipped in 24 hours." },
   { icon: Globe2, title: "Global standard", text: "Materials sourced from the same suppliers as the world's top protection brands." },
 ];
@@ -20,7 +20,7 @@ const values = [
 const timeline = [
   { year: "2023", text: "Founded in Dhaka after too many cracked screens and too many fake protectors." },
   { year: "2024", text: "Launched first tempered glass line for iPhone; 10,000 units sold in six months." },
-  { year: "2025", text: "Introduced the authenticity verification system and expanded to Samsung Galaxy." },
+  { year: "2025", text: "Introduced authenticity-coded packaging and expanded to Samsung Galaxy." },
   { year: "2026", text: "50,000+ customers, privacy armor range and nationwide 24-hour Dhaka delivery." },
 ];
 

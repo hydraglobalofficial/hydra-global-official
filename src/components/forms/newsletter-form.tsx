@@ -3,6 +3,7 @@
 import { useActionState } from "react";
 import { ArrowRight, Check, Loader2 } from "lucide-react";
 import { subscribe } from "@/server/actions/engagement";
+import { TrackEvent } from "@/components/analytics/track-event";
 import { initialFormState } from "@/lib/validations";
 import { cn } from "@/lib/utils";
 
@@ -11,6 +12,7 @@ export function NewsletterForm({ className }: { className?: string }) {
 
   return (
     <form action={action} className={cn("space-y-3", className)}>
+      {state.status === "success" && <TrackEvent event="sign_up" payload={{ label: "newsletter" }} />}
       <div className="flex rounded-full border border-line bg-surface-2 p-1.5 focus-within:border-accent/50">
         <input
           type="email"

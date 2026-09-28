@@ -3,6 +3,7 @@
 import { useActionState } from "react";
 import { CheckCircle2, Loader2, Send } from "lucide-react";
 import { submitInquiry } from "@/server/actions/engagement";
+import { TrackEvent } from "@/components/analytics/track-event";
 import { initialFormState } from "@/lib/validations";
 import { Button } from "@/components/ui/button";
 import { Field, FormMessage, Input, Select, Textarea } from "@/components/ui/form";
@@ -24,6 +25,7 @@ export function InquiryForm({
   if (state.status === "success") {
     return (
       <div className="glass flex flex-col items-center gap-4 rounded-3xl p-10 text-center animate-fade-up">
+        <TrackEvent event="generate_lead" payload={{ label: defaultType }} />
         <CheckCircle2 size={40} className="text-success" />
         <h3 className="text-xl font-semibold">Message sent</h3>
         <p className="max-w-sm text-sm text-muted">{state.message}</p>

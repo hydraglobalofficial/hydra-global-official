@@ -365,7 +365,7 @@ const reviewPool = [
   { authorName: "Tahmid R.", rating: 5, title: "Can't even tell it's there", comment: "Installed in two minutes with the frame. Zero bubbles, touch feels exactly like the bare screen." },
   { authorName: "Nusrat J.", rating: 5, title: "Survived a nasty drop", comment: "Dropped my phone on the stairs — the glass cracked but my screen is perfect. Ordered a replacement immediately." },
   { authorName: "Arif H.", rating: 4, title: "Great quality", comment: "Very clear and smooth. Took one star off because delivery to Sylhet took 4 days, but the product is excellent." },
-  { authorName: "Sadia K.", rating: 5, title: "Genuine and verified", comment: "Verified the code on the website, everything checked out. Much better than the cheap ones at the market." },
+  { authorName: "Sadia K.", rating: 5, title: "Genuine quality", comment: "Sealed box, perfect fit, zero bubbles. Much better than the cheap ones at the market." },
   { authorName: "Rakib M.", rating: 5, title: "Fingerprint works perfectly", comment: "Was worried about the fingerprint sensor but it works instantly after re-registering." },
   { authorName: "Farhana T.", rating: 4, title: "Solid", comment: "Good fit with my case, oleophobic coating is really good. Packaging feels premium too." },
 ];
@@ -387,7 +387,7 @@ Every screen protector includes **one free replacement** for accidental cracks w
 
 ## What's not covered
 - Damage from improper installation after 48 hours
-- Products bought from unauthorized sellers (verify your code first)
+- Products bought from unauthorized sellers
 - Normal wear such as micro-scratches after extended use
 
 ## How to claim
@@ -415,7 +415,7 @@ If you ordered the wrong model and haven't opened the inner seal, we'll exchange
     summary: "How HYDRA collects, uses and protects your personal information.",
     body: `## Information we collect
 - Contact details you provide at checkout: name, phone, email and delivery address
-- Order history and product verification attempts
+- Order history and support requests
 - Anonymous analytics, only after you accept cookies
 
 ## How we use it
@@ -438,7 +438,7 @@ All orders are subject to availability and confirmation. We may cancel orders wi
 Prices are listed in Bangladeshi Taka (BDT) and include applicable VAT. Shipping fees are shown at checkout.
 
 ## Authenticity
-HYDRA products are sold only through hydra.com.bd and authorized resellers. Verification codes are for customer use; tampering with or reproducing codes is prohibited.
+HYDRA products are sold only through hydra.com.bd and authorized resellers. Tampering with or reproducing HYDRA authenticity codes or packaging is prohibited.
 
 ## Liability
 HYDRA protectors reduce the risk of screen damage but cannot guarantee protection against every impact. Our liability is limited to the purchase price of the product.`,
@@ -483,7 +483,7 @@ Refunds are processed within 5 business days to your original payment method or 
 const announcements = [
   { message: "Free delivery across Bangladesh on orders over ৳1,500", href: "/shop" },
   { message: "New: Privacy Armor for iPhone 17 Pro Max is here", href: "/product/privacy-armor-iphone-17-pro-max" },
-  { message: "Verify your HYDRA in seconds — protect yourself from fakes", href: "/verify" },
+  { message: "12-month warranty on every HYDRA protector", href: "/support/warranty" },
   { message: "Use code HYDRA10 for 10% off your first order", href: null },
 ];
 

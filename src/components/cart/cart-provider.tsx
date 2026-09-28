@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import { track } from "@/lib/analytics";
 
 export type CartLine = {
   productId: string;
@@ -66,6 +67,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       }
       return [...prev, { ...line, quantity: Math.min(limit, quantity) }];
     });
+    track("add_to_cart", { items: [{ id: line.productId, name: line.name, variant: line.variantName, price: line.price, quantity }] });
     if (options?.openDrawer !== false) setIsOpen(true);
   }, []);
 

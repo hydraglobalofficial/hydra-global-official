@@ -1,4 +1,4 @@
-import { ArrowRight, ShieldCheck } from "lucide-react";
+import { ArrowRight, ShieldCheck, Wrench } from "lucide-react";
 import { ButtonLink } from "@/components/ui/button";
 import { Eyebrow, Rating } from "@/components/ui/primitives";
 import { PhoneVisual } from "./phone-visual";
@@ -23,15 +23,15 @@ export function Hero() {
             Invisible strength. <span className="text-gradient">Engineered</span> for flagships.
           </h1>
           <p className="max-w-lg text-lg text-pretty text-muted">
-            Aerospace-grade tempered glass, privacy filters and camera armor — laser-cut for iPhone and Samsung Galaxy, with
-            authenticity you can verify in seconds.
+            Aerospace-grade tempered glass, privacy filters and camera armor — laser-cut for iPhone and Samsung Galaxy, and
+            backed by a 12-month warranty.
           </p>
           <div className="flex flex-wrap items-center gap-3">
             <ButtonLink href="/shop" size="lg">
               Shop the collection <ArrowRight size={18} />
             </ButtonLink>
-            <ButtonLink href="/verify" size="lg" variant="outline">
-              <ShieldCheck size={18} /> Verify product
+            <ButtonLink href="/installation" size="lg" variant="outline">
+              <Wrench size={18} /> Installation guide
             </ButtonLink>
           </div>
           <div className="flex items-center gap-4 pt-2">
@@ -55,8 +55,8 @@ export function Hero() {
             <p className="text-xs text-muted">stronger than standard glass</p>
           </div>
           <div className="glass absolute -right-2 top-16 hidden rounded-2xl p-4 animate-float [animation-delay:1.5s] sm:block lg:right-0">
-            <p className="flex items-center gap-2 text-xs"><span className="size-2 rounded-full bg-success" /> Authenticity verified</p>
-            <p className="mt-1 font-mono text-sm tracking-widest text-muted">HYD-7K2Q-9XA4</p>
+            <p className="flex items-center gap-2 text-xs"><ShieldCheck size={14} className="text-success" /> 100% genuine</p>
+            <p className="mt-1 font-mono text-sm tracking-widest text-muted">12-month warranty</p>
           </div>
         </div>
       </div>

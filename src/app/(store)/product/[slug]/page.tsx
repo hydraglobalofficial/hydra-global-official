@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { BadgeCheck, ChevronRight, PlayCircle, Smartphone } from "lucide-react";
+import { TrackEvent } from "@/components/analytics/track-event";
 import { ProductGallery } from "@/components/product/product-gallery";
 import { PurchasePanel } from "@/components/product/purchase-panel";
 import { ProductGrid } from "@/components/product/product-card";
@@ -95,6 +96,7 @@ export default async function ProductPage({ params }: PageProps<"/product/[slug]
             {product.tagline && <p className="text-lg text-muted">{product.tagline}</p>}
           </div>
 
+          <TrackEvent key={product.id} event="view_item" payload={{ items: [{ id: product.id, name: product.name, price: product.price }] }} />
           <PurchasePanel
             product={{
               id: product.id,

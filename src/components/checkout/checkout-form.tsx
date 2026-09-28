@@ -1,6 +1,7 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useActionState, useEffect, useRef, useState } from "react";
+import { track } from "@/lib/analytics";
 import { Loader2, Lock } from "lucide-react";
 import { useCart } from "@/components/cart/cart-provider";
 import { ProductImage } from "@/components/product/product-image";
@@ -19,6 +20,13 @@ export function CheckoutForm() {
   const [payment, setPayment] = useState("COD");
   const errors = state.fieldErrors ?? {};
   const shipping = shippingFee(subtotal, city);
+
+  const checkoutTracked = useRef(false);
+  useEffect(() => {
+    if (!hydrated || lines.length === 0 || checkoutTracked.current) return;
+    checkoutTracked.current = true;
+    track("begin_checkout", { items: lines.map((l) => ({ id: l.productId, name: l.name, variant: l.variantName, price: l.price, quantity: l.quantity })) });
+  }, [hydrated, lines]);
 
   if (!hydrated) return <div className="h-96 animate-pulse rounded-3xl bg-surface" />;
   if (lines.length === 0) {

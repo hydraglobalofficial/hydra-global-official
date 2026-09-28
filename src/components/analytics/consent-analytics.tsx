@@ -2,9 +2,10 @@
 
 import Script from "next/script";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
+import { CONSENT_KEY } from "@/lib/analytics";
 
-const CONSENT_KEY = "hydra.consent";
 type Consent = "granted" | "denied" | null;
 
 const GTM_ID = process.env.NEXT_PUBLIC_GTM_ID;
@@ -19,6 +20,16 @@ export function ConsentAnalytics() {
     setConsent(localStorage.getItem(CONSENT_KEY) as Consent);
     setReady(true);
   }, []);
+
+  // The Pixel snippet tracks the first PageView; client-side navigations are tracked here.
+  // GTM should use a "History Change" trigger for the same purpose.
+  const pathname = usePathname();
+  const lastPath = useRef(pathname);
+  useEffect(() => {
+    if (lastPath.current === pathname) return;
+    lastPath.current = pathname;
+    window.fbq?.("track", "PageView");
+  }, [pathname]);
 
   const decide = (value: Exclude<Consent, null>) => {
     localStorage.setItem(CONSENT_KEY, value);
