@@ -31,6 +31,11 @@ export function slugify(input: string) {
     .replace(/^-+|-+$/g, "");
 }
 
+/** HYDXXXXXXXXX → HYD-XXXX-XXXXX for display and printing. */
+export function formatCode(code: string) {
+  return code.replace(/^(.{3})(.{4})(.+)$/, "$1-$2-$3");
+}
+
 export function absoluteUrl(path = "/") {
   const base = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
   return new URL(path, base).toString();
