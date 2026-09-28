@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600">
+  <defs>
+    <linearGradient id="c" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffffff" stop-opacity=".22"/>
+      <stop offset=".5" stop-color="#ffffff" stop-opacity=".04"/>
+      <stop offset="1" stop-color="#3de3ff" stop-opacity=".18"/>
+    </linearGradient>
+    <linearGradient id="e" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#3de3ff"/>
+      <stop offset="1" stop-color="#00ffa3"/>
+    </linearGradient>
+    <radialGradient id="glow" cx=".5" cy=".5" r=".5">
+      <stop offset="0" stop-color="#00ffa3" stop-opacity=".25"/>
+      <stop offset="1" stop-color="#00ffa3" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <ellipse cx="300" cy="520" rx="170" ry="22" fill="url(#glow)"/>
+  <g transform="rotate(10 300 300)">
+    <rect x="195" y="75" width="210" height="430" rx="46" fill="url(#c)" stroke="url(#e)" stroke-width="3"/>
+    <rect x="215" y="95" width="100" height="100" rx="26" fill="#0c0c12" stroke="#3de3ff" stroke-opacity=".5" stroke-width="2"/>
+    <circle cx="245" cy="125" r="18" fill="#05070a" stroke="#3a3a44"/>
+    <circle cx="285" cy="125" r="18" fill="#05070a" stroke="#3a3a44"/>
+    <circle cx="245" cy="165" r="18" fill="#05070a" stroke="#3a3a44"/>
+    <circle cx="300" cy="330" r="42" fill="none" stroke="#fff" stroke-opacity=".3" stroke-width="2"/>
+    <circle cx="300" cy="330" r="30" fill="none" stroke="#fff" stroke-opacity=".15" stroke-width="2"/>
+    <path d="M195 150 h-6 M195 190 h-6 M405 170 h6" stroke="#3de3ff" stroke-width="6" stroke-linecap="round"/>
+  </g>
+  <text x="300" y="570" text-anchor="middle" font-family="monospace" font-size="14" letter-spacing="6" fill="#8b8b96">HYDRA · MAGSAFE CASE</text>
+</svg>

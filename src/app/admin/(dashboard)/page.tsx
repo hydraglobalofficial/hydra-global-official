@@ -7,9 +7,11 @@ import { formatDate, formatPrice } from "@/lib/utils";
 
 export const metadata = { title: "Overview" };
 
+const daysAgo = (days: number) => new Date(Date.now() - days * 24 * 60 * 60 * 1000);
+
 export default async function AdminOverviewPage() {
   const session = await requireAdmin();
-  const since = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+  const since = daysAgo(30);
 
   const [revenue, orders30, pending, lowStock, recentOrders, recentInquiries] = await Promise.all([
     db.order.aggregate({ where: { createdAt: { gte: since }, status: { notIn: ["CANCELLED", "RETURNED"] } }, _sum: { total: true } }),

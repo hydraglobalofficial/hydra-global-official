@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { Clock, Facebook, Instagram, Mail, MapPin, Phone, Youtube } from "lucide-react";
+import { Clock, Mail, MapPin, Phone } from "lucide-react";
+import { SocialLinks } from "@/components/ui/social-links";
 import { PageHeader } from "@/components/ui/primitives";
 import { InquiryForm } from "@/components/forms/inquiry-form";
 import { siteConfig } from "@/config/site";
@@ -32,16 +33,8 @@ export default function ContactPage() {
               </div>
             </div>
           ))}
-          <div className="glass flex gap-2 rounded-2xl p-5">
-            {[
-              { href: siteConfig.social.facebook, icon: Facebook, label: "Facebook" },
-              { href: siteConfig.social.instagram, icon: Instagram, label: "Instagram" },
-              { href: siteConfig.social.youtube, icon: Youtube, label: "YouTube" },
-            ].map(({ href, icon: Icon, label }) => (
-              <a key={label} href={href} target="_blank" rel="noopener noreferrer" aria-label={label} className="grid size-11 place-items-center rounded-xl border border-line hover:border-accent/40 hover:text-accent">
-                <Icon size={18} />
-              </a>
-            ))}
+          <div className="glass rounded-2xl p-5">
+            <SocialLinks itemClassName="size-11 rounded-xl" />
           </div>
         </aside>
       </div>

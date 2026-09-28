@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { Facebook, Instagram, Mail, MapPin, Phone, Youtube } from "lucide-react";
+import { Mail, MapPin, Phone } from "lucide-react";
+import { SocialLinks } from "@/components/ui/social-links";
 import { NewsletterForm } from "@/components/forms/newsletter-form";
 import { footerNav } from "@/config/navigation";
 import { siteConfig } from "@/config/site";
@@ -55,17 +56,7 @@ export function SiteFooter() {
 
         <div className="flex flex-col items-center justify-between gap-4 border-t border-line py-6 text-xs text-subtle md:flex-row">
           <p>© {new Date().getFullYear()} {siteConfig.legalName}. All rights reserved.</p>
-          <div className="flex items-center gap-2">
-            {[
-              { href: siteConfig.social.facebook, icon: Facebook, label: "Facebook" },
-              { href: siteConfig.social.instagram, icon: Instagram, label: "Instagram" },
-              { href: siteConfig.social.youtube, icon: Youtube, label: "YouTube" },
-            ].map(({ href, icon: Icon, label }) => (
-              <a key={label} href={href} target="_blank" rel="noopener noreferrer" aria-label={label} className="grid size-9 place-items-center rounded-full border border-line hover:border-accent/40 hover:text-fg">
-                <Icon size={15} />
-              </a>
-            ))}
-          </div>
+          <SocialLinks />
         </div>
       </div>
     </footer>
