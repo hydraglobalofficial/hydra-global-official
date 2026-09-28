@@ -1,6 +1,6 @@
 export const siteConfig = {
   name: "HYDRA",
-  legalName: "HYDRA Global",
+  legalName: "HYDRA Global Ltd.",
   tagline: "Engineered protection for flagship phones.",
   description:
     "HYDRA makes precision screen protectors, privacy glass and camera armor for iPhone and Samsung Galaxy — engineered for a perfect, bubble-free fit.",
@@ -22,6 +22,18 @@ export const siteConfig = {
     youtube: "https://youtube.com/@hydraglobal",
     tiktok: "https://tiktok.com/@hydraglobal",
   },
+} as const;
+
+/** Statutory details shown on the About page — replace the placeholders with your RJSC / NBR records. */
+export const companyInfo = {
+  legalForm: "Private Limited Company",
+  incorporated: "2023",
+  jurisdiction: "People's Republic of Bangladesh",
+  registrationNo: "RJSC C-000000/2023",
+  tradeLicense: "DNCC TRAD/000000/2023",
+  tin: "000000000000",
+  bin: "000000000-0101",
+  registeredOffice: siteConfig.address,
 } as const;
 
 /** Add a YouTube video ID to embed it inline; without one the card links to `href`. */

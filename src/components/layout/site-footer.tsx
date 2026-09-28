@@ -56,7 +56,7 @@ export function SiteFooter() {
         </div>
 
         <div className="flex flex-col items-center justify-between gap-4 border-t border-line py-6 text-xs text-subtle md:flex-row">
-          <p>© {new Date().getFullYear()} {siteConfig.legalName}. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} {siteConfig.legalName} All rights reserved.</p>
           <SocialLinks />
         </div>
       </div>

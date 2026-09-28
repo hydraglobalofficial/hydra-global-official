@@ -12,6 +12,7 @@ import { CollectionBento, DropTest, ImpactStat, VideoShowcase } from "@/componen
 import { JsonLd, organizationJsonLd } from "@/lib/seo";
 import { getFeaturedProducts, getNavigationData } from "@/server/queries/catalog";
 import { Reveal } from "@/components/motion/reveal";
+import { HydraRise } from "@/components/hydra/hydra-rise";
 
 export const revalidate = 300;
 
@@ -25,6 +26,8 @@ export default async function HomePage() {
       <div id="explore" className="mt-16 scroll-mt-24">
         <BrandMarquee />
       </div>
+
+      <HydraRise />
 
       <Reveal className="container-page pt-16">
         <DeviceFinder devices={nav.devices} />
