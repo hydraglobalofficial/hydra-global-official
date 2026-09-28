@@ -19,13 +19,13 @@ function OfficeMap() {
             <circle cx="1" cy="1" r="0.7" fill="#fff" fillOpacity="0.08" />
           </pattern>
           <linearGradient id="om-route" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0" stopColor="#3de3ff" stopOpacity="0" />
-            <stop offset="0.5" stopColor="#3de3ff" />
-            <stop offset="1" stopColor="#7b61ff" />
+            <stop offset="0" stopColor="#38bdf8" stopOpacity="0" />
+            <stop offset="0.5" stopColor="#38bdf8" />
+            <stop offset="1" stopColor="#38bdf8" />
           </linearGradient>
         </defs>
         <rect width="320" height="200" fill="url(#om-dots)" />
-        <path d="M40 150 C 70 120, 60 90, 95 70 S 150 60, 160 30 L 175 32 C 168 70, 120 80, 108 100 S 90 150, 60 165 Z" fill="#3de3ff" fillOpacity="0.08" stroke="#3de3ff" strokeOpacity="0.25" />
+        <path d="M40 150 C 70 120, 60 90, 95 70 S 150 60, 160 30 L 175 32 C 168 70, 120 80, 108 100 S 90 150, 60 165 Z" fill="#38bdf8" fillOpacity="0.08" stroke="#38bdf8" strokeOpacity="0.25" />
         <g stroke="#fff" strokeOpacity="0.1" strokeWidth="6" fill="none" strokeLinecap="round">
           <path d="M0 110 L320 95" />
           <path d="M200 0 L215 200" />
@@ -48,7 +48,7 @@ function OfficeMap() {
           viewport={{ once: true }}
           transition={{ duration: 2, ease: "easeInOut" }}
         />
-        <text x="30" y="128" fill="#3de3ff" fillOpacity="0.5" fontSize="7" letterSpacing="2" fontFamily="ui-monospace, monospace">GULSHAN LAKE</text>
+        <text x="30" y="128" fill="#38bdf8" fillOpacity="0.5" fontSize="7" letterSpacing="2" fontFamily="ui-monospace, monospace">GULSHAN LAKE</text>
         <text x="238" y="112" fill="#fff" fillOpacity="0.35" fontSize="6.5" letterSpacing="1.5" fontFamily="ui-monospace, monospace">GULSHAN AVE</text>
       </svg>
 
@@ -56,7 +56,7 @@ function OfficeMap() {
         <span className="absolute left-1/2 top-full size-10 -translate-x-1/2 -translate-y-1/2 animate-ping rounded-full bg-accent/30" />
         <div className="relative flex flex-col items-center">
           <span className="whitespace-nowrap rounded-full border border-accent/40 bg-black/80 px-2.5 py-1 font-mono text-[10px] tracking-wider text-accent backdrop-blur">HYDRA HQ</span>
-          <span className="mt-1 grid size-7 place-items-center rounded-full bg-accent text-black shadow-[0_0_24px_rgba(61,227,255,0.8)]">
+          <span className="mt-1 grid size-7 place-items-center rounded-full bg-accent text-black shadow-[0_0_24px_rgba(56,189,248,0.8)]">
             <MapPin size={14} />
           </span>
         </div>

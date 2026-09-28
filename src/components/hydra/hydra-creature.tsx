@@ -60,16 +60,16 @@ export function HydraCreature({ progress, className }: { progress: MotionValue<n
   const auraScale = useTransform(progress, [0.6, 1], [0.6, 1]);
 
   return (
-    <svg viewBox="0 0 400 400" className={cn("overflow-visible drop-shadow-[0_0_14px_rgba(61,227,255,0.35)]", className)} aria-hidden>
+    <svg viewBox="0 0 400 400" className={cn("overflow-visible drop-shadow-[0_0_14px_rgba(56,189,248,0.35)]", className)} aria-hidden>
       <defs>
         <linearGradient id={stroke} gradientUnits="userSpaceOnUse" x1="0" y1="40" x2="0" y2="390">
-          <stop offset="0" stopColor="#3de3ff" />
-          <stop offset="0.55" stopColor="#8fb8ff" />
-          <stop offset="1" stopColor="#7b61ff" />
+          <stop offset="0" stopColor="#38bdf8" />
+          <stop offset="0.55" stopColor="#7dd3fc" />
+          <stop offset="1" stopColor="#e4e4e7" stopOpacity="0.7" />
         </linearGradient>
         <radialGradient id={aura}>
-          <stop offset="0" stopColor="#3de3ff" stopOpacity="0.35" />
-          <stop offset="0.6" stopColor="#7b61ff" stopOpacity="0.12" />
+          <stop offset="0" stopColor="#38bdf8" stopOpacity="0.35" />
+          <stop offset="0.6" stopColor="#38bdf8" stopOpacity="0.08" />
           <stop offset="1" stopColor="#000" stopOpacity="0" />
         </radialGradient>
       </defs>
@@ -111,7 +111,7 @@ function NeckAndHead({ head, index, progress, stroke }: { head: HydraHead; index
     <g opacity={head.back ? 0.7 : 1}>
       <motion.path d={head.neck} fill="none" stroke="#fff" strokeOpacity="0.05" strokeWidth={16 * head.scale} strokeLinecap="round" style={{ pathLength: draw, opacity: visible }} />
       <motion.path d={head.neck} fill="none" stroke={`url(#${stroke})`} strokeWidth={2.4 * head.scale} strokeLinecap="round" style={{ pathLength: draw, opacity: visible }} />
-      <motion.path d={head.neck} fill="none" stroke="#bdf6ff" strokeWidth={5 * head.scale} strokeDasharray="1.5 7" strokeLinecap="round" style={{ opacity: scales }} />
+      <motion.path d={head.neck} fill="none" stroke="#e0f2fe" strokeWidth={5 * head.scale} strokeDasharray="1.5 7" strokeLinecap="round" style={{ opacity: scales }} />
 
       <g transform={`translate(${head.x} ${head.y}) rotate(${head.rotate}) scale(${head.scale})`}>
         <motion.g style={{ opacity: headIn, scale: headScale, originY: 1 }}>
@@ -128,12 +128,12 @@ function NeckAndHead({ head, index, progress, stroke }: { head: HydraHead; index
               strokeLinecap="round"
             />
             <path d="M-10 0 L-17 -13 L-15 -31 L-7 -47 L0 -58 L7 -47 L15 -31 L17 -13 L10 0 Z" fill="#050608" stroke={`url(#${stroke})`} strokeWidth="2.2" strokeLinejoin="round" />
-            <path d="M-15 -34 L-3 -29 M15 -34 L3 -29 M0 -24 L0 -6 M-7 -44 L-3 -49 M7 -44 L3 -49" fill="none" stroke="#bdf6ff" strokeOpacity="0.55" strokeWidth="1.3" strokeLinecap="round" />
-            <path d="M-12 -28 L-4 -25 L-11 -22 Z M12 -28 L4 -25 L11 -22 Z" fill="#0b1a20" stroke="#3de3ff" strokeOpacity="0.5" strokeWidth="0.8" strokeLinejoin="round" />
+            <path d="M-15 -34 L-3 -29 M15 -34 L3 -29 M0 -24 L0 -6 M-7 -44 L-3 -49 M7 -44 L3 -49" fill="none" stroke="#e0f2fe" strokeOpacity="0.55" strokeWidth="1.3" strokeLinecap="round" />
+            <path d="M-12 -28 L-4 -25 L-11 -22 Z M12 -28 L4 -25 L11 -22 Z" fill="#0b1a20" stroke="#38bdf8" strokeOpacity="0.5" strokeWidth="0.8" strokeLinejoin="round" />
             <motion.g style={{ opacity: eyes }}>
-              <ellipse cx="-8.5" cy="-25" rx="7" ry="4" fill="#3de3ff" opacity="0.4" />
-              <ellipse cx="8.5" cy="-25" rx="7" ry="4" fill="#3de3ff" opacity="0.4" />
-              <path d="M-12 -28 L-4 -25 L-11 -22 Z M12 -28 L4 -25 L11 -22 Z" fill="#eafcff" />
+              <ellipse cx="-8.5" cy="-25" rx="7" ry="4" fill="#38bdf8" opacity="0.4" />
+              <ellipse cx="8.5" cy="-25" rx="7" ry="4" fill="#38bdf8" opacity="0.4" />
+              <path d="M-12 -28 L-4 -25 L-11 -22 Z M12 -28 L4 -25 L11 -22 Z" fill="#f0f9ff" />
             </motion.g>
           </motion.g>
         </motion.g>

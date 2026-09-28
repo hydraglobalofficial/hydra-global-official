@@ -12,7 +12,7 @@ const channels = [
     value: `+${siteConfig.whatsapp.replace(/^(\d{3})(\d{4})(\d+)$/, "$1 $2-$3")}`,
     reply: "~15 min",
     href: `https://wa.me/${siteConfig.whatsapp}?text=${encodeURIComponent("Hi HYDRA! I have a question.")}`,
-    tone: "text-accent-3 border-accent-3/25 bg-accent-3/10",
+    tone: "text-accent border-accent/25 bg-accent/10",
     badge: "Fastest",
   },
   {
@@ -29,7 +29,7 @@ const channels = [
     value: siteConfig.email,
     reply: "< 24 hrs",
     href: `mailto:${siteConfig.email}`,
-    tone: "text-accent-2 border-accent-2/25 bg-accent-2/10",
+    tone: "text-accent border-accent/25 bg-accent/10",
   },
   {
     icon: Send,
@@ -60,7 +60,7 @@ export function ContactChannels() {
                     <Icon size={19} />
                   </span>
                   <div className="flex items-center gap-2">
-                    {badge && <span className="rounded-full bg-accent-3/15 px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider text-accent-3">{badge}</span>}
+                    {badge && <span className="rounded-full bg-accent/15 px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider text-accent">{badge}</span>}
                     <ArrowUpRight size={16} className="text-subtle transition-all duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-fg" />
                   </div>
                 </div>

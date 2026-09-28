@@ -26,7 +26,7 @@ export function FreeShippingMeter({ subtotal }: { subtotal: number }) {
       </p>
       <div className="h-1 overflow-hidden rounded-full bg-white/10">
         <div
-          className="h-full rounded-full bg-gradient-to-r from-accent to-accent-2 transition-[width] duration-500"
+          className="h-full rounded-full bg-accent transition-[width] duration-500"
           style={{ width: `${progress}%` }}
         />
       </div>

@@ -68,7 +68,7 @@ export function SplashScreen() {
               initial={{ opacity: 0, y: 14, filter: "blur(8px)" }}
               animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
               transition={{ delay: reduced ? 0 : 1.5 + i * 0.07, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-              className="text-gradient"
+              className="text-fg"
             >
               {letter}
             </motion.span>
@@ -84,7 +84,7 @@ export function SplashScreen() {
         </motion.p>
         <div className="mt-6 h-px w-44 overflow-hidden bg-white/10">
           <motion.div
-            className="h-full origin-left bg-gradient-to-r from-accent to-accent-2"
+            className="h-full origin-left bg-accent"
             initial={{ scaleX: 0 }}
             animate={{ scaleX: 1 }}
             transition={{ duration: reduced ? 0.3 : 2.4, ease: [0.65, 0, 0.35, 1] }}

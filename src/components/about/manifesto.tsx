@@ -52,7 +52,7 @@ function Word({ word, scroll, range, highlight }: { word: string; scroll: Motion
 
   return (
     <>
-      <motion.span className={cn("inline-block", highlight && "text-gradient")} style={{ opacity, y }}>
+      <motion.span className={cn("inline-block", highlight && "text-accent")} style={{ opacity, y }}>
         {word}
       </motion.span>{" "}
     </>

@@ -11,7 +11,7 @@ export function SiteFooter() {
   return (
     <footer className="relative mt-24 overflow-hidden border-t border-line bg-surface/70 backdrop-blur-xl">
       <div aria-hidden className="divider-glow absolute inset-x-0 top-0" />
-      <div className="pointer-events-none absolute -bottom-40 left-1/2 h-80 w-[60rem] -translate-x-1/2 rounded-full bg-accent-2/10 blur-[140px]" />
+      <div className="pointer-events-none absolute -bottom-40 left-1/2 h-80 w-[60rem] -translate-x-1/2 rounded-full bg-accent/[0.06] blur-[140px]" />
       <div className="container-page relative">
         <div className="border-b border-line py-10">
           <TrustBadges compact />

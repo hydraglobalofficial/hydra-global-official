@@ -43,7 +43,7 @@ const divisions = [
   { icon: ShoppingBag, title: "Retail & e-commerce", text: "Direct-to-customer sales through hydra.com.bd with cash on delivery nationwide.", href: "/shop" },
   { icon: Store, title: "Wholesale & distribution", text: "Trade pricing and priority stock for retailers and repair shops across Bangladesh.", href: "/contact?topic=wholesale#write" },
   { icon: Building2, title: "Corporate supply", text: "Bulk protection for company fleets with VAT invoices and a dedicated account manager.", href: "/contact?topic=corporate#write" },
-  { icon: Headphones, title: "After-sales & warranty", text: "Installation help, 12-month warranty claims and replacements handled by our own team.", href: "/warranty" },
+  { icon: Headphones, title: "After-sales & warranty", text: "Installation help, 12-month warranty claims and replacements handled by our own team.", href: "/support/warranty" },
 ];
 
 const leadership = [
@@ -76,12 +76,12 @@ export default function AboutPage() {
       <section className="relative overflow-hidden">
         <div className="bg-grid pointer-events-none absolute inset-0 [mask-image:radial-gradient(ellipse_at_top,#000,transparent_75%)]" />
         <div className="pointer-events-none absolute -top-40 left-1/4 h-96 w-[40rem] rounded-full bg-accent/15 blur-[130px]" />
-        <div className="pointer-events-none absolute right-0 top-20 h-80 w-80 rounded-full bg-accent-2/15 blur-[110px]" />
+        <div className="pointer-events-none absolute right-0 top-20 h-80 w-80 rounded-full bg-white/[0.04] blur-[110px]" />
         <div className="container-page relative grid items-center gap-12 pb-16 pt-14 md:pt-20 lg:grid-cols-[1.15fr_1fr]">
           <Reveal className="space-y-7">
             <Eyebrow>About {siteConfig.legalName}</Eyebrow>
             <h1 className="text-5xl font-semibold tracking-tight text-balance md:text-7xl">
-              Engineering the armor <span className="text-gradient">Bangladesh&apos;s phones</span> deserve.
+              Engineering the armor <span className="text-accent">Bangladesh&apos;s phones</span> deserve.
             </h1>
             <p className="max-w-xl text-lg text-pretty text-muted">
               {siteConfig.legalName} is a Dhaka-based private limited company that designs, sources and delivers precision protection for the
@@ -117,7 +117,7 @@ export default function AboutPage() {
       />
 
       <section className="container-page py-24">
-        <SectionHeading align="center" eyebrow="Why we exist" title={<>Mission &amp; <span className="text-gradient">vision.</span></>} />
+        <SectionHeading align="center" eyebrow="Why we exist" title={<>Mission &amp; <span className="text-muted">vision.</span></>} />
         <RevealGroup className="grid gap-5 lg:grid-cols-2" stagger={0.12}>
           <RevealItem className="h-full">
             <SpotlightCard className="relative h-full overflow-hidden p-8 md:p-12">
@@ -140,19 +140,19 @@ export default function AboutPage() {
           </RevealItem>
           <RevealItem className="h-full">
             <SpotlightCard className="relative h-full overflow-hidden p-8 md:p-12">
-              <div className="pointer-events-none absolute -right-20 -top-20 size-72 rounded-full bg-accent-2/20 blur-3xl" />
+              <div className="pointer-events-none absolute -right-20 -top-20 size-72 rounded-full bg-white/[0.05] blur-3xl" />
               <div className="relative">
-                <div className="grid size-14 place-items-center rounded-2xl border border-accent-2/30 bg-accent-2/10 text-accent-2">
+                <div className="grid size-14 place-items-center rounded-2xl border border-white/15 bg-white/5 text-fg">
                   <Eye size={26} strokeWidth={1.6} />
                 </div>
-                <p className="mt-8 font-mono text-[11px] uppercase tracking-[0.3em] text-accent-2">Our vision</p>
+                <p className="mt-8 font-mono text-[11px] uppercase tracking-[0.3em] text-fg/70">Our vision</p>
                 <p className="mt-4 text-2xl font-semibold leading-snug tracking-tight text-balance md:text-3xl">
                   To become South Asia&apos;s most trusted name in device protection — the brand people choose first, and recommend without hesitation.
                 </p>
                 <ul className="mt-8 space-y-3 text-muted">
-                  <li className="flex gap-3"><span className="mt-2 size-1.5 shrink-0 rounded-full bg-accent-2" />A partner network in every major city</li>
-                  <li className="flex gap-3"><span className="mt-2 size-1.5 shrink-0 rounded-full bg-accent-2" />Our own R&amp;D and quality lab in Dhaka</li>
-                  <li className="flex gap-3"><span className="mt-2 size-1.5 shrink-0 rounded-full bg-accent-2" />Protection for every device you carry</li>
+                  <li className="flex gap-3"><span className="mt-2 size-1.5 shrink-0 rounded-full bg-fg/60" />A partner network in every major city</li>
+                  <li className="flex gap-3"><span className="mt-2 size-1.5 shrink-0 rounded-full bg-fg/60" />Our own R&amp;D and quality lab in Dhaka</li>
+                  <li className="flex gap-3"><span className="mt-2 size-1.5 shrink-0 rounded-full bg-fg/60" />Protection for every device you carry</li>
                 </ul>
               </div>
             </SpotlightCard>
@@ -164,7 +164,7 @@ export default function AboutPage() {
         <div className="lg:sticky lg:top-28 lg:self-start">
           <Eyebrow>Core values</Eyebrow>
           <h2 className="mt-4 text-4xl font-semibold tracking-tight text-balance md:text-5xl">
-            Six principles. <span className="text-gradient">Zero compromise.</span>
+            Six principles. <span className="text-muted">Zero compromise.</span>
           </h2>
           <p className="mt-5 max-w-md text-lg text-muted">
             They shape who we hire, what we build and how we treat every customer — from a single protector to a thousand-unit corporate order.
@@ -176,7 +176,7 @@ export default function AboutPage() {
       <section className="container-page py-24">
         <SectionHeading
           eyebrow="What we do"
-          title={<>One company. <span className="text-gradient">Four divisions.</span></>}
+          title={<>One company. <span className="text-muted">Four divisions.</span></>}
           description="From a single order in Sylhet to a fleet rollout in Gulshan, every part of HYDRA runs under one roof."
         />
         <RevealGroup className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4" stagger={0.08}>
@@ -200,9 +200,9 @@ export default function AboutPage() {
       </section>
 
       <section className="relative overflow-hidden py-24">
-        <div className="pointer-events-none absolute left-1/2 top-1/3 h-96 w-[48rem] -translate-x-1/2 rounded-full bg-accent-2/10 blur-[140px]" />
+        <div className="pointer-events-none absolute left-1/2 top-1/3 h-96 w-[48rem] -translate-x-1/2 rounded-full bg-accent/[0.06] blur-[140px]" />
         <div className="container-page relative">
-          <SectionHeading align="center" eyebrow="Our journey" title={<>From one idea to <span className="text-gradient">50,000 phones.</span></>} />
+          <SectionHeading align="center" eyebrow="Our journey" title={<>From one idea to <span className="text-muted">50,000 phones.</span></>} />
           <Journey />
         </div>
       </section>
@@ -210,7 +210,7 @@ export default function AboutPage() {
       <section className="container-page py-24">
         <SectionHeading
           eyebrow="Leadership"
-          title={<>The people behind <span className="text-gradient">HYDRA.</span></>}
+          title={<>The people behind <span className="text-muted">HYDRA.</span></>}
           description="A small, hands-on team of engineers, operators and service people — accountable for every box that leaves our warehouse."
         />
         <RevealGroup className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4" stagger={0.08}>
@@ -221,9 +221,9 @@ export default function AboutPage() {
                   <div className="bg-dots absolute inset-0 opacity-40" />
                   <div
                     className="absolute left-1/2 top-1/2 size-40 -translate-x-1/2 -translate-y-1/2 rounded-full blur-2xl transition-transform duration-700 group-hover:scale-125"
-                    style={{ background: ["#3de3ff33", "#7b61ff40", "#00ffa326", "#3de3ff33"][i % 4] }}
+                    style={{ background: ["#38bdf833", "#ffffff14", "#38bdf81f", "#38bdf833"][i % 4] }}
                   />
-                  <span className="text-gradient absolute inset-0 grid place-items-center text-5xl font-semibold tracking-tight">{p.initials}</span>
+                  <span className="text-fg absolute inset-0 grid place-items-center text-5xl font-semibold tracking-tight">{p.initials}</span>
                 </div>
                 <h3 className="mt-5 font-medium">{p.name}</h3>
                 <p className="mt-1 text-sm text-muted">{p.role}</p>
@@ -238,7 +238,7 @@ export default function AboutPage() {
           <Reveal>
             <Eyebrow>Corporate information</Eyebrow>
             <h2 className="mt-4 text-4xl font-semibold tracking-tight text-balance md:text-5xl">
-              A registered company <span className="text-gradient">you can verify.</span>
+              A registered company <span className="text-muted">you can verify.</span>
             </h2>
             <p className="mt-5 max-w-md text-lg text-muted">
               {siteConfig.legalName} is incorporated in Bangladesh and fully registered for trade and VAT. Partners and corporate buyers can request our
@@ -304,8 +304,8 @@ export default function AboutPage() {
           </RevealItem>
           <RevealItem className="h-full">
             <SpotlightCard className="relative h-full overflow-hidden p-8 md:p-10">
-              <div className="pointer-events-none absolute -bottom-24 -right-16 size-72 rounded-full bg-accent-2/20 blur-3xl" />
-              <Handshake className="relative text-accent-2" size={26} strokeWidth={1.6} />
+              <div className="pointer-events-none absolute -bottom-24 -right-16 size-72 rounded-full bg-white/[0.05] blur-3xl" />
+              <Handshake className="relative text-accent" size={26} strokeWidth={1.6} />
               <h3 className="relative mt-6 text-2xl font-semibold tracking-tight md:text-3xl">Partner with HYDRA.</h3>
               <p className="relative mt-3 max-w-md text-muted">Retailers, distributors and brands — let&apos;s grow the market for genuine protection together.</p>
               <Link

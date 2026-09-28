@@ -34,7 +34,7 @@ export function DeviceFinder({ devices }: { devices: DeviceOption[] }) {
     <div className="card-premium relative overflow-hidden rounded-[2rem] p-6 md:p-10">
       <div className="bg-dots pointer-events-none absolute inset-0 opacity-50 [mask-image:linear-gradient(to_left,#000,transparent_70%)]" />
       <div className="pointer-events-none absolute -right-20 -top-20 size-72 rounded-full bg-accent/15 blur-[90px]" />
-      <div className="pointer-events-none absolute -bottom-24 left-1/4 size-60 rounded-full bg-accent-2/15 blur-[90px]" />
+      <div className="pointer-events-none absolute -bottom-24 left-1/4 size-60 rounded-full bg-white/[0.05] blur-[90px]" />
       <div className="relative grid gap-8 lg:grid-cols-[1fr_2fr] lg:items-center">
         <div className="space-y-3">
           <p className="font-mono text-[11px] uppercase tracking-[0.25em] text-accent">Find your fit</p>

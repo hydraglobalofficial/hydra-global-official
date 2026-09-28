@@ -47,7 +47,7 @@ export default async function InstallationGuidePage({ params }: PageProps<"/inst
       </PageHeader>
 
       <div className="container-page grid gap-12 py-16 lg:grid-cols-[1fr_20rem]">
-        <ol className="relative space-y-6 before:absolute before:bottom-6 before:left-[1.4rem] before:top-6 before:w-px before:bg-gradient-to-b before:from-accent before:to-accent-2/0">
+        <ol className="relative space-y-6 before:absolute before:bottom-6 before:left-[1.4rem] before:top-6 before:w-px before:bg-gradient-to-b before:from-accent/60 before:to-transparent">
           {guide.steps.map((step, i) => (
             <li key={step.title} className="relative flex gap-6">
               <span className="relative z-10 grid size-11 shrink-0 place-items-center rounded-full border border-accent/40 bg-black font-mono text-sm text-accent shadow-[0_0_20px_-4px_var(--color-accent)]">

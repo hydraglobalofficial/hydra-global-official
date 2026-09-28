@@ -55,13 +55,13 @@ export default async function ContactPage({ searchParams }: PageProps<"/contact"
       <section className="relative overflow-hidden border-b border-line/60">
         <div className="bg-grid pointer-events-none absolute inset-0 opacity-80" />
         <div className="pointer-events-none absolute -left-32 top-0 size-[30rem] rounded-full bg-accent/15 blur-[140px] animate-aurora-2" />
-        <div className="pointer-events-none absolute -right-20 top-24 size-[26rem] rounded-full bg-accent-2/15 blur-[140px] animate-aurora-1" />
+        <div className="pointer-events-none absolute -right-20 top-24 size-[26rem] rounded-full bg-white/[0.04] blur-[140px] animate-aurora-1" />
 
         <div className="container-page relative grid items-center gap-12 py-16 md:py-24 lg:grid-cols-[1.05fr_1fr]">
           <Reveal className="space-y-7">
             <Eyebrow>Contact HYDRA</Eyebrow>
             <h1 className="text-5xl font-semibold leading-[1.02] tracking-tight text-balance md:text-7xl">
-              Talk to a human, <span className="text-gradient">not a ticket.</span>
+              Talk to a human, <span className="text-muted">not a ticket.</span>
             </h1>
             <p className="max-w-lg text-lg text-pretty text-muted">
               Orders, installs, wholesale or press — our Dhaka team answers every message personally. Pick the channel that suits you.
@@ -95,20 +95,20 @@ export default async function ContactPage({ searchParams }: PageProps<"/contact"
         <Reveal>
           <div className="card-premium relative overflow-hidden rounded-[2rem] p-8 md:p-12">
             <div className="bg-dots pointer-events-none absolute inset-0 opacity-50 [mask-image:linear-gradient(to_left,#000,transparent_70%)]" />
-            <div className="pointer-events-none absolute -right-24 -top-24 size-80 rounded-full bg-accent-2/20 blur-[100px]" />
+            <div className="pointer-events-none absolute -right-24 -top-24 size-80 rounded-full bg-accent/10 blur-[100px]" />
             <div className="relative grid items-center gap-10 lg:grid-cols-[1.2fr_1fr]">
               <div className="space-y-5">
-                <span className="inline-flex items-center gap-2 rounded-full border border-accent-2/30 bg-accent-2/10 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.2em] text-accent-2">
+                <span className="inline-flex items-center gap-2 rounded-full border border-accent/30 bg-accent/10 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.2em] text-accent">
                   <Building2 size={12} /> HYDRA for Business
                 </span>
                 <h2 className="text-3xl font-semibold tracking-tight text-balance md:text-4xl">
-                  Buying for a store or a team? <span className="text-gradient">Let&apos;s talk volume.</span>
+                  Buying for a store or a team? <span className="text-muted">Let&apos;s talk volume.</span>
                 </h2>
                 <p className="max-w-lg text-muted">Retailers, repair shops and companies across Bangladesh stock HYDRA. Get trade pricing, a named contact and invoices that keep accounts happy.</p>
                 <div className="flex flex-wrap gap-3 pt-1">
                   <Link
                     href="/contact?topic=wholesale#write"
-                    className="inline-flex h-12 items-center gap-2 rounded-full bg-fg px-6 text-sm font-medium text-black transition-all hover:shadow-[0_0_40px_-8px_rgba(123,97,255,0.8)]"
+                    className="inline-flex h-12 items-center gap-2 rounded-full bg-fg px-6 text-sm font-medium text-black transition-all hover:shadow-[0_0_40px_-8px_rgba(56,189,248,0.6)]"
                   >
                     Request a quote <ArrowRight size={16} />
                   </Link>
@@ -123,7 +123,7 @@ export default async function ContactPage({ searchParams }: PageProps<"/contact"
               <ul className="grid gap-3 sm:grid-cols-2">
                 {businessPerks.map(({ icon: Icon, text }) => (
                   <li key={text} className="glass flex items-center gap-3 rounded-2xl p-4 text-sm">
-                    <span className="grid size-9 shrink-0 place-items-center rounded-xl border border-accent-2/25 bg-accent-2/10 text-accent-2">
+                    <span className="grid size-9 shrink-0 place-items-center rounded-xl border border-accent/25 bg-accent/10 text-accent">
                       <Icon size={16} />
                     </span>
                     {text}

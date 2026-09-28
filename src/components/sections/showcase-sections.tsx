@@ -20,7 +20,7 @@ const categoryArt: Record<string, string> = {
   cases: "/products/case-clear.svg",
 };
 
-const categoryGlow = ["bg-accent/25", "bg-accent-3/20", "bg-accent-2/25", "bg-accent/20", "bg-accent-2/20"];
+const categoryGlow = ["bg-accent/20", "bg-white/[0.07]", "bg-accent/15", "bg-white/[0.07]", "bg-accent/15"];
 
 export function CollectionBento({ categories }: { categories: NavigationData["categories"] }) {
   return (
@@ -29,7 +29,7 @@ export function CollectionBento({ categories }: { categories: NavigationData["ca
         eyebrow="Shop by collection"
         title={
           <>
-            Armor for every <span className="text-gradient">surface.</span>
+            Armor for every <span className="text-muted">surface.</span>
           </>
         }
         action={
@@ -54,7 +54,7 @@ export function CollectionBento({ categories }: { categories: NavigationData["ca
                         alt=""
                         fill
                         sizes={hero ? "(min-width: 768px) 50vw, 100vw" : "(min-width: 768px) 25vw, 100vw"}
-                        className="object-contain p-4 drop-shadow-[0_24px_40px_rgba(61,227,255,0.22)]"
+                        className="object-contain p-4 drop-shadow-[0_24px_40px_rgba(56,189,248,0.22)]"
                       />
                     </div>
                   )}
@@ -111,8 +111,8 @@ export function ImpactStat() {
           Protected across Bangladesh
         </motion.p>
         <p className="mt-4 text-[clamp(4rem,15vw,12rem)] font-semibold leading-none tracking-[-0.06em]">
-          <CountUp to={50000} className="text-gradient-soft tabular-nums" />
-          <span className="text-gradient">+</span>
+          <CountUp to={50000} className="text-fg tabular-nums" />
+          <span className="text-muted">+</span>
         </p>
         <motion.div
           className="mx-auto mt-8 max-w-2xl space-y-4"
@@ -157,12 +157,12 @@ export function DropTest() {
     <section className="container-page py-16">
       <div className="card-premium relative overflow-hidden rounded-[2.5rem] px-6 pb-12 pt-16 md:px-12 md:pt-20">
         <div className="bg-grid pointer-events-none absolute inset-0 opacity-60" />
-        <div className="pointer-events-none absolute left-1/2 top-[55%] size-[34rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent-2/20 blur-[120px]" />
+        <div className="pointer-events-none absolute left-1/2 top-[55%] size-[34rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent/10 blur-[120px]" />
 
         <div className="relative mx-auto max-w-2xl text-center">
           <p className="font-mono text-[11px] uppercase tracking-[0.3em] text-accent">Impact lab</p>
           <h2 className="mt-4 text-4xl font-semibold tracking-tight text-balance md:text-6xl">
-            Glass breaks. <span className="text-gradient">Your screen doesn&apos;t.</span>
+            Glass breaks. <span className="text-muted">Your screen doesn&apos;t.</span>
           </h2>
           <p className="mt-4 text-muted">HYDRA&apos;s sacrificial layer absorbs and spreads impact energy — so the protector takes the hit, not your display.</p>
         </div>
@@ -176,7 +176,7 @@ export function DropTest() {
           />
           <motion.div
             aria-hidden
-            className="absolute size-40 rounded-full border border-accent-2/50"
+            className="absolute size-40 rounded-full border border-white/25"
             animate={{ scale: [0.6, 2.6], opacity: [0.7, 0] }}
             transition={{ duration: 2.4, repeat: Infinity, ease: "easeOut", delay: 1.2 }}
           />
@@ -185,7 +185,7 @@ export function DropTest() {
             <motion.span
               key={i}
               aria-hidden
-              className="absolute border border-white/30 bg-gradient-to-br from-white/40 via-accent/15 to-accent-2/25 shadow-[0_0_20px_rgba(61,227,255,0.35)] backdrop-blur-sm"
+              className="absolute border border-white/30 bg-gradient-to-br from-white/35 via-white/10 to-accent/20 shadow-[0_0_20px_rgba(56,189,248,0.2)] backdrop-blur-sm"
               style={{ width: s.size, height: s.size * 1.3, clipPath: shardClip[s.shape] }}
               initial={{ x: 0, y: 0, opacity: 0, rotate: 0, scale: 0.3 }}
               whileInView={{ x: s.x, y: s.y, opacity: 1, rotate: s.rotate, scale: 1 }}
@@ -212,11 +212,11 @@ export function DropTest() {
                   <linearGradient id="dt-screen" x1="0" y1="0" x2="1" y2="1">
                     <stop offset="0" stopColor="#0b3a4a" />
                     <stop offset="0.5" stopColor="#0a0a14" />
-                    <stop offset="1" stopColor="#2a1352" />
+                    <stop offset="1" stopColor="#10141c" />
                   </linearGradient>
                   <linearGradient id="dt-edge" x1="0" y1="0" x2="1" y2="1">
-                    <stop offset="0" stopColor="#3de3ff" />
-                    <stop offset="1" stopColor="#7b61ff" />
+                    <stop offset="0" stopColor="#38bdf8" />
+                    <stop offset="1" stopColor="#e4e4e7" stopOpacity="0.5" />
                   </linearGradient>
                 </defs>
                 <rect x="5" y="5" width="190" height="390" rx="36" fill="url(#dt-frame)" />
@@ -283,7 +283,7 @@ export function DropTest() {
   );
 }
 
-const videoTint = ["from-accent/40 via-accent/5", "from-accent-2/45 via-accent-2/5", "from-accent-3/35 via-accent-3/5"];
+const videoTint = ["from-accent/30 via-accent/5", "from-white/15 via-white/[0.03]", "from-accent/20 via-accent/[0.03]"];
 
 export function VideoShowcase() {
   const [playing, setPlaying] = useState<number | null>(null);
@@ -294,7 +294,7 @@ export function VideoShowcase() {
         eyebrow="Watch & learn"
         title={
           <>
-            See HYDRA <span className="text-gradient">in action.</span>
+            See HYDRA <span className="text-muted">in action.</span>
           </>
         }
         action={

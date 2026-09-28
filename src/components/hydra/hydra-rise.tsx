@@ -13,7 +13,7 @@ const chapters = [
     eyebrow: "The legend",
     title: (
       <>
-        One body. <span className="text-gradient">Five heads.</span>
+        One body. <span className="text-muted">Five heads.</span>
       </>
     ),
     body: "In myth, cut off one head of the Hydra and two grow back. We engineer our armor with the same relentless spirit.",
@@ -23,7 +23,7 @@ const chapters = [
     eyebrow: "Every head guards something",
     title: (
       <>
-        Five layers of <span className="text-gradient">protection.</span>
+        Five layers of <span className="text-muted">protection.</span>
       </>
     ),
     body: "Clarity, privacy, impact, camera and fit — each one a specialist, all of them working as one on your phone.",
@@ -33,7 +33,7 @@ const chapters = [
     eyebrow: "Unleashed",
     title: (
       <>
-        Meet the <span className="text-gradient">HYDRA.</span>
+        Meet the <span className="text-muted">HYDRA.</span>
       </>
     ),
     body: "Precision armor for iPhone and Samsung Galaxy, delivered anywhere in Bangladesh.",
@@ -57,7 +57,7 @@ export function HydraRise() {
       <div className={cn("flex items-center overflow-hidden", !reduced && "sticky top-0 h-svh")}>
         <div className="bg-grid pointer-events-none absolute inset-0 opacity-30 [mask-image:radial-gradient(ellipse_at_center,#000,transparent_70%)]" />
         <motion.div
-          className="pointer-events-none absolute left-1/2 top-1/2 size-[40rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent-2/10 blur-[130px] md:left-[68%]"
+          className="pointer-events-none absolute left-1/2 top-1/2 size-[40rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent/[0.07] blur-[130px] md:left-[68%]"
           style={{ scale: glow }}
         />
 
@@ -80,7 +80,7 @@ export function HydraRise() {
           <div className="absolute inset-x-0 bottom-8 mx-auto flex w-40 items-center gap-3">
             <span className="text-[0.6rem] uppercase tracking-[0.3em] text-subtle">Scroll</span>
             <div className="h-px flex-1 overflow-hidden bg-white/10">
-              <motion.div className="h-full origin-left bg-gradient-to-r from-accent to-accent-2" style={{ scaleX: scrollYProgress }} />
+              <motion.div className="h-full origin-left bg-accent" style={{ scaleX: scrollYProgress }} />
             </div>
           </div>
         )}
@@ -141,7 +141,7 @@ function HeadLabel({ head, progress }: { head: HydraHead; progress: MotionValue<
       className="pointer-events-none absolute -translate-x-1/2 -translate-y-[135%]"
       style={{ left: `${tip.left}%`, top: `${tip.top}%`, opacity, y }}
     >
-      <div className="glass whitespace-nowrap rounded-full px-3 py-1 text-center shadow-[0_0_24px_rgba(61,227,255,0.15)]">
+      <div className="glass whitespace-nowrap rounded-full px-3 py-1 text-center shadow-[0_0_24px_rgba(56,189,248,0.15)]">
         <p className="text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-fg md:text-xs">{head.label}</p>
         <p className="hidden text-[0.6rem] text-muted md:block">{head.caption}</p>
       </div>

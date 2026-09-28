@@ -69,7 +69,7 @@ export function HeaderClient({ nav }: { nav: NavigationData }) {
             <Menu size={20} />
           </button>
           <Logo />
-          <nav className="hidden items-center gap-1 lg:flex" aria-label="Primary">
+          <nav className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-1 lg:flex" aria-label="Primary">
             {primaryNav.map((item) => {
               const hasMenu = item.href === "/shop" ? "shop" : item.href === "/support" ? "support" : null;
               const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
@@ -79,7 +79,7 @@ export function HeaderClient({ nav }: { nav: NavigationData }) {
                     href={item.href}
                     className={cn(
                       "flex items-center gap-1 rounded-full px-4 py-2 text-sm transition-colors",
-                      active || menu === hasMenu ? "text-fg" : "text-muted hover:text-fg",
+                      active || (hasMenu && menu === hasMenu) ? "text-fg" : "text-muted hover:text-fg",
                     )}
                     aria-expanded={hasMenu ? menu === hasMenu : undefined}
                   >

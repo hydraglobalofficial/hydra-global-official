@@ -33,9 +33,9 @@ export function AnnouncementBar({ items }: { items: Announcement[] }) {
   );
 
   return (
-    <div className="group relative z-50 overflow-hidden border-b border-accent/15 bg-[linear-gradient(90deg,#021a22,#07091a_40%,#120a2a_70%,#021a22)] text-[11px] text-fg/90">
-      <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-16 bg-gradient-to-r from-[#021a22] to-transparent" />
-      <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-16 bg-gradient-to-l from-[#021a22] to-transparent" />
+    <div className="group relative z-50 overflow-hidden border-b border-line bg-surface text-[11px] text-fg/90">
+      <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-16 bg-gradient-to-r from-surface to-transparent" />
+      <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-16 bg-gradient-to-l from-surface to-transparent" />
       <div className="flex h-9 w-max animate-marquee items-center group-hover:[animation-play-state:paused] [animation-duration:60s]">
         {track(false)}
         {track(true)}

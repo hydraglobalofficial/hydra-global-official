@@ -40,6 +40,9 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# local agent worktrees
+/.kilo/
+
 # prisma generated client
 /src/generated/
 

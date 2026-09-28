@@ -23,7 +23,7 @@ export function Journey() {
     <div ref={ref} className="relative mx-auto max-w-5xl">
       <div className="absolute bottom-0 left-4 top-0 w-px bg-line md:left-1/2" aria-hidden />
       <motion.div
-        className="absolute bottom-0 left-4 top-0 w-px origin-top bg-gradient-to-b from-accent via-accent-2 to-accent-3 shadow-[0_0_12px_var(--color-accent)] md:left-1/2"
+        className="absolute bottom-0 left-4 top-0 w-px origin-top bg-gradient-to-b from-accent via-accent/50 to-white/10 shadow-[0_0_10px_rgb(56_189_248/0.4)] md:left-1/2"
         style={{ scaleY: fill }}
         aria-hidden
       />
@@ -37,8 +37,8 @@ export function Journey() {
                   "absolute left-4 top-1.5 size-3.5 -translate-x-1/2 rounded-full border-2 border-black md:left-1/2",
                   "future" in m ? "bg-subtle" : "bg-accent",
                 )}
-                initial={{ scale: 0, boxShadow: "0 0 0 0 rgba(61,227,255,0)" }}
-                whileInView={{ scale: 1, boxShadow: "0 0 0 6px rgba(61,227,255,0.12)" }}
+                initial={{ scale: 0, boxShadow: "0 0 0 0 rgba(56,189,248,0)" }}
+                whileInView={{ scale: 1, boxShadow: "0 0 0 6px rgba(56,189,248,0.12)" }}
                 viewport={{ once: true, margin: "0px 0px -35% 0px" }}
                 transition={{ type: "spring", stiffness: 300, damping: 18 }}
               />

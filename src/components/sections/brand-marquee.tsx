@@ -23,7 +23,7 @@ export function BrandMarquee() {
       <div className="flex w-max animate-marquee items-center gap-10 hover:[animation-play-state:paused]">
         {row.map((label, i) => (
           <span key={i} className="flex items-center gap-10 whitespace-nowrap text-sm font-medium tracking-wide text-muted">
-            <span className="text-gradient-soft text-base md:text-lg">{label}</span>
+            <span className="text-base text-fg/80 md:text-lg">{label}</span>
             <Sparkle size={14} className="text-accent/70" />
           </span>
         ))}

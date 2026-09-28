@@ -8,12 +8,12 @@ function Scene({ damaged }: { damaged?: boolean }) {
       <defs>
         <linearGradient id={`sky-${damaged ? "d" : "c"}`} x1="0" y1="0" x2="1" y2="1">
           <stop offset="0" stopColor="#031c26" />
-          <stop offset="0.5" stopColor="#0a0a1f" />
-          <stop offset="1" stopColor="#22103f" />
+          <stop offset="0.5" stopColor="#0a0d14" />
+          <stop offset="1" stopColor="#111827" />
         </linearGradient>
         <radialGradient id={`sun-${damaged ? "d" : "c"}`} cx="0.5" cy="0.5" r="0.5">
-          <stop offset="0" stopColor="#3de3ff" />
-          <stop offset="1" stopColor="#3de3ff" stopOpacity="0" />
+          <stop offset="0" stopColor="#38bdf8" />
+          <stop offset="1" stopColor="#38bdf8" stopOpacity="0" />
         </radialGradient>
         <filter id="dull">
           <feGaussianBlur stdDeviation="2.2" />
@@ -23,8 +23,8 @@ function Scene({ damaged }: { damaged?: boolean }) {
       <g filter={damaged ? "url(#dull)" : undefined}>
         <rect width="800" height="500" fill={`url(#sky-${damaged ? "d" : "c"})`} />
         <circle cx="560" cy="170" r="150" fill={`url(#sun-${damaged ? "d" : "c"})`} opacity="0.6" />
-        <circle cx="560" cy="170" r="54" fill="#bff6ff" />
-        <path d="M0 380 L140 270 L250 340 L380 220 L520 330 L640 260 L800 350 L800 500 L0 500 Z" fill="#0e0e22" />
+        <circle cx="560" cy="170" r="54" fill="#e0f2fe" />
+        <path d="M0 380 L140 270 L250 340 L380 220 L520 330 L640 260 L800 350 L800 500 L0 500 Z" fill="#0d1119" />
         <path d="M0 430 L180 340 L320 410 L470 320 L620 400 L800 360 L800 500 L0 500 Z" fill="#06060f" />
         <text x="60" y="120" fill="#fff" fontSize="46" fontWeight="600" letterSpacing="2">12:45</text>
         <text x="62" y="152" fill="#9aa" fontSize="16" letterSpacing="3">MONDAY · DHAKA</text>
@@ -74,7 +74,7 @@ export function ClarityCompare() {
           </ul>
         </div>
         <div className="relative">
-          <div aria-hidden className="pointer-events-none absolute -inset-6 rounded-[2.5rem] bg-gradient-to-br from-accent/20 via-transparent to-accent-2/20 blur-2xl" />
+          <div aria-hidden className="pointer-events-none absolute -inset-6 rounded-[2.5rem] bg-gradient-to-br from-accent/20 via-transparent to-white/[0.06] blur-2xl" />
           <div className="card-premium relative rounded-[2rem] p-2">
             <CompareSlider before={<Scene damaged />} after={<Scene />} beforeLabel="Ordinary glass" afterLabel="HYDRA armor" />
           </div>

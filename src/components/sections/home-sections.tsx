@@ -16,13 +16,13 @@ function DeviceArt({ slug }: { slug: "iphone" | "samsung" }) {
     <svg viewBox="0 0 220 300" className="h-full w-full" aria-hidden>
       <defs>
         <linearGradient id={`da-screen-${slug}`} x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stopColor={iphone ? "#0b4150" : "#241552"} />
+          <stop offset="0" stopColor={iphone ? "#0b3a4f" : "#16202c"} />
           <stop offset="0.6" stopColor="#07070c" />
           <stop offset="1" stopColor={iphone ? "#10233a" : "#0c1f33"} />
         </linearGradient>
         <linearGradient id={`da-edge-${slug}`} x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stopColor="#3de3ff" stopOpacity="0.9" />
-          <stop offset="1" stopColor="#7b61ff" stopOpacity="0.6" />
+          <stop offset="0" stopColor="#38bdf8" stopOpacity="0.9" />
+          <stop offset="1" stopColor="#e4e4e7" stopOpacity="0.4" />
         </linearGradient>
       </defs>
       <g transform="translate(60 20) rotate(8 50 130)">
@@ -43,11 +43,11 @@ function DeviceArt({ slug }: { slug: "iphone" | "samsung" }) {
 export function ShopByDevice({ devices }: { devices: NavigationData["devices"] }) {
   const cards = [
     { slug: "iphone" as const, glow: "bg-accent/25", count: devices.filter((d) => d.brand === "APPLE").length, models: devices.filter((d) => d.brand === "APPLE").slice(0, 4) },
-    { slug: "samsung" as const, glow: "bg-accent-2/30", count: devices.filter((d) => d.brand === "SAMSUNG").length, models: devices.filter((d) => d.brand === "SAMSUNG").slice(0, 4) },
+    { slug: "samsung" as const, glow: "bg-white/10", count: devices.filter((d) => d.brand === "SAMSUNG").length, models: devices.filter((d) => d.brand === "SAMSUNG").slice(0, 4) },
   ];
   return (
     <section className="container-page py-24">
-      <SectionHeading eyebrow="Shop by device" title={<>Pick your <span className="text-gradient">platform.</span></>} />
+      <SectionHeading eyebrow="Shop by device" title={<>Pick your <span className="text-muted">platform.</span></>} />
       <RevealGroup className="grid gap-5 md:grid-cols-2" stagger={0.12}>
         {cards.map((card) => (
           <RevealItem key={card.slug}>
@@ -98,7 +98,7 @@ export function TechGrid() {
   return (
     <section className="relative py-24">
       <div className="container-page relative">
-        <SectionHeading align="center" eyebrow="Engineering" title={<>Protection, <span className="text-gradient">re-engineered.</span></>} description="Every HYDRA protector is designed in-house and quality-checked batch by batch." />
+        <SectionHeading align="center" eyebrow="Engineering" title={<>Protection, <span className="text-muted">re-engineered.</span></>} description="Every HYDRA protector is designed in-house and quality-checked batch by batch." />
         <RevealGroup className="grid gap-4 md:grid-cols-2 lg:grid-cols-3" stagger={0.06}>
           {tech.map(({ icon: Icon, title, text, stat }) => (
             <RevealItem key={title} className="h-full">
@@ -131,7 +131,7 @@ const steps = [
 export function HowItWorks() {
   return (
     <section className="container-page py-24">
-      <SectionHeading eyebrow="How it works" title={<>From checkout to <span className="text-gradient">armored.</span></>} />
+      <SectionHeading eyebrow="How it works" title={<>From checkout to <span className="text-muted">armored.</span></>} />
       <RevealGroup className="relative grid gap-4 md:grid-cols-2 lg:grid-cols-4" stagger={0.1}>
         <div aria-hidden className="divider-glow absolute left-8 right-8 top-[3.25rem] hidden lg:block" />
         {steps.map(({ icon: Icon, title, text }, i) => (
@@ -154,15 +154,15 @@ export function HowItWorks() {
 }
 
 const testimonials = [
-  { name: "Tahmid R.", device: "iPhone 17 Pro Max", text: "Honestly can't tell there's a protector on it. Dropped it on the stairs last week — glass cracked, screen perfect.", rating: 5, hue: "#3de3ff" },
-  { name: "Nusrat J.", device: "Galaxy S25 Ultra", text: "First protector that actually works with the ultrasonic fingerprint. The install kit made it idiot-proof.", rating: 5, hue: "#7b61ff" },
-  { name: "Arif H.", device: "iPhone 16 Pro", text: "Privacy glass is a game changer on the metro. Delivered next day in Dhaka, installed in two minutes.", rating: 4.5, hue: "#00ffa3" },
+  { name: "Tahmid R.", device: "iPhone 17 Pro Max", text: "Honestly can't tell there's a protector on it. Dropped it on the stairs last week — glass cracked, screen perfect.", rating: 5, hue: "#7dd3fc" },
+  { name: "Nusrat J.", device: "Galaxy S25 Ultra", text: "First protector that actually works with the ultrasonic fingerprint. The install kit made it idiot-proof.", rating: 5, hue: "#a1a1aa" },
+  { name: "Arif H.", device: "iPhone 16 Pro", text: "Privacy glass is a game changer on the metro. Delivered next day in Dhaka, installed in two minutes.", rating: 4.5, hue: "#d4d4d8" },
 ];
 
 export function Testimonials() {
   return (
     <section className="container-page py-24">
-      <SectionHeading eyebrow="Reviews" title={<>Loved by <span className="text-gradient">thousands.</span></>} description={<span className="flex items-center gap-3"><Rating value={4.8} size={16} /> 4.8 average from verified buyers</span>} />
+      <SectionHeading eyebrow="Reviews" title={<>Loved by <span className="text-muted">thousands.</span></>} description={<span className="flex items-center gap-3"><Rating value={4.8} size={16} /> 4.8 average from verified buyers</span>} />
       <RevealGroup className="grid gap-5 md:grid-cols-3" stagger={0.1}>
         {testimonials.map((t) => (
           <RevealItem key={t.name} className="h-full">
@@ -206,7 +206,7 @@ export function NewsletterBlock() {
           animate={{ opacity: [0.45, 0.9, 0.45], scale: [1, 1.15, 1] }}
           transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
         />
-        <div className="pointer-events-none absolute -bottom-24 -left-16 size-72 rounded-full bg-accent-2/20 blur-[90px]" />
+        <div className="pointer-events-none absolute -bottom-24 -left-16 size-72 rounded-full bg-white/[0.05] blur-[90px]" />
         <motion.div
           className="relative mx-auto max-w-xl space-y-6"
           initial={{ opacity: 0, y: 20 }}
@@ -216,7 +216,7 @@ export function NewsletterBlock() {
         >
           <p className="font-mono text-[11px] uppercase tracking-[0.3em] text-accent">Members only</p>
           <h2 className="text-4xl font-semibold tracking-tight text-balance md:text-5xl">
-            Join the <span className="text-gradient">HYDRA</span> list.
+            Join the <span className="text-accent">HYDRA</span> list.
           </h2>
           <p className="text-muted">Launch drops, member pricing and early access to new devices. No spam, ever.</p>
           <NewsletterForm className="mx-auto max-w-md text-left" />

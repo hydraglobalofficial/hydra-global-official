@@ -34,7 +34,7 @@ const slides: {
     eyebrow: "Next-gen screen armor · 2026",
     title: (
       <>
-        Invisible strength. <span className="text-gradient">Engineered</span> for flagships.
+        Invisible strength. <span className="text-accent">Engineered</span> for flagships.
       </>
     ),
     text: "Aerospace-grade tempered glass, privacy filters and camera armor — laser-cut for iPhone and Samsung Galaxy, and backed by a 12-month warranty.",
@@ -51,7 +51,7 @@ const slides: {
     eyebrow: "New · Anti-glare clarity glass",
     title: (
       <>
-        Less glare. <span className="text-gradient">More clarity.</span>
+        Less glare. <span className="text-accent">More clarity.</span>
       </>
     ),
     text: "Anti-reflective nano-coating keeps your screen readable under Dhaka sun — now cut for the iPhone 17 and Galaxy S25 lineups.",
@@ -68,7 +68,7 @@ const slides: {
     eyebrow: "Privacy armor",
     title: (
       <>
-        Your screen. <span className="text-gradient">Your business.</span>
+        Your screen. <span className="text-accent">Your business.</span>
       </>
     ),
     text: "Micro-louver privacy glass blacks out side views beyond 30° — made for the metro, the office and every café in between.",
@@ -175,7 +175,7 @@ export function Hero() {
         transition={{ duration: 14, repeat: Infinity, ease: "easeInOut" }}
       />
       <motion.div
-        className="pointer-events-none absolute right-0 top-20 h-[28rem] w-[28rem] rounded-full bg-accent-2/15 blur-[140px]"
+        className="pointer-events-none absolute right-0 top-20 h-[28rem] w-[28rem] rounded-full bg-white/[0.04] blur-[140px]"
         animate={{ x: [0, -30, 0], y: [0, -20, 0] }}
         transition={{ duration: 16, repeat: Infinity, ease: "easeInOut" }}
       />
@@ -218,7 +218,7 @@ export function Hero() {
           <div className="flex flex-wrap items-center justify-between gap-6 pt-2">
             <div className="flex items-center gap-4">
               <div className="flex -space-x-2">
-                {["#3de3ff", "#7b61ff", "#00ffa3", "#ffffff"].map((c) => (
+                {["#38bdf8", "#a1a1aa", "#52525b", "#e4e4e7"].map((c) => (
                   <span key={c} className="size-8 rounded-full border-2 border-black" style={{ background: `linear-gradient(135deg, ${c}, #111)` }} />
                 ))}
               </div>
@@ -269,7 +269,7 @@ export function Hero() {
 
         <ParallaxStage>
           <div aria-hidden className="pointer-events-none absolute inset-0 grid place-items-center">
-            <div className="aspect-square w-[88%] rounded-full bg-[conic-gradient(from_0deg,transparent_0deg,rgb(61_227_255/0.45)_60deg,transparent_140deg,rgb(123_97_255/0.4)_220deg,transparent_300deg)] opacity-60 blur-2xl animate-spin-slow" />
+            <div className="aspect-square w-[88%] rounded-full bg-[conic-gradient(from_0deg,transparent_0deg,rgb(56_189_248/0.35)_60deg,transparent_140deg,rgb(255_255_255/0.12)_220deg,transparent_300deg)] opacity-60 blur-2xl animate-spin-slow" />
           </div>
           <div aria-hidden className="pointer-events-none absolute inset-0 grid place-items-center">
             <div className="aspect-square w-[78%] rounded-full border border-white/[0.06]" />
@@ -278,9 +278,9 @@ export function Hero() {
             <div className="aspect-square w-[60%] rounded-full border border-dashed border-accent/15" />
           </div>
           <div aria-hidden className="pointer-events-none absolute left-1/2 top-1/2 size-0">
-            <span className="absolute size-2 rounded-full bg-accent shadow-[0_0_16px_4px_rgba(61,227,255,0.7)] animate-orbit [--orbit-radius:min(39vw,210px)]" />
-            <span className="absolute size-1.5 rounded-full bg-accent-2 shadow-[0_0_14px_4px_rgba(123,97,255,0.7)] animate-orbit [--orbit-radius:min(30vw,160px)] [animation-delay:-6s] [animation-duration:12s]" />
-            <span className="absolute size-1.5 rounded-full bg-accent-3 shadow-[0_0_14px_4px_rgba(0,255,163,0.6)] animate-orbit [--orbit-radius:min(39vw,210px)] [animation-delay:-11s]" />
+            <span className="absolute size-2 rounded-full bg-accent shadow-[0_0_16px_4px_rgba(56,189,248,0.7)] animate-orbit [--orbit-radius:min(39vw,210px)]" />
+            <span className="absolute size-1.5 rounded-full bg-white/80 shadow-[0_0_12px_3px_rgba(255,255,255,0.35)] animate-orbit [--orbit-radius:min(30vw,160px)] [animation-delay:-6s] [animation-duration:12s]" />
+            <span className="absolute size-1.5 rounded-full bg-accent/70 shadow-[0_0_12px_3px_rgba(56,189,248,0.45)] animate-orbit [--orbit-radius:min(39vw,210px)] [animation-delay:-11s]" />
           </div>
 
           <div className="grid">

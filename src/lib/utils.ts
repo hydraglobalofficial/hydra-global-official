@@ -37,7 +37,13 @@ export function formatCode(code: string) {
   return code.replace(/^(.{3})(.{4})(.+)$/, "$1-$2-$3");
 }
 
+/** Public origin: explicit env first, then Vercel's production domain, then local dev. */
+export function siteUrl() {
+  if (process.env.NEXT_PUBLIC_SITE_URL) return process.env.NEXT_PUBLIC_SITE_URL;
+  if (process.env.VERCEL_PROJECT_PRODUCTION_URL) return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`;
+  return "http://localhost:3000";
+}
+
 export function absoluteUrl(path = "/") {
-  const base = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
-  return new URL(path, base).toString();
+  return new URL(path, siteUrl()).toString();
 }

@@ -42,7 +42,7 @@ export default async function HomePage() {
       <section className="container-page py-24">
         <SectionHeading
           eyebrow="Bestsellers"
-          title={<>The armor everyone&apos;s <span className="text-gradient">talking about.</span></>}
+          title={<>The armor everyone&apos;s <span className="text-muted">talking about.</span></>}
           action={
             <ButtonLink href="/shop" variant="outline">
               View all <ArrowRight size={16} />

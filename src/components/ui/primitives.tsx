@@ -113,7 +113,7 @@ export function PageHeader({
     <section className="relative overflow-hidden">
       <div className="bg-grid pointer-events-none absolute inset-0" />
       <div className="pointer-events-none absolute -top-40 left-1/2 h-80 w-[40rem] -translate-x-1/2 rounded-full bg-accent/15 blur-[120px]" />
-      <div className="pointer-events-none absolute -right-20 top-10 h-64 w-64 rounded-full bg-accent-2/15 blur-[100px]" />
+      <div className="pointer-events-none absolute -right-20 top-10 h-64 w-64 rounded-full bg-white/[0.05] blur-[100px]" />
       <div aria-hidden className="divider-glow absolute inset-x-0 bottom-0" />
       <div className="container-page relative py-16 md:py-24">
         <motion.div
@@ -135,7 +135,7 @@ export function PageHeader({
 export function EmptyState({ title, description, action }: { title: string; description?: string; action?: ReactNode }) {
   return (
     <div className="glass flex flex-col items-center gap-4 rounded-3xl px-6 py-16 text-center">
-      <div className="size-12 rounded-2xl border border-line bg-gradient-to-br from-accent/20 to-accent-2/20" />
+      <div className="size-12 rounded-2xl border border-line bg-gradient-to-br from-accent/20 to-white/[0.04]" />
       <h3 className="text-lg font-medium">{title}</h3>
       {description && <p className="max-w-sm text-sm text-muted">{description}</p>}
       {action}
