@@ -97,13 +97,22 @@ export const listProducts = unstable_cache(
 );
 
 export const getFeaturedProducts = unstable_cache(
-  async (limit = 8) =>
-    db.product.findMany({
+  async (limit = 8) => {
+    const featured = await db.product.findMany({
       where: { status: "ACTIVE", featured: true },
       select: productCardSelect,
       orderBy: [{ soldCount: "desc" }],
       take: limit,
-    }),
+    });
+    if (featured.length >= limit) return featured;
+    const fill = await db.product.findMany({
+      where: { status: "ACTIVE", featured: false },
+      select: productCardSelect,
+      orderBy: [{ soldCount: "desc" }],
+      take: limit - featured.length,
+    });
+    return [...featured, ...fill];
+  },
   ["featured-products"],
   { tags: [CATALOG_TAG], revalidate: 300 },
 );

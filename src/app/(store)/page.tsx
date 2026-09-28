@@ -3,18 +3,15 @@ import { ButtonLink } from "@/components/ui/button";
 import { SectionHeading } from "@/components/ui/primitives";
 import { ProductGrid } from "@/components/product/product-card";
 import { Hero } from "@/components/sections/hero";
-import { TrustBadges } from "@/components/sections/trust-badges";
 import { DeviceFinder } from "@/components/sections/device-finder";
 import { ClarityCompare } from "@/components/sections/clarity-compare";
-import {
-  CategoryShowcase,
-  NewsletterBlock,
-  ShopByDevice,
-  TechGrid,
-  Testimonials,
-} from "@/components/sections/home-sections";
+import { BrandMarquee } from "@/components/sections/brand-marquee";
+import { SectionDivider } from "@/components/ui/section-divider";
+import { HowItWorks, NewsletterBlock, ShopByDevice, TechGrid, Testimonials } from "@/components/sections/home-sections";
+import { CollectionBento, DropTest, ImpactStat, VideoShowcase } from "@/components/sections/showcase-sections";
 import { JsonLd, organizationJsonLd } from "@/lib/seo";
 import { getFeaturedProducts, getNavigationData } from "@/server/queries/catalog";
+import { Reveal } from "@/components/motion/reveal";
 
 export const revalidate = 300;
 
@@ -25,21 +22,24 @@ export default async function HomePage() {
     <>
       <JsonLd data={organizationJsonLd()} />
       <Hero />
+      <div id="explore" className="mt-16 scroll-mt-24">
+        <BrandMarquee />
+      </div>
 
-      <section className="container-page py-16">
-        <TrustBadges />
-      </section>
-
-      <section className="container-page">
+      <Reveal className="container-page pt-16">
         <DeviceFinder devices={nav.devices} />
-      </section>
+      </Reveal>
 
-      <CategoryShowcase categories={nav.categories} />
+      <ShopByDevice devices={nav.devices} />
+      <SectionDivider />
+      <CollectionBento categories={nav.categories} />
+      <ImpactStat />
+      <DropTest />
 
       <section className="container-page py-24">
         <SectionHeading
           eyebrow="Bestsellers"
-          title="The armor everyone's talking about."
+          title={<>The armor everyone&apos;s <span className="text-gradient">talking about.</span></>}
           action={
             <ButtonLink href="/shop" variant="outline">
               View all <ArrowRight size={16} />
@@ -49,10 +49,13 @@ export default async function HomePage() {
         <ProductGrid products={featured} priorityCount={4} />
       </section>
 
-      <ClarityCompare />
-      <ShopByDevice devices={nav.devices} />
-      <TechGrid />
+      <SectionDivider />
+      <Reveal><ClarityCompare /></Reveal>
       <Testimonials />
+      <VideoShowcase />
+      <SectionDivider />
+      <TechGrid />
+      <HowItWorks />
       <NewsletterBlock />
     </>
   );

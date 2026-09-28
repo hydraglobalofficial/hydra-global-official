@@ -1,5 +1,8 @@
+"use client";
+
 import type { ReactNode } from "react";
 import { Star } from "lucide-react";
+import { motion } from "motion/react";
 import { cn } from "@/lib/utils";
 
 export function Badge({
@@ -54,11 +57,15 @@ export function SectionHeading({
   action?: ReactNode;
 }) {
   return (
-    <div
+    <motion.div
       className={cn(
         "mb-10 flex flex-col gap-4 md:mb-14",
         align === "center" ? "items-center text-center" : "md:flex-row md:items-end md:justify-between",
       )}
+      initial={{ opacity: 0, y: 18 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-60px" }}
+      transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
     >
       <div className={cn("max-w-2xl space-y-4", align === "center" && "mx-auto")}>
         {eyebrow && <Eyebrow>{eyebrow}</Eyebrow>}
@@ -66,7 +73,7 @@ export function SectionHeading({
         {description && <div className="text-base text-pretty text-muted md:text-lg">{description}</div>}
       </div>
       {action}
-    </div>
+    </motion.div>
   );
 }
 
@@ -103,16 +110,23 @@ export function PageHeader({
   children?: ReactNode;
 }) {
   return (
-    <section className="relative overflow-hidden border-b border-line">
+    <section className="relative overflow-hidden">
       <div className="bg-grid pointer-events-none absolute inset-0" />
-      <div className="pointer-events-none absolute -top-40 left-1/2 h-80 w-[40rem] -translate-x-1/2 rounded-full bg-accent/10 blur-[120px]" />
+      <div className="pointer-events-none absolute -top-40 left-1/2 h-80 w-[40rem] -translate-x-1/2 rounded-full bg-accent/15 blur-[120px]" />
+      <div className="pointer-events-none absolute -right-20 top-10 h-64 w-64 rounded-full bg-accent-2/15 blur-[100px]" />
+      <div aria-hidden className="divider-glow absolute inset-x-0 bottom-0" />
       <div className="container-page relative py-16 md:py-24">
-        <div className="max-w-3xl space-y-5 animate-fade-up">
+        <motion.div
+          className="max-w-3xl space-y-5"
+          initial={{ opacity: 0, y: 22, filter: "blur(6px)" }}
+          animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+        >
           {eyebrow && <Eyebrow>{eyebrow}</Eyebrow>}
           <h1 className="text-4xl font-semibold tracking-tight text-balance md:text-6xl">{title}</h1>
           {description && <div className="max-w-2xl text-lg text-pretty text-muted">{description}</div>}
           {children}
-        </div>
+        </motion.div>
       </div>
     </section>
   );

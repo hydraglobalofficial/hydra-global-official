@@ -73,7 +73,12 @@ export function ClarityCompare() {
             ))}
           </ul>
         </div>
-        <CompareSlider before={<Scene damaged />} after={<Scene />} beforeLabel="Ordinary glass" afterLabel="HYDRA armor" />
+        <div className="relative">
+          <div aria-hidden className="pointer-events-none absolute -inset-6 rounded-[2.5rem] bg-gradient-to-br from-accent/20 via-transparent to-accent-2/20 blur-2xl" />
+          <div className="card-premium relative rounded-[2rem] p-2">
+            <CompareSlider before={<Scene damaged />} after={<Scene />} beforeLabel="Ordinary glass" afterLabel="HYDRA armor" />
+          </div>
+        </div>
       </div>
     </section>
   );

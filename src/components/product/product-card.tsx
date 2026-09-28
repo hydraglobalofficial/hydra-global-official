@@ -1,9 +1,17 @@
+"use client";
+
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
+import { motion } from "motion/react";
 import { Badge, Rating } from "@/components/ui/primitives";
 import { cn, discountPercent, formatPrice } from "@/lib/utils";
 import type { ProductCardData } from "@/server/queries/catalog";
 import { ProductImage } from "./product-image";
+
+const cardVariants = {
+  hidden: { opacity: 0, y: 24, scale: 0.97 },
+  show: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] as const } },
+};
 
 export function ProductCard({ product, priority }: { product: ProductCardData; priority?: boolean }) {
   const [primary, secondary] = product.images;
@@ -11,11 +19,13 @@ export function ProductCard({ product, priority }: { product: ProductCardData; p
   const soldOut = product.stock <= 0;
 
   return (
+    <motion.div variants={cardVariants} whileHover={{ y: -6 }} transition={{ duration: 0.25 }}>
     <Link
       href={`/product/${product.slug}`}
-      className="group relative flex flex-col overflow-hidden rounded-3xl border border-line bg-surface transition-all duration-300 hover:-translate-y-1 hover:border-accent/30 hover:shadow-[0_20px_60px_-20px_rgba(61,227,255,0.35)]"
+      className="card-premium group flex h-full flex-col overflow-hidden rounded-3xl hover:shadow-[0_30px_70px_-25px_rgba(61,227,255,0.4)]"
     >
-      <div className="relative aspect-square overflow-hidden bg-[radial-gradient(circle_at_50%_40%,#16161b_0%,#070708_70%)]">
+      <div className="relative aspect-square overflow-hidden bg-[radial-gradient(circle_at_50%_40%,#1a1a22_0%,#08080b_72%)]">
+        <div className="bg-dots pointer-events-none absolute inset-0 opacity-40 [mask-image:radial-gradient(circle_at_50%_50%,#000,transparent_70%)]" />
         <div className="pointer-events-none absolute inset-x-8 bottom-6 h-10 rounded-full bg-accent/20 blur-2xl opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
         {primary && (
           <ProductImage
@@ -64,15 +74,22 @@ export function ProductCard({ product, priority }: { product: ProductCardData; p
         </div>
       </div>
     </Link>
+    </motion.div>
   );
 }
 
 export function ProductGrid({ products, priorityCount = 0 }: { products: ProductCardData[]; priorityCount?: number }) {
   return (
-    <div className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-5 xl:grid-cols-4">
+    <motion.div
+      className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-5 xl:grid-cols-4"
+      initial="hidden"
+      whileInView="show"
+      viewport={{ once: true, margin: "-40px" }}
+      transition={{ staggerChildren: 0.06 }}
+    >
       {products.map((p, i) => (
         <ProductCard key={p.id} product={p} priority={i < priorityCount} />
       ))}
-    </div>
+    </motion.div>
   );
 }

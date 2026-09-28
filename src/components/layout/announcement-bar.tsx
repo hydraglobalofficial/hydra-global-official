@@ -1,68 +1,44 @@
-"use client";
-
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
 
 type Announcement = { id: string; message: string; href: string | null };
 
-const INTERVAL_MS = 4500;
+const MIN_ITEMS = 8;
 
 export function AnnouncementBar({ items }: { items: Announcement[] }) {
-  const [index, setIndex] = useState(0);
-  const [paused, setPaused] = useState(false);
-
-  useEffect(() => {
-    if (items.length < 2 || paused) return;
-    const id = setInterval(() => setIndex((i) => (i + 1) % items.length), INTERVAL_MS);
-    return () => clearInterval(id);
-  }, [items.length, paused]);
-
   if (items.length === 0) return null;
-  const step = (dir: 1 | -1) => setIndex((i) => (i + dir + items.length) % items.length);
+
+  const repeated = Array.from({ length: Math.ceil(MIN_ITEMS / items.length) }, () => items).flat();
+
+  const track = (hidden: boolean) => (
+    <ul className="flex shrink-0 items-center" aria-hidden={hidden || undefined}>
+      {repeated.map((item, i) => (
+        <li key={`${item.id}-${i}`} className="flex items-center">
+          {item.href ? (
+            <Link
+              href={item.href}
+              tabIndex={hidden ? -1 : undefined}
+              className="px-6 font-medium uppercase tracking-[0.18em] transition-colors hover:text-accent"
+            >
+              {item.message} <span className="text-accent">→</span>
+            </Link>
+          ) : (
+            <span className="px-6 font-medium uppercase tracking-[0.18em]">{item.message}</span>
+          )}
+          <span aria-hidden className="text-accent/70">
+            ✦
+          </span>
+        </li>
+      ))}
+    </ul>
+  );
 
   return (
-    <div
-      className="relative z-50 border-b border-line bg-[linear-gradient(90deg,#03141a,#0a0a14,#0d0820)] text-xs"
-      onMouseEnter={() => setPaused(true)}
-      onMouseLeave={() => setPaused(false)}
-    >
-      <div className="container-page flex h-10 items-center justify-between gap-4">
-        <button type="button" onClick={() => step(-1)} className="text-muted hover:text-fg" aria-label="Previous announcement">
-          <ChevronLeft size={14} />
-        </button>
-        <div className="relative h-full flex-1 overflow-hidden" aria-live="polite">
-          {items.map((item, i) => {
-            const content = (
-              <span className="tracking-wide">
-                {item.message}
-                {item.href && <span className="ml-2 text-accent underline-offset-4 group-hover:underline">Shop now →</span>}
-              </span>
-            );
-            return (
-              <div
-                key={item.id}
-                className="absolute inset-0 flex items-center justify-center transition-all duration-500"
-                style={{
-                  opacity: i === index ? 1 : 0,
-                  transform: `translateY(${i === index ? 0 : i < index ? -100 : 100}%)`,
-                }}
-                aria-hidden={i !== index}
-              >
-                {item.href ? (
-                  <Link href={item.href} className="group" tabIndex={i === index ? 0 : -1}>
-                    {content}
-                  </Link>
-                ) : (
-                  content
-                )}
-              </div>
-            );
-          })}
-        </div>
-        <button type="button" onClick={() => step(1)} className="text-muted hover:text-fg" aria-label="Next announcement">
-          <ChevronRight size={14} />
-        </button>
+    <div className="group relative z-50 overflow-hidden border-b border-accent/15 bg-[linear-gradient(90deg,#021a22,#07091a_40%,#120a2a_70%,#021a22)] text-[11px] text-fg/90">
+      <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-16 bg-gradient-to-r from-[#021a22] to-transparent" />
+      <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-16 bg-gradient-to-l from-[#021a22] to-transparent" />
+      <div className="flex h-9 w-max animate-marquee items-center group-hover:[animation-play-state:paused] [animation-duration:60s]">
+        {track(false)}
+        {track(true)}
       </div>
     </div>
   );

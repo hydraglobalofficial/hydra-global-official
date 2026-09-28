@@ -484,7 +484,7 @@ const announcements = [
   { message: "Free delivery across Bangladesh on orders over ৳1,500", href: "/shop" },
   { message: "New: Privacy Armor for iPhone 17 Pro Max is here", href: "/product/privacy-armor-iphone-17-pro-max" },
   { message: "12-month warranty on every HYDRA protector", href: "/support/warranty" },
-  { message: "Use code HYDRA10 for 10% off your first order", href: null },
+  { message: "Cash on delivery available across Bangladesh", href: null },
 ];
 
 // ─── Run ─────────────────────────────────────────────────────────────────────

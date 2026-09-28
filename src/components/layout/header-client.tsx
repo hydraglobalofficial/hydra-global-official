@@ -49,14 +49,16 @@ export function HeaderClient({ nav }: { nav: NavigationData }) {
   };
 
   return (
-    <header
-      className={cn(
-        "sticky top-0 z-40 border-b transition-all duration-300",
-        scrolled || menu ? "border-line bg-black/80 backdrop-blur-xl" : "border-transparent bg-black/40 backdrop-blur-md",
-      )}
-      onMouseLeave={scheduleClose}
-    >
-      <div className="container-page flex h-16 items-center justify-between gap-6 md:h-18">
+    <header className="sticky top-0 z-40 px-3 pt-3 md:px-5" onMouseLeave={scheduleClose}>
+      <div
+        className={cn(
+          "relative mx-auto flex h-14 max-w-[88rem] items-center justify-between gap-6 rounded-2xl border px-3 transition-all duration-500 md:h-16 md:px-6",
+          scrolled || menu
+            ? "border-line-strong bg-black/75 shadow-[0_24px_60px_-24px_rgba(0,0,0,0.95),inset_0_1px_0_rgba(255,255,255,0.06)] backdrop-blur-2xl"
+            : "border-line bg-white/[0.03] shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] backdrop-blur-md",
+        )}
+      >
+        <div aria-hidden className="divider-glow pointer-events-none absolute inset-x-10 -bottom-px opacity-60" />
         <div className="flex items-center gap-10">
           <button
             type="button"
@@ -113,7 +115,7 @@ export function HeaderClient({ nav }: { nav: NavigationData }) {
       {/* Desktop dropdowns */}
       <div
         className={cn(
-          "absolute inset-x-0 top-full hidden border-b border-line bg-black/95 backdrop-blur-xl transition-all duration-300 lg:block",
+          "absolute inset-x-3 top-full mx-auto mt-2 hidden max-w-[88rem] overflow-hidden rounded-2xl border border-line-strong bg-black/90 shadow-[0_30px_80px_-30px_rgba(0,0,0,0.95)] backdrop-blur-2xl transition-all duration-300 md:inset-x-5 lg:block",
           menu ? "visible translate-y-0 opacity-100" : "invisible -translate-y-2 opacity-0",
         )}
         onMouseEnter={() => clearTimeout(closeTimer.current)}
@@ -134,7 +136,7 @@ export function HeaderClient({ nav }: { nav: NavigationData }) {
       {/* Search overlay */}
       <div
         className={cn(
-          "absolute inset-x-0 top-full border-b border-line bg-black/95 backdrop-blur-xl transition-all duration-300",
+          "absolute inset-x-3 top-full mx-auto mt-2 max-w-[88rem] overflow-hidden rounded-2xl border border-line-strong bg-black/90 shadow-[0_30px_80px_-30px_rgba(0,0,0,0.95)] backdrop-blur-2xl transition-all duration-300 md:inset-x-5",
           searchOpen ? "visible opacity-100" : "invisible opacity-0",
         )}
       >

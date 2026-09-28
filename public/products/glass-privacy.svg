@@ -26,5 +26,5 @@
     <path d="M270 300 q30 -30 60 0 q-30 30 -60 0 z"/>
     <path d="M265 325 L335 275"/>
   </g>
-  <text x="300" y="570" text-anchor="middle" font-family="monospace" font-size="14" letter-spacing="6" fill="#8b8b96">HYDRA · PRIVACY</text>
+  <text x="300" y="570" text-anchor="middle" font-family="monospace" font-size="14" letter-spacing="6" fill="#8b8b96">HYDRA Â· PRIVACY</text>
 </svg>

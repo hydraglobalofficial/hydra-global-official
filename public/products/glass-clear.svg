@@ -26,5 +26,5 @@
     <path d="M222 110 L290 110 L222 260 Z" fill="#fff" fill-opacity=".12"/>
     <rect x="272" y="100" width="56" height="16" rx="8" fill="none" stroke="#3de3ff" stroke-opacity=".6"/>
   </g>
-  <text x="300" y="570" text-anchor="middle" font-family="monospace" font-size="14" letter-spacing="6" fill="#8b8b96">HYDRA · CLEAR</text>
+  <text x="300" y="570" text-anchor="middle" font-family="monospace" font-size="14" letter-spacing="6" fill="#8b8b96">HYDRA Â· CLEAR</text>
 </svg>

@@ -25,5 +25,5 @@
     <circle cx="300" cy="330" r="30" fill="none" stroke="#fff" stroke-opacity=".15" stroke-width="2"/>
     <path d="M195 150 h-6 M195 190 h-6 M405 170 h6" stroke="#3de3ff" stroke-width="6" stroke-linecap="round"/>
   </g>
-  <text x="300" y="570" text-anchor="middle" font-family="monospace" font-size="14" letter-spacing="6" fill="#8b8b96">HYDRA · MAGSAFE CASE</text>
+  <text x="300" y="570" text-anchor="middle" font-family="monospace" font-size="14" letter-spacing="6" fill="#8b8b96">HYDRA Â· MAGSAFE CASE</text>
 </svg>

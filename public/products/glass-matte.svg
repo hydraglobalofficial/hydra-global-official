@@ -23,5 +23,5 @@
     <circle cx="300" cy="290" r="44" fill="none" stroke="#fff" stroke-opacity=".35"/>
     <circle cx="300" cy="290" r="6" fill="#fff" fill-opacity=".6"/>
   </g>
-  <text x="300" y="570" text-anchor="middle" font-family="monospace" font-size="14" letter-spacing="6" fill="#8b8b96">HYDRA · MATTE</text>
+  <text x="300" y="570" text-anchor="middle" font-family="monospace" font-size="14" letter-spacing="6" fill="#8b8b96">HYDRA Â· MATTE</text>
 </svg>

@@ -9,7 +9,8 @@ import { TrustBadges } from "@/components/sections/trust-badges";
 
 export function SiteFooter() {
   return (
-    <footer className="relative mt-24 overflow-hidden border-t border-line bg-surface">
+    <footer className="relative mt-24 overflow-hidden border-t border-line bg-surface/70 backdrop-blur-xl">
+      <div aria-hidden className="divider-glow absolute inset-x-0 top-0" />
       <div className="pointer-events-none absolute -bottom-40 left-1/2 h-80 w-[60rem] -translate-x-1/2 rounded-full bg-accent-2/10 blur-[140px]" />
       <div className="container-page relative">
         <div className="border-b border-line py-10">
@@ -21,7 +22,7 @@ export function SiteFooter() {
             <Logo />
             <p className="max-w-sm text-sm text-muted">{siteConfig.description}</p>
             <div>
-              <p className="mb-3 text-sm font-medium">Get 10% off your first order</p>
+              <p className="mb-3 text-sm font-medium">Early access to new drops &amp; offers</p>
               <NewsletterForm className="max-w-sm" />
             </div>
           </div>
