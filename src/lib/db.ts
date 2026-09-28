@@ -9,7 +9,8 @@ function createClient() {
   if (!connectionString) {
     throw new Error("DATABASE_URL is not set. Copy .env.example to .env and configure it.");
   }
-  return new PrismaClient({ adapter: new PrismaPg({ connectionString }) });
+  const max = Number(process.env.DATABASE_POOL_MAX) || (process.env.VERCEL ? 3 : 10);
+  return new PrismaClient({ adapter: new PrismaPg({ connectionString, max }) });
 }
 
 // Reuse one client across hot reloads in development.

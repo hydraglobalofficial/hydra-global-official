@@ -11,7 +11,8 @@ if (process.env.NODE_ENV === "production" && process.env.SEED_FORCE !== "1") {
 
 const db = new PrismaClient({ adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL! }) });
 
-const slug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+const slug = (s: string) =>
+  s.toLowerCase().replace(/\+/g, " plus").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 
 // ─── Taxonomy ────────────────────────────────────────────────────────────────
 
