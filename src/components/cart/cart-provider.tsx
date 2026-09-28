@@ -85,6 +85,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
     setLines((prev) => prev.filter((l) => !sameLine(l, productId, variantId)));
   }, []);
 
+  const open = useCallback(() => setIsOpen(true), []);
+  const close = useCallback(() => setIsOpen(false), []);
+  const clear = useCallback(() => setLines([]), []);
+
   const value = useMemo<CartContextValue>(
     () => ({
       lines,
@@ -92,14 +96,14 @@ export function CartProvider({ children }: { children: ReactNode }) {
       subtotal: lines.reduce((n, l) => n + l.price * l.quantity, 0),
       hydrated,
       isOpen,
-      open: () => setIsOpen(true),
-      close: () => setIsOpen(false),
+      open,
+      close,
       add,
       setQuantity,
       remove,
-      clear: () => setLines([]),
+      clear,
     }),
-    [lines, hydrated, isOpen, add, setQuantity, remove],
+    [lines, hydrated, isOpen, open, close, add, setQuantity, remove, clear],
   );
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
