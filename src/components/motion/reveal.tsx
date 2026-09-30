@@ -34,23 +34,57 @@ export function Reveal({ children, className, delay = 0, once = true }: Props) {
 }
 
 /** Reveals children with a staggered delay — pass items as direct children. */
-export function RevealGroup({ children, className, stagger = 0.08 }: { children: ReactNode; className?: string; stagger?: number }) {
+export function RevealGroup({
+  children,
+  className,
+  stagger = 0.08,
+  once = true,
+}: {
+  children: ReactNode;
+  className?: string;
+  stagger?: number;
+  once?: boolean;
+}) {
   return (
     <motion.div
       className={className}
       initial="hidden"
       whileInView="show"
-      viewport={{ once: true, margin: "-60px" }}
-      transition={{ staggerChildren: stagger }}
+      viewport={{ once, amount: 0.15, margin: "0px 0px -8% 0px" }}
+      variants={{
+        hidden: {},
+        show: {
+          transition: { staggerChildren: stagger, delayChildren: 0.06 },
+        },
+      }}
     >
       {children}
     </motion.div>
   );
 }
 
-export function RevealItem({ children, className }: { children: ReactNode; className?: string }) {
+export function RevealItem({
+  children,
+  className,
+  y = 36,
+}: {
+  children: ReactNode;
+  className?: string;
+  y?: number;
+}) {
   return (
-    <motion.div className={cn(className)} variants={variants} transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}>
+    <motion.div
+      className={cn(className)}
+      variants={{
+        hidden: { opacity: 0, y, filter: "blur(4px)" },
+        show: {
+          opacity: 1,
+          y: 0,
+          filter: "blur(0px)",
+          transition: { duration: 0.65, ease: [0.22, 1, 0.36, 1] },
+        },
+      }}
+    >
       {children}
     </motion.div>
   );

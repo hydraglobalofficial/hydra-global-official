@@ -2,12 +2,13 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { ArrowRight, ArrowUpRight, Play, ShieldCheck, Zap, Gem } from "lucide-react";
+import { ArrowRight, ArrowUpRight, Play } from "lucide-react";
 import { animate, motion, useInView } from "motion/react";
 import { RevealGroup, RevealItem } from "@/components/motion/reveal";
 import { ProductImage } from "@/components/product/product-image";
 import { SectionHeading } from "@/components/ui/primitives";
 import { SpotlightCard } from "@/components/ui/spotlight-card";
+import { ImpactPhone3D } from "@/components/sections/impact-phone-3d";
 import { showcaseVideos, siteConfig } from "@/config/site";
 import { cn } from "@/lib/utils";
 import type { NavigationData } from "@/server/queries/catalog";
@@ -20,11 +21,9 @@ const categoryArt: Record<string, string> = {
   cases: "/products/case-clear.svg",
 };
 
-const categoryGlow = ["bg-accent/20", "bg-white/[0.07]", "bg-accent/15", "bg-white/[0.07]", "bg-accent/15"];
-
 export function CollectionBento({ categories }: { categories: NavigationData["categories"] }) {
   return (
-    <section className="container-page py-24">
+    <section className="container-page py-14 sm:py-20 md:py-24">
       <SectionHeading
         eyebrow="Shop by collection"
         title={
@@ -38,34 +37,32 @@ export function CollectionBento({ categories }: { categories: NavigationData["ca
           </Link>
         }
       />
-      <RevealGroup className="grid auto-rows-[15rem] gap-4 md:grid-cols-4 md:auto-rows-[17rem]" stagger={0.08}>
+      <RevealGroup className="grid auto-rows-[13rem] gap-3 sm:auto-rows-[15rem] sm:gap-4 md:grid-cols-4 md:auto-rows-[17rem]" stagger={0.08}>
         {categories.slice(0, 5).map((c, i) => {
           const hero = i === 0;
           return (
-            <RevealItem key={c.id} className={cn("h-full", hero && "md:col-span-2 md:row-span-2")}>
+            <RevealItem key={c.id} className={cn("h-full min-w-0", hero && "md:col-span-2 md:row-span-2")}>
               <SpotlightCard className="group h-full overflow-hidden">
-                <Link href={`/shop?category=${c.slug}`} className="relative flex h-full flex-col justify-end p-6 md:p-8">
-                  <div className="bg-dots pointer-events-none absolute inset-0 opacity-50 [mask-image:radial-gradient(ellipse_at_center,#000,transparent_75%)]" />
-                  <div className={cn("pointer-events-none absolute left-1/2 top-[40%] -translate-x-1/2 -translate-y-1/2 rounded-full blur-[70px] transition-all duration-700 group-hover:scale-125", categoryGlow[i], hero ? "size-80" : "size-44")} />
+                <Link href={`/shop?category=${c.slug}`} className="relative flex h-full flex-col justify-end p-4 sm:p-6 md:p-8">
                   {categoryArt[c.slug] && (
-                    <div className={cn("absolute inset-x-0 top-0 transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:-translate-y-2 group-hover:scale-[1.06]", hero ? "bottom-24" : "bottom-16")}>
+                    <div className={cn("absolute inset-x-0 top-0 transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:-translate-y-1 group-hover:scale-[1.03]", hero ? "bottom-20 sm:bottom-24" : "bottom-14 sm:bottom-16")}>
                       <ProductImage
                         src={categoryArt[c.slug]}
                         alt=""
                         fill
                         sizes={hero ? "(min-width: 768px) 50vw, 100vw" : "(min-width: 768px) 25vw, 100vw"}
-                        className="object-contain p-4 drop-shadow-[0_24px_40px_rgba(56,189,248,0.22)]"
+                        className="object-contain p-3 opacity-90 sm:p-4"
                       />
                     </div>
                   )}
-                  <div className="pointer-events-none absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black via-black/70 to-transparent" />
-                  <div className="relative flex items-end justify-between gap-4">
-                    <div>
-                      <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-accent">Collection 0{i + 1}</p>
-                      <h3 className={cn("mt-2 font-semibold tracking-tight", hero ? "text-4xl md:text-5xl" : "text-2xl")}>{c.name}</h3>
-                      {hero && c.description && <p className="mt-3 max-w-sm text-sm text-muted">{c.description}</p>}
+                  <div className="pointer-events-none absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black via-black/75 to-transparent" />
+                  <div className="relative flex items-end justify-between gap-3 sm:gap-4">
+                    <div className="min-w-0">
+                      <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-subtle">0{i + 1}</p>
+                      <h3 className={cn("mt-1.5 font-semibold tracking-tight sm:mt-2", hero ? "text-3xl sm:text-4xl md:text-5xl" : "text-xl sm:text-2xl")}>{c.name}</h3>
+                      {hero && c.description && <p className="mt-2 hidden max-w-sm text-sm text-muted sm:mt-3 sm:block">{c.description}</p>}
                     </div>
-                    <span className="grid size-10 shrink-0 place-items-center rounded-full border border-line-strong bg-white/5 transition-all duration-300 group-hover:border-accent/50 group-hover:bg-accent group-hover:text-black">
+                    <span className="grid size-9 shrink-0 place-items-center rounded-full border border-line-strong bg-white/5 transition-colors duration-300 group-hover:border-fg/40 group-hover:bg-fg group-hover:text-bg sm:size-10">
                       <ArrowUpRight size={16} />
                     </span>
                   </div>
@@ -100,10 +97,9 @@ function CountUp({ to, className }: { to: number; className?: string }) {
 export function ImpactStat() {
   return (
     <section className="relative overflow-hidden py-28">
-      <div className="pointer-events-none absolute left-1/2 top-1/2 h-72 w-[60rem] max-w-full -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent/10 blur-[120px]" />
       <div className="container-page relative text-center">
         <motion.p
-          className="font-mono text-[11px] uppercase tracking-[0.3em] text-accent"
+          className="font-mono text-[11px] uppercase tracking-[0.3em] text-subtle"
           initial={{ opacity: 0, y: 10 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -132,152 +128,36 @@ export function ImpactStat() {
   );
 }
 
-const shards = Array.from({ length: 16 }, (_, i) => {
-  const angle = (i / 16) * Math.PI * 2 + (i % 2 ? 0.18 : -0.12);
-  const distance = 170 + ((i * 37) % 90);
-  return {
-    x: Math.round(Math.cos(angle) * distance * 1.6),
-    y: Math.round(Math.sin(angle) * distance * 0.9),
-    rotate: ((i * 53) % 160) - 80,
-    size: 22 + ((i * 29) % 36),
-    shape: i % 3,
-  };
-});
-
-const shardClip = ["polygon(50% 0, 100% 80%, 0 100%)", "polygon(0 0, 100% 20%, 70% 100%, 10% 70%)", "polygon(20% 0, 100% 40%, 60% 100%, 0 60%)"];
-
 const dropStats = [
-  { icon: Zap, value: "2 m", label: "drop-tested onto granite" },
-  { icon: Gem, value: "9H+", label: "surface hardness" },
-  { icon: ShieldCheck, value: "3.2×", label: "stronger than standard glass" },
+  { value: "2 m", label: "drop-tested onto granite" },
+  { value: "9H+", label: "surface hardness" },
+  { value: "3.2×", label: "stronger than standard glass" },
 ];
 
 export function DropTest() {
   return (
-    <section className="container-page py-16">
-      <div className="card-premium relative overflow-hidden rounded-[2.5rem] px-6 pb-12 pt-16 md:px-12 md:pt-20">
-        <div className="bg-grid pointer-events-none absolute inset-0 opacity-60" />
-        <div className="pointer-events-none absolute left-1/2 top-[55%] size-[34rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent/10 blur-[120px]" />
-
+    <section className="container-page py-10 sm:py-14 md:py-16">
+      <div className="relative overflow-hidden rounded-[1.5rem] border border-line bg-surface px-4 pb-8 pt-10 sm:rounded-[2rem] sm:px-6 sm:pb-12 sm:pt-16 md:rounded-[2.5rem] md:px-12 md:pt-20">
         <div className="relative mx-auto max-w-2xl text-center">
           <p className="font-mono text-[11px] uppercase tracking-[0.3em] text-accent">Impact lab</p>
-          <h2 className="mt-4 text-4xl font-semibold tracking-tight text-balance md:text-6xl">
+          <h2 className="mt-3 text-3xl font-semibold tracking-tight text-balance sm:mt-4 sm:text-4xl md:text-6xl">
             Glass breaks. <span className="text-muted">Your screen doesn&apos;t.</span>
           </h2>
-          <p className="mt-4 text-muted">HYDRA&apos;s sacrificial layer absorbs and spreads impact energy — so the protector takes the hit, not your display.</p>
+          <p className="mt-3 text-sm text-muted sm:mt-4 sm:text-base">
+            HYDRA&apos;s sacrificial layer absorbs and spreads impact energy — so the protector takes the hit, not your display.
+          </p>
         </div>
 
-        <div className="relative mx-auto mt-10 grid h-[26rem] max-w-4xl place-items-center md:h-[30rem]">
-          <motion.div
-            aria-hidden
-            className="absolute size-40 rounded-full border border-accent/50"
-            animate={{ scale: [0.6, 2.6], opacity: [0.7, 0] }}
-            transition={{ duration: 2.4, repeat: Infinity, ease: "easeOut" }}
-          />
-          <motion.div
-            aria-hidden
-            className="absolute size-40 rounded-full border border-white/25"
-            animate={{ scale: [0.6, 2.6], opacity: [0.7, 0] }}
-            transition={{ duration: 2.4, repeat: Infinity, ease: "easeOut", delay: 1.2 }}
-          />
+        <ImpactPhone3D className="mt-4 sm:mt-6" />
 
-          {shards.map((s, i) => (
-            <motion.span
-              key={i}
-              aria-hidden
-              className="absolute border border-white/30 bg-gradient-to-br from-white/35 via-white/10 to-accent/20 shadow-[0_0_20px_rgba(56,189,248,0.2)] backdrop-blur-sm"
-              style={{ width: s.size, height: s.size * 1.3, clipPath: shardClip[s.shape] }}
-              initial={{ x: 0, y: 0, opacity: 0, rotate: 0, scale: 0.3 }}
-              whileInView={{ x: s.x, y: s.y, opacity: 1, rotate: s.rotate, scale: 1 }}
-              viewport={{ once: true, margin: "-120px" }}
-              transition={{ type: "spring", stiffness: 60, damping: 14, delay: 0.15 + (i % 5) * 0.03 }}
-            />
+        <div className="relative mx-auto mt-2 grid max-w-3xl grid-cols-3 gap-2 border-t border-line pt-6 text-center sm:gap-6 sm:pt-8 md:gap-10">
+          {dropStats.map(({ value, label }) => (
+            <div key={label} className="min-w-0 px-0.5">
+              <p className="font-mono text-lg font-semibold tracking-tight sm:text-2xl md:text-3xl">{value}</p>
+              <p className="mt-1 text-[10px] leading-snug text-muted sm:text-xs md:text-sm">{label}</p>
+            </div>
           ))}
-
-          <motion.div
-            className="relative"
-            initial={{ y: -120, opacity: 0, rotate: -8 }}
-            whileInView={{ y: 0, opacity: 1, rotate: 0 }}
-            viewport={{ once: true, margin: "-120px" }}
-            transition={{ type: "spring", stiffness: 120, damping: 12 }}
-          >
-            <motion.div animate={{ y: [0, -10, 0] }} transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}>
-              <svg viewBox="0 0 200 400" className="h-72 w-auto md:h-80" aria-hidden>
-                <defs>
-                  <linearGradient id="dt-frame" x1="0" y1="0" x2="1" y2="1">
-                    <stop offset="0" stopColor="#4a4a56" />
-                    <stop offset="0.5" stopColor="#15151b" />
-                    <stop offset="1" stopColor="#34343e" />
-                  </linearGradient>
-                  <linearGradient id="dt-screen" x1="0" y1="0" x2="1" y2="1">
-                    <stop offset="0" stopColor="#0b3a4a" />
-                    <stop offset="0.5" stopColor="#0a0a14" />
-                    <stop offset="1" stopColor="#10141c" />
-                  </linearGradient>
-                  <linearGradient id="dt-edge" x1="0" y1="0" x2="1" y2="1">
-                    <stop offset="0" stopColor="#38bdf8" />
-                    <stop offset="1" stopColor="#e4e4e7" stopOpacity="0.5" />
-                  </linearGradient>
-                </defs>
-                <rect x="5" y="5" width="190" height="390" rx="36" fill="url(#dt-frame)" />
-                <rect x="12" y="12" width="176" height="376" rx="30" fill="url(#dt-screen)" />
-                <rect x="73" y="24" width="54" height="15" rx="7.5" fill="#000" />
-                <text x="100" y="120" textAnchor="middle" fill="#fff" fontSize="46" fontWeight="600" fontFamily="ui-monospace, monospace">
-                  09:41
-                </text>
-                <g stroke="#fff" strokeOpacity="0.55" strokeWidth="1" fill="none">
-                  <path d="M100 230 L60 180 L40 150" />
-                  <path d="M100 230 L150 200 L175 190" />
-                  <path d="M100 230 L120 290 L110 340" />
-                  <path d="M100 230 L55 260 L25 300" />
-                  <path d="M100 230 L140 250" />
-                </g>
-                <circle cx="100" cy="230" r="5" fill="#fff" fillOpacity="0.9" />
-                <rect x="3" y="3" width="194" height="394" rx="38" fill="none" stroke="url(#dt-edge)" strokeWidth="1.5" />
-              </svg>
-            </motion.div>
-            <motion.div
-              className="glass absolute -right-4 top-1/2 hidden translate-x-full rounded-2xl px-4 py-3 sm:block"
-              initial={{ opacity: 0, x: 20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.8, duration: 0.5 }}
-            >
-              <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-subtle">Display</p>
-              <p className="mt-0.5 flex items-center gap-1.5 text-sm font-medium text-success">
-                <ShieldCheck size={14} /> 0 damage
-              </p>
-            </motion.div>
-            <motion.div
-              className="glass absolute -left-4 top-[30%] hidden -translate-x-full rounded-2xl px-4 py-3 sm:block"
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.95, duration: 0.5 }}
-            >
-              <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-subtle">Protector</p>
-              <p className="mt-0.5 flex items-center gap-1.5 text-sm font-medium text-accent">
-                <Zap size={14} /> took the hit
-              </p>
-            </motion.div>
-          </motion.div>
         </div>
-
-        <RevealGroup className="relative grid gap-3 sm:grid-cols-3" stagger={0.1}>
-          {dropStats.map(({ icon: Icon, value, label }) => (
-            <RevealItem key={label}>
-              <div className="glass flex items-center gap-4 rounded-2xl p-5">
-                <span className="grid size-11 place-items-center rounded-xl border border-accent/25 bg-accent/10 text-accent">
-                  <Icon size={20} />
-                </span>
-                <div>
-                  <p className="font-mono text-2xl font-semibold">{value}</p>
-                  <p className="text-xs text-muted">{label}</p>
-                </div>
-              </div>
-            </RevealItem>
-          ))}
-        </RevealGroup>
       </div>
     </section>
   );
@@ -289,7 +169,7 @@ export function VideoShowcase() {
   const [playing, setPlaying] = useState<number | null>(null);
 
   return (
-    <section className="container-page py-24">
+    <section className="container-page py-14 sm:py-20 md:py-24">
       <SectionHeading
         eyebrow="Watch & learn"
         title={
@@ -308,9 +188,13 @@ export function VideoShowcase() {
           </a>
         }
       />
-      <RevealGroup className="no-scrollbar -mx-5 flex snap-x gap-4 overflow-x-auto px-5 pb-2 md:mx-0 md:grid md:grid-cols-3 md:px-0" stagger={0.1}>
+      {/* One-by-one on scroll: staggerChildren reveals each card in sequence */}
+      <RevealGroup
+        className="no-scrollbar -mx-4 flex snap-x gap-3 overflow-x-auto px-4 pb-2 sm:-mx-5 sm:gap-4 sm:px-5 md:mx-0 md:grid md:grid-cols-3 md:gap-5 md:overflow-visible md:px-0"
+        stagger={0.2}
+      >
         {showcaseVideos.map((v, i) => (
-          <RevealItem key={v.title} className="w-72 shrink-0 snap-start md:w-auto">
+          <RevealItem key={v.title} className="w-[78vw] max-w-[20rem] shrink-0 snap-start sm:w-72 md:w-auto md:max-w-none" y={44}>
             <SpotlightCard className="group aspect-[9/14] overflow-hidden">
               {playing === i && v.youtubeId ? (
                 <iframe

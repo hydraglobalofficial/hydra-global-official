@@ -2,34 +2,41 @@
 
 import { useRef } from "react";
 import { motion, useMotionValue, useReducedMotion, useScroll, useTransform, type MotionValue } from "motion/react";
-import { LogoMark } from "@/components/layout/logo";
+import { HydraCreature } from "@/components/hydra/hydra-creature";
 import { interpolate } from "@/lib/interpolate";
 import { cn } from "@/lib/utils";
 
-/** Sticky statement whose words light up one by one as the visitor scrolls. */
+/** Sticky manifesto: words light up while the HYDRA rises behind the copy. */
 export function Manifesto({ text, highlight }: { text: string; highlight: readonly string[] }) {
   const ref = useRef<HTMLElement>(null);
   const reduced = useReducedMotion();
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end end"] });
   const complete = useMotionValue(1);
   const scroll = reduced ? complete : scrollYProgress;
-  const rotate = useTransform(scroll, (v) => v * 120);
-  const emblemScale = useTransform(scroll, (v) => interpolate(v, [0, 1], [0.85, 1.15]));
+  const progress = useTransform(scroll, (v) => interpolate(v, [0.05, 0.72], [0, 1]));
+  const driftX = useTransform(scroll, (v) => interpolate(v, [0, 1], [40, -20]));
+  const driftY = useTransform(scroll, (v) => interpolate(v, [0, 1], [30, -40]));
   const words = text.split(" ");
 
   return (
-    <section ref={ref} className={cn("relative", reduced ? "py-24" : "h-[260vh]")} aria-label="Our manifesto">
+    <section ref={ref} className={cn("relative", reduced ? "py-24" : "h-[280vh]")} aria-label="Our manifesto">
       <div className={cn("flex items-center overflow-hidden", !reduced && "sticky top-0 h-svh")}>
+        <div className="bg-grid pointer-events-none absolute inset-0 opacity-25 [mask-image:radial-gradient(ellipse_at_center,#000,transparent_72%)]" />
         <motion.div
-          className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 opacity-[0.07]"
-          style={{ rotate, scale: emblemScale }}
+          className="pointer-events-none absolute -right-[8%] top-1/2 w-[min(92vw,42rem)] -translate-y-1/2 md:-right-[4%] md:w-[min(58vw,40rem)]"
+          style={{ x: driftX, y: driftY }}
           aria-hidden
         >
-          <LogoMark className="size-[34rem] md:size-[46rem]" />
+          <HydraCreature progress={progress} ghost className="w-full" />
         </motion.div>
+        <motion.div
+          className="pointer-events-none absolute left-1/3 top-1/2 size-[28rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent/10 blur-[120px]"
+          style={{ opacity: progress }}
+        />
+
         <div className="container-page relative">
           <p className="mb-8 font-mono text-[11px] uppercase tracking-[0.3em] text-accent">Manifesto</p>
-          <p className="max-w-5xl text-3xl font-semibold leading-[1.2] tracking-tight md:text-5xl lg:text-6xl">
+          <p className="max-w-3xl text-3xl font-semibold leading-[1.2] tracking-tight md:max-w-4xl md:text-5xl lg:text-6xl">
             {words.map((word, i) => (
               <Word
                 key={i}
@@ -48,7 +55,7 @@ export function Manifesto({ text, highlight }: { text: string; highlight: readon
 
 function Word({ word, scroll, range, highlight }: { word: string; scroll: MotionValue<number>; range: [number, number]; highlight: boolean }) {
   const opacity = useTransform(scroll, (v) => interpolate(v, range, [0.12, 1]));
-  const y = useTransform(scroll, (v) => interpolate(v, range, [6, 0]));
+  const y = useTransform(scroll, (v) => interpolate(v, range, [8, 0]));
 
   return (
     <>

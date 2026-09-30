@@ -13,7 +13,7 @@ const chapters = [
     eyebrow: "The legend",
     title: (
       <>
-        One body. <span className="text-muted">Five heads.</span>
+        One body. <span className="text-muted">Three heads.</span>
       </>
     ),
     body: "In myth, cut off one head of the Hydra and two grow back. We engineer our armor with the same relentless spirit.",
@@ -23,10 +23,10 @@ const chapters = [
     eyebrow: "Every head guards something",
     title: (
       <>
-        Five layers of <span className="text-muted">protection.</span>
+        Three layers of <span className="text-muted">protection.</span>
       </>
     ),
-    body: "Clarity, privacy, impact, camera and fit — each one a specialist, all of them working as one on your phone.",
+    body: "Clarity, privacy and impact — each one a specialist, all of them working as one on your phone.",
     range: [0.34, 0.68],
   },
   {
@@ -49,31 +49,33 @@ export function HydraRise() {
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end end"] });
   const complete = useMotionValue(1);
   const scroll = reduced ? complete : scrollYProgress;
-  const progress = useTransform(scroll, (v) => interpolate(v, [0.04, 0.8], [0, 1]));
-  const glow = useTransform(scroll, [0, 1], [0.6, 1.15]);
+  const progress = useTransform(scroll, (v) => interpolate(v, [0.03, 0.78], [0, 1]));
+  const glow = useTransform(scroll, [0, 1], [0.7, 1.2]);
+  const creatureY = useTransform(scroll, (v) => interpolate(v, [0, 1], [24, -12]));
 
   return (
-    <section ref={ref} className={cn("relative", reduced ? "py-24" : "h-[320vh]")} aria-label="The HYDRA story">
+    <section ref={ref} className={cn("relative", reduced ? "py-24" : "h-[340vh]")} aria-label="The HYDRA story">
       <div className={cn("flex items-center overflow-hidden", !reduced && "sticky top-0 h-svh")}>
         <div className="bg-grid pointer-events-none absolute inset-0 opacity-30 [mask-image:radial-gradient(ellipse_at_center,#000,transparent_70%)]" />
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_70%_45%,rgba(56,189,248,0.08),transparent_55%)]" />
         <motion.div
-          className="pointer-events-none absolute left-1/2 top-1/2 size-[40rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent/[0.07] blur-[130px] md:left-[68%]"
+          className="pointer-events-none absolute left-1/2 top-1/2 size-[min(90vw,28rem)] -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent/[0.1] blur-[100px] sm:size-[36rem] sm:blur-[140px] md:left-[68%] md:size-[44rem]"
           style={{ scale: glow }}
         />
 
-        <div className="container-page relative grid w-full items-center gap-6 pt-20 md:grid-cols-[1fr_1.1fr] md:gap-12 md:pt-0">
-          <div className="relative order-2 grid min-h-[15rem] md:order-1">
+        <div className="container-page relative grid w-full items-center gap-6 pt-16 sm:pt-20 md:grid-cols-[1fr_1.15fr] md:gap-12 md:pt-0">
+          <div className="relative order-2 grid min-h-[12rem] sm:min-h-[15rem] md:order-1">
             {chapters.map((c, i) => (
               <Chapter key={i} chapter={c} scroll={scroll} first={i === 0} last={i === chapters.length - 1} />
             ))}
           </div>
 
-          <div className="relative order-1 mx-auto w-full max-w-[22rem] md:order-2 md:max-w-[34rem]">
+          <motion.div className="relative order-1 mx-auto w-full max-w-[18rem] sm:max-w-[24rem] md:order-2 md:max-w-[36rem]" style={{ y: creatureY }}>
             <HydraCreature progress={progress} className="w-full" />
             {hydraHeads.map((head) => (
               <HeadLabel key={head.label} head={head} progress={progress} />
             ))}
-          </div>
+          </motion.div>
         </div>
 
         {!reduced && (
@@ -111,8 +113,8 @@ function Chapter({
   return (
     <motion.div className="col-start-1 row-start-1 self-center text-center md:text-left" style={{ opacity, y, pointerEvents }}>
       <p className="text-xs font-medium uppercase tracking-[0.3em] text-accent">{chapter.eyebrow}</p>
-      <h2 className="mt-4 text-4xl font-semibold tracking-tight md:text-6xl">{chapter.title}</h2>
-      <p className="mx-auto mt-5 max-w-md text-base leading-relaxed text-muted md:mx-0 md:text-lg">{chapter.body}</p>
+      <h2 className="mt-3 text-3xl font-semibold tracking-tight sm:mt-4 sm:text-4xl md:text-6xl">{chapter.title}</h2>
+      <p className="mx-auto mt-4 max-w-md text-sm leading-relaxed text-muted sm:mt-5 sm:text-base md:mx-0 md:text-lg">{chapter.body}</p>
       {"cta" in chapter && (
         <div className="mt-8 flex flex-wrap justify-center gap-3 md:justify-start">
           <Link

@@ -49,20 +49,20 @@ export function HeaderClient({ nav }: { nav: NavigationData }) {
   };
 
   return (
-    <header className="sticky top-0 z-40 px-3 pt-3 md:px-5" onMouseLeave={scheduleClose}>
+    <header className="sticky top-0 z-40 px-2 pt-2 sm:px-3 sm:pt-3 md:px-5" onMouseLeave={scheduleClose}>
       <div
         className={cn(
-          "relative mx-auto flex h-14 max-w-[88rem] items-center justify-between gap-6 rounded-2xl border px-3 transition-all duration-500 md:h-16 md:px-6",
+          "relative mx-auto flex h-14 max-w-[88rem] items-center justify-between gap-2 rounded-2xl border px-2 transition-all duration-500 sm:h-[4.25rem] sm:gap-4 sm:px-3 md:h-[4.75rem] md:gap-6 md:px-6",
           scrolled || menu
             ? "border-line-strong bg-black/75 shadow-[0_24px_60px_-24px_rgba(0,0,0,0.95),inset_0_1px_0_rgba(255,255,255,0.06)] backdrop-blur-2xl"
             : "border-line bg-white/[0.03] shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] backdrop-blur-md",
         )}
       >
-        <div aria-hidden className="divider-glow pointer-events-none absolute inset-x-10 -bottom-px opacity-60" />
-        <div className="flex items-center gap-10">
+        <div aria-hidden className="divider-glow pointer-events-none absolute inset-x-6 -bottom-px opacity-60 sm:inset-x-10" />
+        <div className="flex min-w-0 items-center gap-2 sm:gap-4 md:gap-10">
           <button
             type="button"
-            className="-ml-2 rounded-full p-2 text-muted hover:text-fg lg:hidden"
+            className="-ml-1 rounded-full p-2 text-muted hover:text-fg lg:hidden"
             onClick={() => setMobileOpen(true)}
             aria-label="Open menu"
           >

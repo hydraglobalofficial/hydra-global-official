@@ -15,6 +15,11 @@ export const metadata: Metadata = {
   },
   description: siteConfig.description,
   applicationName: siteConfig.name,
+  icons: {
+    icon: [{ url: "/products/Hydra_Animation.png", type: "image/png" }],
+    apple: [{ url: "/products/Hydra_Animation.png", type: "image/png" }],
+    shortcut: "/products/Hydra_Animation.png",
+  },
   keywords: ["screen protector", "tempered glass", "privacy glass", "iPhone", "Samsung Galaxy", "Bangladesh", "HYDRA"],
   openGraph: {
     type: "website",
@@ -30,6 +35,9 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   themeColor: "#000000",
   colorScheme: "dark",
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

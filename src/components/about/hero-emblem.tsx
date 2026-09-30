@@ -10,19 +10,19 @@ export function HeroEmblem() {
   const reduced = useReducedMotion();
 
   useEffect(() => {
-    const controls = animate(progress, 1, { duration: reduced ? 0 : 2.6, delay: reduced ? 0 : 0.3, ease: [0.65, 0, 0.35, 1] });
+    const controls = animate(progress, 1, { duration: reduced ? 0 : 2.8, delay: reduced ? 0 : 0.25, ease: [0.65, 0, 0.35, 1] });
     return () => controls.stop();
   }, [progress, reduced]);
 
   return (
-    <div className="relative mx-auto aspect-square w-full max-w-md">
+    <div className="relative mx-auto aspect-[3930/3454] w-full max-w-lg">
       <motion.div
-        className="absolute inset-[8%] rounded-full border border-dashed border-white/10"
+        className="absolute inset-[2%] rounded-full border border-dashed border-white/10"
         animate={{ rotate: 360 }}
         transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
       />
       <motion.div
-        className="absolute inset-[18%] rounded-full border border-accent/15"
+        className="absolute inset-[10%] rounded-full border border-accent/15"
         animate={{ rotate: -360 }}
         transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
       >

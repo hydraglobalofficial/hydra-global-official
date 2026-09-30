@@ -180,7 +180,7 @@ export function Hero() {
         transition={{ duration: 16, repeat: Infinity, ease: "easeInOut" }}
       />
 
-      <div className="container-page relative grid items-center gap-12 pb-16 pt-10 md:pt-16 lg:min-h-[42rem] lg:grid-cols-2 lg:gap-8">
+      <div className="container-page relative grid items-center gap-8 pb-12 pt-8 sm:gap-12 sm:pb-16 sm:pt-10 md:pt-16 lg:min-h-[42rem] lg:grid-cols-2 lg:gap-8">
         <div className="space-y-8">
           <div className="grid">
           <AnimatePresence initial={false}>
@@ -197,17 +197,17 @@ export function Hero() {
               <motion.div variants={item}>
                 <Eyebrow>{slide.eyebrow}</Eyebrow>
               </motion.div>
-              <motion.h1 variants={item} className="text-5xl font-semibold leading-[1.02] tracking-tight text-balance md:text-7xl">
+              <motion.h1 variants={item} className="text-[2.35rem] font-semibold leading-[1.05] tracking-tight text-balance sm:text-5xl md:text-7xl">
                 {slide.title}
               </motion.h1>
-              <motion.p variants={item} className="max-w-lg text-lg text-pretty text-muted">
+              <motion.p variants={item} className="max-w-lg text-base text-pretty text-muted sm:text-lg">
                 {slide.text}
               </motion.p>
-              <motion.div variants={item} className="flex flex-wrap items-center gap-3">
-                <ButtonLink href={slide.primary.href} size="lg">
+              <motion.div variants={item} className="flex flex-wrap items-center gap-2.5 sm:gap-3">
+                <ButtonLink href={slide.primary.href} size="lg" className="w-full sm:w-auto">
                   {slide.primary.label} <ArrowRight size={18} />
                 </ButtonLink>
-                <ButtonLink href={slide.secondary.href} size="lg" variant="outline">
+                <ButtonLink href={slide.secondary.href} size="lg" variant="outline" className="w-full sm:w-auto">
                   {slide.key === "armor" && <Wrench size={18} />} {slide.secondary.label}
                 </ButtonLink>
               </motion.div>
