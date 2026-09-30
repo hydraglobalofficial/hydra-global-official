@@ -1,9 +1,12 @@
 "use client";
 
 import { motion } from "motion/react";
+import { useLocalLockScreen } from "@/hooks/use-local-lock-screen";
 
 /** Angled flagship with a tempered-glass sheet hovering above it. Pure SVG + motion. */
 export function GlassLiftVisual() {
+  const clock = useLocalLockScreen();
+
   return (
     <div className="relative mx-auto aspect-[4/5] w-full max-w-[30rem]">
       <div className="absolute inset-x-12 bottom-6 h-12 rounded-[50%] bg-accent/20 blur-3xl" />
@@ -32,9 +35,29 @@ export function GlassLiftVisual() {
           <path d="M7 300 C 60 250, 120 330, 183 270 L183 361 Q183 393 151 393 L39 393 Q7 393 7 361 Z" fill="#ffffff" fillOpacity="0.06" />
           <path d="M7 330 C 70 290, 110 360, 183 320 L183 361 Q183 393 151 393 L39 393 Q7 393 7 361 Z" fill="#38bdf8" fillOpacity="0.18" />
           <rect x="68" y="20" width="54" height="16" rx="8" fill="#000" />
-          <text x="95" y="74" textAnchor="middle" fill="#fff" fillOpacity="0.6" fontSize="10" letterSpacing="2">MONDAY · DHAKA</text>
-          <text x="95" y="140" textAnchor="middle" fill="#fff" fontSize="64" fontWeight="600" fontFamily="ui-monospace, monospace" letterSpacing="-2">
-            09:41
+          <text
+            x="95"
+            y="74"
+            textAnchor="middle"
+            fill="#fff"
+            fillOpacity="0.62"
+            fontSize="9.5"
+            letterSpacing="2.2"
+            style={{ fontFamily: "ui-sans-serif, system-ui, sans-serif" }}
+          >
+            {clock.label}
+          </text>
+          <text
+            x="95"
+            y="138"
+            textAnchor="middle"
+            fill="#fff"
+            fontSize="58"
+            fontWeight="600"
+            letterSpacing="-1.5"
+            style={{ fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace", fontVariantNumeric: "tabular-nums" }}
+          >
+            {clock.time}
           </text>
         </g>
       </svg>

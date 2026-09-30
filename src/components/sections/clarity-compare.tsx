@@ -1,8 +1,13 @@
+"use client";
+
 import { Check } from "lucide-react";
 import { SectionHeading } from "@/components/ui/primitives";
+import { useLocalLockScreen } from "@/hooks/use-local-lock-screen";
 import { CompareSlider } from "./compare-slider";
 
 function Scene({ damaged }: { damaged?: boolean }) {
+  const clock = useLocalLockScreen();
+
   return (
     <svg viewBox="0 0 800 500" preserveAspectRatio="xMidYMid slice" className="h-full w-full" aria-hidden>
       <defs>
@@ -26,8 +31,20 @@ function Scene({ damaged }: { damaged?: boolean }) {
         <circle cx="560" cy="170" r="54" fill="#e0f2fe" />
         <path d="M0 380 L140 270 L250 340 L380 220 L520 330 L640 260 L800 350 L800 500 L0 500 Z" fill="#0d1119" />
         <path d="M0 430 L180 340 L320 410 L470 320 L620 400 L800 360 L800 500 L0 500 Z" fill="#06060f" />
-        <text x="60" y="120" fill="#fff" fontSize="46" fontWeight="600" letterSpacing="2">12:45</text>
-        <text x="62" y="152" fill="#9aa" fontSize="16" letterSpacing="3">MONDAY · DHAKA</text>
+        <text
+          x="60"
+          y="120"
+          fill="#fff"
+          fontSize="46"
+          fontWeight="600"
+          letterSpacing="2"
+          style={{ fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace", fontVariantNumeric: "tabular-nums" }}
+        >
+          {clock.time}
+        </text>
+        <text x="62" y="152" fill="#9aa" fontSize="15" letterSpacing="3" style={{ fontFamily: "ui-sans-serif, system-ui, sans-serif" }}>
+          {clock.label}
+        </text>
       </g>
       {damaged && (
         <g>

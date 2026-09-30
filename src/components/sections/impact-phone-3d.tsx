@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { RotateCcw } from "lucide-react";
 import { AnimatePresence, motion, useInView } from "motion/react";
+import { useLocalLockScreen } from "@/hooks/use-local-lock-screen";
 import { cn } from "@/lib/utils";
 
 type Stage = "idle" | "hold" | "fall" | "hit" | "crack" | "burst" | "settle";
@@ -202,6 +203,8 @@ function PhoneBody({
   growing: boolean;
   flashing: boolean;
 }) {
+  const clock = useLocalLockScreen();
+
   return (
     <div
       className="relative h-[18rem] w-[9rem] sm:h-[22rem] sm:w-[11rem] md:h-[26rem] md:w-[12.75rem]"
@@ -238,10 +241,15 @@ function PhoneBody({
               <span className="absolute right-3 top-1/2 size-[6px] -translate-y-1/2 rounded-full bg-[#0d1a22] ring-1 ring-white/10" />
             </div>
 
-            <div className="absolute inset-x-0 top-12 text-center">
-              <p className="text-[9px] font-medium tracking-[0.2em] text-white/50">Wednesday</p>
-              <p className="mt-0.5 font-semibold tracking-tight text-white" style={{ fontSize: "3.1rem", lineHeight: 1 }}>
-                9:41
+            <div className="absolute inset-x-0 top-11 text-center sm:top-12">
+              <p className="text-[8px] font-medium uppercase tracking-[0.22em] text-white/55 sm:text-[9px]">
+                {clock.label}
+              </p>
+              <p
+                className="mt-0.5 font-semibold tracking-tight text-white tabular-nums"
+                style={{ fontSize: "clamp(2.4rem, 8vw, 3.1rem)", lineHeight: 1, fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace" }}
+              >
+                {clock.time}
               </p>
             </div>
 
