@@ -33,14 +33,23 @@ export async function subscribe(_prev: FormState, formData: FormData): Promise<F
   const parsed = newsletterSchema.safeParse(Object.fromEntries(formData));
   if (!parsed.success) return { status: "error", message: "Enter a valid email address." };
 
-  await db.subscriber.upsert({
-    where: { email: parsed.data.email },
-    update: {},
-    create: { email: parsed.data.email, token: randomBytes(24).toString("base64url") },
-  });
-  // Double opt-in: send the confirmation link containing the token from here.
+  try {
+    await db.subscriber.upsert({
+      where: { email: parsed.data.email },
+      update: { status: "CONFIRMED", confirmedAt: new Date() },
+      create: {
+        email: parsed.data.email,
+        token: randomBytes(24).toString("base64url"),
+        status: "CONFIRMED",
+        confirmedAt: new Date(),
+      },
+    });
+  } catch {
+    return { status: "error", message: "Couldn't save your email right now. Please try again." };
+  }
+  // Hook: email provider (Resend/SES) can send a welcome note using the token.
 
-  return { status: "success", message: "You're on the list. Check your inbox for your 10% code." };
+  return { status: "success", message: "You're on the list. We'll email launch drops and member offers — no spam." };
 }
 
 export async function submitReview(_prev: FormState, formData: FormData): Promise<FormState> {

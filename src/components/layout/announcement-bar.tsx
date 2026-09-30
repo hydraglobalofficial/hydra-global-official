@@ -9,14 +9,14 @@ export function AnnouncementBar({ items }: { items: Announcement[] }) {
 
   const repeated = Array.from({ length: Math.ceil(MIN_ITEMS / items.length) }, () => items).flat();
 
-  const track = (hidden: boolean) => (
+  const track = (hidden: boolean, suffix: string) => (
     <ul className="flex shrink-0 items-center" aria-hidden={hidden || undefined}>
       {repeated.map((item, i) => (
-        <li key={`${item.id}-${i}`} className="flex items-center">
+        <li key={`${suffix}-${item.id}-${i}`} className="flex items-center">
           {item.href ? (
             <Link
               href={item.href}
-              tabIndex={hidden ? -1 : undefined}
+              tabIndex={hidden ? -1 : 0}
               className="px-6 font-medium uppercase tracking-[0.18em] transition-colors hover:text-accent"
             >
               {item.message} <span className="text-accent">→</span>
@@ -37,8 +37,8 @@ export function AnnouncementBar({ items }: { items: Announcement[] }) {
       <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-16 bg-gradient-to-r from-surface to-transparent" />
       <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-16 bg-gradient-to-l from-surface to-transparent" />
       <div className="flex h-9 w-max animate-marquee items-center group-hover:[animation-play-state:paused] [animation-duration:60s]">
-        {track(false)}
-        {track(true)}
+        {track(false, "a")}
+        {track(true, "b")}
       </div>
     </div>
   );

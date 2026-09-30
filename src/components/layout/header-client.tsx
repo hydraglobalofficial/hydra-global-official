@@ -6,6 +6,8 @@ import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { ChevronDown, Menu, Search, ShoppingBag, X } from "lucide-react";
 import { useCart } from "@/components/cart/cart-provider";
+import { useTypingPlaceholder } from "@/components/search/typing-placeholder";
+import { buttonStyles } from "@/components/ui/button";
 import { primaryNav, supportNav } from "@/config/navigation";
 import { cn } from "@/lib/utils";
 import type { NavigationData } from "@/server/queries/catalog";
@@ -19,8 +21,10 @@ export function HeaderClient({ nav }: { nav: NavigationData }) {
   const [menu, setMenu] = useState<"shop" | "support" | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [searchFocused, setSearchFocused] = useState(false);
   const closeTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
   const searchRef = useRef<HTMLInputElement>(null);
+  const typingPlaceholder = useTypingPlaceholder(undefined, searchOpen && !searchFocused);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -38,6 +42,15 @@ export function HeaderClient({ nav }: { nav: NavigationData }) {
 
   useEffect(() => {
     if (searchOpen) searchRef.current?.focus();
+  }, [searchOpen]);
+
+  useEffect(() => {
+    if (!searchOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setSearchOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
   }, [searchOpen]);
 
   const openMenu = (key: "shop" | "support") => {
@@ -140,17 +153,24 @@ export function HeaderClient({ nav }: { nav: NavigationData }) {
           searchOpen ? "visible opacity-100" : "invisible opacity-0",
         )}
       >
-        <Form action="/search" className="container-page flex items-center gap-4 py-6">
-          <Search className="text-accent" size={22} />
+        <Form action="/search" className="container-page flex items-center gap-3 py-5 sm:gap-4 sm:py-6">
+          <Search className="shrink-0 text-accent" size={22} />
           <input
             ref={searchRef}
             name="q"
             type="search"
-            placeholder="Search by product or device — e.g. “iPhone 17 Pro privacy”"
-            className="h-12 flex-1 bg-transparent text-lg placeholder:text-subtle focus:outline-none"
+            required
+            minLength={1}
+            placeholder={typingPlaceholder}
+            onFocus={() => setSearchFocused(true)}
+            onBlur={() => setSearchFocused(false)}
+            className="h-12 min-w-0 flex-1 bg-transparent text-base placeholder:text-subtle focus:outline-none sm:text-lg"
             aria-label="Search products"
           />
-          <button type="button" onClick={() => setSearchOpen(false)} className="rounded-full p-2 text-muted hover:text-fg" aria-label="Close search">
+          <button type="submit" className={buttonStyles({ size: "sm", className: "shrink-0" })}>
+            Search
+          </button>
+          <button type="button" onClick={() => setSearchOpen(false)} className="shrink-0 rounded-full p-2 text-muted hover:text-fg" aria-label="Close search">
             <X size={18} />
           </button>
         </Form>

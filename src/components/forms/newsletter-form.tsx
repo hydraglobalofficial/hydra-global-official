@@ -9,30 +9,33 @@ import { cn } from "@/lib/utils";
 
 export function NewsletterForm({ className }: { className?: string }) {
   const [state, action, pending] = useActionState(subscribe, initialFormState);
+  const done = state.status === "success";
 
   return (
     <form action={action} className={cn("space-y-3", className)}>
-      {state.status === "success" && <TrackEvent event="sign_up" payload={{ label: "newsletter" }} />}
+      {done && <TrackEvent event="sign_up" payload={{ label: "newsletter" }} />}
       <div className="flex rounded-full border border-line bg-surface-2 p-1.5 focus-within:border-accent/50">
         <input
           type="email"
           name="email"
           required
+          disabled={pending || done}
           placeholder="you@example.com"
           aria-label="Email address"
-          className="h-10 flex-1 bg-transparent px-4 text-sm placeholder:text-subtle focus:outline-none"
+          autoComplete="email"
+          className="h-10 flex-1 bg-transparent px-4 text-sm placeholder:text-subtle focus:outline-none disabled:opacity-70"
         />
         <button
           type="submit"
-          disabled={pending || state.status === "success"}
+          disabled={pending || done}
           className="grid size-10 place-items-center rounded-full bg-fg text-black transition hover:bg-white disabled:opacity-70"
           aria-label="Subscribe"
         >
-          {pending ? <Loader2 size={16} className="animate-spin" /> : state.status === "success" ? <Check size={16} /> : <ArrowRight size={16} />}
+          {pending ? <Loader2 size={16} className="animate-spin" /> : done ? <Check size={16} /> : <ArrowRight size={16} />}
         </button>
       </div>
       {state.message && (
-        <p className={cn("text-xs", state.status === "success" ? "text-success" : "text-danger")} role="status">
+        <p className={cn("text-xs", done ? "text-success" : "text-danger")} role="status">
           {state.message}
         </p>
       )}

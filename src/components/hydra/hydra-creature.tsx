@@ -16,30 +16,30 @@ export type HydraHead = {
   fromX?: number;
 };
 
-/** Center first, then the two side heads. */
+/** Center first (stays), then left + right heads slide in from the sides. */
 export const hydraHeads: HydraHead[] = [
   {
     label: "Clarity",
     caption: "99.9% HD transparency",
     clip: "inset(0% 29% 16% 29%)",
     tip: { left: 50, top: 8 },
-    start: 0.08,
+    start: 0.06,
   },
   {
     label: "Privacy",
     caption: "28° side-view blackout",
     clip: "inset(4% 55% 18% 0%)",
     tip: { left: 14, top: 18 },
-    start: 0.32,
-    fromX: -56,
+    start: 0.38,
+    fromX: -72,
   },
   {
     label: "Impact",
     caption: "Drop-tested 9H tempered core",
     clip: "inset(4% 0% 18% 55%)",
     tip: { left: 86, top: 18 },
-    start: 0.32,
-    fromX: 56,
+    start: 0.48,
+    fromX: 72,
   },
 ];
 
@@ -71,10 +71,10 @@ export function HydraCreature({ progress, className, ghost = false, still = fals
   const ringOuter = useTransform(ring, (v) => v * 1.08);
   const ringMid = useTransform(ring, (v) => v * 0.92);
   const ringOpacity = useTransform(progress, (v) => interpolate(v, [0.04, 0.18, 0.75, 1], [0, 0.7, 0.4, 0.25]));
-  const bodyOpacity = useTransform(progress, (v) => interpolate(v, [0.52, 0.74], [0, ghost ? 0.28 : 1]));
-  const bodyScale = useTransform(progress, (v) => interpolate(v, [0.52, 0.82], [0.9, 1]));
-  const beam = useTransform(progress, (v) => interpolate(v, [0.65, 1], [-40, 120]));
-  const beamOpacity = useTransform(progress, (v) => interpolate(v, [0.62, 0.78, 1], [0, 0.55, 0.15]));
+  const bodyOpacity = useTransform(progress, (v) => interpolate(v, [0.68, 0.86], [0, ghost ? 0.28 : 1]));
+  const bodyScale = useTransform(progress, (v) => interpolate(v, [0.68, 0.9], [0.92, 1]));
+  const beam = useTransform(progress, (v) => interpolate(v, [0.75, 1], [-40, 120]));
+  const beamOpacity = useTransform(progress, (v) => interpolate(v, [0.72, 0.85, 1], [0, 0.45, 0.12]));
 
   return (
     <motion.div
@@ -156,14 +156,14 @@ function OrbitDot({ index, progress, ghost }: { index: number; progress: MotionV
 }
 
 function HeadLayer({ head, progress, ghost }: { head: HydraHead; progress: MotionValue<number>; ghost: boolean }) {
-  const end = head.start + 0.2;
-  const fadeOut = ghost ? 1 : 0.82;
+  const end = head.start + 0.22;
+  const fadeOut = ghost ? 1 : 0.9;
   const opacity = useTransform(progress, (v) =>
-    interpolate(v, [head.start, end, fadeOut - 0.06, fadeOut + 0.06], [0, ghost ? 0.35 : 1, ghost ? 0.35 : 1, ghost ? 0.2 : 0]),
+    interpolate(v, [head.start, end, fadeOut - 0.05, fadeOut + 0.05], [0, ghost ? 0.35 : 1, ghost ? 0.35 : 1, ghost ? 0.2 : 0]),
   );
-  const scale = useTransform(progress, (v) => interpolate(v, [head.start, end], [0.65, 1]));
+  const scale = useTransform(progress, (v) => interpolate(v, [head.start, end], [head.fromX ? 0.82 : 0.72, 1]));
   const x = useTransform(progress, (v) => interpolate(v, [head.start, end], [head.fromX ?? 0, 0]));
-  const y = useTransform(progress, (v) => interpolate(v, [head.start, end], [head.fromX ? 8 : 28, 0]));
+  const y = useTransform(progress, (v) => interpolate(v, [head.start, end], [head.fromX ? 6 : 22, 0]));
 
   return (
     <motion.div

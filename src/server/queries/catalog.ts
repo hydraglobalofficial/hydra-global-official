@@ -207,26 +207,48 @@ export async function searchProducts(query: string, limit = 48): Promise<Product
   const q = query.trim().slice(0, 100);
   if (!q) return [];
 
-  const ranked = await db.$queryRaw<{ id: string }[]>`
-    SELECT p.id
-    FROM "Product" p
-    CROSS JOIN LATERAL (
-      SELECT to_tsvector('english',
-        p.name || ' ' || coalesce(p.tagline, '') || ' ' || p.description || ' ' ||
-        coalesce((
-          SELECT string_agg(d.model || ' ' || d.series, ' ')
-          FROM "ProductDevice" pd JOIN "Device" d ON d.id = pd."deviceId"
-          WHERE pd."productId" = p.id
-        ), '')
-      ) AS doc
-    ) x
-    CROSS JOIN websearch_to_tsquery('english', ${q}) query
-    WHERE p.status = 'ACTIVE' AND (x.doc @@ query OR p.name ILIKE ${`%${q}%`})
-    ORDER BY ts_rank(x.doc, query) DESC, p."soldCount" DESC
-    LIMIT ${limit}
-  `;
+  let ranked: { id: string }[] = [];
+  try {
+    ranked = await db.$queryRaw<{ id: string }[]>`
+      SELECT p.id
+      FROM "Product" p
+      CROSS JOIN LATERAL (
+        SELECT to_tsvector('english',
+          p.name || ' ' || coalesce(p.tagline, '') || ' ' || p.description || ' ' ||
+          coalesce((
+            SELECT string_agg(d.model || ' ' || d.series, ' ')
+            FROM "ProductDevice" pd JOIN "Device" d ON d.id = pd."deviceId"
+            WHERE pd."productId" = p.id
+          ), '')
+        ) AS doc
+      ) x
+      CROSS JOIN websearch_to_tsquery('english', ${q}) query
+      WHERE p.status = 'ACTIVE' AND (x.doc @@ query OR p.name ILIKE ${`%${q}%`})
+      ORDER BY ts_rank(x.doc, query) DESC, p."soldCount" DESC
+      LIMIT ${limit}
+    `;
+  } catch {
+    // websearch_to_tsquery can reject odd punctuation — fall back to ILIKE.
+    ranked = [];
+  }
 
-  if (ranked.length === 0) return [];
+  if (ranked.length === 0) {
+    return db.product.findMany({
+      where: {
+        status: "ACTIVE",
+        OR: [
+          { name: { contains: q, mode: "insensitive" } },
+          { tagline: { contains: q, mode: "insensitive" } },
+          { description: { contains: q, mode: "insensitive" } },
+          { devices: { some: { device: { model: { contains: q, mode: "insensitive" } } } } },
+        ],
+      },
+      select: productCardSelect,
+      orderBy: [{ soldCount: "desc" }, { name: "asc" }],
+      take: limit,
+    });
+  }
+
   const products = await db.product.findMany({
     where: { id: { in: ranked.map((r) => r.id) } },
     select: productCardSelect,

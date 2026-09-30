@@ -14,12 +14,6 @@ export default async function StoreLayout({ children }: LayoutProps<"/">) {
 
   return (
     <CartProvider>
-      <script
-        // Hides the splash before first paint for visitors who've already seen it this session.
-        dangerouslySetInnerHTML={{
-          __html: `try{if(sessionStorage.getItem('hydra.splash.seen'))document.documentElement.dataset.splash='seen'}catch(e){}`,
-        }}
-      />
       <AmbientBackground />
       <SplashScreen />
       <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[200] focus:rounded-full focus:bg-fg focus:px-4 focus:py-2 focus:text-black">

@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
-import Form from "next/form";
 import Link from "next/link";
-import { Search } from "lucide-react";
 import { TrackEvent } from "@/components/analytics/track-event";
 import { ProductGrid } from "@/components/product/product-card";
+import { SearchForm } from "@/components/search/search-form";
 import { EmptyState } from "@/components/ui/primitives";
 import { buttonStyles } from "@/components/ui/button";
 import { searchProducts } from "@/server/queries/catalog";
@@ -26,18 +25,7 @@ export default async function SearchPage({ searchParams }: PageProps<"/search">)
   return (
     <div className="container-page py-16">
       {query && <TrackEvent key={query} event="search" payload={{ searchTerm: query }} />}
-      <Form action="/search" className="border-gradient mx-auto flex max-w-3xl items-center gap-3 rounded-full p-2 pl-6">
-        <Search size={20} className="text-accent" />
-        <input
-          name="q"
-          type="search"
-          defaultValue={query}
-          placeholder="Search products or devices"
-          aria-label="Search"
-          className="h-12 flex-1 bg-transparent text-lg placeholder:text-subtle focus:outline-none"
-        />
-        <button type="submit" className={buttonStyles({ size: "md" })}>Search</button>
-      </Form>
+      <SearchForm key={query || "empty"} defaultQuery={query} />
 
       <div className="mx-auto mt-6 flex max-w-3xl flex-wrap justify-center gap-2">
         {suggestions.map((s) => (
