@@ -74,7 +74,7 @@ export function NewsletterPopup() {
             <div className="relative hidden min-h-80 overflow-hidden bg-[radial-gradient(circle_at_40%_40%,rgb(30_64_175/0.2),transparent_60%),radial-gradient(circle_at_70%_80%,rgb(255_255_255/0.05),transparent_60%)] md:block">
               <div className="bg-grid absolute inset-0 opacity-80" />
               <motion.div className="absolute inset-8" animate={{ y: [0, -10, 0] }} transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}>
-                <ProductImage src="/products/glass-privacy.svg" alt="" fill sizes="384px" className="object-contain drop-shadow-[0_30px_40px_rgba(0,0,0,0.6)]" />
+                <ProductImage src="/products/glass-privacy.jpg" alt="" fill sizes="384px" className="object-contain drop-shadow-[0_30px_40px_rgba(0,0,0,0.6)]" />
               </motion.div>
             </div>
             <div className="relative space-y-5 p-8 md:p-10">

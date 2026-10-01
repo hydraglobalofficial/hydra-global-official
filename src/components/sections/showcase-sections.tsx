@@ -14,11 +14,11 @@ import { cn } from "@/lib/utils";
 import type { NavigationData } from "@/server/queries/catalog";
 
 const categoryArt: Record<string, string> = {
-  "tempered-glass": "/products/glass-clear.svg",
-  "privacy-glass": "/products/glass-privacy.svg",
-  "matte-glass": "/products/glass-matte.svg",
-  "camera-armor": "/products/camera-lens.svg",
-  cases: "/products/case-clear.svg",
+  "tempered-glass": "/products/glass-clear.jpg",
+  "privacy-glass": "/products/glass-privacy.jpg",
+  "matte-glass": "/products/glass-matte.jpg",
+  "camera-armor": "/products/camera-lens.jpg",
+  cases: "/products/case-clear.jpg",
 };
 
 export function CollectionBento({ categories }: { categories: NavigationData["categories"] }) {

@@ -62,8 +62,8 @@ export function ProductForm({ initial, categories, devices }: { initial: Product
         <Field label="Highlights" htmlFor="highlights" hint="One per line.">
           <Textarea id="highlights" name="highlights" defaultValue={initial.highlights} className="min-h-28" />
         </Field>
-        <Field label="Image URLs" htmlFor="imageUrls" hint="One per line, in display order. Upload to your R2/S3 bucket and paste the public URL.">
-          <Textarea id="imageUrls" name="imageUrls" defaultValue={initial.imageUrls} className="min-h-24 font-mono text-xs" />
+        <Field label="Image URLs" htmlFor="imageUrls" hint="One per line. Use /products/….jpg local paths, ImgBB (i.ibb.co) links, or R2/S3 public URLs.">
+          <Textarea id="imageUrls" name="imageUrls" defaultValue={initial.imageUrls} className="min-h-24 font-mono text-xs" placeholder={"/products/glass-clear.jpg\nhttps://i.ibb.co/…/product.jpg"} />
         </Field>
         <fieldset>
           <legend className="mb-3 text-xs font-medium uppercase tracking-[0.14em] text-muted">Compatible devices</legend>

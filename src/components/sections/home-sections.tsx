@@ -1,10 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, Droplets, Fingerprint, Layers, PackageCheck, Quote, ScanLine, ShoppingBag, Sparkles, Truck, Wrench, Zap } from "lucide-react";
+import { ArrowRight, Droplets, Fingerprint, Layers, PackageCheck, ScanLine, ShoppingBag, Sparkles, Truck, Wrench, Zap } from "lucide-react";
 import { motion } from "motion/react";
 import { RevealGroup, RevealItem } from "@/components/motion/reveal";
-import { Rating, SectionHeading } from "@/components/ui/primitives";
+import { SectionHeading } from "@/components/ui/primitives";
 import { SpotlightCard } from "@/components/ui/spotlight-card";
 import { NewsletterForm } from "@/components/forms/newsletter-form";
 import { brands } from "@/config/site";
@@ -145,49 +145,6 @@ export function HowItWorks() {
               </div>
               <h3 className="mt-6 text-lg font-medium">{title}</h3>
               <p className="mt-2 text-sm leading-relaxed text-muted">{text}</p>
-            </SpotlightCard>
-          </RevealItem>
-        ))}
-      </RevealGroup>
-    </section>
-  );
-}
-
-const testimonials = [
-  { name: "Tahmid R.", device: "iPhone 17 Pro Max", text: "Honestly can't tell there's a protector on it. Dropped it on the stairs last week — glass cracked, screen perfect.", rating: 5, hue: "#7dd3fc" },
-  { name: "Nusrat J.", device: "Galaxy S25 Ultra", text: "First protector that actually works with the ultrasonic fingerprint. The install kit made it idiot-proof.", rating: 5, hue: "#a1a1aa" },
-  { name: "Arif H.", device: "iPhone 16 Pro", text: "Privacy glass is a game changer on the metro. Delivered next day in Dhaka, installed in two minutes.", rating: 4.5, hue: "#d4d4d8" },
-];
-
-export function Testimonials() {
-  return (
-    <section className="container-page py-24">
-      <SectionHeading eyebrow="Reviews" title={<>Loved by <span className="text-muted">thousands.</span></>} description={<span className="flex items-center gap-3"><Rating value={4.8} size={16} /> 4.8 average from verified buyers</span>} />
-      <RevealGroup className="grid gap-5 md:grid-cols-3" stagger={0.1}>
-        {testimonials.map((t) => (
-          <RevealItem key={t.name} className="h-full">
-            <SpotlightCard className="h-full">
-              <figure className="flex h-full flex-col justify-between gap-8 p-7">
-                <div className="space-y-5">
-                  <div className="flex items-center justify-between">
-                    <Quote size={28} className="text-accent/40" />
-                    <Rating value={t.rating} size={12} />
-                  </div>
-                  <blockquote className="text-pretty text-[15px] leading-relaxed text-fg/90">&ldquo;{t.text}&rdquo;</blockquote>
-                </div>
-                <figcaption className="flex items-center gap-3 border-t border-line pt-5">
-                  <span
-                    className="grid size-10 place-items-center rounded-full text-sm font-semibold text-black"
-                    style={{ background: `linear-gradient(135deg, ${t.hue}, #ffffff)` }}
-                  >
-                    {t.name.charAt(0)}
-                  </span>
-                  <div>
-                    <p className="text-sm font-medium">{t.name}</p>
-                    <p className="text-xs text-muted">{t.device} · Verified buyer</p>
-                  </div>
-                </figcaption>
-              </figure>
             </SpotlightCard>
           </RevealItem>
         ))}

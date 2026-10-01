@@ -4,9 +4,11 @@ import { motion, type Variants } from "motion/react";
 import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
+const ease = [0.22, 1, 0.36, 1] as const;
+
 const variants: Variants = {
-  hidden: { opacity: 0, y: 28, filter: "blur(6px)" },
-  show: { opacity: 1, y: 0, filter: "blur(0px)" },
+  hidden: { opacity: 0, y: 24 },
+  show: { opacity: 1, y: 0 },
 };
 
 type Props = {
@@ -24,9 +26,9 @@ export function Reveal({ children, className, delay = 0, once = true }: Props) {
       className={className}
       initial="hidden"
       whileInView="show"
-      viewport={{ once, margin: "-60px" }}
+      viewport={{ once, margin: "-8% 0px" }}
       variants={variants}
-      transition={{ duration: 0.6, delay, ease: [0.22, 1, 0.36, 1] }}
+      transition={{ duration: 0.7, delay, ease }}
     >
       {children}
     </motion.div>
@@ -50,11 +52,11 @@ export function RevealGroup({
       className={className}
       initial="hidden"
       whileInView="show"
-      viewport={{ once, amount: 0.15, margin: "0px 0px -8% 0px" }}
+      viewport={{ once, amount: 0.12, margin: "0px 0px -6% 0px" }}
       variants={{
         hidden: {},
         show: {
-          transition: { staggerChildren: stagger, delayChildren: 0.06 },
+          transition: { staggerChildren: stagger, delayChildren: 0.04 },
         },
       }}
     >
@@ -66,7 +68,7 @@ export function RevealGroup({
 export function RevealItem({
   children,
   className,
-  y = 36,
+  y = 28,
 }: {
   children: ReactNode;
   className?: string;
@@ -76,12 +78,11 @@ export function RevealItem({
     <motion.div
       className={cn(className)}
       variants={{
-        hidden: { opacity: 0, y, filter: "blur(4px)" },
+        hidden: { opacity: 0, y },
         show: {
           opacity: 1,
           y: 0,
-          filter: "blur(0px)",
-          transition: { duration: 0.65, ease: [0.22, 1, 0.36, 1] },
+          transition: { duration: 0.65, ease },
         },
       }}
     >

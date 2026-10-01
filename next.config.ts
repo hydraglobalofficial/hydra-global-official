@@ -16,6 +16,12 @@ const nextConfig: NextConfig = {
       // Product media bucket (Cloudflare R2 / S3). Adjust to your bucket's public hostname.
       { protocol: "https", hostname: "*.r2.dev" },
       { protocol: "https", hostname: "*.amazonaws.com" },
+      // ImgBB public hosts (admin paste / upload links).
+      { protocol: "https", hostname: "i.ibb.co" },
+      { protocol: "https", hostname: "ibb.co" },
+      { protocol: "https", hostname: "*.ibb.co" },
+      { protocol: "https", hostname: "imagebb.com" },
+      { protocol: "https", hostname: "*.imagebb.com" },
     ],
   },
   async headers() {

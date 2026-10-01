@@ -132,14 +132,17 @@ export default function AboutPage() {
         </RevealGroup>
       </section>
 
-      <section className="container-page grid gap-12 py-24 lg:grid-cols-[0.8fr_1.2fr]">
-        <div className="self-start">
+      <section className="container-page grid gap-10 py-24 lg:grid-cols-[0.85fr_1.15fr] lg:gap-14">
+        <div className="lg:sticky lg:top-[7.25rem] lg:self-start">
           <Eyebrow>Core values</Eyebrow>
           <h2 className="mt-4 text-4xl font-semibold tracking-tight text-balance md:text-5xl">
             Six principles. <span className="text-muted">Zero compromise.</span>
           </h2>
           <p className="mt-5 max-w-md text-lg text-muted">
             They shape who we hire, what we build and how we treat every customer — from a single case to a full accessories kit.
+          </p>
+          <p className="mt-8 hidden font-mono text-[11px] uppercase tracking-[0.28em] text-subtle lg:block">
+            Scroll to stack →
           </p>
         </div>
         <ValuesStack />

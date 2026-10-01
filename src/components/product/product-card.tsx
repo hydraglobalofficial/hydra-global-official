@@ -9,8 +9,8 @@ import type { ProductCardData } from "@/server/queries/catalog";
 import { ProductImage } from "./product-image";
 
 const cardVariants = {
-  hidden: { opacity: 0, y: 24, scale: 0.97 },
-  show: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] as const } },
+  hidden: { opacity: 0, y: 20 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] as const } },
 };
 
 export function ProductCard({ product, priority }: { product: ProductCardData; priority?: boolean }) {
@@ -19,7 +19,7 @@ export function ProductCard({ product, priority }: { product: ProductCardData; p
   const soldOut = product.stock <= 0;
 
   return (
-    <motion.div variants={cardVariants} whileHover={{ y: -6 }} transition={{ duration: 0.25 }}>
+    <motion.div variants={cardVariants} whileHover={{ y: -8 }} transition={{ type: "spring", stiffness: 320, damping: 24 }}>
     <Link
       href={`/product/${product.slug}`}
       className="card-premium group flex h-full flex-col overflow-hidden rounded-3xl hover:shadow-[0_30px_70px_-25px_rgba(30,64,175,0.4)]"
