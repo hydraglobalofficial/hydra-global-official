@@ -202,7 +202,7 @@ function ContactFormInner({ defaultTopic, onReset }: { defaultTopic: ContactTopi
               <button
                 type="submit"
                 disabled={pending}
-                className="group relative inline-flex h-12 w-full items-center justify-center gap-2 overflow-hidden rounded-full bg-fg px-7 text-sm font-medium text-black transition-all hover:shadow-[0_0_40px_-8px_rgba(56,189,248,0.7)] disabled:opacity-70 sm:w-auto"
+                className="group relative inline-flex h-12 w-full items-center justify-center gap-2 overflow-hidden rounded-full bg-fg px-7 text-sm font-medium text-black transition-all hover:shadow-[0_0_40px_-8px_rgba(30,64,175,0.7)] disabled:opacity-70 sm:w-auto"
               >
                 <span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-accent/40 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
                 {pending ? <Loader2 size={16} className="animate-spin" /> : null}

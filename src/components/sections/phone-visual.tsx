@@ -19,16 +19,16 @@ export function PhoneVisual() {
           <linearGradient id="pv-glass" x1="0" y1="0" x2="1" y2="1">
             <stop offset="0" stopColor="#ffffff" stopOpacity="0.28" />
             <stop offset="0.35" stopColor="#ffffff" stopOpacity="0.04" />
-            <stop offset="0.7" stopColor="#38bdf8" stopOpacity="0.08" />
+            <stop offset="0.7" stopColor="#1e40af" stopOpacity="0.08" />
             <stop offset="1" stopColor="#ffffff" stopOpacity="0.12" />
           </linearGradient>
           <linearGradient id="pv-edge" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0" stopColor="#38bdf8" />
+            <stop offset="0" stopColor="#1e40af" />
             <stop offset="1" stopColor="#e4e4e7" stopOpacity="0.5" />
           </linearGradient>
           <radialGradient id="pv-orb" cx="0.5" cy="0.45" r="0.5">
-            <stop offset="0" stopColor="#38bdf8" stopOpacity="0.55" />
-            <stop offset="1" stopColor="#38bdf8" stopOpacity="0" />
+            <stop offset="0" stopColor="#1e40af" stopOpacity="0.55" />
+            <stop offset="1" stopColor="#1e40af" stopOpacity="0" />
           </radialGradient>
         </defs>
 
@@ -38,7 +38,7 @@ export function PhoneVisual() {
           <rect x="7" y="7" width="176" height="386" rx="32" fill="url(#pv-screen)" />
           <rect x="68" y="20" width="54" height="16" rx="8" fill="#000" />
           <circle cx="95" cy="170" r="70" fill="url(#pv-orb)" />
-          <g fill="none" stroke="#38bdf8" strokeOpacity="0.5">
+          <g fill="none" stroke="#1e40af" strokeOpacity="0.5">
             <circle cx="95" cy="170" r="34" />
             <circle cx="95" cy="170" r="52" strokeOpacity="0.25" />
           </g>

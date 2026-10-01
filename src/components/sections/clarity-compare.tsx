@@ -12,13 +12,13 @@ function Scene({ damaged }: { damaged?: boolean }) {
     <svg viewBox="0 0 800 500" preserveAspectRatio="xMidYMid slice" className="h-full w-full" aria-hidden>
       <defs>
         <linearGradient id={`sky-${damaged ? "d" : "c"}`} x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stopColor="#031c26" />
-          <stop offset="0.5" stopColor="#0a0d14" />
-          <stop offset="1" stopColor="#111827" />
+          <stop offset="0" stopColor="#020617" />
+          <stop offset="0.45" stopColor="#0a1628" />
+          <stop offset="1" stopColor="#0f172a" />
         </linearGradient>
         <radialGradient id={`sun-${damaged ? "d" : "c"}`} cx="0.5" cy="0.5" r="0.5">
-          <stop offset="0" stopColor="#38bdf8" />
-          <stop offset="1" stopColor="#38bdf8" stopOpacity="0" />
+          <stop offset="0" stopColor="#1e40af" />
+          <stop offset="1" stopColor="#1e3a8a" stopOpacity="0" />
         </radialGradient>
         <filter id="dull">
           <feGaussianBlur stdDeviation="2.2" />
@@ -28,7 +28,7 @@ function Scene({ damaged }: { damaged?: boolean }) {
       <g filter={damaged ? "url(#dull)" : undefined}>
         <rect width="800" height="500" fill={`url(#sky-${damaged ? "d" : "c"})`} />
         <circle cx="560" cy="170" r="150" fill={`url(#sun-${damaged ? "d" : "c"})`} opacity="0.6" />
-        <circle cx="560" cy="170" r="54" fill="#e0f2fe" />
+        <circle cx="560" cy="170" r="54" fill="#1e3a8a" />
         <path d="M0 380 L140 270 L250 340 L380 220 L520 330 L640 260 L800 350 L800 500 L0 500 Z" fill="#0d1119" />
         <path d="M0 430 L180 340 L320 410 L470 320 L620 400 L800 360 L800 500 L0 500 Z" fill="#06060f" />
         <text

@@ -22,7 +22,7 @@ export function ProductCard({ product, priority }: { product: ProductCardData; p
     <motion.div variants={cardVariants} whileHover={{ y: -6 }} transition={{ duration: 0.25 }}>
     <Link
       href={`/product/${product.slug}`}
-      className="card-premium group flex h-full flex-col overflow-hidden rounded-3xl hover:shadow-[0_30px_70px_-25px_rgba(56,189,248,0.4)]"
+      className="card-premium group flex h-full flex-col overflow-hidden rounded-3xl hover:shadow-[0_30px_70px_-25px_rgba(30,64,175,0.4)]"
     >
       <div className="relative aspect-square overflow-hidden bg-[radial-gradient(circle_at_50%_40%,#1a1a22_0%,#08080b_72%)]">
         <div className="bg-dots pointer-events-none absolute inset-0 opacity-40 [mask-image:radial-gradient(circle_at_50%_50%,#000,transparent_70%)]" />

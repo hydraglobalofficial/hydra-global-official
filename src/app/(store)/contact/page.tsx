@@ -108,7 +108,7 @@ export default async function ContactPage({ searchParams }: PageProps<"/contact"
                 <div className="flex flex-wrap gap-3 pt-1">
                   <Link
                     href="/contact?topic=wholesale#write"
-                    className="inline-flex h-12 items-center gap-2 rounded-full bg-fg px-6 text-sm font-medium text-black transition-all hover:shadow-[0_0_40px_-8px_rgba(56,189,248,0.6)]"
+                    className="inline-flex h-12 items-center gap-2 rounded-full bg-fg px-6 text-sm font-medium text-black transition-all hover:shadow-[0_0_40px_-8px_rgba(30,64,175,0.6)]"
                   >
                     Request a quote <ArrowRight size={16} />
                   </Link>

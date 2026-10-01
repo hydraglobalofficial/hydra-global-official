@@ -16,30 +16,33 @@ export type HydraHead = {
   fromX?: number;
 };
 
-/** Center first (stays), then left + right heads slide in from the sides. */
+/**
+ * Three heads = Protection · Precision · Progression.
+ * Side clips keep full body height (minimal bottom crop) so dragons aren't cut in half.
+ */
 export const hydraHeads: HydraHead[] = [
   {
-    label: "Clarity",
-    caption: "99.9% HD transparency",
-    clip: "inset(0% 29% 16% 29%)",
-    tip: { left: 50, top: 8 },
+    label: "Protection",
+    caption: "Armor that takes the hit",
+    clip: "inset(0% 28% 2% 28%)",
+    tip: { left: 50, top: 4 },
     start: 0.06,
   },
   {
-    label: "Privacy",
-    caption: "28° side-view blackout",
-    clip: "inset(4% 55% 18% 0%)",
-    tip: { left: 14, top: 18 },
-    start: 0.38,
-    fromX: -72,
+    label: "Precision",
+    caption: "Cut to your exact device",
+    clip: "inset(0% 48% 2% 0%)",
+    tip: { left: 30, top: 17 },
+    start: 0.34,
+    fromX: -88,
   },
   {
-    label: "Impact",
-    caption: "Drop-tested 9H tempered core",
-    clip: "inset(4% 0% 18% 55%)",
-    tip: { left: 86, top: 18 },
-    start: 0.48,
-    fromX: 72,
+    label: "Progression",
+    caption: "Built for what comes next",
+    clip: "inset(0% 0% 2% 48%)",
+    tip: { left: 70, top: 17 },
+    start: 0.44,
+    fromX: 88,
   },
 ];
 
@@ -54,27 +57,25 @@ export function headRevealRange(head: HydraHead) {
 type CreatureProps = {
   progress: MotionValue<number>;
   className?: string;
-  /** Softer presentation for manifesto / watermark use. */
   ghost?: boolean;
-  /** Skip continuous float (splash prefers stillness after reveal). */
   still?: boolean;
 };
 
 /**
  * Metallic three-headed HYDRA. Progress 0→1:
- * glow → center head → side heads → full body lock-in.
+ * glow → center head → side heads (full body) → merged body at full size (no grow).
  */
 export function HydraCreature({ progress, className, ghost = false, still = false }: CreatureProps) {
-  const glowOpacity = useTransform(progress, (v) => interpolate(v, [0, 0.1, 1], [0, ghost ? 0.45 : 0.95, ghost ? 0.55 : 1]));
-  const glowScale = useTransform(progress, (v) => interpolate(v, [0, 0.22, 1], [0.45, 1, 1.12]));
+  const glowOpacity = useTransform(progress, (v) => interpolate(v, [0, 0.1, 1], [0, ghost ? 0.4 : 0.9, ghost ? 0.5 : 1]));
+  const glowScale = useTransform(progress, (v) => interpolate(v, [0, 0.22, 1], [0.45, 1, 1.08]));
   const ring = useTransform(progress, (v) => interpolate(v, [0.04, 0.4], [0.35, 1]));
   const ringOuter = useTransform(ring, (v) => v * 1.08);
   const ringMid = useTransform(ring, (v) => v * 0.92);
-  const ringOpacity = useTransform(progress, (v) => interpolate(v, [0.04, 0.18, 0.75, 1], [0, 0.7, 0.4, 0.25]));
-  const bodyOpacity = useTransform(progress, (v) => interpolate(v, [0.68, 0.86], [0, ghost ? 0.28 : 1]));
-  const bodyScale = useTransform(progress, (v) => interpolate(v, [0.68, 0.9], [0.92, 1]));
+  const ringOpacity = useTransform(progress, (v) => interpolate(v, [0.04, 0.18, 0.75, 1], [0, 0.65, 0.35, 0.22]));
+  // Appear at full size immediately — no grow-up scale.
+  const bodyOpacity = useTransform(progress, (v) => interpolate(v, [0.62, 0.72], [0, ghost ? 0.28 : 1]));
   const beam = useTransform(progress, (v) => interpolate(v, [0.75, 1], [-40, 120]));
-  const beamOpacity = useTransform(progress, (v) => interpolate(v, [0.72, 0.85, 1], [0, 0.45, 0.12]));
+  const beamOpacity = useTransform(progress, (v) => interpolate(v, [0.72, 0.85, 1], [0, 0.4, 0.1]));
 
   return (
     <motion.div
@@ -84,7 +85,7 @@ export function HydraCreature({ progress, className, ghost = false, still = fals
       transition={still || ghost ? undefined : { duration: 5.5, repeat: Infinity, ease: "easeInOut" }}
     >
       <motion.div
-        className="pointer-events-none absolute left-1/2 top-[44%] size-[95%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent/30 blur-[90px]"
+        className="pointer-events-none absolute left-1/2 top-[44%] size-[95%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#1e3a8a]/45 blur-[90px]"
         style={{ opacity: glowOpacity, scale: glowScale }}
       />
       <motion.div
@@ -93,7 +94,7 @@ export function HydraCreature({ progress, className, ghost = false, still = fals
       />
 
       <motion.div
-        className="pointer-events-none absolute left-1/2 top-[44%] size-[78%] -translate-x-1/2 -translate-y-1/2 rounded-full border border-accent/35"
+        className="pointer-events-none absolute left-1/2 top-[44%] size-[78%] -translate-x-1/2 -translate-y-1/2 rounded-full border border-[#1e40af]/40"
         style={{ opacity: ringOpacity, scale: ring }}
       />
       <motion.div
@@ -115,20 +116,20 @@ export function HydraCreature({ progress, className, ghost = false, still = fals
         <HeadLayer key={head.label} head={head} progress={progress} ghost={ghost} />
       ))}
 
-      <motion.div className="absolute inset-0" style={{ opacity: bodyOpacity, scale: bodyScale }}>
+      <motion.div className="absolute inset-0" style={{ opacity: bodyOpacity }}>
         <Image
           src={HYDRA_SRC}
           alt=""
           fill
           sizes="(min-width: 768px) 640px, 400px"
-          className={cn("object-contain", !ghost && "drop-shadow-[0_0_48px_rgba(56,189,248,0.35)]")}
+          className={cn("object-contain", !ghost && "drop-shadow-[0_0_40px_rgba(30,58,138,0.45)]")}
           priority={!ghost}
         />
       </motion.div>
 
       {!ghost && (
         <motion.div
-          className="pointer-events-none absolute inset-y-[8%] w-1/3 skew-x-12 bg-gradient-to-r from-transparent via-white/25 to-transparent blur-md"
+          className="pointer-events-none absolute inset-y-[8%] w-1/3 skew-x-12 bg-gradient-to-r from-transparent via-white/20 to-transparent blur-md"
           style={{ left: beam, opacity: beamOpacity }}
         />
       )}
@@ -137,13 +138,13 @@ export function HydraCreature({ progress, className, ghost = false, still = fals
 }
 
 function OrbitDot({ index, progress, ghost }: { index: number; progress: MotionValue<number>; ghost: boolean }) {
-  const opacity = useTransform(progress, (v) => interpolate(v, [0.2 + index * 0.04, 0.4 + index * 0.04], [0, ghost ? 0.35 : 0.75]));
+  const opacity = useTransform(progress, (v) => interpolate(v, [0.2 + index * 0.04, 0.4 + index * 0.04], [0, ghost ? 0.35 : 0.7]));
   const angle = (index / 6) * Math.PI * 2;
   const radius = ghost ? 118 : 138;
 
   return (
     <motion.span
-      className="pointer-events-none absolute left-1/2 top-[44%] size-1.5 rounded-full bg-accent shadow-[0_0_10px_var(--color-accent)]"
+      className="pointer-events-none absolute left-1/2 top-[44%] size-1.5 rounded-full bg-[#60a5fa] shadow-[0_0_10px_rgba(37,99,235,0.8)]"
       style={{
         opacity,
         x: Math.cos(angle) * radius - 3,
@@ -156,14 +157,14 @@ function OrbitDot({ index, progress, ghost }: { index: number; progress: MotionV
 }
 
 function HeadLayer({ head, progress, ghost }: { head: HydraHead; progress: MotionValue<number>; ghost: boolean }) {
-  const end = head.start + 0.22;
-  const fadeOut = ghost ? 1 : 0.9;
+  const end = head.start + 0.2;
+  const fadeOut = ghost ? 1 : 0.68;
   const opacity = useTransform(progress, (v) =>
-    interpolate(v, [head.start, end, fadeOut - 0.05, fadeOut + 0.05], [0, ghost ? 0.35 : 1, ghost ? 0.35 : 1, ghost ? 0.2 : 0]),
+    interpolate(v, [head.start, end, fadeOut - 0.04, fadeOut + 0.04], [0, ghost ? 0.35 : 1, ghost ? 0.35 : 1, ghost ? 0.2 : 0]),
   );
-  const scale = useTransform(progress, (v) => interpolate(v, [head.start, end], [head.fromX ? 0.82 : 0.72, 1]));
+  const scale = useTransform(progress, (v) => interpolate(v, [head.start, end], [1, 1]));
   const x = useTransform(progress, (v) => interpolate(v, [head.start, end], [head.fromX ?? 0, 0]));
-  const y = useTransform(progress, (v) => interpolate(v, [head.start, end], [head.fromX ? 6 : 22, 0]));
+  const y = useTransform(progress, (v) => interpolate(v, [head.start, end], [head.fromX ? 4 : 16, 0]));
 
   return (
     <motion.div

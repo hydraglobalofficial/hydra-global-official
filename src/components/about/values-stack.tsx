@@ -82,7 +82,7 @@ function ValueCard({
   const Icon = value.icon;
 
   return (
-    <div className={cn("sticky", index < total - 1 && "mb-[12vh]")} style={{ top: `calc(7rem + ${index * 1.25}rem)` }}>
+    <div className={cn(index < total - 1 && "mb-4")}>
       <motion.div className="rounded-[2rem] bg-bg" style={{ scale, transformOrigin: "50% 0%" }}>
         <article className="card-premium relative overflow-hidden rounded-[2rem] p-7 md:p-10">
           <div className={cn("pointer-events-none absolute -right-16 -top-16 size-64 rounded-full bg-gradient-to-br to-transparent blur-3xl", value.tone)} />

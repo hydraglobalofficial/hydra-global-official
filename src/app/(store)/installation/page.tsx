@@ -7,7 +7,7 @@ import { installationGuides } from "@/content/installation";
 
 export const metadata: Metadata = {
   title: "Installation Guides",
-  description: "Step-by-step installation guides for HYDRA screen protectors on iPhone and Samsung Galaxy.",
+  description: "Step-by-step installation guides for HYDRA accessories on iPhone and Samsung Galaxy.",
   alternates: { canonical: "/installation" },
 };
 

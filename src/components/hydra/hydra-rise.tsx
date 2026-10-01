@@ -1,152 +1,75 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { motion, useMotionValue, useReducedMotion, useScroll, useTransform, type MotionValue } from "motion/react";
+import { animate, motion, useInView, useMotionValue, useReducedMotion, useTransform, type MotionValue } from "motion/react";
 import { HydraCreature, headRevealRange, headTip, hydraHeads, type HydraHead } from "./hydra-creature";
 import { interpolate } from "@/lib/interpolate";
-import { cn } from "@/lib/utils";
+import { siteConfig } from "@/config/site";
 
-const chapters = [
-  {
-    eyebrow: "The legend",
-    title: (
-      <>
-        One body. <span className="text-muted">Three heads.</span>
-      </>
-    ),
-    body: "In myth, cut off one head of the Hydra and two grow back. We engineer our armor with the same relentless spirit.",
-    range: [0, 0.34],
-  },
-  {
-    eyebrow: "Every head guards something",
-    title: (
-      <>
-        Three layers of <span className="text-muted">protection.</span>
-      </>
-    ),
-    body: "Clarity, privacy and impact — each one a specialist, all of them working as one on your phone.",
-    range: [0.34, 0.68],
-  },
-  {
-    eyebrow: "Unleashed",
-    title: (
-      <>
-        Meet the <span className="text-muted">HYDRA.</span>
-      </>
-    ),
-    body: "Precision armor for iPhone and Samsung Galaxy, delivered anywhere in Bangladesh.",
-    range: [0.68, 1],
-    cta: true,
-  },
-] as const;
-
-/** Sticky scroll story: the HYDRA builds itself as the visitor scrolls. */
+/** Creature + crown labels (Protection / Precision / Progression) + short CTA. */
 export function HydraRise() {
   const ref = useRef<HTMLElement>(null);
+  const inView = useInView(ref, { once: true, margin: "-12% 0px" });
   const reduced = useReducedMotion();
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end end"] });
-  const complete = useMotionValue(1);
-  const scroll = reduced ? complete : scrollYProgress;
-  const progress = useTransform(scroll, (v) => interpolate(v, [0.03, 0.78], [0, 1]));
-  const glow = useTransform(scroll, [0, 1], [0.7, 1.2]);
-  const creatureY = useTransform(scroll, (v) => interpolate(v, [0, 1], [24, -12]));
+  const progress = useMotionValue(reduced ? 1 : 0);
+  const copyOpacity = useTransform(progress, (v) => interpolate(v, [0.55, 0.78], [0, 1]));
+  const copyY = useTransform(progress, (v) => interpolate(v, [0.55, 0.78], [18, 0]));
+
+  useEffect(() => {
+    if (reduced || !inView) return;
+    const anim = animate(progress, 1, { duration: 3.2, ease: [0.65, 0, 0.35, 1] });
+    return () => anim.stop();
+  }, [inView, progress, reduced]);
 
   return (
-    <section ref={ref} className={cn("relative", reduced ? "py-24" : "h-[340vh]")} aria-label="The HYDRA story">
-      <div className={cn("flex items-center overflow-hidden", !reduced && "sticky top-0 h-svh")}>
-        <div className="bg-grid pointer-events-none absolute inset-0 opacity-30 [mask-image:radial-gradient(ellipse_at_center,#000,transparent_70%)]" />
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_70%_45%,rgba(56,189,248,0.08),transparent_55%)]" />
-        <motion.div
-          className="pointer-events-none absolute left-1/2 top-1/2 size-[min(90vw,28rem)] -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent/[0.1] blur-[100px] sm:size-[36rem] sm:blur-[140px] md:left-[68%] md:size-[44rem]"
-          style={{ scale: glow }}
-        />
+    <section ref={ref} className="relative overflow-x-clip py-20 sm:py-24 md:py-28" aria-label="The HYDRA story">
+      <div className="bg-grid pointer-events-none absolute inset-0 opacity-30 [mask-image:radial-gradient(ellipse_at_center,#000,transparent_70%)]" />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_70%_45%,rgba(30,58,138,0.18),transparent_55%)]" />
+      <div className="pointer-events-none absolute left-1/2 top-1/2 size-[min(90vw,28rem)] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#1e3a8a]/15 blur-[100px] sm:size-[36rem] md:left-[68%] md:size-[44rem]" />
 
-        <div className="container-page relative grid w-full items-center gap-6 pt-16 sm:pt-20 md:grid-cols-[1fr_1.15fr] md:gap-12 md:pt-0">
-          <div className="relative order-2 grid min-h-[12rem] sm:min-h-[15rem] md:order-1">
-            {chapters.map((c, i) => (
-              <Chapter key={i} chapter={c} scroll={scroll} first={i === 0} last={i === chapters.length - 1} />
-            ))}
-          </div>
+      <div className="container-page relative grid w-full items-center gap-10 md:grid-cols-[1fr_1.15fr] md:gap-12">
+        <motion.div style={{ opacity: copyOpacity, y: copyY }} className="relative order-2 max-w-lg md:order-1">
+          <p className="font-mono text-[11px] uppercase tracking-[0.3em] text-accent">Unleashed</p>
+          <h2 className="mt-3 text-3xl font-semibold tracking-tight text-balance sm:text-4xl md:text-5xl">
+            Meet the <span className="text-muted">HYDRA.</span>
+          </h2>
+          <p className="mt-4 text-sm text-muted sm:text-base">
+            {siteConfig.slogan}. Accessories for iPhone and Samsung Galaxy, delivered anywhere in Bangladesh.
+          </p>
+          <Link
+            href="/shop"
+            className="mt-6 inline-flex items-center gap-2 text-sm font-medium text-fg transition hover:text-accent"
+          >
+            Shop accessories <ArrowRight size={16} />
+          </Link>
+        </motion.div>
 
-          <motion.div className="relative order-1 mx-auto w-full max-w-[18rem] sm:max-w-[24rem] md:order-2 md:max-w-[36rem]" style={{ y: creatureY }}>
-            <HydraCreature progress={progress} className="w-full" />
-            {hydraHeads.map((head) => (
-              <HeadLabel key={head.label} head={head} progress={progress} />
-            ))}
-          </motion.div>
+        <div className="relative order-1 mx-auto w-[min(100%,22rem)] overflow-visible px-1 pt-11 sm:w-full sm:max-w-[24rem] sm:pt-12 md:order-2 md:max-w-[34rem] md:pt-14">
+          <HydraCreature progress={progress} className="w-full" />
+          {hydraHeads.map((head) => (
+            <HeadLabel key={head.label} head={head} progress={progress} />
+          ))}
         </div>
-
-        {!reduced && (
-          <div className="absolute inset-x-0 bottom-8 mx-auto flex w-40 items-center gap-3">
-            <span className="text-[0.6rem] uppercase tracking-[0.3em] text-subtle">Scroll</span>
-            <div className="h-px flex-1 overflow-hidden bg-white/10">
-              <motion.div className="h-full origin-left bg-accent" style={{ scaleX: scrollYProgress }} />
-            </div>
-          </div>
-        )}
       </div>
     </section>
   );
 }
 
-function Chapter({
-  chapter,
-  scroll,
-  first,
-  last,
-}: {
-  chapter: (typeof chapters)[number];
-  scroll: MotionValue<number>;
-  first: boolean;
-  last: boolean;
-}) {
-  const [a, b] = chapter.range;
-  const input = [...(first ? [0] : [a - 0.04, a + 0.04]), ...(last ? [1] : [b - 0.04, b + 0.04])];
-  const opacityOut = [...(first ? [1] : [0, 1]), ...(last ? [1] : [1, 0])];
-  const yOut = [...(first ? [0] : [40, 0]), ...(last ? [0] : [0, -40])];
-  const opacity = useTransform(scroll, (v) => interpolate(v, input, opacityOut));
-  const y = useTransform(scroll, (v) => interpolate(v, input, yOut));
-  const pointerEvents = useTransform(opacity, (o) => (o > 0.5 ? "auto" : "none"));
-
-  return (
-    <motion.div className="col-start-1 row-start-1 self-center text-center md:text-left" style={{ opacity, y, pointerEvents }}>
-      <p className="text-xs font-medium uppercase tracking-[0.3em] text-accent">{chapter.eyebrow}</p>
-      <h2 className="mt-3 text-3xl font-semibold tracking-tight sm:mt-4 sm:text-4xl md:text-6xl">{chapter.title}</h2>
-      <p className="mx-auto mt-4 max-w-md text-sm leading-relaxed text-muted sm:mt-5 sm:text-base md:mx-0 md:text-lg">{chapter.body}</p>
-      {"cta" in chapter && (
-        <div className="mt-8 flex flex-wrap justify-center gap-3 md:justify-start">
-          <Link
-            href="/shop"
-            className="group inline-flex items-center gap-2 rounded-full bg-fg px-6 py-3 text-sm font-medium text-black transition-transform hover:scale-[1.03]"
-          >
-            Shop the armor <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
-          </Link>
-          <Link href="/about" className="inline-flex items-center rounded-full border border-line-strong px-6 py-3 text-sm text-fg transition-colors hover:bg-white/5">
-            Our story
-          </Link>
-        </div>
-      )}
-    </motion.div>
-  );
-}
-
 function HeadLabel({ head, progress }: { head: HydraHead; progress: MotionValue<number> }) {
-  const [from, to] = headRevealRange(head);
-  const opacity = useTransform(progress, [from, to], [0, 1]);
-  const y = useTransform(progress, [from, to], [8, 0]);
   const tip = headTip(head);
+  const range = headRevealRange(head);
+  const opacity = useTransform(progress, (v) => interpolate(v, [range[0], range[1]], [0, 1]));
 
   return (
     <motion.div
-      className="pointer-events-none absolute -translate-x-1/2 -translate-y-[135%]"
-      style={{ left: `${tip.left}%`, top: `${tip.top}%`, opacity, y }}
+      className="pointer-events-none absolute z-20 -translate-x-1/2 -translate-y-[110%] text-center"
+      style={{ left: `${tip.left}%`, top: `${tip.top}%`, opacity }}
     >
-      <div className="glass whitespace-nowrap rounded-full px-3 py-1 text-center shadow-[0_0_24px_rgba(56,189,248,0.15)]">
-        <p className="text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-fg md:text-xs">{head.label}</p>
-        <p className="hidden text-[0.6rem] text-muted md:block">{head.caption}</p>
-      </div>
+      <p className="whitespace-nowrap rounded-full border border-white/12 bg-black/90 px-2 py-0.5 font-mono text-[8px] font-semibold uppercase tracking-[0.16em] text-zinc-100 shadow-[0_6px_18px_rgba(0,0,0,0.55)] backdrop-blur-md sm:px-2.5 sm:py-1 sm:text-[10px] sm:tracking-[0.2em]">
+        {head.label}
+      </p>
     </motion.div>
   );
 }

@@ -28,7 +28,7 @@ export function CollectionBento({ categories }: { categories: NavigationData["ca
         eyebrow="Shop by collection"
         title={
           <>
-            Armor for every <span className="text-muted">surface.</span>
+            Armor for every <span className="text-muted">device.</span>
           </>
         }
         action={
@@ -117,9 +117,9 @@ export function ImpactStat() {
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.2 }}
         >
-          <h2 className="text-2xl font-semibold tracking-tight md:text-3xl">Devices armored by HYDRA.</h2>
+          <h2 className="text-2xl font-semibold tracking-tight md:text-3xl">Devices equipped by HYDRA.</h2>
           <p className="text-pretty text-muted">
-            Built in Dhaka for the phones Bangladesh actually carries. Every protector is laser-cut per model, quality-checked batch by batch and delivered to all 64
+            Built in Dhaka for the phones Bangladesh actually carries. Screen armor, cases, camera kits and more — cut per model, quality-checked and delivered to all 64
             districts — with real humans on support when you need them.
           </p>
         </motion.div>

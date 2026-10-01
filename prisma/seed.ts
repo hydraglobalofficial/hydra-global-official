@@ -633,15 +633,22 @@ async function main() {
   });
 
   const email = process.env.SEED_ADMIN_EMAIL ?? "admin@hydra.com.bd";
+  const username = (process.env.SEED_ADMIN_USERNAME ?? "owner").toLowerCase();
   const password = process.env.SEED_ADMIN_PASSWORD ?? "ChangeMe!2026";
   await db.user.upsert({
     where: { email },
-    update: {},
-    create: { email, name: "HYDRA Owner", role: "OWNER", passwordHash: await bcrypt.hash(password, 12) },
+    update: { username, passwordHash: await bcrypt.hash(password, 12) },
+    create: {
+      email,
+      username,
+      name: "HYDRA Owner",
+      role: "OWNER",
+      passwordHash: await bcrypt.hash(password, 12),
+    },
   });
 
   console.log(`\n✔ Seed complete — ${products.length} products, ${deviceIds.size} devices.`);
-  console.log(`  Admin: ${email}  (password from SEED_ADMIN_PASSWORD)`);
+  console.log(`  Admin: ${username} / ${email}  (password from SEED_ADMIN_PASSWORD)`);
   console.log(`  Demo verification code: HYD-DEMO-0001`);
 }
 

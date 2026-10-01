@@ -20,7 +20,7 @@ export const metadata: Metadata = {
     apple: [{ url: "/products/Hydra_Animation.png", type: "image/png" }],
     shortcut: "/products/Hydra_Animation.png",
   },
-  keywords: ["screen protector", "tempered glass", "privacy glass", "iPhone", "Samsung Galaxy", "Bangladesh", "HYDRA"],
+  keywords: ["mobile accessories", "phone case", "screen protector", "camera armor", "iPhone", "Samsung Galaxy", "Bangladesh", "HYDRA"],
   openGraph: {
     type: "website",
     siteName: siteConfig.name,

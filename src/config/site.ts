@@ -1,9 +1,10 @@
 export const siteConfig = {
   name: "HYDRA",
   legalName: "HYDRA Global Ltd.",
-  tagline: "Engineered protection for flagship phones.",
+  tagline: "Technology within reach",
+  slogan: "Technology within reach",
   description:
-    "HYDRA makes precision screen protectors, privacy glass and camera armor for iPhone and Samsung Galaxy — engineered for a perfect, bubble-free fit.",
+    "HYDRA is a mobile accessories brand for iPhone and Samsung Galaxy — screen protection, cases, camera armor and everyday essentials, engineered for a perfect fit.",
   email: "support@hydra.com.bd",
   phone: "+880 1700-000000",
   address: "Level 7, Gulshan Avenue, Dhaka 1212, Bangladesh",
@@ -24,7 +25,7 @@ export const siteConfig = {
   },
 } as const;
 
-/** Statutory details shown on the About page — replace the placeholders with your RJSC / NBR records. */
+/** Internal / partner use only — not shown on the public storefront. */
 export const companyInfo = {
   legalForm: "Private Limited Company",
   incorporated: "2023",
@@ -70,12 +71,12 @@ export const brands: Record<BrandSlug, { label: string; enum: "APPLE" | "SAMSUNG
   iphone: {
     label: "iPhone",
     enum: "APPLE",
-    blurb: "Edge-to-edge armor cut to Apple's exact tolerances, from iPhone 15 to the latest Pro Max.",
+    blurb: "Accessories cut to Apple's exact tolerances — from screen armor and cases to camera kits for iPhone 15 through the latest Pro Max.",
   },
   samsung: {
     label: "Samsung Galaxy",
     enum: "SAMSUNG",
-    blurb: "Ultrasonic-fingerprint compatible glass for Galaxy S and Z series flagships.",
+    blurb: "Ultrasonic-fingerprint friendly glass, cases and camera armor for Galaxy S and Z series flagships.",
   },
 };
 

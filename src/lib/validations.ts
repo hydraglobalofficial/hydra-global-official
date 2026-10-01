@@ -47,9 +47,39 @@ export const reviewSchema = z.object({
 });
 
 export const loginSchema = z.object({
-  email: z.email().trim().toLowerCase(),
+  /** Username or email */
+  identifier: z.string().trim().min(3, "Enter your username or email").max(120),
   password: z.string().min(8).max(200),
 });
+
+const strongPassword = z
+  .string()
+  .min(12, "Password must be at least 12 characters")
+  .max(200)
+  .regex(/[a-z]/, "Add a lowercase letter")
+  .regex(/[A-Z]/, "Add an uppercase letter")
+  .regex(/[0-9]/, "Add a number")
+  .regex(/[^A-Za-z0-9]/, "Add a symbol");
+
+export const registerSchema = z
+  .object({
+    name: z.string().trim().min(2, "Name is too short").max(80),
+    username: z
+      .string()
+      .trim()
+      .toLowerCase()
+      .min(3, "Username must be at least 3 characters")
+      .max(32)
+      .regex(/^[a-z0-9._-]+$/, "Use letters, numbers, dots, underscores or dashes"),
+    email: z.email("Enter a valid email").trim().toLowerCase(),
+    password: strongPassword,
+    confirmPassword: z.string().min(1, "Confirm your password"),
+    masterKey: z.string().min(1, "Enter the master key"),
+  })
+  .refine((v) => v.password === v.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  });
 
 export const productSchema = z.object({
   name: z.string().trim().min(2).max(120),

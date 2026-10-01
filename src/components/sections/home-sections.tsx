@@ -21,7 +21,7 @@ function DeviceArt({ slug }: { slug: "iphone" | "samsung" }) {
           <stop offset="1" stopColor={iphone ? "#10233a" : "#0c1f33"} />
         </linearGradient>
         <linearGradient id={`da-edge-${slug}`} x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stopColor="#38bdf8" stopOpacity="0.9" />
+          <stop offset="0" stopColor="#1e40af" stopOpacity="0.9" />
           <stop offset="1" stopColor="#e4e4e7" stopOpacity="0.4" />
         </linearGradient>
       </defs>

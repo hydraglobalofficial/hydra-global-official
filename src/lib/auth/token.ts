@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { SignJWT, jwtVerify } from "jose";
 
 export const SESSION_COOKIE = "hydra_admin";
@@ -18,18 +19,24 @@ function secretKey() {
 }
 
 export async function signSession(payload: SessionPayload) {
-  return new SignJWT(payload)
-    .setProtectedHeader({ alg: "HS256" })
+  return new SignJWT({ ...payload })
+    .setProtectedHeader({ alg: "HS256", typ: "JWT" })
+    .setJti(randomUUID())
     .setIssuedAt()
     .setExpirationTime(`${SESSION_TTL_SECONDS}s`)
+    .setSubject(payload.userId)
     .sign(secretKey());
 }
 
 export async function verifySession(token: string | undefined): Promise<SessionPayload | null> {
   if (!token) return null;
   try {
-    const { payload } = await jwtVerify(token, secretKey(), { algorithms: ["HS256"] });
+    const { payload } = await jwtVerify(token, secretKey(), {
+      algorithms: ["HS256"],
+      maxTokenAge: `${SESSION_TTL_SECONDS}s`,
+    });
     if (payload.role !== "OWNER" && payload.role !== "STAFF") return null;
+    if (!payload.sub || !payload.jti) return null;
     return { userId: String(payload.userId), role: payload.role, name: String(payload.name) };
   } catch {
     return null;
