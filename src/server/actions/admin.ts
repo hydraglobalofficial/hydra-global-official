@@ -110,6 +110,26 @@ export async function createCategory(formData: FormData) {
   refreshCatalog();
 }
 
+export async function updateCategory(formData: FormData) {
+  await requireAdmin();
+  const id = z.string().min(1).parse(formData.get("id"));
+  const name = z.string().trim().min(2).max(60).parse(formData.get("name"));
+  const description = String(formData.get("description") ?? "").trim() || null;
+  const current = await db.category.findUnique({ where: { id } });
+  if (!current) return;
+  const nextSlug = slugify(name);
+  const clash =
+    nextSlug !== current.slug
+      ? await db.category.findUnique({ where: { slug: nextSlug }, select: { id: true } })
+      : null;
+  await db.category.update({
+    where: { id },
+    data: { name, description, slug: clash ? current.slug : nextSlug },
+  });
+  refreshCatalog();
+  revalidatePath("/admin/catalog");
+}
+
 export async function deleteCategory(formData: FormData) {
   await requireAdmin(["OWNER"]);
   const id = String(formData.get("id"));
@@ -129,6 +149,36 @@ export async function createDevice(formData: FormData) {
     .parse(Object.fromEntries(formData));
   await db.device.create({ data: { ...data, slug: slugify(data.model), position: await db.device.count({ where: { brand: data.brand } }) } });
   refreshCatalog();
+}
+
+export async function updateDevice(formData: FormData) {
+  await requireAdmin();
+  const data = z
+    .object({
+      id: z.string().min(1),
+      brand: z.enum(["APPLE", "SAMSUNG"]),
+      series: z.string().trim().min(2).max(60),
+      model: z.string().trim().min(2).max(80),
+    })
+    .parse(Object.fromEntries(formData));
+  const current = await db.device.findUnique({ where: { id: data.id } });
+  if (!current) return;
+  const nextSlug = slugify(data.model);
+  const clash =
+    nextSlug !== current.slug
+      ? await db.device.findUnique({ where: { slug: nextSlug }, select: { id: true } })
+      : null;
+  await db.device.update({
+    where: { id: data.id },
+    data: {
+      brand: data.brand,
+      series: data.series,
+      model: data.model,
+      slug: clash ? current.slug : nextSlug,
+    },
+  });
+  refreshCatalog();
+  revalidatePath("/admin/catalog");
 }
 
 export async function deleteDevice(formData: FormData) {
