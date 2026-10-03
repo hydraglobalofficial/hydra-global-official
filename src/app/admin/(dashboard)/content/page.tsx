@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { LayoutTemplate, Pencil, Plus, Trash2 } from "lucide-react";
+import { LayoutTemplate, Megaphone, Pencil, Plus, Trash2 } from "lucide-react";
 import { AdminHeader, Card } from "@/components/admin/admin-ui";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/form";
@@ -20,15 +20,94 @@ export default async function AdminContentPage() {
   ]);
 
   const sectionUpdated = new Map(sections.map((s) => [s.key, s.updatedAt]));
+  const liveCount = announcements.filter((a) => a.active).length;
 
   return (
     <>
       <AdminHeader
         title="Content"
-        description="Announcements, editable site sections (About & home blocks), and policy pages."
+        description="Top headline marquee, editable site sections, and policy pages."
       />
 
       <section className="space-y-4">
+        <div className="flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <h2 className="flex items-center gap-2 font-medium">
+              <Megaphone size={16} className="text-accent" /> Headline marquee
+            </h2>
+            <p className="mt-1 text-sm text-muted">
+              These lines scroll across the top of every storefront page. {liveCount} live
+              {announcements.length ? ` · ${announcements.length} total` : ""}.
+            </p>
+          </div>
+        </div>
+
+        <Card className="divide-y divide-line">
+          {announcements.length === 0 && (
+            <p className="p-4 text-sm text-muted">No headlines yet — add the first one below.</p>
+          )}
+
+          {announcements.map((a, index) => (
+            <div key={a.id} className="flex flex-col gap-3 p-4 lg:flex-row lg:items-start">
+              <div className="flex size-8 shrink-0 items-center justify-center rounded-full border border-white/10 font-mono text-[10px] text-subtle">
+                {String(index + 1).padStart(2, "0")}
+              </div>
+              <form action={saveAnnouncement} className="grid flex-1 gap-3 sm:grid-cols-2 lg:grid-cols-[1.4fr_0.9fr_5rem_auto_auto] lg:items-end">
+                <input type="hidden" name="id" value={a.id} />
+                <label className="space-y-1.5 sm:col-span-2 lg:col-span-1">
+                  <span className="text-[10px] font-medium uppercase tracking-[0.14em] text-subtle">Headline text</span>
+                  <Input name="message" defaultValue={a.message} required maxLength={160} />
+                </label>
+                <label className="space-y-1.5">
+                  <span className="text-[10px] font-medium uppercase tracking-[0.14em] text-subtle">Link (optional)</span>
+                  <Input name="href" defaultValue={a.href ?? ""} placeholder="/shop" />
+                </label>
+                <label className="space-y-1.5">
+                  <span className="text-[10px] font-medium uppercase tracking-[0.14em] text-subtle">Order</span>
+                  <Input name="position" type="number" defaultValue={a.position} min={0} />
+                </label>
+                <label className="flex h-12 items-center gap-2 text-sm text-muted">
+                  <input type="checkbox" name="active" defaultChecked={a.active} className="accent-[var(--color-accent)]" />
+                  Live
+                </label>
+                <Button type="submit" size="sm" variant="secondary">
+                  Save
+                </Button>
+              </form>
+              <form action={deleteAnnouncement} className="lg:pt-6">
+                <input type="hidden" name="id" value={a.id} />
+                <button type="submit" className="rounded-full p-2 text-muted hover:text-danger" aria-label="Delete headline">
+                  <Trash2 size={14} />
+                </button>
+              </form>
+            </div>
+          ))}
+
+          <form action={saveAnnouncement} className="grid gap-3 p-4 sm:grid-cols-2 lg:grid-cols-[1.4fr_0.9fr_5rem_auto_auto] lg:items-end">
+            <label className="space-y-1.5 sm:col-span-2 lg:col-span-1">
+              <span className="text-[10px] font-medium uppercase tracking-[0.14em] text-subtle">New headline</span>
+              <Input name="message" placeholder="Free delivery across Bangladesh on orders over ৳1,500" required maxLength={160} />
+            </label>
+            <label className="space-y-1.5">
+              <span className="text-[10px] font-medium uppercase tracking-[0.14em] text-subtle">Link (optional)</span>
+              <Input name="href" placeholder="/shop" />
+            </label>
+            <label className="space-y-1.5">
+              <span className="text-[10px] font-medium uppercase tracking-[0.14em] text-subtle">Order</span>
+              <Input name="position" type="number" defaultValue={announcements.length} min={0} />
+            </label>
+            <label className="flex h-12 items-center gap-2 text-sm text-muted">
+              <input type="checkbox" name="active" defaultChecked className="accent-[var(--color-accent)]" />
+              Live
+            </label>
+            <Button type="submit" size="sm">
+              <Plus size={14} /> Add
+            </Button>
+          </form>
+        </Card>
+      </section>
+
+      <section className="mt-10 space-y-4">
         <h2 className="flex items-center gap-2 font-medium">
           <LayoutTemplate size={16} className="text-accent" /> Site sections
         </h2>
@@ -51,45 +130,6 @@ export default async function AdminContentPage() {
               <Pencil size={14} className="shrink-0 text-muted" />
             </Link>
           ))}
-        </Card>
-      </section>
-
-      <section className="mt-10 space-y-4">
-        <h2 className="font-medium">Announcement bar</h2>
-        <Card className="divide-y divide-line">
-          {announcements.map((a) => (
-            <div key={a.id} className="flex flex-col gap-3 p-4 md:flex-row md:items-center">
-              <form action={saveAnnouncement} className="grid flex-1 gap-3 md:grid-cols-[1fr_12rem_5rem_auto_auto] md:items-center">
-                <input type="hidden" name="id" value={a.id} />
-                <Input name="message" defaultValue={a.message} required />
-                <Input name="href" defaultValue={a.href ?? ""} placeholder="/shop (optional)" />
-                <Input name="position" type="number" defaultValue={a.position} min={0} aria-label="Position" />
-                <label className="flex items-center gap-2 text-sm text-muted">
-                  <input type="checkbox" name="active" defaultChecked={a.active} className="accent-[var(--color-accent)]" /> Live
-                </label>
-                <Button type="submit" size="sm" variant="secondary">
-                  Save
-                </Button>
-              </form>
-              <form action={deleteAnnouncement}>
-                <input type="hidden" name="id" value={a.id} />
-                <button type="submit" className="rounded-full p-2 text-muted hover:text-danger" aria-label="Delete announcement">
-                  <Trash2 size={14} />
-                </button>
-              </form>
-            </div>
-          ))}
-          <form action={saveAnnouncement} className="grid gap-3 p-4 md:grid-cols-[1fr_12rem_5rem_auto_auto] md:items-center">
-            <Input name="message" placeholder="New announcement…" required />
-            <Input name="href" placeholder="/shop (optional)" />
-            <Input name="position" type="number" defaultValue={announcements.length} min={0} aria-label="Position" />
-            <label className="flex items-center gap-2 text-sm text-muted">
-              <input type="checkbox" name="active" defaultChecked className="accent-[var(--color-accent)]" /> Live
-            </label>
-            <Button type="submit" size="sm">
-              <Plus size={14} /> Add
-            </Button>
-          </form>
         </Card>
       </section>
 

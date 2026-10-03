@@ -202,34 +202,42 @@ export async function moderateReview(formData: FormData) {
 
 // ─── Content ─────────────────────────────────────────────────────────────────
 
+function refreshAnnouncements() {
+  updateTag(CONTENT_TAG);
+  revalidatePath("/", "layout");
+  revalidatePath("/admin/content");
+}
+
 export async function saveAnnouncement(formData: FormData) {
   await requireAdmin();
-  const data = z
+  const parsed = z
     .object({
       id: z.string().optional(),
       message: z.string().trim().min(3).max(160),
       href: z.string().trim().max(200).optional(),
-      position: z.coerce.number().int().min(0).default(0),
+      position: z.coerce.number().int().min(0).max(999).default(0),
     })
-    .parse(Object.fromEntries(formData));
-  const href = data.href ? safeInternalHref(data.href, "") : "";
+    .safeParse(Object.fromEntries(formData));
+  if (!parsed.success) return;
+
+  const href = parsed.data.href ? safeInternalHref(parsed.data.href, "") : "";
   const payload = {
-    message: data.message,
+    message: parsed.data.message,
     href: href || null,
-    position: data.position,
+    position: parsed.data.position,
     active: formData.get("active") === "on",
   };
-  if (data.id) await db.announcement.update({ where: { id: data.id }, data: payload });
+  if (parsed.data.id) await db.announcement.update({ where: { id: parsed.data.id }, data: payload });
   else await db.announcement.create({ data: payload });
-  updateTag(CONTENT_TAG);
-  revalidatePath("/admin/content");
+  refreshAnnouncements();
 }
 
 export async function deleteAnnouncement(formData: FormData) {
   await requireAdmin();
-  await db.announcement.delete({ where: { id: String(formData.get("id")) } });
-  updateTag(CONTENT_TAG);
-  revalidatePath("/admin/content");
+  const id = String(formData.get("id") ?? "");
+  if (!id) return;
+  await db.announcement.delete({ where: { id } });
+  refreshAnnouncements();
 }
 
 export async function savePage(_prev: FormState, formData: FormData): Promise<FormState> {
