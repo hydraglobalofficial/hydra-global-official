@@ -95,12 +95,11 @@ model Product {
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
 
-  images            ProductImage[]
-  variants          ProductVariant[]
-  devices           ProductDevice[]
-  reviews           Review[]
-  orderItems        OrderItem[]
-  authenticityCodes AuthenticityCode[]
+  images     ProductImage[]
+  variants   ProductVariant[]
+  devices    ProductDevice[]
+  reviews    Review[]
+  orderItems OrderItem[]
 
   @@index([status, featured])
   @@index([categoryId])
@@ -215,8 +214,7 @@ model Order {
   updatedAt       DateTime      @updatedAt
   user            User?         @relation(fields: [userId], references: [id], onDelete: SetNull)
 
-  items             OrderItem[]
-  authenticityCodes AuthenticityCode[]
+  items OrderItem[]
 
   @@index([status, createdAt])
   @@index([email])
@@ -238,51 +236,6 @@ model OrderItem {
   variant     ProductVariant? @relation(fields: [variantId], references: [id], onDelete: SetNull)
 
   @@index([orderId])
-}
-
-// ─── Authenticity ────────────────────────────────────────────────────────────
-
-enum CodeStatus {
-  ACTIVE
-  VOID
-}
-
-model AuthenticityCode {
-  id              String      @id @default(cuid())
-  code            String      @unique
-  productId       String
-  orderId         String?
-  batch           String
-  status          CodeStatus  @default(ACTIVE)
-  verifyCount     Int         @default(0)
-  firstVerifiedAt DateTime?
-  lastVerifiedAt  DateTime?
-  createdAt       DateTime    @default(now())
-  product         Product     @relation(fields: [productId], references: [id], onDelete: Restrict)
-  order           Order?      @relation(fields: [orderId], references: [id], onDelete: SetNull)
-
-  attempts VerificationAttempt[]
-
-  @@index([batch])
-}
-
-enum VerificationResult {
-  GENUINE
-  ALREADY_VERIFIED
-  VOID
-  NOT_FOUND
-}
-
-model VerificationAttempt {
-  id        String             @id @default(cuid())
-  codeId    String?
-  input     String
-  result    VerificationResult
-  ipHash    String?
-  createdAt DateTime           @default(now())
-  code      AuthenticityCode?  @relation(fields: [codeId], references: [id], onDelete: SetNull)
-
-  @@index([createdAt])
 }
 
 // ─── Engagement & content ────────────────────────────────────────────────────
@@ -345,5 +298,14 @@ model Page {
   title     String
   summary   String?
   body      String // Lightweight markdown: "## heading", "- item", paragraphs.
+  updatedAt DateTime @updatedAt
+}
+
+/** Editable storefront section copy (About, home blocks, etc). */
+model SiteSection {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  title     String
+  data      Json
   updatedAt DateTime @updatedAt
 }

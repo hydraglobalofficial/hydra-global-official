@@ -19,7 +19,7 @@ import { HeroEmblem } from "@/components/about/hero-emblem";
 import { Manifesto } from "@/components/about/manifesto";
 import { ValuesStack } from "@/components/about/values-stack";
 import { Journey } from "@/components/about/journey";
-import { siteConfig } from "@/config/site";
+import { getAboutContent } from "@/server/queries/content";
 
 export const metadata: Metadata = {
   title: "About HYDRA",
@@ -28,38 +28,30 @@ export const metadata: Metadata = {
   alternates: { canonical: "/about" },
 };
 
-const stats = [
-  { value: "2023", label: "Founded in Dhaka" },
-  { value: "50K+", label: "Devices equipped" },
-  { value: "64", label: "Districts served" },
-  { value: "18", label: "Flagship models" },
-  { value: "4.9★", label: "Customer rating" },
-];
+const divisionIcons = [ShoppingBag, Store, Headphones];
 
-const divisions = [
-  { icon: ShoppingBag, title: "Retail & e-commerce", text: "Direct-to-customer sales through hydra.com.bd with cash on delivery nationwide.", href: "/shop" },
-  { icon: Store, title: "Wholesale & distribution", text: "Trade pricing and priority stock for retailers and repair shops across Bangladesh.", href: "/contact?topic=wholesale#write" },
-  { icon: Headphones, title: "After-sales & warranty", text: "Installation help, warranty claims and replacements handled by our own team.", href: "/support/warranty" },
-];
+export default async function AboutPage() {
+  const content = await getAboutContent();
 
-export default function AboutPage() {
   return (
     <>
-      <section className="relative overflow-hidden">
-        <div className="bg-grid pointer-events-none absolute inset-0 [mask-image:radial-gradient(ellipse_at_top,#000,transparent_75%)]" />
-        <div className="pointer-events-none absolute -top-40 left-1/4 h-96 w-[40rem] rounded-full bg-accent/15 blur-[130px]" />
-        <div className="pointer-events-none absolute right-0 top-20 h-80 w-80 rounded-full bg-white/[0.04] blur-[110px]" />
-        <div className="container-page relative grid items-center gap-12 pb-16 pt-14 md:pt-20 lg:grid-cols-[1.15fr_1fr]">
-          <Reveal className="space-y-7">
-            <Eyebrow>About HYDRA</Eyebrow>
-            <h1 className="text-5xl font-semibold tracking-tight text-balance md:text-7xl">
-              Mobile accessories <span className="text-accent">within reach.</span>
+      <section className="relative min-h-[min(92vh,52rem)] overflow-hidden">
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_70%_55%_at_15%_10%,rgba(30,64,175,0.28),transparent_55%),radial-gradient(ellipse_50%_40%_at_90%_20%,rgba(255,255,255,0.06),transparent_50%)]" />
+        <div className="bg-grid pointer-events-none absolute inset-0 opacity-60 [mask-image:radial-gradient(ellipse_at_top,#000,transparent_78%)]" />
+        <div className="bg-noise pointer-events-none absolute inset-0 opacity-[0.04]" />
+        <div className="pointer-events-none absolute -left-24 top-1/3 size-[28rem] rounded-full bg-accent/20 blur-[140px]" />
+        <div className="pointer-events-none absolute -right-16 bottom-0 size-80 rounded-full bg-white/[0.04] blur-[110px]" />
+
+        <div className="container-page relative grid min-h-[min(72vh,40rem)] items-center gap-10 pb-10 pt-16 md:gap-14 md:pt-24 lg:grid-cols-[1.15fr_1fr] lg:pb-14">
+          <Reveal className="space-y-7 md:space-y-8">
+            <Eyebrow>{content.hero.eyebrow}</Eyebrow>
+            <h1 className="text-balance text-5xl font-semibold tracking-tight md:text-7xl lg:text-[5.25rem] lg:leading-[0.95]">
+              {content.hero.title}
+              <br />
+              <span className="text-accent">{content.hero.titleAccent}</span>
             </h1>
-            <p className="max-w-xl text-lg text-pretty text-muted">
-              HYDRA designs and delivers essentials for flagship phones — screen armor, cases, camera gear and everyday accessories —
-              built on protection, precision and progression. {siteConfig.slogan}.
-            </p>
-            <div className="flex flex-wrap gap-3">
+            <p className="max-w-xl text-lg text-pretty leading-relaxed text-muted md:text-xl">{content.hero.description}</p>
+            <div className="flex flex-wrap gap-3 pt-1">
               <ButtonLink href="/shop" size="lg">
                 Shop accessories <ArrowRight size={18} />
               </ButtonLink>
@@ -71,148 +63,203 @@ export default function AboutPage() {
           <HeroEmblem />
         </div>
 
-        <div className="container-page relative pb-20">
-          <RevealGroup className="glass grid grid-cols-2 divide-line overflow-hidden rounded-3xl md:grid-cols-5 md:divide-x" stagger={0.06}>
-            {stats.map((s) => (
-              <RevealItem key={s.label} className="px-6 py-7 text-center">
-                <p className="text-3xl font-semibold tracking-tight md:text-4xl">{s.value}</p>
-                <p className="mt-1 text-xs uppercase tracking-[0.18em] text-muted">{s.label}</p>
+        <div className="container-page relative pb-20 md:pb-24">
+          <RevealGroup
+            className="card-premium grid grid-cols-2 overflow-hidden rounded-[1.75rem] md:grid-cols-5 md:divide-x md:divide-white/[0.06]"
+            stagger={0.06}
+          >
+            {content.stats.map((s) => (
+              <RevealItem
+                key={s.label}
+                className="group relative border-b border-white/[0.06] px-5 py-7 text-center last:border-b-0 odd:border-r odd:border-white/[0.06] md:border-b-0 md:border-r-0 md:px-6 md:py-9 odd:md:border-r-0"
+              >
+                <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-accent/[0.07] to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+                <p className="relative text-3xl font-semibold tracking-tight md:text-4xl">{s.value}</p>
+                <p className="relative mt-2 text-[10px] uppercase tracking-[0.2em] text-muted md:text-xs">{s.label}</p>
               </RevealItem>
             ))}
           </RevealGroup>
         </div>
       </section>
 
-      <Manifesto
-        text="We believe the most important device in your life deserves accessories that are engineered, not guessed. Genuine materials. Precise fit. Honest service. That is the HYDRA standard."
-        highlight={["engineered", "Genuine", "Precise", "Honest", "HYDRA"]}
-      />
+      <Manifesto text={content.manifesto.text} highlight={content.manifesto.highlight} />
 
-      <section className="container-page py-24">
-        <SectionHeading align="center" eyebrow="Why we exist" title={<>Mission &amp; <span className="text-muted">vision.</span></>} />
-        <RevealGroup className="grid gap-5 lg:grid-cols-2" stagger={0.12}>
-          <RevealItem className="h-full">
-            <SpotlightCard className="relative h-full overflow-hidden p-8 md:p-12">
-              <div className="pointer-events-none absolute -left-20 -top-20 size-72 rounded-full bg-accent/15 blur-3xl" />
-              <div className="relative">
-                <div className="grid size-14 place-items-center rounded-2xl border border-accent/30 bg-accent/10 text-accent">
-                  <Target size={26} strokeWidth={1.6} />
+      <section className="relative overflow-hidden py-24 md:py-28">
+        <div className="pointer-events-none absolute left-1/2 top-0 h-px w-[min(90%,48rem)] -translate-x-1/2 bg-gradient-to-r from-transparent via-accent/50 to-transparent" />
+        <div className="pointer-events-none absolute inset-x-0 top-24 h-64 bg-[radial-gradient(ellipse_at_center,rgba(30,64,175,0.12),transparent_70%)]" />
+        <div className="container-page relative">
+          <SectionHeading
+            align="center"
+            eyebrow="Why we exist"
+            title={
+              <>
+                Mission &amp; <span className="text-muted">vision.</span>
+              </>
+            }
+          />
+          <RevealGroup className="grid gap-5 lg:grid-cols-2" stagger={0.12}>
+            <RevealItem className="h-full">
+              <SpotlightCard className="relative h-full overflow-hidden p-8 md:p-12">
+                <div className="pointer-events-none absolute -left-24 -top-24 size-80 rounded-full bg-accent/20 blur-3xl" />
+                <div className="pointer-events-none absolute bottom-0 right-0 font-mono text-[7rem] font-semibold leading-none text-white/[0.03] md:text-[9rem]">
+                  01
                 </div>
-                <p className="mt-8 font-mono text-[11px] uppercase tracking-[0.3em] text-accent">Our mission</p>
-                <p className="mt-4 text-2xl font-semibold leading-snug tracking-tight text-balance md:text-3xl">
-                  To make world-class mobile accessories affordable and accessible to every smartphone owner in Bangladesh.
-                </p>
-                <ul className="mt-8 space-y-3 text-muted">
-                  <li className="flex gap-3"><span className="mt-2 size-1.5 shrink-0 rounded-full bg-accent" />Device-specific fit across protectors, cases and more</li>
-                  <li className="flex gap-3"><span className="mt-2 size-1.5 shrink-0 rounded-full bg-accent" />Verified-genuine products at honest, published prices</li>
-                  <li className="flex gap-3"><span className="mt-2 size-1.5 shrink-0 rounded-full bg-accent" />Real people on support, in all 64 districts</li>
-                </ul>
-              </div>
-            </SpotlightCard>
-          </RevealItem>
-          <RevealItem className="h-full">
-            <SpotlightCard className="relative h-full overflow-hidden p-8 md:p-12">
-              <div className="pointer-events-none absolute -right-20 -top-20 size-72 rounded-full bg-white/[0.05] blur-3xl" />
-              <div className="relative">
-                <div className="grid size-14 place-items-center rounded-2xl border border-white/15 bg-white/5 text-fg">
-                  <Eye size={26} strokeWidth={1.6} />
+                <div className="relative">
+                  <div className="grid size-14 place-items-center rounded-2xl border border-accent/35 bg-accent/12 text-accent shadow-[0_0_40px_-10px_rgba(30,64,175,0.85)]">
+                    <Target size={26} strokeWidth={1.6} />
+                  </div>
+                  <p className="mt-8 font-mono text-[11px] uppercase tracking-[0.3em] text-accent">{content.mission.title}</p>
+                  <p className="mt-4 text-2xl font-semibold leading-snug tracking-tight text-balance md:text-3xl">
+                    {content.mission.body}
+                  </p>
+                  <ul className="mt-8 space-y-3 text-muted">
+                    {content.mission.bullets.map((b) => (
+                      <li key={b} className="flex gap-3">
+                        <span className="mt-2 size-1.5 shrink-0 rounded-full bg-accent" />
+                        {b}
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-                <p className="mt-8 font-mono text-[11px] uppercase tracking-[0.3em] text-fg/70">Our vision</p>
-                <p className="mt-4 text-2xl font-semibold leading-snug tracking-tight text-balance md:text-3xl">
-                  To become South Asia&apos;s most trusted mobile accessories brand — the name people choose first, and recommend without hesitation.
-                </p>
-                <ul className="mt-8 space-y-3 text-muted">
-                  <li className="flex gap-3"><span className="mt-2 size-1.5 shrink-0 rounded-full bg-fg/60" />A partner network in every major city</li>
-                  <li className="flex gap-3"><span className="mt-2 size-1.5 shrink-0 rounded-full bg-fg/60" />Expanding categories beyond the screen</li>
-                  <li className="flex gap-3"><span className="mt-2 size-1.5 shrink-0 rounded-full bg-fg/60" />Accessories for every device you carry</li>
-                </ul>
-              </div>
-            </SpotlightCard>
-          </RevealItem>
-        </RevealGroup>
+              </SpotlightCard>
+            </RevealItem>
+            <RevealItem className="h-full">
+              <SpotlightCard className="relative h-full overflow-hidden p-8 md:p-12">
+                <div className="pointer-events-none absolute -right-24 -top-24 size-80 rounded-full bg-white/[0.06] blur-3xl" />
+                <div className="pointer-events-none absolute bottom-0 right-0 font-mono text-[7rem] font-semibold leading-none text-white/[0.03] md:text-[9rem]">
+                  02
+                </div>
+                <div className="relative">
+                  <div className="grid size-14 place-items-center rounded-2xl border border-white/15 bg-white/5 text-fg">
+                    <Eye size={26} strokeWidth={1.6} />
+                  </div>
+                  <p className="mt-8 font-mono text-[11px] uppercase tracking-[0.3em] text-fg/70">{content.vision.title}</p>
+                  <p className="mt-4 text-2xl font-semibold leading-snug tracking-tight text-balance md:text-3xl">
+                    {content.vision.body}
+                  </p>
+                  <ul className="mt-8 space-y-3 text-muted">
+                    {content.vision.bullets.map((b) => (
+                      <li key={b} className="flex gap-3">
+                        <span className="mt-2 size-1.5 shrink-0 rounded-full bg-fg/60" />
+                        {b}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </SpotlightCard>
+            </RevealItem>
+          </RevealGroup>
+        </div>
       </section>
 
       <section className="container-page grid gap-10 py-24 lg:grid-cols-[0.85fr_1.15fr] lg:gap-14">
         <div className="lg:sticky lg:top-[7.25rem] lg:self-start">
           <Eyebrow>Core values</Eyebrow>
           <h2 className="mt-4 text-4xl font-semibold tracking-tight text-balance md:text-5xl">
-            Six principles. <span className="text-muted">Zero compromise.</span>
+            {content.valuesIntro.title} <span className="text-muted">{content.valuesIntro.titleMuted}</span>
           </h2>
-          <p className="mt-5 max-w-md text-lg text-muted">
-            They shape who we hire, what we build and how we treat every customer — from a single case to a full accessories kit.
-          </p>
+          <p className="mt-5 max-w-md text-lg text-muted">{content.valuesIntro.description}</p>
           <p className="mt-8 hidden font-mono text-[11px] uppercase tracking-[0.28em] text-subtle lg:block">
             Scroll to stack →
           </p>
         </div>
-        <ValuesStack />
-      </section>
-
-      <section className="container-page py-24">
-        <SectionHeading
-          eyebrow="What we do"
-          title={<>How HYDRA <span className="text-muted">serves you.</span></>}
-          description="From a single order in Sylhet to a shop restock in Gulshan — retail, wholesale and after-sales under one roof."
-        />
-        <RevealGroup className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3" stagger={0.08}>
-          {divisions.map(({ icon: Icon, title, text, href }) => (
-            <RevealItem key={title} className="h-full">
-              <SpotlightCard className="group h-full">
-                <Link href={href} className="flex h-full flex-col p-7">
-                  <div className="flex items-start justify-between">
-                    <div className="grid size-12 place-items-center rounded-2xl border border-line bg-white/5 text-accent">
-                      <Icon size={22} strokeWidth={1.6} />
-                    </div>
-                    <ArrowUpRight size={18} className="text-subtle transition-all group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-fg" />
-                  </div>
-                  <h3 className="mt-8 text-lg font-medium">{title}</h3>
-                  <p className="mt-2 text-sm text-pretty text-muted">{text}</p>
-                </Link>
-              </SpotlightCard>
-            </RevealItem>
-          ))}
-        </RevealGroup>
+        <ValuesStack values={content.values} />
       </section>
 
       <section className="relative overflow-hidden py-24">
-        <div className="pointer-events-none absolute left-1/2 top-1/3 h-96 w-[48rem] -translate-x-1/2 rounded-full bg-accent/[0.06] blur-[140px]" />
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_0%,rgba(30,64,175,0.1),transparent_65%)]" />
         <div className="container-page relative">
-          <SectionHeading align="center" eyebrow="Our journey" title={<>From one idea to <span className="text-muted">50,000 devices.</span></>} />
-          <Journey />
+          <SectionHeading
+            eyebrow="What we do"
+            title={
+              <>
+                How HYDRA <span className="text-muted">serves you.</span>
+              </>
+            }
+            description="From a single order in Sylhet to a shop restock in Gulshan — retail, wholesale and after-sales under one roof."
+          />
+          <RevealGroup className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3" stagger={0.08}>
+            {content.divisions.map((d, i) => {
+              const Icon = divisionIcons[i % divisionIcons.length];
+              const index = String(i + 1).padStart(2, "0");
+              return (
+                <RevealItem key={d.title} className="h-full">
+                  <SpotlightCard className="group h-full">
+                    <Link href={d.href} className="relative flex h-full flex-col overflow-hidden p-7 md:p-8">
+                      <div className="pointer-events-none absolute -right-8 -top-8 font-mono text-7xl font-semibold text-white/[0.03] transition-colors group-hover:text-accent/[0.08]">
+                        {index}
+                      </div>
+                      <div className="relative flex items-start justify-between">
+                        <div className="grid size-12 place-items-center rounded-2xl border border-accent/25 bg-accent/10 text-accent transition-transform duration-500 group-hover:scale-105">
+                          <Icon size={22} strokeWidth={1.6} />
+                        </div>
+                        <ArrowUpRight
+                          size={18}
+                          className="text-subtle transition-all group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-fg"
+                        />
+                      </div>
+                      <h3 className="relative mt-10 text-lg font-medium md:text-xl">{d.title}</h3>
+                      <p className="relative mt-2 flex-1 text-sm leading-relaxed text-pretty text-muted">{d.text}</p>
+                      <span className="relative mt-6 inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.18em] text-accent opacity-0 transition-opacity group-hover:opacity-100">
+                        Explore <ArrowRight size={12} />
+                      </span>
+                    </Link>
+                  </SpotlightCard>
+                </RevealItem>
+              );
+            })}
+          </RevealGroup>
         </div>
       </section>
 
-      <section className="container-page pb-28 pt-8">
-        <RevealGroup className="grid gap-5 lg:grid-cols-2" stagger={0.1}>
-          <RevealItem className="h-full">
-            <SpotlightCard className="relative h-full overflow-hidden p-8 md:p-10">
-              <div className="pointer-events-none absolute -bottom-24 -right-16 size-72 rounded-full bg-accent/15 blur-3xl" />
-              <Briefcase className="relative text-accent" size={26} strokeWidth={1.6} />
-              <h3 className="relative mt-6 text-2xl font-semibold tracking-tight md:text-3xl">Build with HYDRA.</h3>
-              <p className="relative mt-3 max-w-md text-muted">We&apos;re growing across product, ops and customer experience in Dhaka.</p>
-              <a
-                href={`mailto:careers@hydra.com.bd?subject=${encodeURIComponent("Careers at HYDRA")}`}
-                className="relative mt-8 inline-flex items-center gap-2 rounded-full bg-fg px-6 py-3 text-sm font-medium text-black transition-transform hover:scale-[1.03]"
-              >
-                View careers <ArrowRight size={16} />
-              </a>
-            </SpotlightCard>
-          </RevealItem>
-          <RevealItem className="h-full">
-            <SpotlightCard className="relative h-full overflow-hidden p-8 md:p-10">
-              <div className="pointer-events-none absolute -bottom-24 -right-16 size-72 rounded-full bg-white/[0.05] blur-3xl" />
-              <Handshake className="relative text-accent" size={26} strokeWidth={1.6} />
-              <h3 className="relative mt-6 text-2xl font-semibold tracking-tight md:text-3xl">Partner with HYDRA.</h3>
-              <p className="relative mt-3 max-w-md text-muted">Retailers and distributors — let&apos;s grow genuine mobile accessories together.</p>
-              <Link
-                href="/contact?topic=partnership#write"
-                className="relative mt-8 inline-flex items-center gap-2 rounded-full border border-line-strong px-6 py-3 text-sm text-fg transition-colors hover:bg-white/5"
-              >
-                Start a partnership <ArrowRight size={16} />
-              </Link>
-            </SpotlightCard>
-          </RevealItem>
-        </RevealGroup>
+      <section className="relative overflow-hidden py-24 md:py-28">
+        <div className="pointer-events-none absolute left-1/2 top-1/3 h-96 w-[48rem] -translate-x-1/2 rounded-full bg-accent/[0.07] blur-[140px]" />
+        <div className="container-page relative">
+          <SectionHeading
+            align="center"
+            eyebrow="Our journey"
+            title={
+              <>
+                From one idea to <span className="text-muted">50,000 devices.</span>
+              </>
+            }
+          />
+          <Journey milestones={content.journey} />
+        </div>
+      </section>
+
+      <section className="container-page pb-28 pt-4">
+        <Reveal>
+          <div className="card-premium relative overflow-hidden rounded-[2rem] p-1">
+            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,rgba(30,64,175,0.22),transparent_45%),radial-gradient(ellipse_at_bottom_right,rgba(255,255,255,0.05),transparent_40%)]" />
+            <div className="relative grid gap-px overflow-hidden rounded-[1.85rem] bg-white/[0.04] lg:grid-cols-2">
+              <div className="relative overflow-hidden bg-black/40 p-8 md:p-10">
+                <div className="pointer-events-none absolute -bottom-24 -right-16 size-72 rounded-full bg-accent/20 blur-3xl" />
+                <Briefcase className="relative text-accent" size={26} strokeWidth={1.6} />
+                <h3 className="relative mt-6 text-2xl font-semibold tracking-tight md:text-3xl">{content.careers.title}</h3>
+                <p className="relative mt-3 max-w-md text-muted">{content.careers.text}</p>
+                <a
+                  href={`mailto:careers@hydra.com.bd?subject=${encodeURIComponent("Careers at HYDRA")}`}
+                  className="relative mt-8 inline-flex items-center gap-2 rounded-full bg-fg px-6 py-3 text-sm font-medium text-black transition-transform hover:scale-[1.03]"
+                >
+                  {content.careers.cta} <ArrowRight size={16} />
+                </a>
+              </div>
+              <div className="relative overflow-hidden bg-black/40 p-8 md:p-10">
+                <div className="pointer-events-none absolute -bottom-24 -right-16 size-72 rounded-full bg-white/[0.06] blur-3xl" />
+                <Handshake className="relative text-accent" size={26} strokeWidth={1.6} />
+                <h3 className="relative mt-6 text-2xl font-semibold tracking-tight md:text-3xl">{content.partner.title}</h3>
+                <p className="relative mt-3 max-w-md text-muted">{content.partner.text}</p>
+                <Link
+                  href="/contact?topic=partnership#write"
+                  className="relative mt-8 inline-flex items-center gap-2 rounded-full border border-line-strong px-6 py-3 text-sm text-fg transition-colors hover:border-accent/40 hover:bg-accent/10"
+                >
+                  {content.partner.cta} <ArrowRight size={16} />
+                </Link>
+              </div>
+            </div>
+          </div>
+        </Reveal>
       </section>
     </>
   );

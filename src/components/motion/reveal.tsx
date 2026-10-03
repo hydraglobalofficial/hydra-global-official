@@ -2,6 +2,7 @@
 
 import { motion, type Variants } from "motion/react";
 import type { ReactNode } from "react";
+import { useHasMounted } from "@/hooks/use-has-mounted";
 import { cn } from "@/lib/utils";
 
 const ease = [0.22, 1, 0.36, 1] as const;
@@ -21,6 +22,13 @@ type Props = {
 
 /** Fades + slides an element up into view once it scrolls into the viewport. */
 export function Reveal({ children, className, delay = 0, once = true }: Props) {
+  const mounted = useHasMounted();
+
+  // Avoid motion SSR style mismatches (opacity: 0 vs "0").
+  if (!mounted) {
+    return <div className={cn(className, "translate-y-6 opacity-0")}>{children}</div>;
+  }
+
   return (
     <motion.div
       className={className}
@@ -47,6 +55,12 @@ export function RevealGroup({
   stagger?: number;
   once?: boolean;
 }) {
+  const mounted = useHasMounted();
+
+  if (!mounted) {
+    return <div className={className}>{children}</div>;
+  }
+
   return (
     <motion.div
       className={className}
@@ -74,6 +88,12 @@ export function RevealItem({
   className?: string;
   y?: number;
 }) {
+  const mounted = useHasMounted();
+
+  if (!mounted) {
+    return <div className={cn(className, "opacity-0")} style={{ transform: `translateY(${y}px)` }}>{children}</div>;
+  }
+
   return (
     <motion.div
       className={cn(className)}

@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { motion, useTransform, type MotionValue } from "motion/react";
 import { interpolate } from "@/lib/interpolate";
@@ -66,6 +67,9 @@ type CreatureProps = {
  * glow → center head → side heads (full body) → merged body at full size (no grow).
  */
 export function HydraCreature({ progress, className, ghost = false, still = false }: CreatureProps) {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
   const glowOpacity = useTransform(progress, (v) => interpolate(v, [0, 0.1, 1], [0, ghost ? 0.4 : 0.9, ghost ? 0.5 : 1]));
   const glowScale = useTransform(progress, (v) => interpolate(v, [0, 0.22, 1], [0.45, 1, 1.08]));
   const ring = useTransform(progress, (v) => interpolate(v, [0.04, 0.4], [0.35, 1]));
@@ -76,6 +80,25 @@ export function HydraCreature({ progress, className, ghost = false, still = fals
   const bodyOpacity = useTransform(progress, (v) => interpolate(v, [0.62, 0.72], [0, ghost ? 0.28 : 1]));
   const beam = useTransform(progress, (v) => interpolate(v, [0.75, 1], [-40, 120]));
   const beamOpacity = useTransform(progress, (v) => interpolate(v, [0.72, 0.85, 1], [0, 0.4, 0.1]));
+
+  // Static shell on SSR / first paint — motion styles hydrate inconsistently.
+  if (!mounted) {
+    return (
+      <div className={cn("relative mx-auto aspect-[3930/3454] w-full", className)} aria-hidden>
+        <div className="pointer-events-none absolute left-1/2 top-[44%] size-[95%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#1e3a8a]/30 blur-[90px]" />
+        <div className="absolute inset-0 opacity-20">
+          <Image
+            src={HYDRA_SRC}
+            alt=""
+            fill
+            sizes="(min-width: 768px) 640px, 400px"
+            className="object-contain"
+            priority={!ghost}
+          />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <motion.div
@@ -141,15 +164,13 @@ function OrbitDot({ index, progress, ghost }: { index: number; progress: MotionV
   const opacity = useTransform(progress, (v) => interpolate(v, [0.2 + index * 0.04, 0.4 + index * 0.04], [0, ghost ? 0.35 : 0.7]));
   const angle = (index / 6) * Math.PI * 2;
   const radius = ghost ? 118 : 138;
+  const x = Math.round(Math.cos(angle) * radius) - 3;
+  const y = Math.round(Math.sin(angle) * radius) - 3;
 
   return (
     <motion.span
       className="pointer-events-none absolute left-1/2 top-[44%] size-1.5 rounded-full bg-[#60a5fa] shadow-[0_0_10px_rgba(37,99,235,0.8)]"
-      style={{
-        opacity,
-        x: Math.cos(angle) * radius - 3,
-        y: Math.sin(angle) * radius - 3,
-      }}
+      style={{ opacity, x, y }}
       animate={ghost ? undefined : { scale: [1, 1.55, 1] }}
       transition={ghost ? undefined : { duration: 2.4 + index * 0.2, repeat: Infinity, ease: "easeInOut", delay: index * 0.15 }}
     />

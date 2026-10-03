@@ -8,6 +8,7 @@ import { SectionHeading } from "@/components/ui/primitives";
 import { SpotlightCard } from "@/components/ui/spotlight-card";
 import { NewsletterForm } from "@/components/forms/newsletter-form";
 import { brands } from "@/config/site";
+import type { HowItWorksContent, NewsletterContent } from "@/content/site-sections";
 import type { NavigationData } from "@/server/queries/catalog";
 
 function DeviceArt({ slug }: { slug: "iphone" | "samsung" }) {
@@ -96,19 +97,21 @@ const tech = [
 
 export function TechGrid() {
   return (
-    <section className="relative py-24">
+    <section className="relative overflow-hidden py-24 md:py-28">
+      <div className="pointer-events-none absolute inset-x-0 top-1/2 h-72 -translate-y-1/2 bg-[radial-gradient(ellipse_at_center,rgba(30,64,175,0.12),transparent_65%)]" />
       <div className="container-page relative">
         <SectionHeading align="center" eyebrow="Engineering" title={<>Protection, <span className="text-muted">re-engineered.</span></>} description="Every HYDRA protector is designed in-house and quality-checked batch by batch." />
         <RevealGroup className="grid gap-4 md:grid-cols-2 lg:grid-cols-3" stagger={0.06}>
           {tech.map(({ icon: Icon, title, text, stat }) => (
             <RevealItem key={title} className="h-full">
-              <SpotlightCard className="group h-full p-8">
+              <SpotlightCard className="group h-full overflow-hidden p-8">
+                <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-accent/35 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
                 <div className="flex items-start justify-between">
                   <span className="relative grid size-12 place-items-center rounded-2xl border border-accent/25 bg-accent/10 text-accent">
                     <span className="absolute inset-0 rounded-2xl bg-accent/20 opacity-0 blur-md transition-opacity duration-500 group-hover:opacity-100" />
                     <Icon className="relative transition-transform duration-500 group-hover:scale-110" size={22} />
                   </span>
-                  <span className="font-mono text-xs text-subtle transition-colors group-hover:text-accent">{stat}</span>
+                  <span className="rounded-full border border-white/8 bg-white/[0.03] px-2.5 py-1 font-mono text-xs text-subtle transition-colors group-hover:border-accent/30 group-hover:text-accent">{stat}</span>
                 </div>
                 <h3 className="mt-8 text-lg font-medium">{title}</h3>
                 <p className="mt-2 text-sm leading-relaxed text-muted">{text}</p>
@@ -121,39 +124,51 @@ export function TechGrid() {
   );
 }
 
-const steps = [
-  { icon: ShoppingBag, title: "Pick your armor", text: "Choose your exact model and finish. Every cut is device-specific." },
-  { icon: Truck, title: "Fast delivery", text: "24–48 hours inside Dhaka, 2–4 days nationwide. Cash on delivery." },
-  { icon: Wrench, title: "Install in 2 minutes", text: "Alignment frame and clean kit included. Bubble-free, first time." },
-  { icon: PackageCheck, title: "Covered for a year", text: "12-month warranty plus one free replacement for accidental cracks." },
-];
+const stepIcons = [ShoppingBag, Truck, Wrench, PackageCheck];
 
-export function HowItWorks() {
+export function HowItWorks({ content }: { content: HowItWorksContent }) {
   return (
-    <section className="container-page py-24">
-      <SectionHeading eyebrow="How it works" title={<>From checkout to <span className="text-muted">armored.</span></>} />
-      <RevealGroup className="relative grid gap-4 md:grid-cols-2 lg:grid-cols-4" stagger={0.1}>
-        <div aria-hidden className="divider-glow absolute left-8 right-8 top-[3.25rem] hidden lg:block" />
-        {steps.map(({ icon: Icon, title, text }, i) => (
-          <RevealItem key={title} className="relative h-full">
-            <SpotlightCard className="group h-full p-7">
-              <div className="flex items-center gap-4">
-                <span className="relative grid size-12 place-items-center rounded-full border border-line-strong bg-black text-accent shadow-[0_0_0_6px_rgba(0,0,0,0.9)]">
-                  <Icon size={20} />
-                </span>
-                <span className="font-mono text-xs tracking-[0.2em] text-subtle">STEP 0{i + 1}</span>
-              </div>
-              <h3 className="mt-6 text-lg font-medium">{title}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-muted">{text}</p>
-            </SpotlightCard>
-          </RevealItem>
-        ))}
-      </RevealGroup>
+    <section className="relative overflow-hidden py-24 md:py-28">
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-accent/35 to-transparent" />
+      <div className="pointer-events-none absolute left-1/2 top-16 h-56 w-[40rem] -translate-x-1/2 rounded-full bg-accent/[0.08] blur-[120px]" />
+      <div className="container-page relative">
+        <SectionHeading
+          eyebrow={content.eyebrow}
+          title={
+            <>
+              {content.title} <span className="text-muted">{content.titleMuted}</span>
+            </>
+          }
+        />
+        <RevealGroup className="relative grid gap-4 md:grid-cols-2 lg:grid-cols-4" stagger={0.1}>
+          <div aria-hidden className="divider-glow absolute left-8 right-8 top-[3.25rem] hidden lg:block" />
+          {content.steps.map(({ title, text }, i) => {
+            const Icon = stepIcons[i % stepIcons.length];
+            return (
+              <RevealItem key={title} className="relative h-full">
+                <SpotlightCard className="group h-full overflow-hidden p-7">
+                  <div className="pointer-events-none absolute -right-6 -top-6 font-mono text-6xl font-semibold text-white/[0.03] transition-colors group-hover:text-accent/[0.1]">
+                    0{i + 1}
+                  </div>
+                  <div className="relative flex items-center gap-4">
+                    <span className="relative grid size-12 place-items-center rounded-full border border-accent/30 bg-accent/10 text-accent shadow-[0_0_0_6px_rgba(0,0,0,0.85),0_0_28px_-6px_rgba(30,64,175,0.7)] transition-transform duration-500 group-hover:scale-105">
+                      <Icon size={20} />
+                    </span>
+                    <span className="font-mono text-xs tracking-[0.2em] text-subtle">STEP 0{i + 1}</span>
+                  </div>
+                  <h3 className="relative mt-6 text-lg font-medium">{title}</h3>
+                  <p className="relative mt-2 text-sm leading-relaxed text-muted">{text}</p>
+                </SpotlightCard>
+              </RevealItem>
+            );
+          })}
+        </RevealGroup>
+      </div>
     </section>
   );
 }
 
-export function NewsletterBlock() {
+export function NewsletterBlock({ content }: { content: NewsletterContent }) {
   return (
     <section className="container-page py-16">
       <div className="card-premium relative overflow-hidden rounded-[2rem] px-6 py-16 text-center md:py-24">
@@ -171,11 +186,11 @@ export function NewsletterBlock() {
           viewport={{ once: true }}
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
         >
-          <p className="font-mono text-[11px] uppercase tracking-[0.3em] text-accent">Members only</p>
+          <p className="font-mono text-[11px] uppercase tracking-[0.3em] text-accent">{content.eyebrow}</p>
           <h2 className="text-4xl font-semibold tracking-tight text-balance md:text-5xl">
-            Join the <span className="text-accent">HYDRA</span> list.
+            {content.title} <span className="text-accent">{content.titleAccent}</span> list.
           </h2>
-          <p className="text-muted">Launch drops, member pricing and early access to new devices. No spam, ever.</p>
+          <p className="text-muted">{content.description}</p>
           <NewsletterForm className="mx-auto max-w-md text-left" />
         </motion.div>
       </div>

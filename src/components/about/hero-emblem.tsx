@@ -16,18 +16,24 @@ export function HeroEmblem() {
 
   return (
     <div className="relative mx-auto aspect-[3930/3454] w-full max-w-lg">
+      <div className="pointer-events-none absolute inset-[8%] rounded-full bg-accent/15 blur-[60px]" />
       <motion.div
-        className="absolute inset-[2%] rounded-full border border-dashed border-white/10"
+        className="absolute inset-[2%] rounded-full border border-dashed border-white/12"
         animate={{ rotate: 360 }}
         transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
       />
       <motion.div
-        className="absolute inset-[10%] rounded-full border border-accent/15"
+        className="absolute inset-[10%] rounded-full border border-accent/20"
         animate={{ rotate: -360 }}
         transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
       >
-        <span className="absolute -top-1 left-1/2 size-2 -translate-x-1/2 rounded-full bg-accent shadow-[0_0_12px_var(--color-accent)]" />
+        <span className="absolute -top-1 left-1/2 size-2 -translate-x-1/2 rounded-full bg-accent shadow-[0_0_14px_var(--color-accent)]" />
       </motion.div>
+      <motion.div
+        className="absolute inset-[22%] rounded-full border border-white/[0.06]"
+        animate={{ rotate: 360 }}
+        transition={{ duration: 90, repeat: Infinity, ease: "linear" }}
+      />
       <HydraCreature progress={progress} className="relative w-full" />
     </div>
   );

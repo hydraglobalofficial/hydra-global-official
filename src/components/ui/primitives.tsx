@@ -3,6 +3,7 @@
 import type { ReactNode } from "react";
 import { Star } from "lucide-react";
 import { motion } from "motion/react";
+import { useHasMounted } from "@/hooks/use-has-mounted";
 import { cn } from "@/lib/utils";
 
 export function Badge({
@@ -56,23 +57,35 @@ export function SectionHeading({
   align?: "left" | "center";
   action?: ReactNode;
 }) {
-  return (
-    <motion.div
-      className={cn(
-        "mb-10 flex flex-col gap-4 md:mb-14",
-        align === "center" ? "items-center text-center" : "md:flex-row md:items-end md:justify-between",
-      )}
-      initial={{ opacity: 0, y: 18 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-60px" }}
-      transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
-    >
+  const mounted = useHasMounted();
+  const layout = cn(
+    "mb-10 flex flex-col gap-4 md:mb-14",
+    align === "center" ? "items-center text-center" : "md:flex-row md:items-end md:justify-between",
+  );
+  const body = (
+    <>
       <div className={cn("max-w-2xl space-y-4", align === "center" && "mx-auto")}>
         {eyebrow && <Eyebrow>{eyebrow}</Eyebrow>}
         <h2 className="text-3xl font-semibold tracking-tight text-balance md:text-5xl">{title}</h2>
         {description && <div className="text-base text-pretty text-muted md:text-lg">{description}</div>}
       </div>
       {action}
+    </>
+  );
+
+  if (!mounted) {
+    return <div className={cn(layout, "translate-y-[18px] opacity-0")}>{body}</div>;
+  }
+
+  return (
+    <motion.div
+      className={layout}
+      initial={{ opacity: 0, y: 18 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-60px" }}
+      transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+    >
+      {body}
     </motion.div>
   );
 }
@@ -109,6 +122,16 @@ export function PageHeader({
   description?: ReactNode;
   children?: ReactNode;
 }) {
+  const mounted = useHasMounted();
+  const content = (
+    <>
+      {eyebrow && <Eyebrow>{eyebrow}</Eyebrow>}
+      <h1 className="text-4xl font-semibold tracking-tight text-balance md:text-6xl">{title}</h1>
+      {description && <div className="max-w-2xl text-lg text-pretty text-muted">{description}</div>}
+      {children}
+    </>
+  );
+
   return (
     <section className="relative overflow-hidden">
       <div className="bg-grid pointer-events-none absolute inset-0" />
@@ -116,17 +139,18 @@ export function PageHeader({
       <div className="pointer-events-none absolute -right-20 top-10 h-64 w-64 rounded-full bg-white/[0.05] blur-[100px]" />
       <div aria-hidden className="divider-glow absolute inset-x-0 bottom-0" />
       <div className="container-page relative py-16 md:py-24">
-        <motion.div
-          className="max-w-3xl space-y-5"
-          initial={{ opacity: 0, y: 22, filter: "blur(6px)" }}
-          animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-        >
-          {eyebrow && <Eyebrow>{eyebrow}</Eyebrow>}
-          <h1 className="text-4xl font-semibold tracking-tight text-balance md:text-6xl">{title}</h1>
-          {description && <div className="max-w-2xl text-lg text-pretty text-muted">{description}</div>}
-          {children}
-        </motion.div>
+        {mounted ? (
+          <motion.div
+            className="max-w-3xl space-y-5"
+            initial={{ opacity: 0, y: 22, filter: "blur(6px)" }}
+            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+          >
+            {content}
+          </motion.div>
+        ) : (
+          <div className="max-w-3xl translate-y-[22px] space-y-5 opacity-0 blur-[6px]">{content}</div>
+        )}
       </div>
     </section>
   );

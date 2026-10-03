@@ -61,12 +61,11 @@ export const ModelName = {
   Review: 'Review',
   Order: 'Order',
   OrderItem: 'OrderItem',
-  AuthenticityCode: 'AuthenticityCode',
-  VerificationAttempt: 'VerificationAttempt',
   Inquiry: 'Inquiry',
   Subscriber: 'Subscriber',
   Announcement: 'Announcement',
-  Page: 'Page'
+  Page: 'Page',
+  SiteSection: 'SiteSection'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -239,34 +238,6 @@ export const OrderItemScalarFieldEnum = {
 export type OrderItemScalarFieldEnum = (typeof OrderItemScalarFieldEnum)[keyof typeof OrderItemScalarFieldEnum]
 
 
-export const AuthenticityCodeScalarFieldEnum = {
-  id: 'id',
-  code: 'code',
-  productId: 'productId',
-  orderId: 'orderId',
-  batch: 'batch',
-  status: 'status',
-  verifyCount: 'verifyCount',
-  firstVerifiedAt: 'firstVerifiedAt',
-  lastVerifiedAt: 'lastVerifiedAt',
-  createdAt: 'createdAt'
-} as const
-
-export type AuthenticityCodeScalarFieldEnum = (typeof AuthenticityCodeScalarFieldEnum)[keyof typeof AuthenticityCodeScalarFieldEnum]
-
-
-export const VerificationAttemptScalarFieldEnum = {
-  id: 'id',
-  codeId: 'codeId',
-  input: 'input',
-  result: 'result',
-  ipHash: 'ipHash',
-  createdAt: 'createdAt'
-} as const
-
-export type VerificationAttemptScalarFieldEnum = (typeof VerificationAttemptScalarFieldEnum)[keyof typeof VerificationAttemptScalarFieldEnum]
-
-
 export const InquiryScalarFieldEnum = {
   id: 'id',
   type: 'type',
@@ -317,6 +288,17 @@ export const PageScalarFieldEnum = {
 } as const
 
 export type PageScalarFieldEnum = (typeof PageScalarFieldEnum)[keyof typeof PageScalarFieldEnum]
+
+
+export const SiteSectionScalarFieldEnum = {
+  id: 'id',
+  key: 'key',
+  title: 'title',
+  data: 'data',
+  updatedAt: 'updatedAt'
+} as const
+
+export type SiteSectionScalarFieldEnum = (typeof SiteSectionScalarFieldEnum)[keyof typeof SiteSectionScalarFieldEnum]
 
 
 export const SortOrder = {

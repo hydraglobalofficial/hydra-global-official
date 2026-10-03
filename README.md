@@ -1,6 +1,6 @@
 # HYDRA
 
-Premium screen protection for iPhone and Samsung Galaxy — a Bangladesh-focused (BDT) storefront with an authenticity-verification system and an admin console.
+Premium screen protection for iPhone and Samsung Galaxy — a Bangladesh-focused (BDT) storefront with an admin console for catalog, orders and editable site content.
 
 **Stack:** Next.js 16 (App Router, TypeScript) · PostgreSQL · Prisma 7 · Tailwind CSS v4 · Zod 4 · pnpm
 
@@ -12,7 +12,7 @@ No Docker needed. Create a free hosted Postgres database on [Neon](https://neon.
 pnpm install              # also runs `prisma generate`
 cp .env.example .env      # set DATABASE_URL, DIRECT_URL, AUTH_SECRET (32+ chars)
 pnpm db:deploy            # apply migrations
-pnpm db:seed              # demo catalog, pages, codes, orders, owner account
+pnpm db:seed              # demo catalog, pages, sections, orders, owner account
 pnpm dev                  # http://localhost:3000
 ```
 
@@ -38,7 +38,6 @@ pnpm dev                  # http://localhost:3000
 | Demo item               | Value                                              |
 | ----------------------- | -------------------------------------------------- |
 | Admin console           | `/admin` — `admin@hydra.com.bd` / `SEED_ADMIN_PASSWORD` |
-| Verification demo code  | `HYD-DEMO-0001`                                    |
 
 ### Scripts
 
@@ -56,16 +55,16 @@ pnpm dev                  # http://localhost:3000
 
 ```
 prisma/
-  schema.prisma          data model (products, devices, orders, codes, CMS…)
+  schema.prisma          data model (products, devices, orders, CMS sections…)
   migrations/            SQL migrations
   seed.ts                demo data (refuses to run in production without SEED_FORCE=1)
 public/products/         placeholder product artwork
 src/
   app/
     (store)/             public storefront: home, shop, product, installation,
-                         verify, support, about, contact, cart, checkout, legal
+                         support, about, contact, cart, checkout, legal
     admin/               login + (dashboard) console: products, orders, catalog,
-                         reviews, inquiries, verifications, content
+                         reviews, inquiries, content, team
     api/                 JSON endpoints
     sitemap.ts robots.ts
   components/
@@ -73,11 +72,11 @@ src/
     layout/ sections/    header, mega menu, footer, homepage sections
     product/ cart/ shop/ checkout/ forms/ admin/ …
   config/                site config + navigation
-  content/               static FAQ + installation guides
+  content/               static FAQ + installation guides + section defaults
   lib/                   db client, auth, validation, pricing, SEO, rate limiting
   server/
     queries/             cached read models (catalog, content)
-    actions/             server actions (checkout, verify, auth, admin…)
+    actions/             server actions (checkout, auth, admin…)
   proxy.ts               guards /admin routes
   generated/prisma/      generated Prisma client (git-ignored)
 ```

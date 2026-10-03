@@ -77,24 +77,6 @@ export const PaymentStatus = {
 export type PaymentStatus = (typeof PaymentStatus)[keyof typeof PaymentStatus]
 
 
-export const CodeStatus = {
-  ACTIVE: 'ACTIVE',
-  VOID: 'VOID'
-} as const
-
-export type CodeStatus = (typeof CodeStatus)[keyof typeof CodeStatus]
-
-
-export const VerificationResult = {
-  GENUINE: 'GENUINE',
-  ALREADY_VERIFIED: 'ALREADY_VERIFIED',
-  VOID: 'VOID',
-  NOT_FOUND: 'NOT_FOUND'
-} as const
-
-export type VerificationResult = (typeof VerificationResult)[keyof typeof VerificationResult]
-
-
 export const InquiryType = {
   CONTACT: 'CONTACT',
   SUPPORT: 'SUPPORT',

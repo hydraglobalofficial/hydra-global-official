@@ -11,13 +11,14 @@ const WORD = "HYDRA".split("");
 type Phase = "loading" | "reveal" | "brand" | "exit" | "done";
 
 /**
- * Page-load intro:
+ * Page-load intro (client-only to avoid hydration mismatch):
  * 1) loading bar
  * 2) center head → side heads (full body) → merge at full size
  * 3) HYDRA + slogan
  * 4) fade into site
  */
 export function SplashScreen() {
+  const [mounted, setMounted] = useState(false);
   const [phase, setPhase] = useState<Phase>("loading");
   const progress = useMotionValue(0);
   const load = useMotionValue(0);
@@ -25,6 +26,11 @@ export function SplashScreen() {
   const reduced = useReducedMotion();
 
   useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!mounted) return;
     if (reduced) {
       setPhase("done");
       return;
@@ -41,7 +47,7 @@ export function SplashScreen() {
     return () => {
       loadAnim.stop();
     };
-  }, [load, reduced]);
+  }, [mounted, load, reduced]);
 
   useEffect(() => {
     if (phase !== "reveal") return;
@@ -72,7 +78,8 @@ export function SplashScreen() {
     return () => clearTimeout(done);
   }, [phase]);
 
-  if (phase === "done") return null;
+  // SSR + first paint: render nothing so server/client HTML match.
+  if (!mounted || phase === "done") return null;
 
   const showCreature = phase === "reveal" || phase === "brand" || phase === "exit";
   const showBrand = phase === "brand" || phase === "exit";
@@ -106,7 +113,6 @@ export function SplashScreen() {
             className="flex w-full max-w-xs flex-col items-center"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
             transition={{ duration: 0.4 }}
           >
             <p className="font-mono text-[10px] uppercase tracking-[0.5em] text-[#93c5fd]">HYDRA</p>

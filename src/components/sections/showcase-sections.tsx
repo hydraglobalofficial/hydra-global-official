@@ -9,45 +9,45 @@ import { ProductImage } from "@/components/product/product-image";
 import { SectionHeading } from "@/components/ui/primitives";
 import { SpotlightCard } from "@/components/ui/spotlight-card";
 import { ImpactPhone3D } from "@/components/sections/impact-phone-3d";
+import type { CollectionsContent } from "@/content/site-sections";
 import { showcaseVideos, siteConfig } from "@/config/site";
 import { cn } from "@/lib/utils";
-import type { NavigationData } from "@/server/queries/catalog";
 
-const categoryArt: Record<string, string> = {
-  "tempered-glass": "/products/glass-clear.jpg",
-  "privacy-glass": "/products/glass-privacy.jpg",
-  "matte-glass": "/products/glass-matte.jpg",
-  "camera-armor": "/products/camera-lens.jpg",
-  cases: "/products/case-clear.jpg",
-};
+export function CollectionBento({ content }: { content: CollectionsContent }) {
+  const items = content.items.slice(0, 5);
 
-export function CollectionBento({ categories }: { categories: NavigationData["categories"] }) {
   return (
     <section className="container-page py-14 sm:py-20 md:py-24">
       <SectionHeading
-        eyebrow="Shop by collection"
+        eyebrow={content.eyebrow}
         title={
           <>
-            Armor for every <span className="text-muted">device.</span>
+            {content.title} <span className="text-muted">{content.titleMuted}</span>
           </>
         }
         action={
-          <Link href="/shop" className="group inline-flex items-center gap-2 text-sm text-muted transition-colors hover:text-fg">
-            All products <ArrowRight size={15} className="transition-transform group-hover:translate-x-1" />
+          <Link href={content.ctaHref} className="group inline-flex items-center gap-2 text-sm text-muted transition-colors hover:text-fg">
+            {content.ctaLabel} <ArrowRight size={15} className="transition-transform group-hover:translate-x-1" />
           </Link>
         }
       />
       <RevealGroup className="grid auto-rows-[13rem] gap-3 sm:auto-rows-[15rem] sm:gap-4 md:grid-cols-4 md:auto-rows-[17rem]" stagger={0.08}>
-        {categories.slice(0, 5).map((c, i) => {
+        {items.map((c, i) => {
           const hero = i === 0;
+          const index = String(i + 1).padStart(2, "0");
           return (
-            <RevealItem key={c.id} className={cn("h-full min-w-0", hero && "md:col-span-2 md:row-span-2")}>
+            <RevealItem key={`${c.slug}-${i}`} className={cn("h-full min-w-0", hero && "md:col-span-2 md:row-span-2")}>
               <SpotlightCard className="group h-full overflow-hidden">
                 <Link href={`/shop?category=${c.slug}`} className="relative flex h-full flex-col justify-end p-4 sm:p-6 md:p-8">
-                  {categoryArt[c.slug] && (
-                    <div className={cn("absolute inset-x-0 top-0 transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:-translate-y-1 group-hover:scale-[1.03]", hero ? "bottom-20 sm:bottom-24" : "bottom-14 sm:bottom-16")}>
+                  {c.image && (
+                    <div
+                      className={cn(
+                        "absolute inset-x-0 top-0 transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:-translate-y-1 group-hover:scale-[1.03]",
+                        hero ? "bottom-20 sm:bottom-24" : "bottom-14 sm:bottom-16",
+                      )}
+                    >
                       <ProductImage
-                        src={categoryArt[c.slug]}
+                        src={c.image}
                         alt=""
                         fill
                         sizes={hero ? "(min-width: 768px) 50vw, 100vw" : "(min-width: 768px) 25vw, 100vw"}
@@ -58,9 +58,13 @@ export function CollectionBento({ categories }: { categories: NavigationData["ca
                   <div className="pointer-events-none absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black via-black/75 to-transparent" />
                   <div className="relative flex items-end justify-between gap-3 sm:gap-4">
                     <div className="min-w-0">
-                      <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-subtle">0{i + 1}</p>
-                      <h3 className={cn("mt-1.5 font-semibold tracking-tight sm:mt-2", hero ? "text-3xl sm:text-4xl md:text-5xl" : "text-xl sm:text-2xl")}>{c.name}</h3>
-                      {hero && c.description && <p className="mt-2 hidden max-w-sm text-sm text-muted sm:mt-3 sm:block">{c.description}</p>}
+                      <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-subtle">{index}</p>
+                      <h3 className={cn("mt-1.5 font-semibold tracking-tight sm:mt-2", hero ? "text-3xl sm:text-4xl md:text-5xl" : "text-xl sm:text-2xl")}>
+                        {c.name}
+                      </h3>
+                      {hero && c.description ? (
+                        <p className="mt-2 hidden max-w-sm text-sm text-muted sm:mt-3 sm:block">{c.description}</p>
+                      ) : null}
                     </div>
                     <span className="grid size-9 shrink-0 place-items-center rounded-full border border-line-strong bg-white/5 transition-colors duration-300 group-hover:border-fg/40 group-hover:bg-fg group-hover:text-bg sm:size-10">
                       <ArrowUpRight size={16} />
@@ -96,10 +100,13 @@ function CountUp({ to, className }: { to: number; className?: string }) {
 
 export function ImpactStat() {
   return (
-    <section className="relative overflow-hidden py-28">
+    <section className="relative overflow-hidden py-28 md:py-36">
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_70%_60%_at_50%_40%,rgba(30,64,175,0.18),transparent_65%)]" />
+      <div className="bg-grid pointer-events-none absolute inset-0 opacity-40 [mask-image:radial-gradient(ellipse_at_center,#000,transparent_70%)]" />
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-accent/40 to-transparent" />
       <div className="container-page relative text-center">
         <motion.p
-          className="font-mono text-[11px] uppercase tracking-[0.3em] text-subtle"
+          className="font-mono text-[11px] uppercase tracking-[0.3em] text-accent"
           initial={{ opacity: 0, y: 10 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -107,7 +114,7 @@ export function ImpactStat() {
           Protected across Bangladesh
         </motion.p>
         <p className="mt-4 text-[clamp(4rem,15vw,12rem)] font-semibold leading-none tracking-[-0.06em]">
-          <CountUp to={50000} className="text-fg tabular-nums" />
+          <CountUp to={50000} className="bg-gradient-to-b from-white via-fg to-white/55 bg-clip-text text-transparent tabular-nums" />
           <span className="text-muted">+</span>
         </p>
         <motion.div

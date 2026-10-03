@@ -1,8 +1,13 @@
 import "dotenv/config";
 import bcrypt from "bcryptjs";
-import { randomInt } from "node:crypto";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient, type DeviceBrand } from "../src/generated/prisma/client";
+import {
+  defaultAboutContent,
+  defaultCollectionsContent,
+  defaultHowItWorksContent,
+  defaultNewsletterContent,
+} from "../src/content/site-sections";
 
 if (process.env.NODE_ENV === "production" && process.env.SEED_FORCE !== "1") {
   console.error("Refusing to reset a production database. Set SEED_FORCE=1 if you really mean it.");
@@ -437,8 +442,8 @@ All orders are subject to availability and confirmation. We may cancel orders wi
 ## Pricing
 Prices are listed in Bangladeshi Taka (BDT) and include applicable VAT. Shipping fees are shown at checkout.
 
-## Authenticity
-HYDRA products are sold only through hydra.com.bd and authorized resellers. Tampering with or reproducing HYDRA authenticity codes or packaging is prohibited.
+## Authorized sales
+HYDRA products are sold only through hydra.com.bd and authorized resellers.
 
 ## Liability
 HYDRA protectors reduce the risk of screen damage but cannot guarantee protection against every impact. Our liability is limited to the purchase price of the product.`,
@@ -473,7 +478,7 @@ Unopened products may be returned within 7 days of delivery for a full refund.
 Defective products are replaced free of charge within the 12-month warranty period. Accidental cracks within 30 days qualify for one free replacement.
 
 ## Condition
-Returned items must include original packaging and the authenticity label. Products with scratched-off codes are eligible for replacement only.
+Returned items must include original packaging and tags in sellable condition.
 
 ## Refund method
 Refunds are processed within 5 business days to your original payment method or bKash.`,
@@ -489,16 +494,9 @@ const announcements = [
 
 // ─── Run ─────────────────────────────────────────────────────────────────────
 
-function randomCode() {
-  const alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
-  return "HYD" + Array.from({ length: 9 }, () => alphabet[randomInt(alphabet.length)]).join("");
-}
-
 async function main() {
   console.log("Resetting data…");
   await db.$transaction([
-    db.verificationAttempt.deleteMany(),
-    db.authenticityCode.deleteMany(),
     db.orderItem.deleteMany(),
     db.order.deleteMany(),
     db.review.deleteMany(),
@@ -512,6 +510,7 @@ async function main() {
     db.subscriber.deleteMany(),
     db.announcement.deleteMany(),
     db.page.deleteMany(),
+    db.siteSection.deleteMany(),
   ]);
 
   console.log("Seeding taxonomy…");
@@ -588,11 +587,13 @@ async function main() {
   console.log("Seeding content…");
   await db.announcement.createMany({ data: announcements.map((a, i) => ({ ...a, position: i })) });
   await db.page.createMany({ data: pages });
-
-  console.log("Seeding authenticity codes…");
-  await db.authenticityCode.create({ data: { code: "HYDDEMO0001", productId: productIds[0], batch: "DEMO" } });
-  await db.authenticityCode.createMany({
-    data: Array.from({ length: 25 }, (_, i) => ({ code: randomCode(), productId: productIds[i % 4], batch: "B260901" })),
+  await db.siteSection.createMany({
+    data: [
+      { key: "about", title: "About page", data: defaultAboutContent },
+      { key: "home.collections", title: "Home · Collections", data: defaultCollectionsContent },
+      { key: "home.howItWorks", title: "Home · How it works", data: defaultHowItWorksContent },
+      { key: "home.newsletter", title: "Home · Newsletter", data: defaultNewsletterContent },
+    ],
   });
 
   console.log("Seeding sample orders & inquiries…");

@@ -1,6 +1,5 @@
 "use server";
 
-import { randomInt } from "node:crypto";
 import { redirect } from "next/navigation";
 import { revalidatePath, updateTag } from "next/cache";
 import { z } from "zod";
@@ -10,6 +9,12 @@ import { invalid, productSchema, type FormState } from "@/lib/validations";
 import { slugify } from "@/lib/utils";
 import { CATALOG_TAG, CONTENT_TAG } from "@/server/queries/catalog";
 import { Prisma } from "@/generated/prisma/client";
+import type {
+  AboutContent,
+  CollectionsContent,
+  HowItWorksContent,
+  NewsletterContent,
+} from "@/content/site-sections";
 
 const lines = (value: string) =>
   value
@@ -188,45 +193,6 @@ export async function moderateReview(formData: FormData) {
   refreshCatalog(product.slug);
 }
 
-// ─── Authenticity codes ──────────────────────────────────────────────────────
-
-const CODE_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; // no 0/O/1/I ambiguity
-
-function generateCode() {
-  let s = "HYD";
-  for (let i = 0; i < 9; i++) s += CODE_ALPHABET[randomInt(CODE_ALPHABET.length)];
-  return s;
-}
-
-export async function generateCodes(_prev: FormState, formData: FormData): Promise<FormState> {
-  await requireAdmin();
-  const parsed = z
-    .object({
-      productId: z.string().min(1, "Choose a product"),
-      batch: z.string().trim().min(2).max(40),
-      quantity: z.coerce.number().int().min(1).max(5000),
-    })
-    .safeParse(Object.fromEntries(formData));
-  if (!parsed.success) return invalid(parsed.error);
-
-  const { productId, batch, quantity } = parsed.data;
-  const codes = new Set<string>();
-  while (codes.size < quantity) codes.add(generateCode());
-
-  const result = await db.authenticityCode.createMany({
-    data: [...codes].map((code) => ({ code, productId, batch })),
-    skipDuplicates: true,
-  });
-  revalidatePath("/admin/verifications");
-  return { status: "success", message: `Generated ${result.count} codes in batch “${batch}”. Export them from the table below.` };
-}
-
-export async function voidCode(formData: FormData) {
-  await requireAdmin();
-  await db.authenticityCode.update({ where: { id: String(formData.get("id")) }, data: { status: "VOID" } });
-  revalidatePath("/admin/verifications");
-}
-
 // ─── Content ─────────────────────────────────────────────────────────────────
 
 export async function saveAnnouncement(formData: FormData) {
@@ -269,4 +235,214 @@ export async function savePage(_prev: FormState, formData: FormData): Promise<Fo
   await db.page.update({ where: { slug }, data: { ...rest, summary: summary || null } });
   revalidatePath("/", "layout");
   return { status: "success", message: "Page published." };
+}
+
+function linesFrom(formData: FormData, name: string) {
+  return formData
+    .getAll(name)
+    .map((v) => String(v).trim())
+    .filter(Boolean);
+}
+
+function pairsFrom(formData: FormData, a: string, b: string) {
+  const left = formData.getAll(a).map(String);
+  const right = formData.getAll(b).map(String);
+  return left
+    .map((value, i) => ({ value: value.trim(), label: (right[i] ?? "").trim() }))
+    .filter((row) => row.value && row.label);
+}
+
+export async function saveAboutSection(_prev: FormState, formData: FormData): Promise<FormState> {
+  await requireAdmin();
+
+  const stats = pairsFrom(formData, "statValue", "statLabel");
+  const missionBullets = linesFrom(formData, "missionBullet");
+  const visionBullets = linesFrom(formData, "visionBullet");
+  const highlights = String(formData.get("manifestoHighlights") ?? "")
+    .split("\n")
+    .map((l) => l.trim())
+    .filter(Boolean);
+
+  const valueTitles = formData.getAll("valueTitle").map(String);
+  const valueKeywords = formData.getAll("valueKeyword").map(String);
+  const valueTexts = formData.getAll("valueText").map(String);
+  const values = valueTitles
+    .map((title, i) => ({
+      title: title.trim(),
+      keyword: (valueKeywords[i] ?? "").trim(),
+      text: (valueTexts[i] ?? "").trim(),
+    }))
+    .filter((v) => v.title && v.keyword && v.text);
+
+  const divisionTitles = formData.getAll("divisionTitle").map(String);
+  const divisionTexts = formData.getAll("divisionText").map(String);
+  const divisionHrefs = formData.getAll("divisionHref").map(String);
+  const divisions = divisionTitles
+    .map((title, i) => ({
+      title: title.trim(),
+      text: (divisionTexts[i] ?? "").trim(),
+      href: (divisionHrefs[i] ?? "").trim(),
+    }))
+    .filter((d) => d.title && d.text && d.href);
+
+  const journeyYears = formData.getAll("journeyYear").map(String);
+  const journeyTitles = formData.getAll("journeyTitle").map(String);
+  const journeyTexts = formData.getAll("journeyText").map(String);
+  const journeyFuture = formData.getAll("journeyFuture").map(String);
+  const journey = journeyYears
+    .map((year, i) => ({
+      year: year.trim(),
+      title: (journeyTitles[i] ?? "").trim(),
+      text: (journeyTexts[i] ?? "").trim(),
+      ...(journeyFuture[i] === "yes" ? { future: true as const } : {}),
+    }))
+    .filter((j) => j.year && j.title && j.text);
+
+  const data: AboutContent = {
+    hero: {
+      eyebrow: String(formData.get("heroEyebrow") ?? "").trim(),
+      title: String(formData.get("heroTitle") ?? "").trim(),
+      titleAccent: String(formData.get("heroTitleAccent") ?? "").trim(),
+      description: String(formData.get("heroDescription") ?? "").trim(),
+    },
+    stats,
+    manifesto: {
+      text: String(formData.get("manifestoText") ?? "").trim(),
+      highlight: highlights,
+    },
+    mission: {
+      title: String(formData.get("missionTitle") ?? "").trim(),
+      body: String(formData.get("missionBody") ?? "").trim(),
+      bullets: missionBullets,
+    },
+    vision: {
+      title: String(formData.get("visionTitle") ?? "").trim(),
+      body: String(formData.get("visionBody") ?? "").trim(),
+      bullets: visionBullets,
+    },
+    valuesIntro: {
+      title: String(formData.get("valuesTitle") ?? "").trim(),
+      titleMuted: String(formData.get("valuesTitleMuted") ?? "").trim(),
+      description: String(formData.get("valuesDescription") ?? "").trim(),
+    },
+    values,
+    divisions,
+    journey,
+    careers: {
+      title: String(formData.get("careersTitle") ?? "").trim(),
+      text: String(formData.get("careersText") ?? "").trim(),
+      cta: String(formData.get("careersCta") ?? "").trim(),
+    },
+    partner: {
+      title: String(formData.get("partnerTitle") ?? "").trim(),
+      text: String(formData.get("partnerText") ?? "").trim(),
+      cta: String(formData.get("partnerCta") ?? "").trim(),
+    },
+  };
+
+  if (!data.hero.title || !data.manifesto.text || values.length === 0) {
+    return { status: "error", message: "Hero, manifesto and at least one value are required." };
+  }
+
+  await db.siteSection.upsert({
+    where: { key: "about" },
+    create: { key: "about", title: "About page", data },
+    update: { data, title: "About page" },
+  });
+  updateTag(CONTENT_TAG);
+  revalidatePath("/about");
+  revalidatePath("/admin/content");
+  return { status: "success", message: "About page published." };
+}
+
+export async function saveHowItWorksSection(_prev: FormState, formData: FormData): Promise<FormState> {
+  await requireAdmin();
+  const titles = formData.getAll("stepTitle").map(String);
+  const texts = formData.getAll("stepText").map(String);
+  const steps = titles
+    .map((title, i) => ({ title: title.trim(), text: (texts[i] ?? "").trim() }))
+    .filter((s) => s.title && s.text);
+
+  const data: HowItWorksContent = {
+    eyebrow: String(formData.get("eyebrow") ?? "").trim(),
+    title: String(formData.get("title") ?? "").trim(),
+    titleMuted: String(formData.get("titleMuted") ?? "").trim(),
+    steps,
+  };
+  if (!data.title || steps.length === 0) {
+    return { status: "error", message: "Title and at least one step are required." };
+  }
+
+  await db.siteSection.upsert({
+    where: { key: "home.howItWorks" },
+    create: { key: "home.howItWorks", title: "Home · How it works", data },
+    update: { data, title: "Home · How it works" },
+  });
+  updateTag(CONTENT_TAG);
+  revalidatePath("/");
+  revalidatePath("/admin/content");
+  return { status: "success", message: "How it works published." };
+}
+
+export async function saveNewsletterSection(_prev: FormState, formData: FormData): Promise<FormState> {
+  await requireAdmin();
+  const data: NewsletterContent = {
+    eyebrow: String(formData.get("eyebrow") ?? "").trim(),
+    title: String(formData.get("title") ?? "").trim(),
+    titleAccent: String(formData.get("titleAccent") ?? "").trim(),
+    description: String(formData.get("description") ?? "").trim(),
+  };
+  if (!data.title || !data.description) {
+    return { status: "error", message: "Title and description are required." };
+  }
+
+  await db.siteSection.upsert({
+    where: { key: "home.newsletter" },
+    create: { key: "home.newsletter", title: "Home · Newsletter", data },
+    update: { data, title: "Home · Newsletter" },
+  });
+  updateTag(CONTENT_TAG);
+  revalidatePath("/");
+  revalidatePath("/admin/content");
+  return { status: "success", message: "Newsletter block published." };
+}
+
+export async function saveCollectionsSection(_prev: FormState, formData: FormData): Promise<FormState> {
+  await requireAdmin();
+
+  const names = formData.getAll("itemName").map(String);
+  const slugs = formData.getAll("itemSlug").map(String);
+  const descriptions = formData.getAll("itemDescription").map(String);
+  const images = formData.getAll("itemImage").map(String);
+  const items = names
+    .map((name, i) => ({
+      name: name.trim(),
+      slug: (slugs[i] ?? "").trim(),
+      description: (descriptions[i] ?? "").trim(),
+      image: (images[i] ?? "").trim(),
+    }))
+    .filter((item) => item.name && item.slug && item.image);
+
+  const data: CollectionsContent = {
+    eyebrow: String(formData.get("eyebrow") ?? "").trim(),
+    title: String(formData.get("title") ?? "").trim(),
+    titleMuted: String(formData.get("titleMuted") ?? "").trim(),
+    ctaLabel: String(formData.get("ctaLabel") ?? "").trim(),
+    ctaHref: String(formData.get("ctaHref") ?? "").trim(),
+    items,
+  };
+
+  if (!data.title || !data.ctaHref || items.length === 0) {
+    return { status: "error", message: "Title, CTA link, and at least one collection card are required." };
+  }
+
+  await db.siteSection.upsert({
+    where: { key: "home.collections" },
+    create: { key: "home.collections", title: "Home · Collections", data },
+    update: { data, title: "Home · Collections" },
+  });
+  updateTag(CONTENT_TAG);
+  revalidatePath("/");
+  revalidatePath("/admin/content");
+  return { status: "success", message: "Collections section published." };
 }

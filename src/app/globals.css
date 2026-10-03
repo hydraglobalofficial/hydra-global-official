@@ -175,6 +175,36 @@
   }
 }
 
+@utility admin-card {
+  border: 1px solid transparent;
+  background:
+    linear-gradient(180deg, rgb(18 20 30 / 0.94), rgb(6 8 14 / 0.94)) padding-box,
+    linear-gradient(155deg, rgb(255 255 255 / 0.16), rgb(30 64 175 / 0.22) 42%, rgb(255 255 255 / 0.06)) border-box;
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.07),
+    0 28px 70px -36px rgb(0 0 0 / 0.95);
+}
+
+@utility admin-aurora {
+  animation: admin-aurora 18s ease-in-out infinite;
+}
+
+@utility admin-aurora-delay {
+  animation: admin-aurora 24s ease-in-out infinite reverse;
+}
+
+@keyframes admin-aurora {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+    opacity: 0.55;
+  }
+  50% {
+    transform: translate3d(4vw, 3vh, 0) scale(1.15);
+    opacity: 0.9;
+  }
+}
+
 /* Layered premium surface: soft top highlight, gradient hairline border, inner glow. */
 @utility card-premium {
   position: relative;

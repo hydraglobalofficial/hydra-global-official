@@ -92,16 +92,6 @@ export type Order = Prisma.OrderModel
  */
 export type OrderItem = Prisma.OrderItemModel
 /**
- * Model AuthenticityCode
- * 
- */
-export type AuthenticityCode = Prisma.AuthenticityCodeModel
-/**
- * Model VerificationAttempt
- * 
- */
-export type VerificationAttempt = Prisma.VerificationAttemptModel
-/**
  * Model Inquiry
  * 
  */
@@ -121,3 +111,8 @@ export type Announcement = Prisma.AnnouncementModel
  * 
  */
 export type Page = Prisma.PageModel
+/**
+ * Model SiteSection
+ * * Editable storefront section copy (About, home blocks, etc).
+ */
+export type SiteSection = Prisma.SiteSectionModel

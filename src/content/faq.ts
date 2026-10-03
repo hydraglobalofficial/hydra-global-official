@@ -23,14 +23,6 @@ export const faqGroups: FaqGroup[] = [
     ],
   },
   {
-    id: "authenticity",
-    title: "Authenticity",
-    items: [
-      { question: "How do I know my HYDRA is genuine?", answer: "Buy only from hydra.com.bd or an authorised HYDRA retailer. Genuine products come in sealed packaging with a unique authenticity code on every box." },
-      { question: "I think I received a counterfeit. What should I do?", answer: "Contact support with your order number and a photo of the packaging. We'll check it against our records and replace anything that isn't genuine." },
-    ],
-  },
-  {
     id: "warranty",
     title: "Warranty & Returns",
     items: [

@@ -7,7 +7,7 @@ import { JsonLd, faqJsonLd } from "@/lib/seo";
 
 export const metadata: Metadata = {
   title: "Frequently Asked Questions",
-  description: "Answers about HYDRA delivery, payment, compatibility, authenticity, warranty and returns.",
+  description: "Answers about HYDRA delivery, payment, compatibility, warranty and returns.",
   alternates: { canonical: "/support/faq" },
 };
 

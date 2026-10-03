@@ -32,11 +32,6 @@ export function slugify(input: string) {
     .replace(/^-+|-+$/g, "");
 }
 
-/** HYDXXXXXXXXX → HYD-XXXX-XXXXX for display and printing. */
-export function formatCode(code: string) {
-  return code.replace(/^(.{3})(.{4})(.+)$/, "$1-$2-$3");
-}
-
 /** Public origin: explicit env first, then Vercel's production domain, then local dev. */
 export function siteUrl() {
   if (process.env.NEXT_PUBLIC_SITE_URL) return process.env.NEXT_PUBLIC_SITE_URL;

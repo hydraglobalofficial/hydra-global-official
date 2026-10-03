@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef } from "react";
-import { BadgeCheck, Cpu, HeartHandshake, Leaf, Lightbulb, Scale } from "lucide-react";
+import { BadgeCheck, Cpu, HeartHandshake, Leaf, Lightbulb, Scale, type LucideIcon } from "lucide-react";
 import {
   motion,
   useReducedMotion,
@@ -9,54 +9,29 @@ import {
   useTransform,
   type MotionValue,
 } from "motion/react";
+import type { AboutContent } from "@/content/site-sections";
 import { interpolate } from "@/lib/interpolate";
 import { cn } from "@/lib/utils";
 
-const values = [
-  {
-    icon: Cpu,
-    title: "Engineering first",
-    keyword: "Precision",
-    text: "Every product starts in CAD against real device scans — never a generic template. If it isn't cut to ±0.05 mm, it doesn't ship.",
-  },
-  {
-    icon: BadgeCheck,
-    title: "Radical authenticity",
-    keyword: "Genuine",
-    text: "Sealed packaging and a unique authenticity code on every box. What we say is inside is exactly what you get.",
-  },
-  {
-    icon: HeartHandshake,
-    title: "Customer obsessed",
-    keyword: "People",
-    text: "A local team that answers personally, a 12-month warranty, and replacements dispatched within 24 hours.",
-  },
-  {
-    icon: Scale,
-    title: "Integrity always",
-    keyword: "Trust",
-    text: "Honest pricing, VAT-compliant invoicing and no inflated claims. We would rather lose a sale than a customer's trust.",
-  },
-  {
-    icon: Lightbulb,
-    title: "Relentless innovation",
-    keyword: "Progress",
-    text: "Like the Hydra, we keep growing new heads — privacy layers, camera armor and coatings tested in our own lab.",
-  },
-  {
-    icon: Leaf,
-    title: "Responsible growth",
-    keyword: "Future",
-    text: "Recyclable packaging, fair local employment and partnerships that let small retailers across Bangladesh grow with us.",
-  },
-] as const;
+const iconByKeyword: Record<string, LucideIcon> = {
+  Precision: Cpu,
+  Genuine: BadgeCheck,
+  People: HeartHandshake,
+  Trust: Scale,
+  Progress: Lightbulb,
+  Future: Leaf,
+};
+
+const fallbackIcons = [Cpu, BadgeCheck, HeartHandshake, Scale, Lightbulb, Leaf];
+
+type ValueItem = AboutContent["values"][number];
 
 /**
  * Core values as sticky stacked cards.
  * Each card pins under the header; the next one slides over it while
  * earlier cards gently scale + dim — so the stack reads as one composition.
  */
-export function ValuesStack() {
+export function ValuesStack({ values }: { values: ValueItem[] }) {
   const reduced = useReducedMotion();
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
@@ -68,7 +43,7 @@ export function ValuesStack() {
     return (
       <div className="space-y-4">
         {values.map((value, i) => (
-          <StaticValueCard key={value.title} value={value} index={i} total={values.length} />
+          <StaticValueCard key={`${value.title}-${i}`} value={value} index={i} total={values.length} />
         ))}
       </div>
     );
@@ -77,10 +52,14 @@ export function ValuesStack() {
   return (
     <div ref={ref} className="relative">
       {values.map((value, i) => (
-        <ValueCard key={value.title} value={value} index={i} total={values.length} progress={scrollYProgress} />
+        <ValueCard key={`${value.title}-${i}`} value={value} index={i} total={values.length} progress={scrollYProgress} />
       ))}
     </div>
   );
+}
+
+function valueIcon(value: ValueItem, index: number) {
+  return iconByKeyword[value.keyword] ?? fallbackIcons[index % fallbackIcons.length];
 }
 
 function ValueCard({
@@ -89,7 +68,7 @@ function ValueCard({
   total,
   progress,
 }: {
-  value: (typeof values)[number];
+  value: ValueItem;
   index: number;
   total: number;
   progress: MotionValue<number>;
@@ -97,7 +76,6 @@ function ValueCard({
   const depth = total - 1 - index;
   const slot = 1 / total;
 
-  // Hold full size until the next card arrives, then ease into the stack.
   const scale = useTransform(progress, (v) =>
     interpolate(v, [index * slot, (index + 1) * slot, 1], [1, 1, 1 - depth * 0.045]),
   );
@@ -111,7 +89,7 @@ function ValueCard({
     interpolate(v, [(index - 0.15) * slot, index * slot, (index + 0.85) * slot], [0.15, 1, 0.35]),
   );
 
-  const Icon = value.icon;
+  const Icon = valueIcon(value, index);
 
   return (
     <div
@@ -164,11 +142,11 @@ function StaticValueCard({
   index,
   total,
 }: {
-  value: (typeof values)[number];
+  value: ValueItem;
   index: number;
   total: number;
 }) {
-  const Icon = value.icon;
+  const Icon = valueIcon(value, index);
   return (
     <article className="card-premium relative overflow-hidden rounded-[1.75rem] p-6 sm:rounded-[2rem] sm:p-8 md:p-10">
       <div className="pointer-events-none absolute -right-16 -top-16 size-56 rounded-full bg-accent/20 blur-3xl" />

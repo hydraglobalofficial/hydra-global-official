@@ -12,13 +12,20 @@ import { Testimonials } from "@/components/sections/testimonials-carousel";
 import { CollectionBento, DropTest, ImpactStat, VideoShowcase } from "@/components/sections/showcase-sections";
 import { JsonLd, organizationJsonLd } from "@/lib/seo";
 import { getFeaturedProducts, getNavigationData } from "@/server/queries/catalog";
+import { getCollectionsContent, getHowItWorksContent, getNewsletterContent } from "@/server/queries/content";
 import { Reveal } from "@/components/motion/reveal";
 import { HydraRise } from "@/components/hydra/hydra-rise";
 
 export const revalidate = 300;
 
 export default async function HomePage() {
-  const [featured, nav] = await Promise.all([getFeaturedProducts(8), getNavigationData()]);
+  const [featured, nav, collections, howItWorks, newsletter] = await Promise.all([
+    getFeaturedProducts(8),
+    getNavigationData(),
+    getCollectionsContent(),
+    getHowItWorksContent(),
+    getNewsletterContent(),
+  ]);
 
   return (
     <>
@@ -36,7 +43,7 @@ export default async function HomePage() {
 
       <ShopByDevice devices={nav.devices} />
       <SectionDivider />
-      <CollectionBento categories={nav.categories} />
+      <CollectionBento content={collections} />
       <ImpactStat />
       <DropTest />
 
@@ -59,8 +66,8 @@ export default async function HomePage() {
       <VideoShowcase />
       <SectionDivider />
       <TechGrid />
-      <HowItWorks />
-      <NewsletterBlock />
+      <HowItWorks content={howItWorks} />
+      <NewsletterBlock content={newsletter} />
     </>
   );
 }

@@ -15,11 +15,14 @@ export function AdminHeader({
 }) {
   return (
     <div className="mb-6 flex flex-col gap-4 sm:mb-8 md:mb-10 md:flex-row md:items-end md:justify-between">
-      <div className="min-w-0 space-y-2">
+      <div className="min-w-0 space-y-2.5">
         {eyebrow && (
-          <p className="font-mono text-[10px] uppercase tracking-[0.28em] text-accent sm:text-[11px]">{eyebrow}</p>
+          <p className="inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.28em] text-accent sm:text-[11px]">
+            <span className="size-1.5 rounded-full bg-accent shadow-[0_0_10px_var(--color-accent)]" aria-hidden />
+            {eyebrow}
+          </p>
         )}
-        <h1 className="text-balance text-2xl font-semibold tracking-tight text-fg sm:text-3xl lg:text-[2.15rem] lg:leading-tight">
+        <h1 className="text-balance text-2xl font-semibold tracking-tight text-fg sm:text-3xl lg:text-[2.25rem] lg:leading-tight">
           {title}
         </h1>
         {description && <p className="max-w-xl text-sm leading-relaxed text-muted sm:text-[15px]">{description}</p>}
@@ -33,8 +36,8 @@ export function Card({ children, className, glow }: { children: ReactNode; class
   return (
     <div
       className={cn(
-        "card-premium relative overflow-hidden rounded-2xl backdrop-blur-md",
-        glow && "before:pointer-events-none before:absolute before:-right-10 before:-top-12 before:size-44 before:rounded-full before:bg-accent/25 before:blur-3xl before:content-['']",
+        "admin-card relative overflow-hidden rounded-2xl backdrop-blur-md",
+        glow && "before:pointer-events-none before:absolute before:-right-10 before:-top-12 before:size-48 before:rounded-full before:bg-accent/30 before:blur-3xl before:content-['']",
         className,
       )}
     >
@@ -57,21 +60,34 @@ export function StatCard({
   tone?: "default" | "accent" | "warning" | "success";
 }) {
   const tones = {
-    default: "text-muted",
-    accent: "text-accent",
-    warning: "text-warning",
-    success: "text-success",
+    default: {
+      icon: "text-muted border-white/8 bg-white/[0.03]",
+      bar: "from-white/20 to-transparent",
+      glow: false as boolean,
+    },
+    accent: {
+      icon: "text-accent border-accent/30 bg-accent/10",
+      bar: "from-accent/70 to-transparent",
+      glow: true,
+    },
+    warning: {
+      icon: "text-warning border-warning/25 bg-warning/10",
+      bar: "from-warning/60 to-transparent",
+      glow: false,
+    },
+    success: {
+      icon: "text-success border-success/25 bg-success/10",
+      bar: "from-success/60 to-transparent",
+      glow: false,
+    },
   };
+  const t = tones[tone];
   return (
-    <Card className="group p-4 transition-[border-color,transform] duration-300 hover:border-white/14 sm:p-5" glow={tone === "accent"}>
+    <Card className="group p-4 transition-[border-color,transform,box-shadow] duration-300 hover:-translate-y-0.5 hover:border-white/16 sm:p-5" glow={t.glow}>
+      <div className={cn("pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r", t.bar)} />
       <div className="flex items-start justify-between gap-3">
         <p className="text-[10px] font-medium uppercase tracking-[0.16em] text-subtle sm:text-xs sm:tracking-[0.14em]">{label}</p>
-        <span
-          className={cn(
-            "grid size-8 shrink-0 place-items-center rounded-xl border border-white/8 bg-white/[0.03] transition-colors group-hover:border-white/14 sm:size-9",
-            tones[tone],
-          )}
-        >
+        <span className={cn("grid size-9 shrink-0 place-items-center rounded-xl border transition-transform duration-300 group-hover:scale-105 sm:size-10", t.icon)}>
           {icon}
         </span>
       </div>
@@ -96,9 +112,11 @@ export function Panel({
 }) {
   return (
     <Card className={cn("flex flex-col", className)}>
-      <div className="flex items-center justify-between gap-3 border-b border-white/[0.06] px-4 py-3.5 sm:px-5 sm:py-4">
-        <h2 className="flex items-center gap-2 text-sm font-medium tracking-tight sm:text-[15px]">
-          {icon}
+      <div className="flex items-center justify-between gap-3 border-b border-white/[0.06] bg-gradient-to-r from-white/[0.03] to-transparent px-4 py-3.5 sm:px-5 sm:py-4">
+        <h2 className="flex items-center gap-2.5 text-sm font-medium tracking-tight sm:text-[15px]">
+          {icon ? (
+            <span className="grid size-7 place-items-center rounded-lg border border-white/8 bg-white/[0.03]">{icon}</span>
+          ) : null}
           {title}
         </h2>
         {action}
@@ -111,7 +129,7 @@ export function Panel({
 export function Table({ children }: { children: ReactNode }) {
   return (
     <div className="-mx-px overflow-x-auto">
-      <table className="w-full min-w-[36rem] text-left text-sm [&_td]:px-4 [&_td]:py-3.5 sm:[&_td]:px-5 [&_th]:px-4 [&_th]:py-3 sm:[&_th]:px-5 [&_th]:text-[10px] [&_th]:font-medium [&_th]:uppercase [&_th]:tracking-[0.14em] [&_th]:text-subtle [&_thead]:border-b [&_thead]:border-white/[0.06] [&_tbody_tr]:border-b [&_tbody_tr]:border-white/[0.05] last:[&_tbody_tr]:border-0 [&_tbody_tr]:transition-colors [&_tbody_tr:hover]:bg-white/[0.025]">
+      <table className="w-full min-w-[36rem] text-left text-sm [&_td]:px-4 [&_td]:py-3.5 sm:[&_td]:px-5 [&_th]:bg-white/[0.02] [&_th]:px-4 [&_th]:py-3 sm:[&_th]:px-5 [&_th]:text-[10px] [&_th]:font-medium [&_th]:uppercase [&_th]:tracking-[0.14em] [&_th]:text-subtle [&_thead]:border-b [&_thead]:border-white/[0.06] [&_tbody_tr]:border-b [&_tbody_tr]:border-white/[0.05] last:[&_tbody_tr]:border-0 [&_tbody_tr]:transition-colors [&_tbody_tr:hover]:bg-white/[0.03]">
         {children}
       </table>
     </div>
@@ -136,16 +154,14 @@ const statusTones: Record<string, "default" | "accent" | "success" | "warning" |
   ACTIVE: "success",
   DRAFT: "default",
   ARCHIVED: "danger",
-  VOID: "danger",
   APPROVED: "success",
   REJECTED: "danger",
-  GENUINE: "success",
-  ALREADY_VERIFIED: "warning",
-  NOT_FOUND: "danger",
   CONTACT: "accent",
   SUPPORT: "accent",
   WARRANTY: "warning",
   RETURN: "danger",
+  OWNER: "accent",
+  STAFF: "success",
 };
 
 export function StatusBadge({ status }: { status: string }) {

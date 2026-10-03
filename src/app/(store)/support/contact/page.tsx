@@ -13,18 +13,14 @@ export const metadata: Metadata = {
 const topicMap = { warranty: "WARRANTY", return: "RETURN", returns: "RETURN" } as const;
 
 export default async function SupportContactPage({ searchParams }: PageProps<"/support/contact">) {
-  const { topic, code } = await searchParams;
+  const { topic } = await searchParams;
   const type = typeof topic === "string" && topic in topicMap ? topicMap[topic as keyof typeof topicMap] : "SUPPORT";
-  const defaultMessage =
-    topic === "authenticity" && typeof code === "string"
-      ? `I'd like to report a possible counterfeit. Verification code: ${code}\n\nWhere I bought it: `
-      : undefined;
 
   return (
     <>
       <PageHeader eyebrow="Support" title="Contact support" description="Warranty claims, returns, installation trouble — tell us what's up and we'll sort it." />
       <div className="container-page grid gap-10 py-16 lg:grid-cols-[1fr_20rem]">
-        <InquiryForm showType defaultType={type} defaultMessage={defaultMessage} />
+        <InquiryForm showType defaultType={type} />
         <aside className="space-y-4">
           {[
             { icon: Phone, label: "Call / WhatsApp", value: siteConfig.phone },
