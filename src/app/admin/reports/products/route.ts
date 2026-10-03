@@ -9,7 +9,7 @@ import {
 } from "@/lib/reports/format";
 
 export async function GET(request: Request) {
-  await requireAdmin();
+  await requireAdmin(["OWNER", "STAFF"], { next: "/admin/reports/products" });
   const { searchParams } = new URL(request.url);
   const format = searchParams.get("format") === "csv" ? "csv" : "html";
   const q = searchParams.get("q")?.trim() ?? "";

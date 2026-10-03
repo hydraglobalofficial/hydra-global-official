@@ -28,7 +28,7 @@ export function MegaMenu({ nav }: { nav: NavigationData }) {
           {nav.categories.map((c) => {
             const Icon = categoryIcons[c.icon ?? ""] ?? Shield;
             return (
-              <Link key={c.id} href={`/shop?category=${c.slug}`} className="group flex items-start gap-4 rounded-2xl p-3 hover:bg-white/[0.04]">
+              <Link key={c.slug} href={`/shop?category=${c.slug}`} className="group flex items-start gap-4 rounded-2xl p-3 hover:bg-white/[0.04]">
                 <span className="grid size-10 shrink-0 place-items-center rounded-xl border border-line bg-surface-2 text-accent group-hover:border-accent/40">
                   <Icon size={18} />
                 </span>
@@ -56,7 +56,7 @@ export function MegaMenu({ nav }: { nav: NavigationData }) {
                 <p className="mb-2 text-sm font-medium">{series}</p>
                 <ul className="space-y-1.5">
                   {devices.map((d) => (
-                    <li key={d.id}>
+                    <li key={d.slug}>
                       <Link href={`${brand.href}?device=${d.slug}`} className="text-sm text-muted hover:text-fg">
                         {d.model}
                       </Link>

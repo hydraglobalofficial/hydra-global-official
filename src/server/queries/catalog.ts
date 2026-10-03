@@ -4,6 +4,7 @@ import { unstable_cache } from "next/cache";
 import { db } from "@/lib/db";
 import type { Prisma } from "@/generated/prisma/client";
 import { brands, type BrandSlug } from "@/config/site";
+import { publicProductCard, publicStock } from "@/lib/public-data";
 
 export const CATALOG_TAG = "catalog";
 export const CONTENT_TAG = "content";
@@ -90,7 +91,12 @@ export const listProducts = unstable_cache(
       db.product.count({ where }),
     ]);
 
-    return { items, total, page, pageCount: Math.max(1, Math.ceil(total / PAGE_SIZE)) };
+    return {
+      items: items.map(publicProductCard),
+      total,
+      page,
+      pageCount: Math.max(1, Math.ceil(total / PAGE_SIZE)),
+    };
   },
   ["list-products"],
   { tags: [CATALOG_TAG], revalidate: 300 },
@@ -104,27 +110,29 @@ export const getFeaturedProducts = unstable_cache(
       orderBy: [{ soldCount: "desc" }],
       take: limit,
     });
-    if (featured.length >= limit) return featured;
+    if (featured.length >= limit) return featured.map(publicProductCard);
     const fill = await db.product.findMany({
       where: { status: "ACTIVE", featured: false },
       select: productCardSelect,
       orderBy: [{ soldCount: "desc" }],
       take: limit - featured.length,
     });
-    return [...featured, ...fill];
+    return [...featured, ...fill].map(publicProductCard);
   },
   ["featured-products"],
   { tags: [CATALOG_TAG], revalidate: 300 },
 );
 
 export const getBestSellers = unstable_cache(
-  async (limit = 4) =>
-    db.product.findMany({
+  async (limit = 4) => {
+    const items = await db.product.findMany({
       where: { status: "ACTIVE" },
       select: productCardSelect,
       orderBy: [{ soldCount: "desc" }],
       take: limit,
-    }),
+    });
+    return items.map(publicProductCard);
+  },
   ["best-sellers"],
   { tags: [CATALOG_TAG], revalidate: 300 },
 );
@@ -134,11 +142,11 @@ export const getNavigationData = unstable_cache(
     const [categories, devices] = await Promise.all([
       db.category.findMany({
         where: { parentId: null },
-        select: { id: true, name: true, slug: true, description: true, icon: true },
+        select: { name: true, slug: true, description: true, icon: true },
         orderBy: { position: "asc" },
       }),
       db.device.findMany({
-        select: { id: true, brand: true, series: true, model: true, slug: true },
+        select: { brand: true, series: true, model: true, slug: true },
         orderBy: [{ brand: "asc" }, { position: "asc" }],
       }),
     ]);
@@ -151,14 +159,40 @@ export const getNavigationData = unstable_cache(
 export type NavigationData = Awaited<ReturnType<typeof getNavigationData>>;
 export type DeviceOption = NavigationData["devices"][number];
 
-export const getProductBySlug = cache(async (slug: string) =>
-  db.product.findFirst({
+export const getProductBySlug = cache(async (slug: string) => {
+  const product = await db.product.findFirst({
     where: { slug, status: "ACTIVE" },
-    include: {
-      category: { select: { id: true, name: true, slug: true } },
-      images: { orderBy: { position: "asc" } },
-      variants: { orderBy: { position: "asc" } },
-      devices: { include: { device: true } },
+    select: {
+      id: true,
+      slug: true,
+      name: true,
+      tagline: true,
+      description: true,
+      price: true,
+      compareAtPrice: true,
+      sku: true,
+      stock: true,
+      featured: true,
+      highlights: true,
+      specs: true,
+      ratingAverage: true,
+      ratingCount: true,
+      categoryId: true,
+      category: { select: { name: true, slug: true } },
+      images: {
+        orderBy: { position: "asc" as const },
+        select: { id: true, url: true, alt: true, position: true },
+      },
+      variants: {
+        orderBy: { position: "asc" as const },
+        select: { id: true, name: true, priceOverride: true, stock: true, position: true },
+      },
+      devices: {
+        select: {
+          deviceId: true,
+          device: { select: { brand: true, series: true, model: true, slug: true } },
+        },
+      },
       reviews: {
         where: { status: "APPROVED" },
         orderBy: { createdAt: "desc" },
@@ -174,14 +208,20 @@ export const getProductBySlug = cache(async (slug: string) =>
         },
       },
     },
-  }),
-);
+  });
+  if (!product) return null;
+  return {
+    ...product,
+    stock: publicStock(product.stock),
+    variants: product.variants.map((v) => ({ ...v, stock: publicStock(v.stock) })),
+  };
+});
 
 export type ProductDetail = NonNullable<Awaited<ReturnType<typeof getProductBySlug>>>;
 
 export async function getRelatedProducts(product: ProductDetail, limit = 4) {
   const deviceIds = product.devices.map((d) => d.deviceId);
-  return db.product.findMany({
+  const items = await db.product.findMany({
     where: {
       status: "ACTIVE",
       id: { not: product.id },
@@ -194,6 +234,7 @@ export async function getRelatedProducts(product: ProductDetail, limit = 4) {
     orderBy: [{ soldCount: "desc" }],
     take: limit,
   });
+  return items.map(publicProductCard);
 }
 
 export async function getActiveProductSlugs() {
@@ -233,7 +274,7 @@ export async function searchProducts(query: string, limit = 48): Promise<Product
   }
 
   if (ranked.length === 0) {
-    return db.product.findMany({
+    const items = await db.product.findMany({
       where: {
         status: "ACTIVE",
         OR: [
@@ -247,6 +288,7 @@ export async function searchProducts(query: string, limit = 48): Promise<Product
       orderBy: [{ soldCount: "desc" }, { name: "asc" }],
       take: limit,
     });
+    return items.map(publicProductCard);
   }
 
   const products = await db.product.findMany({
@@ -254,5 +296,5 @@ export async function searchProducts(query: string, limit = 48): Promise<Product
     select: productCardSelect,
   });
   const order = new Map(ranked.map((r, i) => [r.id, i]));
-  return products.sort((a, b) => order.get(a.id)! - order.get(b.id)!);
+  return products.sort((a, b) => order.get(a.id)! - order.get(b.id)!).map(publicProductCard);
 }

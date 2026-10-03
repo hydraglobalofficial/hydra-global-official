@@ -127,7 +127,7 @@ export default async function ProductPage({ params }: PageProps<"/product/[slug]
               </p>
               <div className="flex flex-wrap gap-2">
                 {product.devices.map(({ device }) => (
-                  <span key={device.id} className="rounded-full border border-line px-3 py-1.5 text-xs">{device.model}</span>
+                  <span key={device.slug} className="rounded-full border border-line px-3 py-1.5 text-xs">{device.model}</span>
                 ))}
               </div>
             </div>

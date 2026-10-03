@@ -17,20 +17,27 @@ export default async function AdminTeamPage() {
 
   const owners = admins.filter((a) => a.role === "OWNER").length;
   const staff = admins.filter((a) => a.role === "STAFF").length;
+  const registrationOpen = process.env.ADMIN_REGISTRATION_ENABLED === "1";
 
   return (
     <div className="space-y-6 sm:space-y-8">
       <AdminHeader
         eyebrow="Access"
         title="Admin team"
-        description="People who can sign in to the HYDRA control room. New staff register with the master key."
+        description={
+          registrationOpen
+            ? "People who can sign in to the HYDRA control room. New staff register with the master key."
+            : "People who can sign in to the HYDRA control room. Set ADMIN_REGISTRATION_ENABLED=1 to allow new admins."
+        }
         action={
-          <Link
-            href="/admin/register"
-            className="inline-flex items-center gap-1.5 rounded-full border border-white/12 bg-white/[0.04] px-3.5 py-2 text-sm transition-colors hover:border-accent/40 hover:bg-accent/10"
-          >
-            <Plus size={14} /> Add admin
-          </Link>
+          registrationOpen ? (
+            <Link
+              href="/admin/register"
+              className="inline-flex items-center gap-1.5 rounded-full border border-white/12 bg-white/[0.04] px-3.5 py-2 text-sm transition-colors hover:border-accent/40 hover:bg-accent/10"
+            >
+              <Plus size={14} /> Add admin
+            </Link>
+          ) : undefined
         }
       />
 

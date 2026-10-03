@@ -220,23 +220,34 @@ export function NewsletterSectionEditor({ content }: { content: NewsletterConten
 
 export function CollectionsSectionEditor({ content }: { content: CollectionsContent }) {
   const [state, action, pending] = useActionState(saveCollectionsSection, initialFormState);
+  const items =
+    Array.isArray(content?.items) && content.items.length > 0
+      ? content.items
+      : [
+          { slug: "", name: "", description: "", image: "" },
+          { slug: "", name: "", description: "", image: "" },
+          { slug: "", name: "", description: "", image: "" },
+          { slug: "", name: "", description: "", image: "" },
+          { slug: "", name: "", description: "", image: "" },
+        ];
+
   return (
     <form action={action} className="space-y-5">
       <Section title="Heading">
-        <Label label="Eyebrow"><Input name="eyebrow" defaultValue={content.eyebrow} required /></Label>
+        <Label label="Eyebrow"><Input name="eyebrow" defaultValue={content?.eyebrow ?? ""} required /></Label>
         <div className="grid gap-3 sm:grid-cols-2">
-          <Label label="Title"><Input name="title" defaultValue={content.title} required /></Label>
-          <Label label="Muted title"><Input name="titleMuted" defaultValue={content.titleMuted} required /></Label>
+          <Label label="Title"><Input name="title" defaultValue={content?.title ?? ""} required /></Label>
+          <Label label="Muted title"><Input name="titleMuted" defaultValue={content?.titleMuted ?? ""} required /></Label>
         </div>
         <div className="grid gap-3 sm:grid-cols-2">
-          <Label label="CTA label"><Input name="ctaLabel" defaultValue={content.ctaLabel} required /></Label>
-          <Label label="CTA link"><Input name="ctaHref" defaultValue={content.ctaHref} required /></Label>
+          <Label label="CTA label"><Input name="ctaLabel" defaultValue={content?.ctaLabel ?? "All products"} required /></Label>
+          <Label label="CTA link"><Input name="ctaHref" defaultValue={content?.ctaHref ?? "/shop"} required /></Label>
         </div>
       </Section>
       <Section title="Collection cards">
         <p className="text-xs text-subtle">First card is the large featured tile. Slug must match a shop category (e.g. tempered-glass).</p>
         <div className="space-y-4">
-          {content.items.map((item, i) => (
+          {items.map((item, i) => (
             <div key={i} className="space-y-3 rounded-xl border border-white/[0.06] p-3">
               <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-subtle">
                 {String(i + 1).padStart(2, "0")} {i === 0 ? "· Featured" : ""}

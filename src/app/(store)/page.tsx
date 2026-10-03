@@ -12,6 +12,7 @@ import { Testimonials } from "@/components/sections/testimonials-carousel";
 import { CollectionBento, DropTest, ImpactStat, VideoShowcase } from "@/components/sections/showcase-sections";
 import { JsonLd, organizationJsonLd } from "@/lib/seo";
 import { getFeaturedProducts, getNavigationData } from "@/server/queries/catalog";
+import { defaultCollectionsContent } from "@/content/site-sections";
 import { getCollectionsContent, getHowItWorksContent, getNewsletterContent } from "@/server/queries/content";
 import { Reveal } from "@/components/motion/reveal";
 import { HydraRise } from "@/components/hydra/hydra-rise";
@@ -26,6 +27,7 @@ export default async function HomePage() {
     getHowItWorksContent(),
     getNewsletterContent(),
   ]);
+  const collectionsContent = collections ?? defaultCollectionsContent;
 
   return (
     <>
@@ -43,7 +45,7 @@ export default async function HomePage() {
 
       <ShopByDevice devices={nav.devices} />
       <SectionDivider />
-      <CollectionBento content={collections} />
+      <CollectionBento content={collectionsContent} />
       <ImpactStat />
       <DropTest />
 

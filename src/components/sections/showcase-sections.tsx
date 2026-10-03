@@ -9,25 +9,33 @@ import { ProductImage } from "@/components/product/product-image";
 import { SectionHeading } from "@/components/ui/primitives";
 import { SpotlightCard } from "@/components/ui/spotlight-card";
 import { ImpactPhone3D } from "@/components/sections/impact-phone-3d";
-import type { CollectionsContent } from "@/content/site-sections";
+import { defaultCollectionsContent, type CollectionsContent } from "@/content/site-sections";
 import { showcaseVideos, siteConfig } from "@/config/site";
 import { cn } from "@/lib/utils";
 
-export function CollectionBento({ content }: { content: CollectionsContent }) {
-  const items = content.items.slice(0, 5);
+export function CollectionBento({ content }: { content?: CollectionsContent | null }) {
+  const section = {
+    ...defaultCollectionsContent,
+    ...content,
+    items:
+      Array.isArray(content?.items) && content.items.length > 0
+        ? content.items
+        : defaultCollectionsContent.items,
+  };
+  const items = section.items.slice(0, 5);
 
   return (
     <section className="container-page py-14 sm:py-20 md:py-24">
       <SectionHeading
-        eyebrow={content.eyebrow}
+        eyebrow={section.eyebrow}
         title={
           <>
-            {content.title} <span className="text-muted">{content.titleMuted}</span>
+            {section.title} <span className="text-muted">{section.titleMuted}</span>
           </>
         }
         action={
-          <Link href={content.ctaHref} className="group inline-flex items-center gap-2 text-sm text-muted transition-colors hover:text-fg">
-            {content.ctaLabel} <ArrowRight size={15} className="transition-transform group-hover:translate-x-1" />
+          <Link href={section.ctaHref} className="group inline-flex items-center gap-2 text-sm text-muted transition-colors hover:text-fg">
+            {section.ctaLabel} <ArrowRight size={15} className="transition-transform group-hover:translate-x-1" />
           </Link>
         }
       />

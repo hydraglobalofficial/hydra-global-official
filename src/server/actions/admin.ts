@@ -15,6 +15,13 @@ import type {
   HowItWorksContent,
   NewsletterContent,
 } from "@/content/site-sections";
+import { clampText, safeInternalHref, safeMediaUrl, safeSlug } from "@/lib/content-safety";
+import {
+  normalizeAboutContent,
+  normalizeCollectionsContent,
+  normalizeHowItWorksContent,
+  normalizeNewsletterContent,
+} from "@/lib/normalize-sections";
 
 const lines = (value: string) =>
   value
@@ -205,7 +212,13 @@ export async function saveAnnouncement(formData: FormData) {
       position: z.coerce.number().int().min(0).default(0),
     })
     .parse(Object.fromEntries(formData));
-  const payload = { message: data.message, href: data.href || null, position: data.position, active: formData.get("active") === "on" };
+  const href = data.href ? safeInternalHref(data.href, "") : "";
+  const payload = {
+    message: data.message,
+    href: href || null,
+    position: data.position,
+    active: formData.get("active") === "on",
+  };
   if (data.id) await db.announcement.update({ where: { id: data.id }, data: payload });
   else await db.announcement.create({ data: payload });
   updateTag(CONTENT_TAG);
@@ -255,194 +268,254 @@ function pairsFrom(formData: FormData, a: string, b: string) {
 export async function saveAboutSection(_prev: FormState, formData: FormData): Promise<FormState> {
   await requireAdmin();
 
-  const stats = pairsFrom(formData, "statValue", "statLabel");
-  const missionBullets = linesFrom(formData, "missionBullet");
-  const visionBullets = linesFrom(formData, "visionBullet");
-  const highlights = String(formData.get("manifestoHighlights") ?? "")
-    .split("\n")
-    .map((l) => l.trim())
-    .filter(Boolean);
+  try {
+    const stats = pairsFrom(formData, "statValue", "statLabel").slice(0, 8);
+    const missionBullets = linesFrom(formData, "missionBullet").slice(0, 8);
+    const visionBullets = linesFrom(formData, "visionBullet").slice(0, 8);
+    const highlights = String(formData.get("manifestoHighlights") ?? "")
+      .split("\n")
+      .map((l) => l.trim())
+      .filter(Boolean)
+      .slice(0, 24);
 
-  const valueTitles = formData.getAll("valueTitle").map(String);
-  const valueKeywords = formData.getAll("valueKeyword").map(String);
-  const valueTexts = formData.getAll("valueText").map(String);
-  const values = valueTitles
-    .map((title, i) => ({
-      title: title.trim(),
-      keyword: (valueKeywords[i] ?? "").trim(),
-      text: (valueTexts[i] ?? "").trim(),
-    }))
-    .filter((v) => v.title && v.keyword && v.text);
+    const valueTitles = formData.getAll("valueTitle").map(String);
+    const valueKeywords = formData.getAll("valueKeyword").map(String);
+    const valueTexts = formData.getAll("valueText").map(String);
+    const values = valueTitles
+      .map((title, i) => ({
+        title: clampText(title, 80),
+        keyword: clampText(valueKeywords[i], 40),
+        text: clampText(valueTexts[i], 600),
+      }))
+      .filter((v) => v.title && v.keyword && v.text)
+      .slice(0, 12);
 
-  const divisionTitles = formData.getAll("divisionTitle").map(String);
-  const divisionTexts = formData.getAll("divisionText").map(String);
-  const divisionHrefs = formData.getAll("divisionHref").map(String);
-  const divisions = divisionTitles
-    .map((title, i) => ({
-      title: title.trim(),
-      text: (divisionTexts[i] ?? "").trim(),
-      href: (divisionHrefs[i] ?? "").trim(),
-    }))
-    .filter((d) => d.title && d.text && d.href);
+    const divisionTitles = formData.getAll("divisionTitle").map(String);
+    const divisionTexts = formData.getAll("divisionText").map(String);
+    const divisionHrefs = formData.getAll("divisionHref").map(String);
+    const divisions = divisionTitles
+      .map((title, i) => ({
+        title: clampText(title, 80),
+        text: clampText(divisionTexts[i], 400),
+        href: safeInternalHref(divisionHrefs[i], ""),
+      }))
+      .filter((d) => d.title && d.text && d.href)
+      .slice(0, 6);
 
-  const journeyYears = formData.getAll("journeyYear").map(String);
-  const journeyTitles = formData.getAll("journeyTitle").map(String);
-  const journeyTexts = formData.getAll("journeyText").map(String);
-  const journeyFuture = formData.getAll("journeyFuture").map(String);
-  const journey = journeyYears
-    .map((year, i) => ({
-      year: year.trim(),
-      title: (journeyTitles[i] ?? "").trim(),
-      text: (journeyTexts[i] ?? "").trim(),
-      ...(journeyFuture[i] === "yes" ? { future: true as const } : {}),
-    }))
-    .filter((j) => j.year && j.title && j.text);
+    const journeyYears = formData.getAll("journeyYear").map(String);
+    const journeyTitles = formData.getAll("journeyTitle").map(String);
+    const journeyTexts = formData.getAll("journeyText").map(String);
+    const journeyFuture = formData.getAll("journeyFuture").map(String);
+    const journey = journeyYears
+      .map((year, i) => ({
+        year: clampText(year, 24),
+        title: clampText(journeyTitles[i], 120),
+        text: clampText(journeyTexts[i], 600),
+        ...(journeyFuture[i] === "yes" ? { future: true as const } : {}),
+      }))
+      .filter((j) => j.year && j.title && j.text)
+      .slice(0, 12);
 
-  const data: AboutContent = {
-    hero: {
-      eyebrow: String(formData.get("heroEyebrow") ?? "").trim(),
-      title: String(formData.get("heroTitle") ?? "").trim(),
-      titleAccent: String(formData.get("heroTitleAccent") ?? "").trim(),
-      description: String(formData.get("heroDescription") ?? "").trim(),
-    },
-    stats,
-    manifesto: {
-      text: String(formData.get("manifestoText") ?? "").trim(),
-      highlight: highlights,
-    },
-    mission: {
-      title: String(formData.get("missionTitle") ?? "").trim(),
-      body: String(formData.get("missionBody") ?? "").trim(),
-      bullets: missionBullets,
-    },
-    vision: {
-      title: String(formData.get("visionTitle") ?? "").trim(),
-      body: String(formData.get("visionBody") ?? "").trim(),
-      bullets: visionBullets,
-    },
-    valuesIntro: {
-      title: String(formData.get("valuesTitle") ?? "").trim(),
-      titleMuted: String(formData.get("valuesTitleMuted") ?? "").trim(),
-      description: String(formData.get("valuesDescription") ?? "").trim(),
-    },
-    values,
-    divisions,
-    journey,
-    careers: {
-      title: String(formData.get("careersTitle") ?? "").trim(),
-      text: String(formData.get("careersText") ?? "").trim(),
-      cta: String(formData.get("careersCta") ?? "").trim(),
-    },
-    partner: {
-      title: String(formData.get("partnerTitle") ?? "").trim(),
-      text: String(formData.get("partnerText") ?? "").trim(),
-      cta: String(formData.get("partnerCta") ?? "").trim(),
-    },
-  };
+    const heroTitle = clampText(formData.get("heroTitle"), 120);
+    const manifestoText = clampText(formData.get("manifestoText"), 1200);
+    if (!heroTitle || !manifestoText || values.length === 0) {
+      return { status: "error", message: "Hero, manifesto and at least one value are required." };
+    }
+    const badDivisionLink = divisionTitles.some((title, i) => {
+      const filled = title.trim() || (divisionTexts[i] ?? "").trim() || (divisionHrefs[i] ?? "").trim();
+      if (!filled) return false;
+      return !safeInternalHref(divisionHrefs[i], "");
+    });
+    if (badDivisionLink) {
+      return { status: "error", message: "Division links must be site paths like /shop or /contact." };
+    }
 
-  if (!data.hero.title || !data.manifesto.text || values.length === 0) {
-    return { status: "error", message: "Hero, manifesto and at least one value are required." };
+    const data = normalizeAboutContent({
+      hero: {
+        eyebrow: clampText(formData.get("heroEyebrow"), 60),
+        title: heroTitle,
+        titleAccent: clampText(formData.get("heroTitleAccent"), 80),
+        description: clampText(formData.get("heroDescription"), 800),
+      },
+      stats,
+      manifesto: { text: manifestoText, highlight: highlights },
+      mission: {
+        title: clampText(formData.get("missionTitle"), 80),
+        body: clampText(formData.get("missionBody"), 800),
+        bullets: missionBullets,
+      },
+      vision: {
+        title: clampText(formData.get("visionTitle"), 80),
+        body: clampText(formData.get("visionBody"), 800),
+        bullets: visionBullets,
+      },
+      valuesIntro: {
+        title: clampText(formData.get("valuesTitle"), 80),
+        titleMuted: clampText(formData.get("valuesTitleMuted"), 80),
+        description: clampText(formData.get("valuesDescription"), 400),
+      },
+      values,
+      divisions,
+      journey,
+      careers: {
+        title: clampText(formData.get("careersTitle"), 120),
+        text: clampText(formData.get("careersText"), 400),
+        cta: clampText(formData.get("careersCta"), 60),
+      },
+      partner: {
+        title: clampText(formData.get("partnerTitle"), 120),
+        text: clampText(formData.get("partnerText"), 400),
+        cta: clampText(formData.get("partnerCta"), 60),
+      },
+    } satisfies AboutContent);
+
+    await db.siteSection.upsert({
+      where: { key: "about" },
+      create: { key: "about", title: "About page", data },
+      update: { data, title: "About page" },
+    });
+    updateTag(CONTENT_TAG);
+    revalidatePath("/about");
+    revalidatePath("/admin/content");
+    return { status: "success", message: "About page published." };
+  } catch (error) {
+    console.error("[saveAboutSection]", error);
+    return { status: "error", message: "Could not publish About page." };
   }
-
-  await db.siteSection.upsert({
-    where: { key: "about" },
-    create: { key: "about", title: "About page", data },
-    update: { data, title: "About page" },
-  });
-  updateTag(CONTENT_TAG);
-  revalidatePath("/about");
-  revalidatePath("/admin/content");
-  return { status: "success", message: "About page published." };
 }
 
 export async function saveHowItWorksSection(_prev: FormState, formData: FormData): Promise<FormState> {
   await requireAdmin();
-  const titles = formData.getAll("stepTitle").map(String);
-  const texts = formData.getAll("stepText").map(String);
-  const steps = titles
-    .map((title, i) => ({ title: title.trim(), text: (texts[i] ?? "").trim() }))
-    .filter((s) => s.title && s.text);
+  try {
+    const titles = formData.getAll("stepTitle").map(String);
+    const texts = formData.getAll("stepText").map(String);
+    const steps = titles
+      .map((title, i) => ({
+        title: clampText(title, 80),
+        text: clampText(texts[i], 400),
+      }))
+      .filter((s) => s.title && s.text)
+      .slice(0, 8);
 
-  const data: HowItWorksContent = {
-    eyebrow: String(formData.get("eyebrow") ?? "").trim(),
-    title: String(formData.get("title") ?? "").trim(),
-    titleMuted: String(formData.get("titleMuted") ?? "").trim(),
-    steps,
-  };
-  if (!data.title || steps.length === 0) {
-    return { status: "error", message: "Title and at least one step are required." };
+    const title = clampText(formData.get("title"), 120);
+    if (!title || steps.length === 0) {
+      return { status: "error", message: "Title and at least one step are required." };
+    }
+
+    const data = normalizeHowItWorksContent({
+      eyebrow: clampText(formData.get("eyebrow"), 60),
+      title,
+      titleMuted: clampText(formData.get("titleMuted"), 80),
+      steps,
+    } satisfies HowItWorksContent);
+
+    await db.siteSection.upsert({
+      where: { key: "home.howItWorks" },
+      create: { key: "home.howItWorks", title: "Home · How it works", data },
+      update: { data, title: "Home · How it works" },
+    });
+    updateTag(CONTENT_TAG);
+    revalidatePath("/");
+    revalidatePath("/admin/content");
+    return { status: "success", message: "How it works published." };
+  } catch (error) {
+    console.error("[saveHowItWorksSection]", error);
+    return { status: "error", message: "Could not publish How it works." };
   }
-
-  await db.siteSection.upsert({
-    where: { key: "home.howItWorks" },
-    create: { key: "home.howItWorks", title: "Home · How it works", data },
-    update: { data, title: "Home · How it works" },
-  });
-  updateTag(CONTENT_TAG);
-  revalidatePath("/");
-  revalidatePath("/admin/content");
-  return { status: "success", message: "How it works published." };
 }
 
 export async function saveNewsletterSection(_prev: FormState, formData: FormData): Promise<FormState> {
   await requireAdmin();
-  const data: NewsletterContent = {
-    eyebrow: String(formData.get("eyebrow") ?? "").trim(),
-    title: String(formData.get("title") ?? "").trim(),
-    titleAccent: String(formData.get("titleAccent") ?? "").trim(),
-    description: String(formData.get("description") ?? "").trim(),
-  };
-  if (!data.title || !data.description) {
-    return { status: "error", message: "Title and description are required." };
-  }
+  try {
+    const title = clampText(formData.get("title"), 80);
+    const description = clampText(formData.get("description"), 400);
+    if (!title || !description) {
+      return { status: "error", message: "Title and description are required." };
+    }
 
-  await db.siteSection.upsert({
-    where: { key: "home.newsletter" },
-    create: { key: "home.newsletter", title: "Home · Newsletter", data },
-    update: { data, title: "Home · Newsletter" },
-  });
-  updateTag(CONTENT_TAG);
-  revalidatePath("/");
-  revalidatePath("/admin/content");
-  return { status: "success", message: "Newsletter block published." };
+    const data = normalizeNewsletterContent({
+      eyebrow: clampText(formData.get("eyebrow"), 60),
+      title,
+      titleAccent: clampText(formData.get("titleAccent"), 40),
+      description,
+    } satisfies NewsletterContent);
+
+    await db.siteSection.upsert({
+      where: { key: "home.newsletter" },
+      create: { key: "home.newsletter", title: "Home · Newsletter", data },
+      update: { data, title: "Home · Newsletter" },
+    });
+    updateTag(CONTENT_TAG);
+    revalidatePath("/");
+    revalidatePath("/admin/content");
+    return { status: "success", message: "Newsletter block published." };
+  } catch (error) {
+    console.error("[saveNewsletterSection]", error);
+    return { status: "error", message: "Could not publish newsletter block." };
+  }
 }
 
 export async function saveCollectionsSection(_prev: FormState, formData: FormData): Promise<FormState> {
   await requireAdmin();
 
-  const names = formData.getAll("itemName").map(String);
-  const slugs = formData.getAll("itemSlug").map(String);
-  const descriptions = formData.getAll("itemDescription").map(String);
-  const images = formData.getAll("itemImage").map(String);
-  const items = names
-    .map((name, i) => ({
-      name: name.trim(),
-      slug: (slugs[i] ?? "").trim(),
-      description: (descriptions[i] ?? "").trim(),
-      image: (images[i] ?? "").trim(),
-    }))
-    .filter((item) => item.name && item.slug && item.image);
+  try {
+    const names = formData.getAll("itemName").map(String);
+    const slugs = formData.getAll("itemSlug").map(String);
+    const descriptions = formData.getAll("itemDescription").map(String);
+    const images = formData.getAll("itemImage").map(String);
+    const badCard = names.some((name, i) => {
+      const rawName = name.trim();
+      const rawSlug = String(slugs[i] ?? "").trim();
+      const rawImage = String(images[i] ?? "").trim();
+      if (!rawName && !rawSlug && !rawImage) return false;
+      return !(clampText(rawName, 80) && safeSlug(rawSlug) && safeMediaUrl(rawImage));
+    });
+    if (badCard) {
+      return {
+        status: "error",
+        message: "Each card needs a valid slug (a-z0-9-), name, and image path/URL (local /… or allowlisted host).",
+      };
+    }
 
-  const data: CollectionsContent = {
-    eyebrow: String(formData.get("eyebrow") ?? "").trim(),
-    title: String(formData.get("title") ?? "").trim(),
-    titleMuted: String(formData.get("titleMuted") ?? "").trim(),
-    ctaLabel: String(formData.get("ctaLabel") ?? "").trim(),
-    ctaHref: String(formData.get("ctaHref") ?? "").trim(),
-    items,
-  };
+    const items = names
+      .map((name, i) => ({
+        name: clampText(name, 80),
+        slug: safeSlug(slugs[i]),
+        description: clampText(descriptions[i], 240, ""),
+        image: safeMediaUrl(images[i]),
+      }))
+      .filter((item) => item.name && item.slug && item.image)
+      .slice(0, 5);
 
-  if (!data.title || !data.ctaHref || items.length === 0) {
-    return { status: "error", message: "Title, CTA link, and at least one collection card are required." };
+    const title = clampText(formData.get("title"), 120);
+    if (!title || items.length === 0) {
+      return {
+        status: "error",
+        message: "Title and at least one complete card (name, slug, image) are required.",
+      };
+    }
+
+    const data = normalizeCollectionsContent({
+      eyebrow: clampText(formData.get("eyebrow"), 60),
+      title,
+      titleMuted: clampText(formData.get("titleMuted"), 80),
+      ctaLabel: clampText(formData.get("ctaLabel"), 40) || "All products",
+      ctaHref: safeInternalHref(formData.get("ctaHref"), "/shop"),
+      items,
+    } satisfies CollectionsContent);
+
+    await db.siteSection.upsert({
+      where: { key: "home.collections" },
+      create: { key: "home.collections", title: "Home · Collections", data },
+      update: { data, title: "Home · Collections" },
+    });
+    updateTag(CONTENT_TAG);
+    revalidatePath("/");
+    revalidatePath("/admin/content");
+    revalidatePath("/admin/content/sections/home.collections");
+    return { status: "success", message: "Collections section published." };
+  } catch (error) {
+    console.error("[saveCollectionsSection]", error);
+    return { status: "error", message: "Could not save collections section." };
   }
-
-  await db.siteSection.upsert({
-    where: { key: "home.collections" },
-    create: { key: "home.collections", title: "Home · Collections", data },
-    update: { data, title: "Home · Collections" },
-  });
-  updateTag(CONTENT_TAG);
-  revalidatePath("/");
-  revalidatePath("/admin/content");
-  return { status: "success", message: "Collections section published." };
 }

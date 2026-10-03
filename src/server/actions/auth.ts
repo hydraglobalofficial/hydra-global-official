@@ -44,6 +44,12 @@ export async function register(_prev: FormState, formData: FormData): Promise<Fo
   const limited = await rateLimit("admin-register", 3, 60 * 60_000);
   if (!limited.ok) return { status: "error", message: "Too many registration attempts. Try again later." };
 
+  const adminCount = await db.user.count({ where: { role: { in: ["OWNER", "STAFF"] } } });
+  // First owner bootstrap always allowed; later accounts need an explicit env flag.
+  if (adminCount > 0 && process.env.ADMIN_REGISTRATION_ENABLED !== "1") {
+    return { status: "error", message: "Admin registration is disabled." };
+  }
+
   const parsed = registerSchema.safeParse(Object.fromEntries(formData));
   if (!parsed.success) return invalid(parsed.error);
 
@@ -61,7 +67,6 @@ export async function register(_prev: FormState, formData: FormData): Promise<Fo
     return { status: "error", message: "Username or email is already registered." };
   }
 
-  const adminCount = await db.user.count({ where: { role: { in: ["OWNER", "STAFF"] } } });
   const role = adminCount === 0 ? "OWNER" : "STAFF";
   const passwordHash = await bcrypt.hash(parsed.data.password, BCRYPT_COST);
 

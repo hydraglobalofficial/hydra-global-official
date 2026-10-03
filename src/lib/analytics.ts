@@ -8,7 +8,7 @@ declare global {
 }
 
 export type AnalyticsItem = {
-  id: string;
+  id?: string;
   name: string;
   price: number;
   quantity?: number;

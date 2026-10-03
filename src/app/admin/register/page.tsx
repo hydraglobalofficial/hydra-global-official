@@ -1,10 +1,17 @@
 import type { Metadata } from "next";
+import Link from "next/link";
+import { notFound } from "next/navigation";
 import { LogoMark } from "@/components/layout/logo";
 import { RegisterForm } from "@/components/admin/register-form";
+import { db } from "@/lib/db";
 
 export const metadata: Metadata = { title: "Admin register", robots: { index: false, follow: false } };
 
-export default function AdminRegisterPage() {
+export default async function AdminRegisterPage() {
+  const adminCount = await db.user.count({ where: { role: { in: ["OWNER", "STAFF"] } } });
+  const open = adminCount === 0 || process.env.ADMIN_REGISTRATION_ENABLED === "1";
+  if (!open) notFound();
+
   return (
     <main className="relative grid min-h-dvh place-items-center overflow-hidden px-6 py-12">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,_rgba(30,64,175,0.22),_transparent_55%),linear-gradient(180deg,#05070d_0%,#0a0f1a_100%)]" />
@@ -19,6 +26,12 @@ export default function AdminRegisterPage() {
           <p className="text-sm text-muted">Name, username, password, and master key required.</p>
         </div>
         <RegisterForm />
+        <p className="text-center text-xs text-subtle">
+          Already have access?{" "}
+          <Link href="/admin/login" className="text-accent hover:underline">
+            Sign in
+          </Link>
+        </p>
       </div>
     </main>
   );

@@ -40,8 +40,16 @@ export const getSession = cache(async () => {
 });
 
 /** Proxy only does an optimistic check; every admin page and action must call this. */
-export async function requireAdmin(roles: SessionPayload["role"][] = ["OWNER", "STAFF"]) {
+export async function requireAdmin(
+  roles: SessionPayload["role"][] = ["OWNER", "STAFF"],
+  options?: { next?: string },
+) {
   const session = await getSession();
-  if (!session || !roles.includes(session.role)) redirect("/admin/login");
+  if (!session || !roles.includes(session.role)) {
+    const next = options?.next && options.next.startsWith("/") && !options.next.startsWith("//")
+      ? `?next=${encodeURIComponent(options.next)}`
+      : "";
+    redirect(`/admin/login${next}`);
+  }
   return session;
 }

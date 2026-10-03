@@ -64,7 +64,7 @@ export function ShopFilters({ action, categories, devices, sortOptions, current 
           <select name="device" defaultValue={current.device ?? ""} onChange={submit} className="h-11 w-full rounded-xl border border-line bg-surface-2 px-3 text-sm focus:border-accent/60 focus:outline-none">
             <option value="">All devices</option>
             {devices.map((d) => (
-              <option key={d.id} value={d.slug}>
+              <option key={d.slug} value={d.slug}>
                 {d.model}
               </option>
             ))}

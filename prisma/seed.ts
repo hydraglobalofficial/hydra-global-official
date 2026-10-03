@@ -650,7 +650,7 @@ async function main() {
 
   console.log(`\n✔ Seed complete — ${products.length} products, ${deviceIds.size} devices.`);
   console.log(`  Admin: ${username} / ${email}  (password from SEED_ADMIN_PASSWORD)`);
-  console.log(`  Demo verification code: HYD-DEMO-0001`);
+  console.log(`  Editable sections: about, home.collections, home.howItWorks, home.newsletter`);
 }
 
 main()

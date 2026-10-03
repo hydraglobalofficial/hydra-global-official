@@ -7,8 +7,8 @@ import { escapeHtml, formatReportDate, formatReportMoney, reportFilename } from 
 type Params = { params: Promise<{ id: string }> };
 
 export async function GET(_request: Request, { params }: Params) {
-  await requireAdmin();
   const { id } = await params;
+  await requireAdmin(["OWNER", "STAFF"], { next: `/admin/reports/orders/${id}` });
   const order = await db.order.findUnique({
     where: { id },
     include: { items: true },

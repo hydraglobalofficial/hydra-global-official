@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { safeInternalHref } from "@/lib/content-safety";
 
 type Announcement = { id: string; message: string; href: string | null };
 
@@ -13,9 +14,9 @@ export function AnnouncementBar({ items }: { items: Announcement[] }) {
     <ul className="flex shrink-0 items-center" aria-hidden={hidden || undefined}>
       {repeated.map((item, i) => (
         <li key={`${suffix}-${item.id}-${i}`} className="flex items-center">
-          {item.href ? (
+          {item.href && safeInternalHref(item.href, "") ? (
             <Link
-              href={item.href}
+              href={safeInternalHref(item.href)}
               tabIndex={hidden ? -1 : 0}
               className="px-6 font-medium uppercase tracking-[0.18em] transition-colors hover:text-accent"
             >

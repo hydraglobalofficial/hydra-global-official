@@ -63,7 +63,7 @@ export function ShopByDevice({ devices }: { devices: NavigationData["devices"] }
                     <p className="mt-3 max-w-xs text-muted">{brands[card.slug].blurb}</p>
                     <div className="mt-6 flex flex-wrap gap-2">
                       {card.models.map((m) => (
-                        <span key={m.id} className="rounded-full border border-line bg-white/[0.03] px-3 py-1 text-xs text-muted">
+                        <span key={m.slug} className="rounded-full border border-line bg-white/[0.03] px-3 py-1 text-xs text-muted">
                           {m.model}
                         </span>
                       ))}

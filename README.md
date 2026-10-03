@@ -85,9 +85,10 @@ src/
 
 - **Money** is stored as whole BDT integers. Shipping: ৳70 inside Dhaka, ৳130 outside, free over ৳1,500.
 - **Checkout** re-prices every line from the database and decrements stock atomically inside a transaction.
-- **Verification** codes (`HYD-XXXX-XXXXX`) are generated in batches from the admin console. Every lookup is logged and can be exported as CSV.
+- **Site sections:** About + home blocks (collections, how-it-works, newsletter) are editable JSON in admin (`SiteSection`), with safe href/image validation on save and normalize-on-read.
+- **Reports:** Admin can download HTML/CSV order and product statements from the orders and products screens.
 - **Caching:** catalog pages use ISR and tag-based revalidation. Admin edits refresh the storefront immediately.
-- **Security:** bcrypt passwords, an HS256 JWT session cookie, Zod on every input, honeypot fields, rate limiting, and strict security headers.
+- **Security:** bcrypt passwords, an HS256 JWT session cookie, Zod on storefront inputs, honeypot fields, rate limiting, and strict security headers.
 - **Analytics:** GTM and Meta Pixel load only after cookie consent (`NEXT_PUBLIC_GTM_ID`, `NEXT_PUBLIC_META_PIXEL_ID`).
 
 ## Not yet implemented

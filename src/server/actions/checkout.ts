@@ -6,6 +6,7 @@ import { updateTag } from "next/cache";
 import { db } from "@/lib/db";
 import { checkoutSchema, invalid, type FormState } from "@/lib/validations";
 import { isPaymentEnabled, shippingFee } from "@/lib/pricing";
+import { signOrderAccess } from "@/lib/order-access";
 import { rateLimit } from "@/lib/rate-limit";
 import { CATALOG_TAG } from "@/server/queries/catalog";
 
@@ -107,5 +108,6 @@ export async function placeOrder(_prev: FormState, formData: FormData): Promise<
   }
 
   updateTag(CATALOG_TAG);
-  redirect(`/checkout/success?order=${encodeURIComponent(number)}`);
+  const access = signOrderAccess(number);
+  redirect(`/checkout/success?order=${encodeURIComponent(number)}&t=${encodeURIComponent(access)}`);
 }

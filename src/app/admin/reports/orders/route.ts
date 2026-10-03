@@ -21,7 +21,7 @@ const statuses: OrderStatus[] = [
 ];
 
 export async function GET(request: Request) {
-  await requireAdmin();
+  await requireAdmin(["OWNER", "STAFF"], { next: "/admin/reports/orders" });
   const { searchParams } = new URL(request.url);
   const format = searchParams.get("format") === "csv" ? "csv" : "html";
   const statusParam = searchParams.get("status");

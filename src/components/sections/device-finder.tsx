@@ -72,7 +72,7 @@ export function DeviceFinder({ devices }: { devices: DeviceOption[] }) {
             >
               <option value="">{brand ? "All models" : "Select a brand first"}</option>
               {models.map((m) => (
-                <option key={m.id} value={m.slug}>
+                <option key={m.slug} value={m.slug}>
                   {m.model}
                 </option>
               ))}
@@ -86,7 +86,7 @@ export function DeviceFinder({ devices }: { devices: DeviceOption[] }) {
               <span className="mr-1 font-mono text-[10px] uppercase tracking-[0.2em] text-subtle">Popular</span>
               {popular.map((d) => (
                 <Link
-                  key={d.id}
+                  key={d.slug}
                   href={`/shop/${d.brand === "APPLE" ? "iphone" : "samsung"}?device=${d.slug}`}
                   className="group inline-flex items-center gap-1 rounded-full border border-line bg-white/[0.03] px-3 py-1.5 text-xs text-muted transition-all hover:border-accent/40 hover:bg-accent/10 hover:text-fg"
                 >
