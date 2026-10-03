@@ -42,12 +42,12 @@ export default async function AdminLayout({ children }: LayoutProps<"/admin">) {
       <div className="bg-grid pointer-events-none absolute inset-0 opacity-[0.28]" />
       <div className="bg-noise pointer-events-none absolute inset-0 opacity-[0.04]" />
 
-      <div className="relative mx-auto flex min-h-dvh max-w-[1600px] flex-col lg:grid lg:grid-cols-[17rem_minmax(0,1fr)] xl:grid-cols-[17.5rem_minmax(0,1fr)]">
+      <div className="relative mx-auto flex min-h-dvh max-w-[1600px] flex-col lg:grid lg:grid-cols-[18.5rem_minmax(0,1fr)] xl:grid-cols-[19rem_minmax(0,1fr)]">
         <aside className="sticky top-0 z-30 border-b border-white/[0.06] bg-[#05070e]/90 backdrop-blur-2xl lg:flex lg:h-dvh lg:flex-col lg:border-b-0 lg:border-r lg:border-white/[0.05] lg:bg-gradient-to-b lg:from-[#0a1020]/95 lg:via-[#05070e]/90 lg:to-[#05070e]/85">
           {/* Brand */}
-          <div className="px-4 py-3.5 sm:px-5 lg:px-3.5 lg:pb-3 lg:pt-5">
-            <div className="flex items-center justify-between gap-2">
-              <Logo className="origin-left scale-[0.88]" />
+          <div className="px-4 py-3.5 sm:px-5 lg:px-5 lg:pb-5 lg:pt-6">
+            <div className="flex items-center justify-between gap-3">
+              <Logo className="origin-left scale-[0.9]" />
               <div className="flex shrink-0 items-center gap-2">
                 <span className="rounded-full bg-accent/15 px-2.5 py-1 font-mono text-[9px] uppercase tracking-[0.14em] text-blue-200 ring-1 ring-accent/25">
                   {session.role}
@@ -64,7 +64,7 @@ export default async function AdminLayout({ children }: LayoutProps<"/admin">) {
               </div>
             </div>
 
-            <div className="mt-3 hidden items-center gap-2 px-0.5 lg:flex">
+            <div className="mt-4 hidden items-center gap-2 lg:flex">
               <span className="relative flex size-1.5 shrink-0">
                 <span className="absolute inline-flex size-full animate-ping rounded-full bg-success/45" />
                 <span className="relative inline-flex size-1.5 rounded-full bg-success" />
@@ -88,23 +88,23 @@ export default async function AdminLayout({ children }: LayoutProps<"/admin">) {
           </div>
 
           {/* Nav */}
-          <div className="px-3 pb-3 sm:px-4 lg:flex-1 lg:overflow-y-auto lg:px-2.5 lg:pb-4">
+          <div className="px-3 pb-3 sm:px-4 lg:flex-1 lg:overflow-y-auto lg:px-4 lg:pb-6 lg:pt-1">
             <AdminNav badges={badges} />
           </div>
 
           {/* Footer */}
-          <div className="mt-auto hidden border-t border-white/[0.05] p-3 lg:block">
+          <div className="mt-auto hidden border-t border-white/[0.05] p-4 lg:block lg:px-4 lg:pb-5 lg:pt-4">
             <Link
               href="/"
               target="_blank"
-              className="mb-2 flex items-center gap-2 rounded-lg px-2.5 py-2 text-[12.5px] text-zinc-500 transition-colors hover:bg-white/[0.03] hover:text-zinc-200"
+              className="mb-3 flex items-center gap-2.5 rounded-xl px-3.5 py-2.5 text-[13px] text-zinc-500 transition-colors hover:bg-white/[0.03] hover:text-zinc-200"
             >
-              <ExternalLink size={13} />
+              <ExternalLink size={14} />
               View store
             </Link>
 
-            <div className="flex items-center gap-2.5 rounded-xl border border-white/[0.06] bg-white/[0.03] p-2 pl-2.5">
-              <div className="grid size-8 shrink-0 place-items-center rounded-lg bg-accent/20 font-mono text-[11px] font-semibold tracking-wide text-blue-100">
+            <div className="flex items-center gap-3 rounded-xl border border-white/[0.06] bg-white/[0.03] p-2.5 pl-3">
+              <div className="grid size-9 shrink-0 place-items-center rounded-lg bg-accent/20 font-mono text-[11px] font-semibold tracking-wide text-blue-100">
                 {initials || "AD"}
               </div>
               <div className="min-w-0 flex-1">
