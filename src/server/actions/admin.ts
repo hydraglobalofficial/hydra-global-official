@@ -145,47 +145,84 @@ export async function deleteCategory(formData: FormData) {
   refreshCatalog();
 }
 
-export async function createDevice(formData: FormData) {
+export type DeviceMutationResult =
+  | { ok: true; device: { id: string; brand: "APPLE" | "SAMSUNG"; series: string; model: string } }
+  | { ok: false; message: string };
+
+const deviceFields = z.object({
+  brand: z.enum(["APPLE", "SAMSUNG"]),
+  series: z.string().trim().min(2).max(60),
+  model: z.string().trim().min(2).max(80),
+});
+
+/** Used from product form (client). Catalog forms call the void wrappers below. */
+export async function createDeviceMutation(formData: FormData): Promise<DeviceMutationResult> {
   await requireAdmin();
-  const data = z
-    .object({
-      brand: z.enum(["APPLE", "SAMSUNG"]),
-      series: z.string().trim().min(2).max(60),
-      model: z.string().trim().min(2).max(80),
-    })
-    .parse(Object.fromEntries(formData));
-  await db.device.create({ data: { ...data, slug: slugify(data.model), position: await db.device.count({ where: { brand: data.brand } }) } });
-  refreshCatalog();
+  const parsed = deviceFields.safeParse(Object.fromEntries(formData));
+  if (!parsed.success) return { ok: false, message: "Brand, series, and model are required." };
+  const data = parsed.data;
+  const slug = slugify(data.model);
+  if (await db.device.findUnique({ where: { slug }, select: { id: true } })) {
+    return { ok: false, message: "A device with that name already exists." };
+  }
+  try {
+    const device = await db.device.create({
+      data: {
+        ...data,
+        slug,
+        position: await db.device.count({ where: { brand: data.brand } }),
+      },
+      select: { id: true, brand: true, series: true, model: true },
+    });
+    refreshCatalog();
+    revalidatePath("/admin/catalog");
+    revalidatePath("/admin/products", "layout");
+    return { ok: true, device };
+  } catch {
+    return { ok: false, message: "Could not create device." };
+  }
 }
 
-export async function updateDevice(formData: FormData) {
+export async function updateDeviceMutation(formData: FormData): Promise<DeviceMutationResult> {
   await requireAdmin();
-  const data = z
-    .object({
-      id: z.string().min(1),
-      brand: z.enum(["APPLE", "SAMSUNG"]),
-      series: z.string().trim().min(2).max(60),
-      model: z.string().trim().min(2).max(80),
-    })
-    .parse(Object.fromEntries(formData));
+  const parsed = deviceFields
+    .extend({ id: z.string().min(1) })
+    .safeParse(Object.fromEntries(formData));
+  if (!parsed.success) return { ok: false, message: "Brand, series, and model are required." };
+  const data = parsed.data;
   const current = await db.device.findUnique({ where: { id: data.id } });
-  if (!current) return;
+  if (!current) return { ok: false, message: "Device not found." };
   const nextSlug = slugify(data.model);
   const clash =
     nextSlug !== current.slug
       ? await db.device.findUnique({ where: { slug: nextSlug }, select: { id: true } })
       : null;
-  await db.device.update({
-    where: { id: data.id },
-    data: {
-      brand: data.brand,
-      series: data.series,
-      model: data.model,
-      slug: clash ? current.slug : nextSlug,
-    },
-  });
-  refreshCatalog();
-  revalidatePath("/admin/catalog");
+  try {
+    const device = await db.device.update({
+      where: { id: data.id },
+      data: {
+        brand: data.brand,
+        series: data.series,
+        model: data.model,
+        slug: clash ? current.slug : nextSlug,
+      },
+      select: { id: true, brand: true, series: true, model: true },
+    });
+    refreshCatalog();
+    revalidatePath("/admin/catalog");
+    revalidatePath("/admin/products", "layout");
+    return { ok: true, device };
+  } catch {
+    return { ok: false, message: "Could not update device." };
+  }
+}
+
+export async function createDevice(formData: FormData): Promise<void> {
+  await createDeviceMutation(formData);
+}
+
+export async function updateDevice(formData: FormData): Promise<void> {
+  await updateDeviceMutation(formData);
 }
 
 export async function deleteDevice(formData: FormData) {

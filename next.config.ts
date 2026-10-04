@@ -11,6 +11,18 @@ const securityHeaders = [
   { key: "X-DNS-Prefetch-Control", value: "off" },
 ];
 
+function r2PublicHostname() {
+  const base = process.env.R2_PUBLIC_URL?.trim();
+  if (!base) return null;
+  try {
+    return new URL(base).hostname;
+  } catch {
+    return null;
+  }
+}
+
+const r2Host = r2PublicHostname();
+
 const nextConfig: NextConfig = {
   poweredByHeader: false,
   productionBrowserSourceMaps: false,
@@ -21,10 +33,12 @@ const nextConfig: NextConfig = {
     qualities: [75, 92, 95],
     minimumCacheTTL: 60 * 60 * 24 * 30,
     remotePatterns: [
-      // Product media bucket (Cloudflare R2 / S3). Adjust to your bucket's public hostname.
+      // Product media bucket (Cloudflare R2 / S3).
       { protocol: "https", hostname: "*.r2.dev" },
       { protocol: "https", hostname: "*.amazonaws.com" },
-      // ImgBB public hosts (admin paste / upload links).
+      // Custom R2 public domain (from R2_PUBLIC_URL), e.g. media.hydra.com.bd
+      ...(r2Host ? [{ protocol: "https" as const, hostname: r2Host }] : []),
+      // ImgBB public hosts (admin paste links).
       { protocol: "https", hostname: "i.ibb.co" },
       { protocol: "https", hostname: "ibb.co" },
       { protocol: "https", hostname: "*.ibb.co" },

@@ -9,7 +9,10 @@ export default async function NewProductPage() {
   await requireAdmin();
   const [categories, devices] = await Promise.all([
     db.category.findMany({ select: { id: true, name: true }, orderBy: { position: "asc" } }),
-    db.device.findMany({ select: { id: true, model: true, brand: true }, orderBy: [{ brand: "asc" }, { position: "asc" }] }),
+    db.device.findMany({
+      select: { id: true, model: true, brand: true, series: true },
+      orderBy: [{ brand: "asc" }, { position: "asc" }],
+    }),
   ]);
 
   return (

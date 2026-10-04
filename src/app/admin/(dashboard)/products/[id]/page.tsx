@@ -16,7 +16,10 @@ export default async function EditProductPage({ params }: PageProps<"/admin/prod
   const [product, categories, devices] = await Promise.all([
     db.product.findUnique({ where: { id }, include: { devices: true, images: { orderBy: { position: "asc" } } } }),
     db.category.findMany({ select: { id: true, name: true }, orderBy: { position: "asc" } }),
-    db.device.findMany({ select: { id: true, model: true, brand: true }, orderBy: [{ brand: "asc" }, { position: "asc" }] }),
+    db.device.findMany({
+      select: { id: true, model: true, brand: true, series: true },
+      orderBy: [{ brand: "asc" }, { position: "asc" }],
+    }),
   ]);
   if (!product) notFound();
 

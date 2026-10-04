@@ -11,7 +11,7 @@ No Docker needed. Create a free hosted Postgres database on [Neon](https://neon.
 ```bash
 pnpm install              # also runs `prisma generate`
 cp .env.example .env      # set DATABASE_URL, DIRECT_URL, AUTH_SECRET (32+ chars)
-                          # optional: UPSTASH_REDIS_REST_URL + UPSTASH_REDIS_REST_TOKEN
+                          # optional: UPSTASH_REDIS_* · R2_* for admin image uploads
 pnpm db:deploy            # apply migrations
 pnpm db:seed              # demo catalog, pages, sections, orders, owner account
 pnpm dev                  # http://localhost:3000
@@ -29,6 +29,7 @@ pnpm dev                  # http://localhost:3000
    | `AUTH_SECRET`          | 32+ char random string                              |
    | `NEXT_PUBLIC_SITE_URL` | `https://your-domain.com`                           |
    | `NEXT_PUBLIC_GTM_ID`, `NEXT_PUBLIC_META_PIXEL_ID` | optional                 |
+   | `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET`, `R2_PUBLIC_URL` | Cloudflare R2 for admin image uploads |
 
    With the Neon integration from the Vercel Marketplace, the database variables are added for you.
 3. Deploy. The `vercel-build` script runs `prisma migrate deploy` before `next build`, so the schema is always up to date.
@@ -89,14 +90,23 @@ src/
 - **Site sections:** About + home blocks (collections, how-it-works, newsletter) are editable JSON in admin (`SiteSection`), with safe href/image validation on save and normalize-on-read.
 - **Reports:** Admin can download HTML/CSV order and product statements from the orders and products screens.
 - **Caching:** catalog pages use ISR and tag-based revalidation. Admin uses a versioned cache-aside layer (`src/lib/admin-cache.ts`) on Upstash Redis with tag invalidation, hit metadata, and Overview → Purge cache. Rate limits also use Redis. Without `UPSTASH_REDIS_*`, both fall back to process memory.
+- **Media:** Admin product + CMS image fields can upload from the device to Cloudflare R2 (`POST /api/admin/upload`). Set `R2_*` in `.env` (see `.env.example`). Public URLs are validated via `safeMediaUrl` and allowed in `next/image` remotePatterns.
 - **Security:** bcrypt passwords, an HS256 JWT session cookie, Zod on storefront inputs, honeypot fields, rate limiting, and strict security headers.
 - **Analytics:** GTM and Meta Pixel load only after cookie consent (`NEXT_PUBLIC_GTM_ID`, `NEXT_PUBLIC_META_PIXEL_ID`).
+
+## Cloudflare R2 setup
+
+1. In Cloudflare → R2 → create a bucket (e.g. `hydra-media`).
+2. **Settings → Public access:** enable `r2.dev` subdomain, or attach a custom domain.
+3. **Manage R2 API Tokens → Create API token** with Object Read & Write on that bucket.
+4. Copy into `.env` / Vercel: `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET`, `R2_PUBLIC_URL` (no trailing slash).
+5. Redeploy so `next.config` picks up a custom `R2_PUBLIC_URL` hostname for `next/image`.
+6. In admin → Products (or Content), use **Upload from device** — files go to R2 and the public URL is filled in.
 
 ## Not yet implemented
 
 - Mobile wallet and card payments. They are stubbed and shown as "coming soon"; only pay-on-delivery works where offered.
 - Customer accounts. Admin auth only.
 - Transactional email.
-- Image upload. Product images are entered as URLs.
 - Editing product variants in the admin form. Variants are seeded.
 - Phase 2 items: multi-currency, blog, and affiliate pages.

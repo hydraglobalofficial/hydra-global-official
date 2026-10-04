@@ -20,6 +20,16 @@ export function safeInternalHref(raw: unknown, fallback = "/"): string {
   return href;
 }
 
+function r2PublicHost(): string {
+  const base = process.env.R2_PUBLIC_URL?.trim();
+  if (!base) return "";
+  try {
+    return new URL(base).hostname.toLowerCase();
+  } catch {
+    return "";
+  }
+}
+
 /** Local /public paths or allowlisted remote image hosts (see next.config.ts). */
 export function safeMediaUrl(raw: unknown, fallback = ""): string {
   if (typeof raw !== "string") return fallback;
@@ -33,6 +43,7 @@ export function safeMediaUrl(raw: unknown, fallback = ""): string {
     const parsed = new URL(url);
     if (parsed.protocol !== "https:") return fallback;
     const host = parsed.hostname.toLowerCase();
+    const configuredR2 = r2PublicHost();
     const allowed =
       host === "i.ibb.co" ||
       host === "ibb.co" ||
@@ -40,7 +51,8 @@ export function safeMediaUrl(raw: unknown, fallback = ""): string {
       host.endsWith(".ibb.co") ||
       host.endsWith(".imagebb.com") ||
       host.endsWith(".r2.dev") ||
-      host.endsWith(".amazonaws.com");
+      host.endsWith(".amazonaws.com") ||
+      (configuredR2 !== "" && host === configuredR2);
     return allowed ? parsed.toString() : fallback;
   } catch {
     return fallback;

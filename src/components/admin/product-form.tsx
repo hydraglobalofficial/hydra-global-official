@@ -2,6 +2,8 @@
 
 import { useActionState } from "react";
 import { Loader2, Save } from "lucide-react";
+import { DeviceCompatField, type DeviceOpt } from "@/components/admin/device-compat";
+import { ImageUrlsField } from "@/components/admin/media-uploader";
 import { saveProduct } from "@/server/actions/admin";
 import { initialFormState } from "@/lib/validations";
 import { slugify } from "@/lib/utils";
@@ -9,7 +11,6 @@ import { Button } from "@/components/ui/button";
 import { Field, FormMessage, Input, Select, Textarea } from "@/components/ui/form";
 
 type Option = { id: string; name: string };
-type DeviceOpt = { id: string; model: string; brand: string };
 
 export type ProductFormValues = {
   id?: string;
@@ -29,7 +30,15 @@ export type ProductFormValues = {
   imageUrls: string;
 };
 
-export function ProductForm({ initial, categories, devices }: { initial: ProductFormValues; categories: Option[]; devices: DeviceOpt[] }) {
+export function ProductForm({
+  initial,
+  categories,
+  devices,
+}: {
+  initial: ProductFormValues;
+  categories: Option[];
+  devices: DeviceOpt[];
+}) {
   const [state, action, pending] = useActionState(saveProduct.bind(null, initial.id ?? null), initialFormState);
   const e = state.fieldErrors ?? {};
 
@@ -62,19 +71,24 @@ export function ProductForm({ initial, categories, devices }: { initial: Product
         <Field label="Highlights" htmlFor="highlights" hint="One per line.">
           <Textarea id="highlights" name="highlights" defaultValue={initial.highlights} className="min-h-28" />
         </Field>
-        <Field label="Image URLs" htmlFor="imageUrls" hint="One per line. Use /products/….jpg local paths, ImgBB (i.ibb.co) links, or R2/S3 public URLs.">
-          <Textarea id="imageUrls" name="imageUrls" defaultValue={initial.imageUrls} className="min-h-24 font-mono text-xs" placeholder={"/products/glass-clear.jpg\nhttps://i.ibb.co/…/product.jpg"} />
+        <Field
+          label="Images"
+          htmlFor="imageUrls"
+          hint="First image is the cover. Drag to reorder. Upload goes to Cloudflare R2."
+        >
+          <ImageUrlsField
+            id="imageUrls"
+            name="imageUrls"
+            defaultValue={initial.imageUrls}
+            folder="products"
+            placeholder={"/products/glass-clear.jpg\nhttps://…r2.dev/products/…"}
+          />
         </Field>
         <fieldset>
-          <legend className="mb-3 text-xs font-medium uppercase tracking-[0.14em] text-muted">Compatible devices</legend>
-          <div className="grid max-h-72 gap-2 overflow-y-auto rounded-xl border border-line p-4 sm:grid-cols-2 lg:grid-cols-3">
-            {devices.map((d) => (
-              <label key={d.id} className="flex items-center gap-2 text-sm text-muted has-[:checked]:text-fg">
-                <input type="checkbox" name="deviceIds" value={d.id} defaultChecked={initial.deviceIds.includes(d.id)} className="accent-[var(--color-accent)]" />
-                {d.model}
-              </label>
-            ))}
-          </div>
+          <legend className="mb-3 text-xs font-medium uppercase tracking-[0.14em] text-muted">
+            Compatible devices
+          </legend>
+          <DeviceCompatField devices={devices} selectedIds={initial.deviceIds} />
         </fieldset>
       </div>
 
@@ -91,12 +105,15 @@ export function ProductForm({ initial, categories, devices }: { initial: Product
             <Select id="categoryId" name="categoryId" defaultValue={initial.categoryId} required>
               <option value="">Select…</option>
               {categories.map((c) => (
-                <option key={c.id} value={c.id}>{c.name}</option>
+                <option key={c.id} value={c.id}>
+                  {c.name}
+                </option>
               ))}
             </Select>
           </Field>
           <label className="flex items-center gap-3 text-sm">
-            <input type="checkbox" name="featured" defaultChecked={initial.featured} className="accent-[var(--color-accent)]" /> Featured on homepage
+            <input type="checkbox" name="featured" defaultChecked={initial.featured} className="accent-[var(--color-accent)]" />{" "}
+            Featured on homepage
           </label>
         </div>
         <div className="space-y-5 rounded-2xl border border-line bg-surface p-6">

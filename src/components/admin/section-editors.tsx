@@ -17,6 +17,7 @@ import type {
   NewsletterContent,
 } from "@/content/site-sections";
 import { initialFormState } from "@/lib/validations";
+import { ImageUrlField } from "@/components/admin/media-uploader";
 import { Button } from "@/components/ui/button";
 import { FormMessage, Input, Select, Textarea } from "@/components/ui/form";
 import { Card } from "@/components/admin/admin-ui";
@@ -395,8 +396,13 @@ export function HomeHeroSectionEditor({ content }: { content: HomeHeroContent })
                     <option value="image">Custom image</option>
                   </Select>
                 </Label>
-                <Label label="Custom image URL" hint="Required only when visual is Custom image.">
-                  <Input name="slideImage" defaultValue={slide.image} placeholder="/products/glass-clear.jpg" />
+                <Label label="Custom image" hint="Upload from device (Cloudflare R2) or paste a URL. Required when visual is Custom image.">
+                  <ImageUrlField
+                    name="slideImage"
+                    defaultValue={slide.image}
+                    folder="hero"
+                    placeholder="/products/glass-clear.jpg"
+                  />
                 </Label>
               </div>
             </div>
@@ -473,8 +479,14 @@ export function CollectionsSectionEditor({ content }: { content: CollectionsCont
               <Label label="Description">
                 <Textarea name="itemDescription" defaultValue={item.description} className="min-h-16" />
               </Label>
-              <Label label="Image URL" hint="Public path, e.g. /products/glass-clear.jpg">
-                <Input name="itemImage" defaultValue={item.image} required />
+              <Label label="Image" hint="Upload from device (Cloudflare R2) or paste a public URL / path.">
+                <ImageUrlField
+                  name="itemImage"
+                  defaultValue={item.image}
+                  folder="collections"
+                  placeholder="/products/glass-clear.jpg"
+                  required
+                />
               </Label>
             </div>
           ))}
