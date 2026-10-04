@@ -1,11 +1,13 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { AnimatePresence, motion, useMotionValue, useSpring, useTransform, type Variants } from "motion/react";
 import { ButtonLink } from "@/components/ui/button";
 import { Rating } from "@/components/ui/primitives";
+import type { HeroSlide, HomeHeroContent } from "@/content/site-sections";
 import { cn } from "@/lib/utils";
 import { PhoneVisual } from "./phone-visual";
 import { GlassLiftVisual, PrivacyVisual } from "./hero-visuals";
@@ -13,76 +15,44 @@ import { GlassLiftVisual, PrivacyVisual } from "./hero-visuals";
 const SLIDE_MS = 7000;
 const ease = [0.22, 1, 0.36, 1] as const;
 
-const slides: {
-  key: string;
-  brand: string;
-  title: React.ReactNode;
-  text: string;
-  primary: { href: string; label: string };
-  secondary: { href: string; label: string };
-  Visual: () => React.JSX.Element;
-}[] = [
-  {
-    key: "armor",
-    brand: "HYDRA",
-    title: (
-      <>
-        Technology
-        <span className="block text-accent">within reach.</span>
-      </>
-    ),
-    text: "Premium cases, screen armor and camera gear for iPhone & Galaxy — cut to fit, built to last.",
-    primary: { href: "/shop", label: "Shop now" },
-    secondary: { href: "/about", label: "Our story" },
-    Visual: PhoneVisual,
-  },
-  {
-    key: "clarity",
-    brand: "Clarity glass",
-    title: (
-      <>
-        Less glare.
-        <span className="block text-accent">More clarity.</span>
-      </>
-    ),
-    text: "Anti-reflective armor for outdoor readability — tuned for iPhone 17 and Galaxy S25.",
-    primary: { href: "/shop?category=tempered-glass", label: "Shop glass" },
-    secondary: { href: "/shop/iphone", label: "iPhone lineup" },
-    Visual: GlassLiftVisual,
-  },
-  {
-    key: "privacy",
-    brand: "Privacy armor",
-    title: (
-      <>
-        Your screen.
-        <span className="block text-accent">Your business.</span>
-      </>
-    ),
-    text: "Side views black out past 30° — privacy for the metro, office and every café seat.",
-    primary: { href: "/shop?category=privacy-glass", label: "Shop privacy" },
-    secondary: { href: "/shop/samsung", label: "Galaxy lineup" },
-    Visual: PrivacyVisual,
-  },
-];
-
 const container: Variants = {
   hidden: {},
-  show: { transition: { staggerChildren: 0.08, delayChildren: 0.05 } },
-  exit: { transition: { staggerChildren: 0.025, staggerDirection: -1 } },
+  show: { transition: { staggerChildren: 0.07, delayChildren: 0.04 } },
+  exit: { transition: { staggerChildren: 0.02, staggerDirection: -1 } },
 };
 
 const item: Variants = {
-  hidden: { opacity: 0, y: 22 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.6, ease } },
-  exit: { opacity: 0, y: -14, transition: { duration: 0.25 } },
+  hidden: { opacity: 0, y: 18 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.5, ease } },
+  exit: { opacity: 0, y: -10, transition: { duration: 0.2 } },
 };
+
+function SlideVisual({ slide, priority }: { slide: HeroSlide; priority?: boolean }) {
+  if (slide.visual === "image" && slide.image) {
+    return (
+      <div className="relative mx-auto aspect-[4/5] w-full max-w-[30rem] overflow-hidden rounded-[2rem]">
+        <Image
+          src={slide.image}
+          alt={slide.brand}
+          fill
+          sizes="(max-width: 1024px) 90vw, 34rem"
+          className="object-cover"
+          priority={priority}
+        />
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-white/5" />
+      </div>
+    );
+  }
+  if (slide.visual === "glass") return <GlassLiftVisual />;
+  if (slide.visual === "privacy") return <PrivacyVisual />;
+  return <PhoneVisual />;
+}
 
 function Stage({ children }: { children: React.ReactNode }) {
   const mx = useMotionValue(0);
   const my = useMotionValue(0);
-  const rx = useSpring(useTransform(my, [-0.5, 0.5], [6, -6]), { stiffness: 90, damping: 18 });
-  const ry = useSpring(useTransform(mx, [-0.5, 0.5], [-8, 8]), { stiffness: 90, damping: 18 });
+  const rx = useSpring(useTransform(my, [-0.5, 0.5], [4, -4]), { stiffness: 70, damping: 22, mass: 0.8 });
+  const ry = useSpring(useTransform(mx, [-0.5, 0.5], [-5, 5]), { stiffness: 70, damping: 22, mass: 0.8 });
 
   return (
     <motion.div
@@ -103,18 +73,120 @@ function Stage({ children }: { children: React.ReactNode }) {
   );
 }
 
-export function Hero() {
+/** Classic carousel strip — sits tight under the phone stage. */
+function HeroStagePager({
+  index,
+  total,
+  paused,
+  labels,
+  onPrev,
+  onNext,
+  onSelect,
+}: {
+  index: number;
+  total: number;
+  paused: boolean;
+  labels: string[];
+  onPrev: () => void;
+  onNext: () => void;
+  onSelect: (i: number) => void;
+}) {
+  return (
+    <div className="pointer-events-auto w-[min(100%,20rem)]">
+      <div className="flex items-center gap-2">
+        <button
+          type="button"
+          onClick={onPrev}
+          aria-label="Previous slide"
+          className="grid size-11 shrink-0 place-items-center rounded-full border border-white/15 bg-black/55 text-fg shadow-[0_10px_30px_-12px_rgba(0,0,0,0.8)] backdrop-blur-md transition-colors hover:border-accent/50 hover:bg-black/70"
+        >
+          <ChevronLeft size={18} />
+        </button>
+
+        <div className="min-w-0 flex-1 rounded-full border border-white/12 bg-black/55 px-3 py-2.5 shadow-[0_14px_40px_-18px_rgba(0,0,0,0.85)] backdrop-blur-md">
+          <div className="flex items-center justify-center gap-2">
+            {Array.from({ length: total }, (_, i) => {
+              const active = i === index;
+              return (
+                <button
+                  key={i}
+                  type="button"
+                  onClick={() => onSelect(i)}
+                  aria-label={labels[i] ? `Go to ${labels[i]}` : `Go to slide ${i + 1}`}
+                  aria-current={active ? "true" : undefined}
+                  className={cn(
+                    "relative overflow-hidden rounded-full transition-all duration-300",
+                    active
+                      ? "h-2.5 w-10 bg-white/15"
+                      : "size-2.5 bg-white/30 hover:bg-white/55",
+                  )}
+                >
+                  {active && (
+                    <span
+                      key={`${index}-${paused ? "p" : "r"}`}
+                      className={cn(
+                        "absolute inset-y-0 left-0 origin-left rounded-full bg-accent",
+                        paused ? "w-full" : "animate-hero-rail w-full",
+                      )}
+                      style={paused ? undefined : { animationDuration: `${SLIDE_MS}ms` }}
+                    />
+                  )}
+                </button>
+              );
+            })}
+          </div>
+          <p className="mt-1.5 text-center font-mono text-[10px] tabular-nums tracking-[0.2em] text-muted">
+            <span className="text-fg">{String(index + 1).padStart(2, "0")}</span>
+            <span className="mx-1 text-white/25">/</span>
+            {String(total).padStart(2, "0")}
+          </p>
+        </div>
+
+        <button
+          type="button"
+          onClick={onNext}
+          aria-label="Next slide"
+          className="grid size-11 shrink-0 place-items-center rounded-full border border-accent/40 bg-accent/20 text-fg shadow-[0_10px_30px_-12px_rgba(30,64,175,0.55)] backdrop-blur-md transition-colors hover:bg-accent/30"
+        >
+          <ChevronRight size={18} />
+        </button>
+      </div>
+    </div>
+  );
+}
+
+export function Hero({ content }: { content: HomeHeroContent }) {
+  const slides = content.slides;
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
-  const slide = slides[index];
+  const slide = slides[Math.min(index, slides.length - 1)] ?? slides[0];
+  const stats = content.stats;
 
-  const go = useCallback((dir: 1 | -1) => setIndex((i) => (i + dir + slides.length) % slides.length), []);
+  const go = useCallback(
+    (dir: 1 | -1) => setIndex((i) => (i + dir + slides.length) % slides.length),
+    [slides.length],
+  );
 
   useEffect(() => {
-    if (paused) return;
-    const id = setTimeout(() => go(1), SLIDE_MS);
-    return () => clearTimeout(id);
-  }, [index, paused, go]);
+    if (paused || slides.length < 2) return;
+    const id = window.setTimeout(() => go(1), SLIDE_MS);
+    return () => window.clearTimeout(id);
+  }, [index, paused, go, slides.length]);
+
+  // Keep index valid if CMS slide count shrinks after publish.
+  useEffect(() => {
+    if (index >= slides.length) setIndex(0);
+  }, [index, slides.length]);
+
+  const social = useMemo(
+    () => ({
+      ratingLabel: content.ratingLabel,
+      quickLinks: content.quickLinks,
+    }),
+    [content.ratingLabel, content.quickLinks],
+  );
+
+  if (!slide) return null;
 
   return (
     <section
@@ -126,22 +198,16 @@ export function Hero() {
       onFocusCapture={() => setPaused(true)}
       onBlurCapture={() => setPaused(false)}
     >
-      {/* Full-bleed cinematic plane */}
       <div className="pointer-events-none absolute inset-0 bg-[#03050a]" />
-      <motion.div
-        className="pointer-events-none absolute -right-[10%] top-[-5%] h-[90%] w-[70%] rounded-full bg-accent/25 blur-[120px]"
-        animate={{ opacity: [0.35, 0.55, 0.35], scale: [1, 1.08, 1] }}
-        transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-      />
+      <div className="pointer-events-none absolute -right-[10%] top-[-5%] h-[90%] w-[70%] animate-hero-glow rounded-full bg-accent/25 blur-[120px]" />
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_20%_40%,rgba(255,255,255,0.04),transparent_55%)]" />
       <div className="bg-grid pointer-events-none absolute inset-0 opacity-30" />
       <div className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-[#03050a] via-[#03050a]/80 to-transparent" />
 
-      <div className="container-page relative grid min-h-[100svh] items-center gap-8 pb-28 pt-8 lg:grid-cols-[0.92fr_1.08fr] lg:gap-4 lg:pb-24 lg:pt-6">
-        {/* Copy — brand-first, tight hero budget */}
+      <div className="container-page relative grid min-h-[100svh] items-center gap-6 pb-24 pt-8 lg:grid-cols-[0.92fr_1.08fr] lg:gap-4 lg:pb-20 lg:pt-6">
         <div className="relative z-10 max-w-xl space-y-8 lg:space-y-9">
           <div className="grid min-h-[16.5rem] sm:min-h-[18rem]">
-            <AnimatePresence initial={false}>
+            <AnimatePresence initial={false} mode="popLayout">
               <motion.div
                 key={slide.key}
                 className="col-start-1 row-start-1 space-y-6 sm:space-y-7"
@@ -164,6 +230,7 @@ export function Hero() {
                   className="text-[2.85rem] font-semibold leading-[0.98] tracking-tight text-balance sm:text-6xl md:text-7xl lg:text-[4.6rem] lg:leading-[0.96]"
                 >
                   {slide.title}
+                  <span className="block text-accent">{slide.titleAccent}</span>
                 </motion.h1>
 
                 <motion.p variants={item} className="max-w-md text-base leading-relaxed text-muted sm:text-lg">
@@ -171,11 +238,11 @@ export function Hero() {
                 </motion.p>
 
                 <motion.div variants={item} className="flex flex-wrap items-center gap-3">
-                  <ButtonLink href={slide.primary.href} size="lg" className="min-w-[9.5rem] text-[15px]">
-                    {slide.primary.label} <ArrowRight size={17} />
+                  <ButtonLink href={slide.primaryHref} size="lg" className="min-w-[9.5rem] text-[15px]">
+                    {slide.primaryLabel} <ArrowRight size={17} />
                   </ButtonLink>
-                  <ButtonLink href={slide.secondary.href} size="lg" variant="outline">
-                    {slide.secondary.label}
+                  <ButtonLink href={slide.secondaryHref} size="lg" variant="outline">
+                    {slide.secondaryLabel}
                   </ButtonLink>
                 </motion.div>
               </motion.div>
@@ -185,119 +252,78 @@ export function Hero() {
           <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
             <div className="flex items-center gap-3">
               <Rating value={4.8} size={13} />
-              <p className="text-xs text-muted sm:text-sm">50,000+ owners · Bangladesh</p>
+              <p className="text-xs text-muted sm:text-sm">{social.ratingLabel}</p>
             </div>
             <div className="hidden h-4 w-px bg-white/10 sm:block" />
             <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-subtle">
-              <Link href="/shop/iphone" className="transition-colors hover:text-fg">
-                iPhone
-              </Link>
-              <Link href="/shop/samsung" className="transition-colors hover:text-fg">
-                Samsung
-              </Link>
-              <Link href="/shop" className="transition-colors hover:text-fg">
-                All products
-              </Link>
+              {social.quickLinks.map((link) => (
+                <Link key={`${link.href}-${link.label}`} href={link.href} className="transition-colors hover:text-fg">
+                  {link.label}
+                </Link>
+              ))}
             </div>
           </div>
         </div>
 
-        {/* Dominant product plane */}
-        <Stage>
-          <div className="relative mx-auto flex aspect-[4/5] w-full max-w-[34rem] items-center justify-center lg:max-w-none lg:translate-x-2">
-            <div
-              aria-hidden
-              className="pointer-events-none absolute left-1/2 top-[45%] size-[120%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(30,64,175,0.45)_0%,transparent_62%)] blur-3xl"
-            />
-            <div aria-hidden className="pointer-events-none absolute inset-x-[18%] bottom-[4%] h-20 rounded-[100%] bg-black/70 blur-3xl" />
+        <div className="relative mx-auto w-full max-w-[34rem] lg:max-w-none lg:translate-x-2">
+          <Stage>
+            <div className="relative mx-auto flex aspect-[4/5] w-full items-center justify-center">
+              <div
+                aria-hidden
+                className="pointer-events-none absolute left-1/2 top-[45%] size-[120%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(30,64,175,0.45)_0%,transparent_62%)] blur-3xl"
+              />
+              <div aria-hidden className="pointer-events-none absolute inset-x-[18%] bottom-[4%] h-20 rounded-[100%] bg-black/70 blur-3xl" />
 
-            <div className="relative z-[1] w-full scale-[1.02] sm:scale-105 lg:scale-110">
-              <div className="grid">
-                <AnimatePresence initial={false}>
-                  <motion.div
-                    key={slide.key}
-                    className="col-start-1 row-start-1"
-                    initial={{ opacity: 0, scale: 0.94, y: 28 }}
-                    animate={{ opacity: 1, scale: 1, y: 0 }}
-                    exit={{ opacity: 0, scale: 1.04, y: -18 }}
-                    transition={{ duration: 0.55, ease }}
-                  >
-                    <slide.Visual />
-                  </motion.div>
-                </AnimatePresence>
+              <div className="relative z-[1] w-full scale-[1.02] sm:scale-105 lg:scale-110">
+                <div className="grid">
+                  <AnimatePresence initial={false} mode="popLayout">
+                    <motion.div
+                      key={slide.key}
+                      className="col-start-1 row-start-1"
+                      initial={{ opacity: 0, scale: 0.96, y: 20 }}
+                      animate={{ opacity: 1, scale: 1, y: 0 }}
+                      exit={{ opacity: 0, scale: 1.02, y: -12 }}
+                      transition={{ duration: 0.45, ease }}
+                    >
+                      <SlideVisual slide={slide} priority={index === 0} />
+                    </motion.div>
+                  </AnimatePresence>
+                </div>
               </div>
+
+              {slides.length > 1 && (
+                <div className="absolute inset-x-0 bottom-[7%] z-30 flex justify-center px-3 sm:bottom-[8%] lg:bottom-[9%]">
+                  <HeroStagePager
+                    index={index}
+                    total={slides.length}
+                    paused={paused}
+                    labels={slides.map((s) => s.brand)}
+                    onPrev={() => go(-1)}
+                    onNext={() => go(1)}
+                    onSelect={setIndex}
+                  />
+                </div>
+              )}
             </div>
-          </div>
-        </Stage>
+          </Stage>
+        </div>
       </div>
 
-      {/* Bottom control dock — one composition footer for the first viewport */}
       <div className="pointer-events-none absolute inset-x-0 bottom-0 z-20">
         <div className="container-page pointer-events-auto pb-5 pt-2 sm:pb-7">
-          <div className="flex flex-col gap-4 rounded-2xl border border-white/[0.07] bg-black/50 p-3 backdrop-blur-xl sm:flex-row sm:items-center sm:justify-between sm:rounded-full sm:px-5 sm:py-3">
-            <dl className="grid grid-cols-3 divide-x divide-white/[0.06] sm:flex sm:divide-x">
-              {[
-                { v: "9H+", l: "Hardness" },
-                { v: "±0.05", l: "mm fit" },
-                { v: "12 mo", l: "Warranty" },
-              ].map((s) => (
-                <div key={s.l} className="flex flex-col items-center px-3 py-1 sm:flex-row sm:gap-2 sm:px-5">
-                  <dt className="order-2 text-[10px] uppercase tracking-[0.14em] text-subtle sm:order-1 sm:text-xs">{s.l}</dt>
-                  <dd className="order-1 font-mono text-sm font-semibold tabular-nums sm:order-2 sm:text-base">{s.v}</dd>
+          <div className="rounded-2xl border border-white/[0.07] bg-black/50 px-3 py-3 backdrop-blur-xl sm:rounded-full sm:px-5">
+            <dl className="grid grid-cols-3 divide-x divide-white/[0.06] sm:flex sm:justify-center sm:divide-x">
+              {stats.map((s) => (
+                <div key={s.label} className="flex flex-col items-center px-3 py-1 sm:flex-row sm:gap-2 sm:px-8">
+                  <dt className="order-2 text-[10px] uppercase tracking-[0.14em] text-subtle sm:order-1 sm:text-xs">
+                    {s.label}
+                  </dt>
+                  <dd className="order-1 font-mono text-sm font-semibold tabular-nums sm:order-2 sm:text-base">
+                    {s.value}
+                  </dd>
                 </div>
               ))}
             </dl>
-
-            <div className="flex items-center justify-between gap-3 sm:justify-end">
-              <span className="font-mono text-xs tabular-nums text-muted">
-                <span className="text-fg">{String(index + 1).padStart(2, "0")}</span>
-                <span className="mx-1 text-white/20">/</span>
-                {String(slides.length).padStart(2, "0")}
-              </span>
-              <div className="flex gap-1.5">
-                {slides.map((s, i) => (
-                  <button
-                    key={s.key}
-                    type="button"
-                    onClick={() => setIndex(i)}
-                    aria-label={`Go to slide ${i + 1}`}
-                    aria-current={i === index ? "true" : undefined}
-                    className="relative h-1 w-8 overflow-hidden rounded-full bg-white/15"
-                  >
-                    {i === index && (
-                      <motion.span
-                        key={`${s.key}-${paused}`}
-                        className="absolute inset-y-0 left-0 bg-accent"
-                        initial={{ width: paused ? "100%" : "0%" }}
-                        animate={{ width: "100%" }}
-                        transition={{ duration: paused ? 0 : SLIDE_MS / 1000, ease: "linear" }}
-                      />
-                    )}
-                    {i < index && <span className="absolute inset-0 bg-white/40" />}
-                  </button>
-                ))}
-              </div>
-              <div className="flex gap-1">
-                <button
-                  type="button"
-                  onClick={() => go(-1)}
-                  aria-label="Previous slide"
-                  className={cn(
-                    "grid size-9 place-items-center rounded-full border border-white/10 text-muted transition-colors hover:border-accent/40 hover:text-fg",
-                  )}
-                >
-                  <ChevronLeft size={15} />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => go(1)}
-                  aria-label="Next slide"
-                  className="grid size-9 place-items-center rounded-full border border-white/10 text-muted transition-colors hover:border-accent/40 hover:text-fg"
-                >
-                  <ChevronRight size={15} />
-                </button>
-              </div>
-            </div>
           </div>
         </div>
       </div>

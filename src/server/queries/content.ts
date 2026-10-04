@@ -5,10 +5,12 @@ import { db } from "@/lib/db";
 import {
   defaultAboutContent,
   defaultCollectionsContent,
+  defaultHomeHeroContent,
   defaultHowItWorksContent,
   defaultNewsletterContent,
   type AboutContent,
   type CollectionsContent,
+  type HomeHeroContent,
   type HowItWorksContent,
   type NewsletterContent,
 } from "@/content/site-sections";
@@ -16,6 +18,7 @@ import { safeInternalHref } from "@/lib/content-safety";
 import {
   normalizeAboutContent,
   normalizeCollectionsContent,
+  normalizeHomeHeroContent,
   normalizeHowItWorksContent,
   normalizeNewsletterContent,
 } from "@/lib/normalize-sections";
@@ -45,10 +48,10 @@ export const getAboutContent = unstable_cache(
       const row = await db.siteSection.findUnique({ where: { key: "about" }, select: { data: true } });
       return normalizeAboutContent(row?.data ?? defaultAboutContent);
     } catch {
-      return defaultAboutContent;
+      return normalizeAboutContent(defaultAboutContent);
     }
   },
-  ["site-section-about"],
+  ["site-section-about-v2"],
   { tags: [CONTENT_TAG], revalidate: 3600 },
 );
 
@@ -88,6 +91,19 @@ export const getCollectionsContent = unstable_cache(
     }
   },
   ["site-section-collections"],
+  { tags: [CONTENT_TAG], revalidate: 3600 },
+);
+
+export const getHomeHeroContent = unstable_cache(
+  async (): Promise<HomeHeroContent> => {
+    try {
+      const row = await db.siteSection.findUnique({ where: { key: "home.hero" }, select: { data: true } });
+      return normalizeHomeHeroContent(row?.data ?? defaultHomeHeroContent);
+    } catch {
+      return defaultHomeHeroContent;
+    }
+  },
+  ["site-section-home-hero"],
   { tags: [CONTENT_TAG], revalidate: 3600 },
 );
 

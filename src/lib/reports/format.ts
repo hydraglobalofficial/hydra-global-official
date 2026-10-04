@@ -10,7 +10,7 @@ export function escapeHtml(value: string) {
 }
 
 export function formatReportMoney(amount: number) {
-  return `BDT ${new Intl.NumberFormat("en-BD", { maximumFractionDigits: 0 }).format(amount)}`;
+  return `USD ${new Intl.NumberFormat("en-US", { maximumFractionDigits: 0 }).format(amount)}`;
 }
 
 export function formatReportDate(date: Date | string) {
@@ -29,7 +29,7 @@ export function formatReportDateTime(date: Date | string = new Date()) {
     hour: "2-digit",
     minute: "2-digit",
     hour12: true,
-    timeZone: "Asia/Dhaka",
+    timeZone: "UTC",
   }).format(new Date(date));
 }
 

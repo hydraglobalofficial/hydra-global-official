@@ -5,6 +5,7 @@ import { AdminHeader } from "@/components/admin/admin-ui";
 import {
   AboutSectionEditor,
   CollectionsSectionEditor,
+  HomeHeroSectionEditor,
   HowItWorksSectionEditor,
   NewsletterSectionEditor,
 } from "@/components/admin/section-editors";
@@ -13,6 +14,7 @@ import { requireAdmin } from "@/lib/auth/session";
 import {
   normalizeAboutContent,
   normalizeCollectionsContent,
+  normalizeHomeHeroContent,
   normalizeHowItWorksContent,
   normalizeNewsletterContent,
 } from "@/lib/normalize-sections";
@@ -38,6 +40,7 @@ export default async function EditSiteSectionPage({ params }: Props) {
       </Link>
       <AdminHeader eyebrow="Site sections" title={meta.title} description={meta.description} />
 
+      {key === "home.hero" && <HomeHeroSectionEditor content={normalizeHomeHeroContent(row?.data)} />}
       {key === "about" && <AboutSectionEditor content={normalizeAboutContent(row?.data)} />}
       {key === "home.collections" && (
         <CollectionsSectionEditor content={normalizeCollectionsContent(row?.data)} />

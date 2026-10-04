@@ -4,19 +4,20 @@ export const siteConfig = {
   tagline: "Technology within reach",
   slogan: "Technology within reach",
   description:
-    "HYDRA is a mobile accessories brand for iPhone and Samsung Galaxy — screen protection, cases, camera armor and everyday essentials, engineered for a perfect fit.",
-  email: "support@hydra.com.bd",
-  phone: "+880 1700-000000",
-  address: "Level 7, Gulshan Avenue, Dhaka 1212, Bangladesh",
-  hours: "Sat–Thu, 10:00–20:00",
+    "HYDRA is a global mobile accessories brand for iPhone and Samsung Galaxy — screen protection, cases, camera armor and everyday essentials, engineered for a perfect fit and shipped worldwide.",
+  email: "support@hydraglobal.com",
+  phone: "+1 (415) 555-0147",
+  address: "Global HQ · Shipping from regional hubs worldwide",
+  hours: "Mon–Fri, 09:00–18:00 (local hub time)",
   /** Used for the live open/closed indicator. Days follow Date#getDay (0 = Sunday). */
-  businessHours: { timeZone: "Asia/Dhaka", days: [6, 0, 1, 2, 3, 4], open: 10, close: 20 },
-  whatsapp: "8801700000000",
+  businessHours: { timeZone: "UTC", days: [1, 2, 3, 4, 5], open: 9, close: 18 },
+  whatsapp: "14155550147",
   messenger: "https://m.me/hydraglobal",
-  mapsUrl: "https://www.google.com/maps/search/?api=1&query=Gulshan+Avenue+Dhaka+1212",
-  currency: "BDT",
-  freeShippingThreshold: 1500,
-  shippingFee: { insideDhaka: 70, outsideDhaka: 130 },
+  mapsUrl: "https://www.google.com/maps/search/?api=1&query=HYDRA+Global",
+  currency: "USD",
+  freeShippingThreshold: 80,
+  /** Express = major hub cities; standard = everywhere else. */
+  shippingFee: { express: 8, standard: 14 },
   social: {
     facebook: "https://facebook.com/hydraglobal",
     instagram: "https://instagram.com/hydraglobal",
@@ -25,7 +26,10 @@ export const siteConfig = {
   },
 } as const;
 
-/** Internal / partner use only — not shown on the public storefront. */
+/**
+ * Internal legal identifiers for invoices / reports only — never render on the public storefront.
+ * Public About company copy lives in the About CMS section.
+ */
 export const companyInfo = {
   legalForm: "Private Limited Company",
   incorporated: "2023",
@@ -34,7 +38,7 @@ export const companyInfo = {
   tradeLicense: "DNCC TRAD/000000/2023",
   tin: "000000000000",
   bin: "000000000-0101",
-  registeredOffice: siteConfig.address,
+  registeredOffice: "Level 7, Gulshan Avenue, Dhaka 1212, Bangladesh",
 } as const;
 
 /** Add a YouTube video ID to embed it inline; without one the card links to `href`. */
@@ -49,7 +53,7 @@ export const showcaseVideos: { title: string; caption: string; duration: string;
   },
   {
     title: "Privacy glass, side by side",
-    caption: "What your neighbour on the metro sees — nothing.",
+    caption: "What your neighbour on the train sees — nothing.",
     duration: "Demo · 1 min",
     poster: "/products/glass-privacy.jpg",
     youtubeId: "",

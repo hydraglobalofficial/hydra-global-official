@@ -119,7 +119,7 @@ export function ImpactStat() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
         >
-          Protected across Bangladesh
+          Protected worldwide
         </motion.p>
         <p className="mt-4 text-[clamp(4rem,15vw,12rem)] font-semibold leading-none tracking-[-0.06em]">
           <CountUp to={50000} className="bg-gradient-to-b from-white via-fg to-white/55 bg-clip-text text-transparent tabular-nums" />
@@ -134,8 +134,8 @@ export function ImpactStat() {
         >
           <h2 className="text-2xl font-semibold tracking-tight md:text-3xl">Devices equipped by HYDRA.</h2>
           <p className="text-pretty text-muted">
-            Built in Dhaka for the phones Bangladesh actually carries. Screen armor, cases, camera kits and more — cut per model, quality-checked and delivered to all 64
-            districts — with real humans on support when you need them.
+            Engineered for the flagship phones people actually carry. Screen armor, cases, camera kits and more — cut per model,
+            quality-checked and shipped worldwide — with real humans on support when you need them.
           </p>
         </motion.div>
       </div>

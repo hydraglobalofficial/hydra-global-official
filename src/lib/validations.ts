@@ -1,10 +1,11 @@
 import { z } from "zod";
 
-const bdPhone = z
+/** International-friendly mobile: optional +, 8–15 digits. */
+const intlPhone = z
   .string()
   .trim()
-  .transform((v) => v.replace(/[\s-]/g, ""))
-  .pipe(z.string().regex(/^(\+?880)?01[3-9]\d{8}$/, "Enter a valid Bangladeshi mobile number"));
+  .transform((v) => v.replace(/[\s()-]/g, ""))
+  .pipe(z.string().regex(/^\+?[1-9]\d{7,14}$/, "Enter a valid mobile number with country code"));
 
 export const inquirySchema = z.object({
   type: z.enum(["CONTACT", "SUPPORT", "WARRANTY", "RETURN"]).default("CONTACT"),
@@ -29,7 +30,7 @@ export const cartLineSchema = z.object({
 export const checkoutSchema = z.object({
   customerName: z.string().trim().min(2, "Enter your full name").max(80),
   email: z.email("Enter a valid email").trim().toLowerCase(),
-  phone: bdPhone,
+  phone: intlPhone,
   address: z.string().trim().min(6, "Enter a complete delivery address").max(300),
   city: z.string().trim().min(2, "Select a city").max(60),
   area: z.string().trim().max(80).optional().or(z.literal("")),

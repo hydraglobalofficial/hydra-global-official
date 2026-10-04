@@ -119,7 +119,7 @@ export default async function AdminOrdersPage({ searchParams }: PageProps<"/admi
         </form>
       </div>
 
-      <Panel title="Order register" icon={<span className="font-mono text-[10px] text-accent">BDT</span>}>
+      <Panel title="Order register" icon={<span className="font-mono text-[10px] text-accent">USD</span>}>
         <ul className="divide-y divide-white/[0.05] sm:hidden">
           {orders.map((o) => (
             <li key={o.id} className="px-4 py-3.5">

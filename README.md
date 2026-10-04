@@ -1,6 +1,6 @@
 # HYDRA
 
-Premium screen protection for iPhone and Samsung Galaxy — a Bangladesh-focused (BDT) storefront with an admin console for catalog, orders and editable site content.
+Premium screen protection for iPhone and Samsung Galaxy — a worldwide (USD) storefront with an admin console for catalog, orders and editable site content.
 
 **Stack:** Next.js 16 (App Router, TypeScript) · PostgreSQL · Prisma 7 · Tailwind CSS v4 · Zod 4 · pnpm
 
@@ -83,7 +83,7 @@ src/
 
 ## Key behaviour
 
-- **Money** is stored as whole BDT integers. Shipping: ৳70 inside Dhaka, ৳130 outside, free over ৳1,500.
+- **Money** is stored as whole USD integers. Shipping: $8 express hubs, $14 standard, free over $80.
 - **Checkout** re-prices every line from the database and decrements stock atomically inside a transaction.
 - **Site sections:** About + home blocks (collections, how-it-works, newsletter) are editable JSON in admin (`SiteSection`), with safe href/image validation on save and normalize-on-read.
 - **Reports:** Admin can download HTML/CSV order and product statements from the orders and products screens.
@@ -93,7 +93,7 @@ src/
 
 ## Not yet implemented
 
-- bKash, Nagad and SSLCommerz payments. They are stubbed and shown as "coming soon"; only Cash on Delivery works.
+- Mobile wallet and card payments. They are stubbed and shown as "coming soon"; only pay-on-delivery works where offered.
 - Customer accounts. Admin auth only.
 - Transactional email.
 - Image upload. Product images are entered as URLs.

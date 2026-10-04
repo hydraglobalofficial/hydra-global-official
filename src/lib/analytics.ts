@@ -37,7 +37,7 @@ const pixelEvents = {
 
 export type AnalyticsEvent = keyof typeof pixelEvents;
 
-const CURRENCY = "BDT";
+const CURRENCY = "USD";
 
 export function hasAnalyticsConsent() {
   return typeof window !== "undefined" && localStorage.getItem(CONSENT_KEY) === "granted";

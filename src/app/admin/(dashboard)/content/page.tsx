@@ -86,7 +86,7 @@ export default async function AdminContentPage() {
           <form action={saveAnnouncement} className="grid gap-3 p-4 sm:grid-cols-2 lg:grid-cols-[1.4fr_0.9fr_5rem_auto_auto] lg:items-end">
             <label className="space-y-1.5 sm:col-span-2 lg:col-span-1">
               <span className="text-[10px] font-medium uppercase tracking-[0.14em] text-subtle">New headline</span>
-              <Input name="message" placeholder="Free delivery across Bangladesh on orders over ৳1,500" required maxLength={160} />
+              <Input name="message" placeholder="Free worldwide shipping on orders over $80" required maxLength={160} />
             </label>
             <label className="space-y-1.5">
               <span className="text-[10px] font-medium uppercase tracking-[0.14em] text-subtle">Link (optional)</span>
@@ -108,11 +108,79 @@ export default async function AdminContentPage() {
       </section>
 
       <section className="mt-10 space-y-4">
+        <div>
+          <h2 className="flex items-center gap-2 font-medium">
+            <LayoutTemplate size={16} className="text-accent" /> Homepage hero
+          </h2>
+          <p className="mt-1 text-sm text-muted">
+            Slides, stage visuals/images, left-side copy, CTAs, quick links and stats — managed separately from other blocks.
+          </p>
+        </div>
+        {SITE_SECTION_META.filter((s) => s.key === "home.hero").map((s) => (
+          <Link
+            key={s.key}
+            href={`/admin/content/sections/${encodeURIComponent(s.key)}`}
+            className="block rounded-2xl border border-accent/25 bg-gradient-to-br from-accent/15 via-white/[0.03] to-transparent p-5 transition-colors hover:border-accent/45"
+          >
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <p className="text-[10px] font-medium uppercase tracking-[0.18em] text-accent">Featured · Home</p>
+                <p className="mt-1 text-base font-medium">{s.title}</p>
+                <p className="mt-1 text-sm text-muted">{s.description}</p>
+                <p className="mt-2 text-xs text-subtle">
+                  {sectionUpdated.has(s.key)
+                    ? `Updated ${formatDate(sectionUpdated.get(s.key)!)}`
+                    : "Using defaults until you publish"}
+                </p>
+              </div>
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-white/10 px-3 py-1.5 text-xs text-muted">
+                <Pencil size={12} /> Edit
+              </span>
+            </div>
+          </Link>
+        ))}
+      </section>
+
+      <section className="mt-10 space-y-4">
+        <div>
+          <h2 className="flex items-center gap-2 font-medium">
+            <LayoutTemplate size={16} className="text-accent" /> About page
+          </h2>
+          <p className="mt-1 text-sm text-muted">
+            Edit every About block — including company overview show/hide and public facts. Keep licence / TIN / BIN off the public page.
+          </p>
+        </div>
+        {SITE_SECTION_META.filter((s) => s.key === "about").map((s) => (
+          <Link
+            key={s.key}
+            href={`/admin/content/sections/${encodeURIComponent(s.key)}`}
+            className="block rounded-2xl border border-white/10 bg-gradient-to-br from-white/[0.04] via-white/[0.02] to-transparent p-5 transition-colors hover:border-accent/35"
+          >
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <p className="text-[10px] font-medium uppercase tracking-[0.18em] text-accent">Featured · About</p>
+                <p className="mt-1 text-base font-medium">{s.title}</p>
+                <p className="mt-1 text-sm text-muted">{s.description}</p>
+                <p className="mt-2 text-xs text-subtle">
+                  {sectionUpdated.has(s.key)
+                    ? `Updated ${formatDate(sectionUpdated.get(s.key)!)}`
+                    : "Using defaults until you publish"}
+                </p>
+              </div>
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-white/10 px-3 py-1.5 text-xs text-muted">
+                <Pencil size={12} /> Edit
+              </span>
+            </div>
+          </Link>
+        ))}
+      </section>
+
+      <section className="mt-10 space-y-4">
         <h2 className="flex items-center gap-2 font-medium">
-          <LayoutTemplate size={16} className="text-accent" /> Site sections
+          <LayoutTemplate size={16} className="text-accent" /> Other site sections
         </h2>
         <Card className="divide-y divide-line">
-          {SITE_SECTION_META.map((s) => (
+          {SITE_SECTION_META.filter((s) => s.key !== "home.hero" && s.key !== "about").map((s) => (
             <Link
               key={s.key}
               href={`/admin/content/sections/${encodeURIComponent(s.key)}`}

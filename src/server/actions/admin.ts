@@ -12,6 +12,8 @@ import { Prisma } from "@/generated/prisma/client";
 import type {
   AboutContent,
   CollectionsContent,
+  HeroVisualKey,
+  HomeHeroContent,
   HowItWorksContent,
   NewsletterContent,
 } from "@/content/site-sections";
@@ -19,9 +21,12 @@ import { clampText, safeInternalHref, safeMediaUrl, safeSlug } from "@/lib/conte
 import {
   normalizeAboutContent,
   normalizeCollectionsContent,
+  normalizeHomeHeroContent,
   normalizeHowItWorksContent,
   normalizeNewsletterContent,
 } from "@/lib/normalize-sections";
+
+const HERO_VISUALS = new Set<HeroVisualKey>(["phone", "glass", "privacy", "image"]);
 
 const lines = (value: string) =>
   value
@@ -388,6 +393,26 @@ export async function saveAboutSection(_prev: FormState, formData: FormData): Pr
       return { status: "error", message: "Division links must be site paths like /shop or /contact." };
     }
 
+    const commitmentTitles = formData.getAll("companyCommitmentTitle").map(String);
+    const commitmentTexts = formData.getAll("companyCommitmentText").map(String);
+    const commitments = commitmentTitles
+      .map((title, i) => ({
+        title: clampText(title, 80),
+        text: clampText(commitmentTexts[i], 240),
+      }))
+      .filter((row) => row.title && row.text)
+      .slice(0, 8);
+
+    const factLabels = formData.getAll("companyFactLabel").map(String);
+    const factValues = formData.getAll("companyFactValue").map(String);
+    const facts = factLabels
+      .map((label, i) => ({
+        label: clampText(label, 80),
+        value: clampText(factValues[i], 200),
+      }))
+      .filter((row) => row.label && row.value)
+      .slice(0, 16);
+
     const data = normalizeAboutContent({
       hero: {
         eyebrow: clampText(formData.get("heroEyebrow"), 60),
@@ -415,6 +440,19 @@ export async function saveAboutSection(_prev: FormState, formData: FormData): Pr
       values,
       divisions,
       journey,
+      company: {
+        visible: formData.get("companyVisible") === "on",
+        eyebrow: clampText(formData.get("companyEyebrow"), 60),
+        title: clampText(formData.get("companyTitle"), 120),
+        titleMuted: clampText(formData.get("companyTitleMuted"), 80),
+        description: clampText(formData.get("companyDescription"), 600),
+        ctaLabel: clampText(formData.get("companyCtaLabel"), 60),
+        ctaHref: safeInternalHref(formData.get("companyCtaHref"), "/contact"),
+        sheetTitle: clampText(formData.get("companySheetTitle"), 80),
+        sheetBadge: clampText(formData.get("companySheetBadge"), 40),
+        commitments,
+        facts,
+      },
       careers: {
         title: clampText(formData.get("careersTitle"), 120),
         text: clampText(formData.get("careersText"), 400),
@@ -435,6 +473,7 @@ export async function saveAboutSection(_prev: FormState, formData: FormData): Pr
     updateTag(CONTENT_TAG);
     revalidatePath("/about");
     revalidatePath("/admin/content");
+    revalidatePath("/admin/content/sections/about");
     return { status: "success", message: "About page published." };
   } catch (error) {
     console.error("[saveAboutSection]", error);
@@ -510,6 +549,105 @@ export async function saveNewsletterSection(_prev: FormState, formData: FormData
   } catch (error) {
     console.error("[saveNewsletterSection]", error);
     return { status: "error", message: "Could not publish newsletter block." };
+  }
+}
+
+export async function saveHomeHeroSection(_prev: FormState, formData: FormData): Promise<FormState> {
+  await requireAdmin();
+
+  try {
+    const keys = formData.getAll("slideKey").map(String);
+    const brands = formData.getAll("slideBrand").map(String);
+    const titles = formData.getAll("slideTitle").map(String);
+    const accents = formData.getAll("slideTitleAccent").map(String);
+    const texts = formData.getAll("slideText").map(String);
+    const primaryLabels = formData.getAll("slidePrimaryLabel").map(String);
+    const primaryHrefs = formData.getAll("slidePrimaryHref").map(String);
+    const secondaryLabels = formData.getAll("slideSecondaryLabel").map(String);
+    const secondaryHrefs = formData.getAll("slideSecondaryHref").map(String);
+    const visuals = formData.getAll("slideVisual").map(String);
+    const images = formData.getAll("slideImage").map(String);
+
+    const slides = keys
+      .map((_, i) => {
+        const key = safeSlug(keys[i]) || clampText(keys[i], 40).toLowerCase().replace(/[^a-z0-9-]+/g, "-");
+        const brand = clampText(brands[i], 40);
+        const title = clampText(titles[i], 80);
+        const titleAccent = clampText(accents[i], 80);
+        const text = clampText(texts[i], 280);
+        const primaryLabel = clampText(primaryLabels[i], 40);
+        const primaryHref = safeInternalHref(primaryHrefs[i], "/shop");
+        const secondaryLabel = clampText(secondaryLabels[i], 40);
+        const secondaryHref = safeInternalHref(secondaryHrefs[i], "/shop");
+        const visualRaw = String(visuals[i] ?? "phone");
+        const visual: HeroVisualKey = HERO_VISUALS.has(visualRaw as HeroVisualKey)
+          ? (visualRaw as HeroVisualKey)
+          : "phone";
+        const image = safeMediaUrl(images[i], "");
+        if (!key && !brand && !title) return null;
+        if (!key || !brand || !title || !titleAccent || !text || !primaryLabel || !secondaryLabel) return null;
+        if (visual === "image" && !image) return null;
+        return {
+          key,
+          brand,
+          title,
+          titleAccent,
+          text,
+          primaryLabel,
+          primaryHref,
+          secondaryLabel,
+          secondaryHref,
+          visual,
+          image,
+        };
+      })
+      .filter((row): row is NonNullable<typeof row> => !!row)
+      .slice(0, 6);
+
+    if (slides.length === 0) {
+      return { status: "error", message: "Add at least one complete hero slide." };
+    }
+
+    const statValues = formData.getAll("statValue").map(String);
+    const statLabels = formData.getAll("statLabel").map(String);
+    const stats = statValues
+      .map((value, i) => ({
+        value: clampText(value, 24),
+        label: clampText(statLabels[i], 40),
+      }))
+      .filter((row) => row.value && row.label)
+      .slice(0, 4);
+
+    const linkLabels = formData.getAll("linkLabel").map(String);
+    const linkHrefs = formData.getAll("linkHref").map(String);
+    const quickLinks = linkLabels
+      .map((label, i) => ({
+        label: clampText(label, 40),
+        href: safeInternalHref(linkHrefs[i], ""),
+      }))
+      .filter((row) => row.label && row.href)
+      .slice(0, 6);
+
+    const data = normalizeHomeHeroContent({
+      ratingLabel: clampText(formData.get("ratingLabel"), 80) || "50,000+ owners · worldwide",
+      quickLinks,
+      stats,
+      slides,
+    } satisfies HomeHeroContent);
+
+    await db.siteSection.upsert({
+      where: { key: "home.hero" },
+      create: { key: "home.hero", title: "Home · Hero slider", data },
+      update: { data, title: "Home · Hero slider" },
+    });
+    updateTag(CONTENT_TAG);
+    revalidatePath("/");
+    revalidatePath("/admin/content");
+    revalidatePath("/admin/content/sections/home.hero");
+    return { status: "success", message: "Hero slider published." };
+  } catch (error) {
+    console.error("[saveHomeHeroSection]", error);
+    return { status: "error", message: "Could not save hero section." };
   }
 }
 

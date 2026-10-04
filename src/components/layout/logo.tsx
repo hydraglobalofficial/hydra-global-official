@@ -2,10 +2,13 @@ import Image from "next/image";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 
-const MARK_SRC = "/products/Hydra_Animation.png";
-const WORDMARK_SRC = "/products/Hydra.png";
+/** Creature crest (Hydra_Animation) for compact mark. */
+export const MARK_SRC = "/products/Hydra_Mark.png";
+export const CREST_SRC = "/products/Hydra_Animation.png";
+/** Full HYDRA wordmark + tagline (real brand PNG). */
+export const WORDMARK_SRC = "/products/Hydra.png";
 
-/** Creature mark — silver/black original on black plate. */
+/** Creature mark — from Hydra_Animation.png */
 export function LogoMark({
   className,
   priority = false,
@@ -17,12 +20,20 @@ export function LogoMark({
 }) {
   return (
     <span className={cn("relative inline-block size-10 shrink-0 overflow-hidden rounded-md bg-black sm:size-11 md:size-12", className)}>
-      <Image src={MARK_SRC} alt="" fill sizes={sizes} priority={priority} className="object-contain object-center p-0.5" />
+      <Image
+        src={MARK_SRC}
+        alt=""
+        fill
+        sizes={sizes}
+        priority={priority}
+        quality={92}
+        className="object-contain object-center p-0.5"
+      />
     </span>
   );
 }
 
-/** Original HYDRA brand PNG for footer / large lockups. */
+/** Real HYDRA wordmark image (includes SMART ACCESSORIES). */
 export function WordmarkImage({
   className,
   priority = false,
@@ -33,33 +44,58 @@ export function WordmarkImage({
   sizes?: string;
 }) {
   return (
-    <span className={cn("relative inline-block bg-black", className)}>
-      <Image src={WORDMARK_SRC} alt="" fill sizes={sizes} priority={priority} className="object-contain object-center" />
+    <span className={cn("relative inline-block", className)}>
+      <Image
+        src={WORDMARK_SRC}
+        alt="HYDRA"
+        fill
+        sizes={sizes}
+        priority={priority}
+        quality={95}
+        className="object-contain object-center brightness-0 invert"
+      />
     </span>
   );
 }
 
 /**
- * Header lockup: mark | HYDRA wordmark + TM (closer).
- * Silver + black only; black logo plate.
+ * Brand lockup: crest + full HYDRA wordmark, TM tucked on the A (not far away).
  */
 export function Logo({ className }: { className?: string }) {
   return (
     <Link
       href="/"
       className={cn(
-        "group relative inline-flex max-w-[70vw] shrink-0 items-center gap-2 rounded-lg bg-black px-1.5 py-1 sm:max-w-none sm:gap-2.5 sm:px-2",
+        "group relative inline-flex max-w-[70vw] shrink-0 items-center gap-1.5 sm:max-w-none sm:gap-2",
         className,
       )}
       aria-label="HYDRA home"
     >
-      <LogoMark priority className="size-9 sm:size-10 md:size-11" />
-      <span className="relative inline-flex items-start gap-0.5">
-        <span className="text-[1.15rem] font-semibold tracking-[0.14em] text-zinc-200 transition-colors group-hover:text-white sm:text-[1.35rem] sm:tracking-[0.16em] md:text-[1.55rem]">
-          HYDRA
-        </span>
+      <span className="relative block size-9 shrink-0 sm:size-10 md:size-11">
+        <Image
+          src={MARK_SRC}
+          alt=""
+          fill
+          sizes="48px"
+          priority
+          quality={92}
+          className="object-contain object-center"
+        />
+      </span>
+
+      <span className="relative block h-9 w-[7.5rem] sm:h-11 sm:w-[9.25rem] md:h-12 md:w-[10.5rem]">
+        <Image
+          src={WORDMARK_SRC}
+          alt="HYDRA"
+          fill
+          sizes="200px"
+          priority
+          quality={95}
+          className="object-contain object-left brightness-0 invert transition-opacity duration-300 group-hover:opacity-90"
+        />
+        {/* Sit on the A — left% beats right-edge padding in the PNG */}
         <span
-          className="mt-[0.15em] select-none font-mono text-[5px] font-semibold leading-none tracking-wide text-zinc-400 transition-colors group-hover:text-zinc-200 sm:text-[6px] md:text-[7px]"
+          className="pointer-events-none absolute left-[86%] top-0 select-none font-sans text-[7px] font-extrabold leading-none tracking-tighter text-white sm:left-[87%] sm:text-[8px] md:left-[88%] md:text-[9px]"
           aria-hidden
         >
           TM

@@ -5,18 +5,20 @@ import { Loader2 } from "lucide-react";
 import {
   saveAboutSection,
   saveCollectionsSection,
+  saveHomeHeroSection,
   saveHowItWorksSection,
   saveNewsletterSection,
 } from "@/server/actions/admin";
 import type {
   AboutContent,
   CollectionsContent,
+  HomeHeroContent,
   HowItWorksContent,
   NewsletterContent,
 } from "@/content/site-sections";
 import { initialFormState } from "@/lib/validations";
 import { Button } from "@/components/ui/button";
-import { FormMessage, Input, Textarea } from "@/components/ui/form";
+import { FormMessage, Input, Select, Textarea } from "@/components/ui/form";
 import { Card } from "@/components/admin/admin-ui";
 
 function Section({ title, children }: { title: string; children: ReactNode }) {
@@ -38,8 +40,21 @@ function Label({ label, hint, children }: { label: string; hint?: string; childr
   );
 }
 
+function padRows<T>(rows: T[], min: number, empty: T): T[] {
+  if (rows.length >= min) return rows;
+  return [...rows, ...Array.from({ length: min - rows.length }, () => empty)];
+}
+
 export function AboutSectionEditor({ content }: { content: AboutContent }) {
   const [state, action, pending] = useActionState(saveAboutSection, initialFormState);
+  const stats = padRows(content.stats, 6, { value: "", label: "" });
+  const missionBullets = padRows(content.mission.bullets, 4, "");
+  const visionBullets = padRows(content.vision.bullets, 4, "");
+  const values = padRows(content.values, 7, { title: "", keyword: "", text: "" });
+  const divisions = padRows(content.divisions, 4, { title: "", text: "", href: "" });
+  const journey = padRows(content.journey, 6, { year: "", title: "", text: "" });
+  const commitments = padRows(content.company.commitments, 5, { title: "", text: "" });
+  const facts = padRows(content.company.facts, 8, { label: "", value: "" });
 
   return (
     <form action={action} className="space-y-5">
@@ -53,15 +68,15 @@ export function AboutSectionEditor({ content }: { content: AboutContent }) {
       </Section>
 
       <Section title="Stats">
+        <p className="text-xs text-subtle">Leave a row blank to skip it. Aim for ~5 filled rows.</p>
         <div className="space-y-3">
-          {content.stats.map((s, i) => (
+          {stats.map((s, i) => (
             <div key={i} className="grid gap-3 sm:grid-cols-2">
-              <Input name="statValue" defaultValue={s.value} placeholder="Value" required />
-              <Input name="statLabel" defaultValue={s.label} placeholder="Label" required />
+              <Input name="statValue" defaultValue={s.value} placeholder="Value" />
+              <Input name="statLabel" defaultValue={s.label} placeholder="Label" />
             </div>
           ))}
         </div>
-        <p className="text-xs text-subtle">Keep five rows for the best layout.</p>
       </Section>
 
       <Section title="Manifesto">
@@ -78,7 +93,7 @@ export function AboutSectionEditor({ content }: { content: AboutContent }) {
       <Section title="Mission">
         <Label label="Title"><Input name="missionTitle" defaultValue={content.mission.title} required /></Label>
         <Label label="Body"><Textarea name="missionBody" defaultValue={content.mission.body} className="min-h-24" required /></Label>
-        {content.mission.bullets.map((b, i) => (
+        {missionBullets.map((b, i) => (
           <Input key={i} name="missionBullet" defaultValue={b} placeholder={`Bullet ${i + 1}`} />
         ))}
       </Section>
@@ -86,7 +101,7 @@ export function AboutSectionEditor({ content }: { content: AboutContent }) {
       <Section title="Vision">
         <Label label="Title"><Input name="visionTitle" defaultValue={content.vision.title} required /></Label>
         <Label label="Body"><Textarea name="visionBody" defaultValue={content.vision.body} className="min-h-24" required /></Label>
-        {content.vision.bullets.map((b, i) => (
+        {visionBullets.map((b, i) => (
           <Input key={i} name="visionBullet" defaultValue={b} placeholder={`Bullet ${i + 1}`} />
         ))}
       </Section>
@@ -100,35 +115,38 @@ export function AboutSectionEditor({ content }: { content: AboutContent }) {
       </Section>
 
       <Section title="Values">
+        <p className="text-xs text-subtle">Blank cards are skipped. At least one complete value is required.</p>
         <div className="space-y-4">
-          {content.values.map((v, i) => (
+          {values.map((v, i) => (
             <div key={i} className="grid gap-3 rounded-xl border border-white/[0.06] p-3 sm:grid-cols-[1fr_8rem]">
-              <Input name="valueTitle" defaultValue={v.title} placeholder="Title" required />
-              <Input name="valueKeyword" defaultValue={v.keyword} placeholder="Keyword" required />
-              <Textarea name="valueText" defaultValue={v.text} className="min-h-20 sm:col-span-2" required />
+              <Input name="valueTitle" defaultValue={v.title} placeholder="Title" />
+              <Input name="valueKeyword" defaultValue={v.keyword} placeholder="Keyword" />
+              <Textarea name="valueText" defaultValue={v.text} className="min-h-20 sm:col-span-2" />
             </div>
           ))}
         </div>
       </Section>
 
       <Section title="Divisions">
+        <p className="text-xs text-subtle">Blank cards are skipped.</p>
         <div className="space-y-4">
-          {content.divisions.map((d, i) => (
+          {divisions.map((d, i) => (
             <div key={i} className="grid gap-3 rounded-xl border border-white/[0.06] p-3">
-              <Input name="divisionTitle" defaultValue={d.title} placeholder="Title" required />
-              <Textarea name="divisionText" defaultValue={d.text} className="min-h-20" required />
-              <Input name="divisionHref" defaultValue={d.href} placeholder="/shop" required />
+              <Input name="divisionTitle" defaultValue={d.title} placeholder="Title" />
+              <Textarea name="divisionText" defaultValue={d.text} className="min-h-20" />
+              <Input name="divisionHref" defaultValue={d.href} placeholder="/shop" />
             </div>
           ))}
         </div>
       </Section>
 
       <Section title="Journey">
+        <p className="text-xs text-subtle">Blank milestones are skipped.</p>
         <div className="space-y-4">
-          {content.journey.map((j, i) => (
+          {journey.map((j, i) => (
             <div key={i} className="grid gap-3 rounded-xl border border-white/[0.06] p-3 sm:grid-cols-[6rem_1fr_auto]">
-              <Input name="journeyYear" defaultValue={j.year} placeholder="Year" required />
-              <Input name="journeyTitle" defaultValue={j.title} placeholder="Title" required />
+              <Input name="journeyYear" defaultValue={j.year} placeholder="Year" />
+              <Input name="journeyTitle" defaultValue={j.title} placeholder="Title" />
               <label className="flex items-center gap-2 text-xs text-muted">
                 Future
                 <select
@@ -140,7 +158,57 @@ export function AboutSectionEditor({ content }: { content: AboutContent }) {
                   <option value="yes">Yes</option>
                 </select>
               </label>
-              <Textarea name="journeyText" defaultValue={j.text} className="min-h-20 sm:col-span-3" required />
+              <Textarea name="journeyText" defaultValue={j.text} className="min-h-20 sm:col-span-3" />
+            </div>
+          ))}
+        </div>
+      </Section>
+
+      <Section title="Company information">
+        <label className="flex items-center gap-2 text-sm text-muted">
+          <input
+            type="checkbox"
+            name="companyVisible"
+            defaultChecked={content.company.visible}
+            className="accent-[var(--color-accent)]"
+          />
+          Show company section on the About page
+        </label>
+        <p className="text-xs text-subtle">
+          Do not publish registration numbers, trade licence, TIN or BIN here — keep those for private profiles only.
+          Blank fact rows are skipped; clear all facts to hide the overview card.
+        </p>
+        <div className="grid gap-3 sm:grid-cols-2">
+          <Label label="Eyebrow"><Input name="companyEyebrow" defaultValue={content.company.eyebrow} /></Label>
+          <Label label="Sheet badge"><Input name="companySheetBadge" defaultValue={content.company.sheetBadge} placeholder="Public" /></Label>
+        </div>
+        <div className="grid gap-3 sm:grid-cols-2">
+          <Label label="Title"><Input name="companyTitle" defaultValue={content.company.title} /></Label>
+          <Label label="Muted title"><Input name="companyTitleMuted" defaultValue={content.company.titleMuted} /></Label>
+        </div>
+        <Label label="Description">
+          <Textarea name="companyDescription" defaultValue={content.company.description} className="min-h-24" />
+        </Label>
+        <div className="grid gap-3 sm:grid-cols-2">
+          <Label label="CTA label"><Input name="companyCtaLabel" defaultValue={content.company.ctaLabel} /></Label>
+          <Label label="CTA link"><Input name="companyCtaHref" defaultValue={content.company.ctaHref} /></Label>
+        </div>
+        <Label label="Overview card title"><Input name="companySheetTitle" defaultValue={content.company.sheetTitle} /></Label>
+        <div className="space-y-3">
+          <p className="text-xs font-medium uppercase tracking-[0.14em] text-muted">Commitments</p>
+          {commitments.map((c, i) => (
+            <div key={i} className="grid gap-3 rounded-xl border border-white/[0.06] p-3 sm:grid-cols-2">
+              <Input name="companyCommitmentTitle" defaultValue={c.title} placeholder="Title" />
+              <Input name="companyCommitmentText" defaultValue={c.text} placeholder="Short text" />
+            </div>
+          ))}
+        </div>
+        <div className="space-y-3">
+          <p className="text-xs font-medium uppercase tracking-[0.14em] text-muted">Public overview rows</p>
+          {facts.map((f, i) => (
+            <div key={i} className="grid gap-3 rounded-xl border border-white/[0.06] p-3 sm:grid-cols-2">
+              <Input name="companyFactLabel" defaultValue={f.label} placeholder="Label" />
+              <Input name="companyFactValue" defaultValue={f.value} placeholder="Value" />
             </div>
           ))}
         </div>
@@ -193,6 +261,152 @@ export function HowItWorksSectionEditor({ content }: { content: HowItWorksConten
       <FormMessage status={state.status} message={state.message} />
       <Button type="submit" disabled={pending}>
         {pending && <Loader2 size={16} className="animate-spin" />} Publish
+      </Button>
+    </form>
+  );
+}
+
+const emptyHeroSlide = {
+  key: "",
+  brand: "",
+  title: "",
+  titleAccent: "",
+  text: "",
+  primaryLabel: "",
+  primaryHref: "/shop",
+  secondaryLabel: "",
+  secondaryHref: "/about",
+  visual: "phone" as const,
+  image: "",
+};
+
+export function HomeHeroSectionEditor({ content }: { content: HomeHeroContent }) {
+  const [state, action, pending] = useActionState(saveHomeHeroSection, initialFormState);
+  const baseSlides = Array.isArray(content?.slides) && content.slides.length > 0 ? content.slides : [];
+  const slides = [...baseSlides, ...Array.from({ length: Math.max(0, 4 - baseSlides.length) }, () => emptyHeroSlide)].slice(
+    0,
+    4,
+  );
+  const stats =
+    Array.isArray(content?.stats) && content.stats.length > 0
+      ? content.stats
+      : [
+          { value: "", label: "" },
+          { value: "", label: "" },
+          { value: "", label: "" },
+        ];
+  const quickLinks =
+    Array.isArray(content?.quickLinks) && content.quickLinks.length > 0
+      ? content.quickLinks
+      : [
+          { label: "", href: "" },
+          { label: "", href: "" },
+          { label: "", href: "" },
+        ];
+
+  return (
+    <form action={action} className="space-y-5">
+      <Section title="Social proof & quick links">
+        <Label label="Rating line" hint="Shown under the CTAs next to the stars.">
+          <Input name="ratingLabel" defaultValue={content.ratingLabel} required />
+        </Label>
+        <div className="space-y-3">
+          {quickLinks.map((link, i) => (
+            <div key={i} className="grid gap-3 sm:grid-cols-2">
+              <Label label={`Link ${i + 1} label`}>
+                <Input name="linkLabel" defaultValue={link.label} />
+              </Label>
+              <Label label={`Link ${i + 1} href`}>
+                <Input name="linkHref" defaultValue={link.href} placeholder="/shop/iphone" />
+              </Label>
+            </div>
+          ))}
+        </div>
+      </Section>
+
+      <Section title="Bottom stats bar">
+        <p className="text-xs text-subtle">Hardness / fit / warranty strip under the hero.</p>
+        <div className="space-y-3">
+          {stats.map((stat, i) => (
+            <div key={i} className="grid gap-3 sm:grid-cols-2">
+              <Label label={`Stat ${i + 1} value`}>
+                <Input name="statValue" defaultValue={stat.value} placeholder="9H+" />
+              </Label>
+              <Label label={`Stat ${i + 1} label`}>
+                <Input name="statLabel" defaultValue={stat.label} placeholder="Hardness" />
+              </Label>
+            </div>
+          ))}
+        </div>
+      </Section>
+
+      <Section title="Hero slides">
+        <p className="text-xs text-subtle">
+          Each slide has its own left-side copy and right-side stage. Leave a slot blank to skip it. Visual:
+          built-in phone / glass / privacy, or a custom image URL.
+        </p>
+        <div className="space-y-4">
+          {slides.map((slide, i) => (
+            <div key={`${slide.key}-${i}`} className="space-y-3 rounded-xl border border-white/[0.06] p-3 sm:p-4">
+              <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-subtle">
+                Slide {String(i + 1).padStart(2, "0")}
+              </p>
+              <div className="grid gap-3 sm:grid-cols-2">
+                <Label label="Key (unique id)">
+                  <Input name="slideKey" defaultValue={slide.key} placeholder="clarity" />
+                </Label>
+                <Label label="Brand / eyebrow">
+                  <Input name="slideBrand" defaultValue={slide.brand} placeholder="Clarity glass" />
+                </Label>
+              </div>
+              <div className="grid gap-3 sm:grid-cols-2">
+                <Label label="Title line">
+                  <Input name="slideTitle" defaultValue={slide.title} placeholder="Less glare." />
+                </Label>
+                <Label label="Accent line">
+                  <Input name="slideTitleAccent" defaultValue={slide.titleAccent} placeholder="More clarity." />
+                </Label>
+              </div>
+              <Label label="Supporting text">
+                <Textarea name="slideText" defaultValue={slide.text} className="min-h-20" />
+              </Label>
+              <div className="grid gap-3 sm:grid-cols-2">
+                <Label label="Primary CTA label">
+                  <Input name="slidePrimaryLabel" defaultValue={slide.primaryLabel} placeholder="Shop glass" />
+                </Label>
+                <Label label="Primary CTA link">
+                  <Input name="slidePrimaryHref" defaultValue={slide.primaryHref} placeholder="/shop" />
+                </Label>
+              </div>
+              <div className="grid gap-3 sm:grid-cols-2">
+                <Label label="Secondary CTA label">
+                  <Input name="slideSecondaryLabel" defaultValue={slide.secondaryLabel} placeholder="iPhone lineup" />
+                </Label>
+                <Label label="Secondary CTA link">
+                  <Input name="slideSecondaryHref" defaultValue={slide.secondaryHref} placeholder="/shop/iphone" />
+                </Label>
+              </div>
+              <div className="grid gap-3 sm:grid-cols-2">
+                <Label label="Stage visual">
+                  <Select name="slideVisual" defaultValue={slide.visual}>
+                    <option value="phone">Phone (default)</option>
+                    <option value="glass">Clarity glass lift</option>
+                    <option value="privacy">Privacy glass</option>
+                    <option value="image">Custom image</option>
+                  </Select>
+                </Label>
+                <Label label="Custom image URL" hint="Required only when visual is Custom image.">
+                  <Input name="slideImage" defaultValue={slide.image} placeholder="/products/glass-clear.jpg" />
+                </Label>
+              </div>
+            </div>
+          ))}
+        </div>
+      </Section>
+
+      <FormMessage status={state.status} message={state.message} />
+      <Button type="submit" disabled={pending}>
+        {pending && <Loader2 size={16} className="animate-spin" />} Publish hero
       </Button>
     </form>
   );

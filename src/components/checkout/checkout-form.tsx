@@ -8,7 +8,7 @@ import { ProductImage } from "@/components/product/product-image";
 import { Button, ButtonLink } from "@/components/ui/button";
 import { Field, FormMessage, Input, Select, Textarea } from "@/components/ui/form";
 import { EmptyState } from "@/components/ui/primitives";
-import { cities, paymentMethods, shippingFee } from "@/lib/pricing";
+import { cities, paymentMethods, shippingFee, shippingLabel } from "@/lib/pricing";
 import { initialFormState } from "@/lib/validations";
 import { cn, formatPrice } from "@/lib/utils";
 import { placeOrder } from "@/server/actions/checkout";
@@ -16,7 +16,7 @@ import { placeOrder } from "@/server/actions/checkout";
 export function CheckoutForm() {
   const { lines, subtotal, hydrated } = useCart();
   const [state, action, pending] = useActionState(placeOrder, initialFormState);
-  const [city, setCity] = useState("Dhaka");
+  const [city, setCity] = useState("New York");
   const [payment, setPayment] = useState("COD");
   const errors = state.fieldErrors ?? {};
   const shipping = shippingFee(subtotal, city);
@@ -48,7 +48,7 @@ export function CheckoutForm() {
               <Input id="customerName" name="customerName" autoComplete="name" required aria-invalid={!!errors.customerName} />
             </Field>
             <Field label="Mobile number" htmlFor="phone" error={errors.phone}>
-              <Input id="phone" name="phone" type="tel" autoComplete="tel" placeholder="01XXXXXXXXX" required aria-invalid={!!errors.phone} />
+              <Input id="phone" name="phone" type="tel" autoComplete="tel" placeholder="+1 415 555 0147" required aria-invalid={!!errors.phone} />
             </Field>
             <Field label="Email" htmlFor="email" error={errors.email} className="sm:col-span-2" hint="Order confirmation and tracking will be sent here.">
               <Input id="email" name="email" type="email" autoComplete="email" required aria-invalid={!!errors.email} />
@@ -68,11 +68,11 @@ export function CheckoutForm() {
                 ))}
               </Select>
             </Field>
-            <Field label="Area / Thana" htmlFor="area" error={errors.area}>
-              <Input id="area" name="area" placeholder="e.g. Gulshan 2" />
+            <Field label="Area / district" htmlFor="area" error={errors.area}>
+              <Input id="area" name="area" placeholder="e.g. Downtown" />
             </Field>
             <Field label="Full address" htmlFor="address" error={errors.address} className="sm:col-span-2">
-              <Input id="address" name="address" autoComplete="street-address" placeholder="House, road, block" required aria-invalid={!!errors.address} />
+              <Input id="address" name="address" autoComplete="street-address" placeholder="Street, building, apartment" required aria-invalid={!!errors.address} />
             </Field>
             <Field label="Order notes (optional)" htmlFor="notes" className="sm:col-span-2">
               <Textarea id="notes" name="notes" className="min-h-20" placeholder="Landmark, delivery time preference…" />
@@ -133,7 +133,7 @@ export function CheckoutForm() {
         <dl className="space-y-3 border-t border-line pt-5 text-sm">
           <div className="flex justify-between"><dt className="text-muted">Subtotal</dt><dd className="font-mono tabular-nums">{formatPrice(subtotal)}</dd></div>
           <div className="flex justify-between">
-            <dt className="text-muted">Shipping ({city === "Dhaka" ? "inside" : "outside"} Dhaka)</dt>
+            <dt className="text-muted">Shipping ({shippingLabel(city)})</dt>
             <dd className="font-mono tabular-nums">{shipping === 0 ? <span className="text-success">Free</span> : formatPrice(shipping)}</dd>
           </div>
           <div className="flex justify-between border-t border-line pt-3 text-base">

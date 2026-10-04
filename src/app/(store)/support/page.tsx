@@ -24,7 +24,7 @@ export default function SupportPage() {
   const popular = faqGroups.flatMap((g) => g.items).slice(0, 4);
   return (
     <>
-      <PageHeader eyebrow="Help Center" title="How can we help?" description="Find answers fast, or reach our Dhaka-based support team directly." />
+      <PageHeader eyebrow="Help Center" title="How can we help?" description="Find answers fast, or reach the HYDRA support team directly." />
       <section className="container-page grid gap-4 py-16 sm:grid-cols-2 lg:grid-cols-3">
         {topics.map(({ href, icon: Icon, title, text }) => (
           <Link key={href + title} href={href} className="group glass relative rounded-3xl p-7 transition-all hover:-translate-y-0.5 hover:border-accent/30">

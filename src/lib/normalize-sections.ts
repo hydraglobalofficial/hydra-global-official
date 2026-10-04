@@ -1,14 +1,24 @@
 import {
   defaultAboutContent,
   defaultCollectionsContent,
+  defaultHomeHeroContent,
   defaultHowItWorksContent,
   defaultNewsletterContent,
   type AboutContent,
   type CollectionsContent,
+  type HeroSlide,
+  type HeroVisualKey,
+  type HomeHeroContent,
   type HowItWorksContent,
   type NewsletterContent,
 } from "@/content/site-sections";
 import { asStringArray, clampText, safeInternalHref, safeMediaUrl, safeSlug } from "@/lib/content-safety";
+
+const HERO_VISUALS = new Set<HeroVisualKey>(["phone", "glass", "privacy", "image"]);
+
+function normalizeHeroVisual(raw: unknown): HeroVisualKey {
+  return typeof raw === "string" && HERO_VISUALS.has(raw as HeroVisualKey) ? (raw as HeroVisualKey) : "phone";
+}
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return !!value && typeof value === "object" && !Array.isArray(value);
@@ -23,6 +33,7 @@ export function normalizeAboutContent(raw: unknown): AboutContent {
   const valuesIntro = isRecord(data.valuesIntro) ? data.valuesIntro : {};
   const careers = isRecord(data.careers) ? data.careers : {};
   const partner = isRecord(data.partner) ? data.partner : {};
+  const company = isRecord(data.company) ? data.company : {};
 
   const stats = Array.isArray(data.stats)
     ? data.stats
@@ -113,6 +124,44 @@ export function normalizeAboutContent(raw: unknown): AboutContent {
     values: values.length > 0 ? values : defaultAboutContent.values,
     divisions: divisions.length > 0 ? divisions : defaultAboutContent.divisions,
     journey: journey.length > 0 ? journey : defaultAboutContent.journey,
+    company: (() => {
+      const defaults = defaultAboutContent.company;
+      const commitments = Array.isArray(company.commitments)
+        ? company.commitments
+            .map((row) => {
+              if (!isRecord(row)) return null;
+              const title = clampText(row.title, 80);
+              const text = clampText(row.text, 240);
+              return title && text ? { title, text } : null;
+            })
+            .filter((row): row is AboutContent["company"]["commitments"][number] => !!row)
+            .slice(0, 8)
+        : [];
+      const facts = Array.isArray(company.facts)
+        ? company.facts
+            .map((row) => {
+              if (!isRecord(row)) return null;
+              const label = clampText(row.label, 80);
+              const value = clampText(row.value, 200);
+              return label && value ? { label, value } : null;
+            })
+            .filter((row): row is AboutContent["company"]["facts"][number] => !!row)
+            .slice(0, 16)
+        : defaults.facts;
+      return {
+        visible: company.visible !== false,
+        eyebrow: clampText(company.eyebrow, 60, defaults.eyebrow),
+        title: clampText(company.title, 120, defaults.title),
+        titleMuted: clampText(company.titleMuted, 80, defaults.titleMuted),
+        description: clampText(company.description, 600, defaults.description),
+        ctaLabel: clampText(company.ctaLabel, 60, defaults.ctaLabel),
+        ctaHref: safeInternalHref(company.ctaHref, defaults.ctaHref),
+        sheetTitle: clampText(company.sheetTitle, 80, defaults.sheetTitle),
+        sheetBadge: clampText(company.sheetBadge, 40, defaults.sheetBadge),
+        commitments: commitments.length > 0 ? commitments : defaults.commitments,
+        facts,
+      };
+    })(),
     careers: {
       title: clampText(careers.title, 120, defaultAboutContent.careers.title),
       text: clampText(careers.text, 400, defaultAboutContent.careers.text),
@@ -181,5 +230,82 @@ export function normalizeCollectionsContent(raw: unknown): CollectionsContent {
     ctaLabel: clampText(data.ctaLabel, 40, defaultCollectionsContent.ctaLabel),
     ctaHref: safeInternalHref(data.ctaHref, defaultCollectionsContent.ctaHref),
     items: items.length > 0 ? items : defaultCollectionsContent.items,
+  };
+}
+
+function normalizeHeroSlide(row: unknown, fallback?: HeroSlide): HeroSlide | null {
+  if (!isRecord(row)) return null;
+  const key = safeSlug(row.key) || clampText(row.key, 40).toLowerCase().replace(/[^a-z0-9-]+/g, "-");
+  const brand = clampText(row.brand, 40);
+  const title = clampText(row.title, 80);
+  const titleAccent = clampText(row.titleAccent, 80);
+  const text = clampText(row.text, 280);
+  const primaryLabel = clampText(row.primaryLabel, 40);
+  const primaryHref = safeInternalHref(row.primaryHref, "/shop");
+  const secondaryLabel = clampText(row.secondaryLabel, 40);
+  const secondaryHref = safeInternalHref(row.secondaryHref, "/shop");
+  const visual = normalizeHeroVisual(row.visual);
+  const image = safeMediaUrl(row.image, "");
+
+  if (!key || !brand || !title || !titleAccent || !text || !primaryLabel || !secondaryLabel) {
+    return fallback ?? null;
+  }
+  if (visual === "image" && !image) return fallback ?? null;
+
+  return {
+    key,
+    brand,
+    title,
+    titleAccent,
+    text,
+    primaryLabel,
+    primaryHref,
+    secondaryLabel,
+    secondaryHref,
+    visual,
+    image,
+  };
+}
+
+export function normalizeHomeHeroContent(raw: unknown): HomeHeroContent {
+  const data = isRecord(raw) ? raw : {};
+  const defaults = defaultHomeHeroContent;
+
+  const stats = Array.isArray(data.stats)
+    ? data.stats
+        .map((row) => {
+          if (!isRecord(row)) return null;
+          const value = clampText(row.value, 24);
+          const label = clampText(row.label, 40);
+          return value && label ? { value, label } : null;
+        })
+        .filter((row): row is HomeHeroContent["stats"][number] => !!row)
+        .slice(0, 4)
+    : [];
+
+  const quickLinks = Array.isArray(data.quickLinks)
+    ? data.quickLinks
+        .map((row) => {
+          if (!isRecord(row)) return null;
+          const label = clampText(row.label, 40);
+          const href = safeInternalHref(row.href, "");
+          return label && href ? { label, href } : null;
+        })
+        .filter((row): row is HomeHeroContent["quickLinks"][number] => !!row)
+        .slice(0, 6)
+    : [];
+
+  const slides = Array.isArray(data.slides)
+    ? data.slides
+        .map((row, i) => normalizeHeroSlide(row, defaults.slides[i]))
+        .filter((row): row is HeroSlide => !!row)
+        .slice(0, 6)
+    : [];
+
+  return {
+    ratingLabel: clampText(data.ratingLabel, 80, defaults.ratingLabel),
+    quickLinks: quickLinks.length > 0 ? quickLinks : defaults.quickLinks,
+    stats: stats.length > 0 ? stats : defaults.stats,
+    slides: slides.length > 0 ? slides : defaults.slides,
   };
 }

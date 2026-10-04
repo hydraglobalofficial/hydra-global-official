@@ -28,6 +28,17 @@
   --animate-float: float 6s ease-in-out infinite;
   --animate-scan: scan 3.2s ease-in-out infinite;
   --animate-pulse-glow: pulse-glow 3s ease-in-out infinite;
+  --animate-hero-glow: hero-glow 10s ease-in-out infinite;
+  --animate-hero-rail: hero-rail 7s linear forwards;
+
+  @keyframes hero-glow {
+    0%, 100% { opacity: 0.35; transform: scale(1); }
+    50% { opacity: 0.55; transform: scale(1.06); }
+  }
+  @keyframes hero-rail {
+    from { transform: scaleX(0); }
+    to { transform: scaleX(1); }
+  }
 
   @keyframes marquee {
     from { transform: translateX(0); }

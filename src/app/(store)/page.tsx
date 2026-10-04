@@ -12,27 +12,34 @@ import { Testimonials } from "@/components/sections/testimonials-carousel";
 import { CollectionBento, DropTest, ImpactStat, VideoShowcase } from "@/components/sections/showcase-sections";
 import { JsonLd, organizationJsonLd } from "@/lib/seo";
 import { getFeaturedProducts, getNavigationData } from "@/server/queries/catalog";
-import { defaultCollectionsContent } from "@/content/site-sections";
-import { getCollectionsContent, getHowItWorksContent, getNewsletterContent } from "@/server/queries/content";
+import { defaultCollectionsContent, defaultHomeHeroContent } from "@/content/site-sections";
+import {
+  getCollectionsContent,
+  getHomeHeroContent,
+  getHowItWorksContent,
+  getNewsletterContent,
+} from "@/server/queries/content";
 import { Reveal } from "@/components/motion/reveal";
 import { HydraRise } from "@/components/hydra/hydra-rise";
 
 export const revalidate = 300;
 
 export default async function HomePage() {
-  const [featured, nav, collections, howItWorks, newsletter] = await Promise.all([
+  const [featured, nav, collections, howItWorks, newsletter, hero] = await Promise.all([
     getFeaturedProducts(8),
     getNavigationData(),
     getCollectionsContent(),
     getHowItWorksContent(),
     getNewsletterContent(),
+    getHomeHeroContent(),
   ]);
   const collectionsContent = collections ?? defaultCollectionsContent;
+  const heroContent = hero ?? defaultHomeHeroContent;
 
   return (
     <>
       <JsonLd data={organizationJsonLd()} />
-      <Hero />
+      <Hero content={heroContent} />
       <div id="explore" className="mt-16 scroll-mt-24">
         <BrandMarquee />
       </div>
@@ -59,7 +66,7 @@ export default async function HomePage() {
             </ButtonLink>
           }
         />
-        <ProductGrid products={featured} priorityCount={4} />
+        <ProductGrid products={featured} priorityCount={2} />
       </section>
 
       <SectionDivider />

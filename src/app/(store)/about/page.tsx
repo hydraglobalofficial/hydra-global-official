@@ -4,6 +4,8 @@ import {
   ArrowRight,
   ArrowUpRight,
   Briefcase,
+  Building2,
+  CheckCircle2,
   Eye,
   Handshake,
   Headphones,
@@ -19,12 +21,13 @@ import { HeroEmblem } from "@/components/about/hero-emblem";
 import { Manifesto } from "@/components/about/manifesto";
 import { ValuesStack } from "@/components/about/values-stack";
 import { Journey } from "@/components/about/journey";
+import { defaultAboutContent } from "@/content/site-sections";
 import { getAboutContent } from "@/server/queries/content";
 
 export const metadata: Metadata = {
   title: "About HYDRA",
   description:
-    "HYDRA is a mobile accessories brand for iPhone and Samsung Galaxy — protection, precision and progression in every product. Technology within reach.",
+    "HYDRA Global Ltd. — company overview, mission and the story behind precision mobile accessories for iPhone and Samsung Galaxy.",
   alternates: { canonical: "/about" },
 };
 
@@ -32,6 +35,7 @@ const divisionIcons = [ShoppingBag, Store, Headphones];
 
 export default async function AboutPage() {
   const content = await getAboutContent();
+  const company = content.company ?? defaultAboutContent.company;
 
   return (
     <>
@@ -55,9 +59,15 @@ export default async function AboutPage() {
               <ButtonLink href="/shop" size="lg">
                 Shop accessories <ArrowRight size={18} />
               </ButtonLink>
-              <ButtonLink href="/contact" size="lg" variant="outline">
-                Talk to us
-              </ButtonLink>
+              {company.visible ? (
+                <ButtonLink href="#corporate" size="lg" variant="outline">
+                  Company information
+                </ButtonLink>
+              ) : (
+                <ButtonLink href="/contact" size="lg" variant="outline">
+                  Talk to us
+                </ButtonLink>
+              )}
             </div>
           </Reveal>
           <HeroEmblem />
@@ -176,7 +186,7 @@ export default async function AboutPage() {
                 How HYDRA <span className="text-muted">serves you.</span>
               </>
             }
-            description="From a single order in Sylhet to a shop restock in Gulshan — retail, wholesale and after-sales under one roof."
+            description="From a single order across the world to a shop restock downtown — retail, wholesale and after-sales under one roof."
           />
           <RevealGroup className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3" stagger={0.08}>
             {content.divisions.map((d, i) => {
@@ -228,6 +238,72 @@ export default async function AboutPage() {
         </div>
       </section>
 
+      {company.visible && (
+        <section id="corporate" className="scroll-mt-28 border-y border-line/60 bg-white/[0.015] py-24 md:py-28">
+          <div
+            className={
+              company.facts.length > 0
+                ? "container-page grid gap-12 lg:grid-cols-[0.95fr_1.05fr] lg:gap-16"
+                : "container-page max-w-3xl"
+            }
+          >
+            <Reveal>
+              <Eyebrow>{company.eyebrow}</Eyebrow>
+              <h2 className="mt-4 text-4xl font-semibold tracking-tight text-balance md:text-5xl">
+                {company.title} <span className="text-muted">{company.titleMuted}</span>
+              </h2>
+              <p className="mt-5 max-w-md text-lg text-muted">{company.description}</p>
+              {company.commitments.length > 0 && (
+                <div className="mt-8 space-y-4">
+                  {company.commitments.map((item) => (
+                    <div key={item.title} className="flex gap-4">
+                      <div className="grid size-11 shrink-0 place-items-center rounded-xl border border-line bg-white/5 text-accent">
+                        <CheckCircle2 size={19} strokeWidth={1.7} />
+                      </div>
+                      <div>
+                        <p className="font-medium">{item.title}</p>
+                        <p className="text-sm text-muted">{item.text}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+              {company.ctaLabel && company.ctaHref && (
+                <ButtonLink href={company.ctaHref} variant="outline" className="mt-8">
+                  {company.ctaLabel} <ArrowRight size={16} />
+                </ButtonLink>
+              )}
+            </Reveal>
+
+            {company.facts.length > 0 && (
+              <Reveal delay={0.1}>
+                <div className="card-premium relative overflow-hidden rounded-[2rem]">
+                  <div className="flex items-center justify-between border-b border-line px-7 py-5">
+                    <div className="flex items-center gap-3">
+                      <Building2 size={18} className="text-accent" />
+                      <p className="font-medium">{company.sheetTitle}</p>
+                    </div>
+                    {company.sheetBadge ? (
+                      <span className="rounded-full border border-success/30 bg-success/10 px-2.5 py-0.5 text-[11px] font-medium uppercase tracking-wider text-success">
+                        {company.sheetBadge}
+                      </span>
+                    ) : null}
+                  </div>
+                  <dl className="divide-y divide-line">
+                    {company.facts.map((row) => (
+                      <div key={row.label} className="grid gap-1 px-7 py-4 sm:grid-cols-[12rem_1fr] sm:gap-6">
+                        <dt className="text-sm text-muted">{row.label}</dt>
+                        <dd className="font-mono text-sm text-fg">{row.value}</dd>
+                      </div>
+                    ))}
+                  </dl>
+                </div>
+              </Reveal>
+            )}
+          </div>
+        </section>
+      )}
+
       <section className="container-page pb-28 pt-4">
         <Reveal>
           <div className="card-premium relative overflow-hidden rounded-[2rem] p-1">
@@ -239,7 +315,7 @@ export default async function AboutPage() {
                 <h3 className="relative mt-6 text-2xl font-semibold tracking-tight md:text-3xl">{content.careers.title}</h3>
                 <p className="relative mt-3 max-w-md text-muted">{content.careers.text}</p>
                 <a
-                  href={`mailto:careers@hydra.com.bd?subject=${encodeURIComponent("Careers at HYDRA")}`}
+                  href={`mailto:careers@hydraglobal.com?subject=${encodeURIComponent("Careers at HYDRA")}`}
                   className="relative mt-8 inline-flex items-center gap-2 rounded-full bg-fg px-6 py-3 text-sm font-medium text-black transition-transform hover:scale-[1.03]"
                 >
                   {content.careers.cta} <ArrowRight size={16} />

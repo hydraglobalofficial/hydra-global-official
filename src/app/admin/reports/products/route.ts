@@ -129,7 +129,7 @@ export async function GET(request: Request) {
       { label: "Search", value: q || "—" },
       { label: "SKUs", value: String(products.length) },
       { label: "Low stock", value: String(lowStock) },
-      { label: "Currency", value: "BDT" },
+      { label: "Currency", value: "USD" },
     ],
     body,
   });

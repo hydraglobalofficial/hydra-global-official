@@ -1,18 +1,36 @@
 import { siteConfig } from "@/config/site";
 
-export const cities = ["Dhaka", "Chattogram", "Sylhet", "Khulna", "Rajshahi", "Barishal", "Rangpur", "Mymensingh", "Other"] as const;
+/** Major hubs get express shipping; everything else is standard. */
+export const cities = [
+  "New York",
+  "London",
+  "Dubai",
+  "Singapore",
+  "Tokyo",
+  "Sydney",
+  "Toronto",
+  "Berlin",
+  "Dhaka",
+  "Other",
+] as const;
+
+const expressCities = new Set<string>(["New York", "London", "Dubai", "Singapore", "Tokyo", "Sydney", "Toronto", "Berlin", "Dhaka"]);
 
 export function shippingFee(subtotal: number, city: string) {
   if (subtotal <= 0) return 0;
   if (subtotal >= siteConfig.freeShippingThreshold) return 0;
-  return city === "Dhaka" ? siteConfig.shippingFee.insideDhaka : siteConfig.shippingFee.outsideDhaka;
+  return expressCities.has(city) ? siteConfig.shippingFee.express : siteConfig.shippingFee.standard;
+}
+
+export function shippingLabel(city: string) {
+  return expressCities.has(city) ? "express" : "standard";
 }
 
 export const paymentMethods = [
-  { value: "COD", label: "Cash on Delivery", description: "Pay when your order arrives", enabled: true },
-  { value: "BKASH", label: "bKash", description: "Coming soon", enabled: false },
-  { value: "NAGAD", label: "Nagad", description: "Coming soon", enabled: false },
-  { value: "SSLCOMMERZ", label: "Card / Mobile Banking", description: "Coming soon via SSLCommerz", enabled: false },
+  { value: "COD", label: "Pay on delivery", description: "Pay when your order arrives (where available)", enabled: true },
+  { value: "BKASH", label: "Mobile wallet", description: "Coming soon", enabled: false },
+  { value: "NAGAD", label: "Local wallet", description: "Coming soon", enabled: false },
+  { value: "SSLCOMMERZ", label: "Card / online pay", description: "Coming soon", enabled: false },
 ] as const;
 
 export type PaymentMethodValue = (typeof paymentMethods)[number]["value"];

@@ -25,11 +25,11 @@ export const metadata: Metadata = {
     apple: [{ url: "/icons/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
     shortcut: "/icons/icon-32.png",
   },
-  keywords: ["mobile accessories", "phone case", "screen protector", "camera armor", "iPhone", "Samsung Galaxy", "Bangladesh", "HYDRA"],
+  keywords: ["mobile accessories", "phone case", "screen protector", "camera armor", "iPhone", "Samsung Galaxy", "global", "HYDRA"],
   openGraph: {
     type: "website",
     siteName: siteConfig.name,
-    locale: "en_BD",
+    locale: "en_US",
     title: `${siteConfig.name} — ${siteConfig.tagline}`,
     description: siteConfig.description,
   },

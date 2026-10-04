@@ -147,7 +147,7 @@ export async function GET(request: Request) {
       { label: "Filter status", value: status ?? "ALL" },
       { label: "Search", value: q || "—" },
       { label: "Records", value: String(orders.length) },
-      { label: "Currency", value: "BDT" },
+      { label: "Currency", value: "USD" },
     ],
     body,
   });

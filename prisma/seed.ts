@@ -5,6 +5,7 @@ import { PrismaClient, type DeviceBrand } from "../src/generated/prisma/client";
 import {
   defaultAboutContent,
   defaultCollectionsContent,
+  defaultHomeHeroContent,
   defaultHowItWorksContent,
   defaultNewsletterContent,
 } from "../src/content/site-sections";
@@ -73,8 +74,8 @@ const products: Seed[] = [
     description:
       "Armor Glass is five precision layers fused into a 0.33 mm shield. It absorbs impact energy before it reaches your OLED, while the oleophobic nano-coating keeps it looking brand new.\n\nThe included alignment frame snaps onto your iPhone 17 Pro Max so the glass lands perfectly around the Dynamic Island every single time.",
     category: "tempered-glass",
-    price: 1290,
-    compareAtPrice: 1590,
+    price: 13,
+    compareAtPrice: 16,
     stock: 240,
     featured: true,
     image: "/products/glass-clear.jpg",
@@ -92,8 +93,8 @@ const products: Seed[] = [
     tagline: "Edge-to-edge clarity for the 6.3\" Pro display.",
     description: "The same five-layer Armor Glass construction, tuned for the iPhone 17 Pro's thinner bezels and Dynamic Island cut-out.\n\nInstalls in under two minutes with the alignment frame.",
     category: "tempered-glass",
-    price: 1190,
-    compareAtPrice: 1490,
+    price: 12,
+    compareAtPrice: 15,
     stock: 180,
     featured: true,
     image: "/products/glass-clear.jpg",
@@ -111,8 +112,8 @@ const products: Seed[] = [
     tagline: "Featherweight protection for the thinnest iPhones yet.",
     description: "Designed for the iPhone 17 and the ultra-slim 17 Air — full coverage without adding bulk.",
     category: "tempered-glass",
-    price: 1090,
-    compareAtPrice: 1290,
+    price: 11,
+    compareAtPrice: 13,
     stock: 150,
     image: "/products/glass-clear.jpg",
     devices: ["iPhone 17", "iPhone 17 Air"],
@@ -130,8 +131,8 @@ const products: Seed[] = [
     description:
       "Micro-louver privacy technology darkens the display beyond a 30° viewing angle, so your chats, banking apps and photos stay private on the bus, in the metro or at the office.\n\nBuilt on the same 9H Armor Glass core for uncompromised protection.",
     category: "privacy-glass",
-    price: 1490,
-    compareAtPrice: 1890,
+    price: 15,
+    compareAtPrice: 19,
     stock: 120,
     featured: true,
     image: "/products/glass-privacy.jpg",
@@ -145,8 +146,8 @@ const products: Seed[] = [
     tagline: "Privacy glass for iPhone 16 Pro and Pro Max.",
     description: "Two-way privacy filter with Armor Glass strength. Choose your exact model below.",
     category: "privacy-glass",
-    price: 1390,
-    compareAtPrice: 1690,
+    price: 14,
+    compareAtPrice: 17,
     stock: 95,
     image: "/products/glass-privacy.jpg",
     devices: ["iPhone 16 Pro", "iPhone 16 Pro Max"],
@@ -163,8 +164,8 @@ const products: Seed[] = [
     tagline: "One glass, four perfect fits.",
     description: "Pick your iPhone 16 model — every size is individually laser-cut for full coverage.",
     category: "tempered-glass",
-    price: 990,
-    compareAtPrice: 1290,
+    price: 10,
+    compareAtPrice: 13,
     stock: 300,
     image: "/products/glass-clear.jpg",
     devices: ["iPhone 16", "iPhone 16 Plus", "iPhone 16 Pro", "iPhone 16 Pro Max"],
@@ -183,8 +184,8 @@ const products: Seed[] = [
     tagline: "Proven protection for iPhone 15 owners.",
     description: "Everything you love about Armor Glass, cut for the iPhone 15 family.",
     category: "tempered-glass",
-    price: 890,
-    compareAtPrice: 1090,
+    price: 9,
+    compareAtPrice: 11,
     stock: 200,
     image: "/products/glass-clear.jpg",
     devices: ["iPhone 15", "iPhone 15 Pro", "iPhone 15 Pro Max"],
@@ -202,8 +203,8 @@ const products: Seed[] = [
     tagline: "Individual sapphire-coated rings for every lens.",
     description: "Aluminium rings with sapphire-coated optical glass protect each camera lens individually — no flare, no haze, no compromise on night mode.",
     category: "camera-armor",
-    price: 690,
-    compareAtPrice: 890,
+    price: 7,
+    compareAtPrice: 9,
     stock: 210,
     featured: true,
     image: "/products/camera-lens.jpg",
@@ -222,8 +223,8 @@ const products: Seed[] = [
     tagline: "Camera protection that looks factory-fitted.",
     description: "Colour-matched rings for the iPhone 16 Pro camera system.",
     category: "camera-armor",
-    price: 590,
-    compareAtPrice: 790,
+    price: 6,
+    compareAtPrice: 8,
     stock: 160,
     image: "/products/camera-lens.jpg",
     devices: ["iPhone 16 Pro", "iPhone 16 Pro Max"],
@@ -241,8 +242,8 @@ const products: Seed[] = [
     tagline: "Crystal-clear, drop-tested, never yellows.",
     description: "Military-grade drop protection in a 1.2 mm clear shell with built-in N52 magnets for MagSafe charging and accessories. Anti-yellowing coating keeps it clear for years.",
     category: "cases",
-    price: 1490,
-    compareAtPrice: 1990,
+    price: 15,
+    compareAtPrice: 20,
     stock: 85,
     image: "/products/case-clear.jpg",
     devices: ["iPhone 17 Pro Max"],
@@ -256,8 +257,8 @@ const products: Seed[] = [
     description:
       "Engineered for the Galaxy S25 Ultra's flat display with an ultrasonic-optimized adhesive, so your fingerprint unlock stays instant.\n\nIncludes our alignment frame and a UV-free installation — no lamps, no liquids.",
     category: "tempered-glass",
-    price: 1390,
-    compareAtPrice: 1790,
+    price: 14,
+    compareAtPrice: 18,
     stock: 190,
     featured: true,
     image: "/products/glass-clear.jpg",
@@ -275,8 +276,8 @@ const products: Seed[] = [
     tagline: "Privacy glass that keeps fingerprint unlock flawless.",
     description: "Two-way privacy filter engineered around the S25 Ultra's ultrasonic sensor.",
     category: "privacy-glass",
-    price: 1590,
-    compareAtPrice: 1990,
+    price: 16,
+    compareAtPrice: 20,
     stock: 70,
     featured: true,
     image: "/products/glass-privacy.jpg",
@@ -290,8 +291,8 @@ const products: Seed[] = [
     tagline: "Precision glass for the compact Galaxy flagships.",
     description: "Choose your model for an exact fit with full fingerprint support.",
     category: "tempered-glass",
-    price: 1090,
-    compareAtPrice: 1390,
+    price: 11,
+    compareAtPrice: 14,
     stock: 140,
     image: "/products/glass-clear.jpg",
     devices: ["Galaxy S25", "Galaxy S25+"],
@@ -308,8 +309,8 @@ const products: Seed[] = [
     tagline: "Paper-like feel for S Pen artists and outdoor readers.",
     description: "An etched anti-glare surface that eliminates reflections and fingerprints, with a paper-like drag that makes S Pen writing feel natural.",
     category: "matte-glass",
-    price: 1490,
-    compareAtPrice: 1790,
+    price: 15,
+    compareAtPrice: 18,
     stock: 60,
     image: "/products/glass-matte.jpg",
     devices: ["Galaxy S25 Ultra"],
@@ -322,8 +323,8 @@ const products: Seed[] = [
     tagline: "Individual lens rings for the 200MP camera system.",
     description: "Protect all five S25 Ultra lenses with colour-matched aluminium rings and sapphire-coated glass.",
     category: "camera-armor",
-    price: 690,
-    compareAtPrice: 890,
+    price: 7,
+    compareAtPrice: 9,
     stock: 130,
     image: "/products/camera-lens.jpg",
     devices: ["Galaxy S25 Ultra"],
@@ -341,8 +342,8 @@ const products: Seed[] = [
     tagline: "Still the benchmark for S24 Ultra owners.",
     description: "Our best-selling S24 Ultra protector with full fingerprint support.",
     category: "tempered-glass",
-    price: 1190,
-    compareAtPrice: 1490,
+    price: 12,
+    compareAtPrice: 15,
     stock: 8,
     image: "/products/glass-clear.jpg",
     devices: ["Galaxy S24 Ultra"],
@@ -355,8 +356,8 @@ const products: Seed[] = [
     tagline: "Front screen glass + hinge film for the Fold7.",
     description: "A complete protection kit for Galaxy Z Fold7: cover-screen Armor Glass and a self-healing hinge film.",
     category: "tempered-glass",
-    price: 1990,
-    compareAtPrice: 2490,
+    price: 20,
+    compareAtPrice: 25,
     stock: 0,
     image: "/products/glass-clear.jpg",
     devices: ["Galaxy Z Fold7"],
@@ -396,7 +397,7 @@ Every screen protector includes **one free replacement** for accidental cracks w
 - Normal wear such as micro-scratches after extended use
 
 ## How to claim
-Submit a request through Contact Support with your order number and a clear photo of the issue. Approved claims are shipped within 24 hours inside Dhaka and 2–4 days elsewhere.`,
+Submit a request through Contact Support with your order number and a clear photo of the issue. Approved claims are shipped express to hub cities and via standard courier elsewhere.`,
   },
   {
     slug: "returns",
@@ -406,13 +407,13 @@ Submit a request through Contact Support with your order number and a clear phot
 Unopened products in original packaging can be returned within **7 days** of delivery for a full refund.
 
 ## Wrong model?
-If you ordered the wrong model and haven't opened the inner seal, we'll exchange it free of charge inside Dhaka.
+If you ordered the wrong model and haven't opened the inner seal, we'll exchange it free of charge in hub cities.
 
 ## How it works
 - Submit a return request via Contact Support
 - We confirm eligibility within one business day
-- Inside Dhaka we collect from your address; outside Dhaka we share courier instructions
-- Refunds are issued within 5 business days to bKash, Nagad or your bank`,
+- Hub cities: we arrange pickup; elsewhere we share courier instructions
+- Refunds are issued within 5 business days to your original payment method`,
   },
   {
     slug: "privacy-policy",
@@ -430,20 +431,20 @@ We use your information to fulfil orders, provide support, prevent counterfeitin
 We share delivery details with courier partners solely to deliver your order. We **never** sell your data.
 
 ## Your rights
-You can request a copy or deletion of your data at any time by emailing support@hydra.com.bd.`,
+You can request a copy or deletion of your data at any time by emailing support@hydraglobal.com.`,
   },
   {
     slug: "terms",
     title: "Terms & Conditions",
-    summary: "The rules for using hydra.com.bd and purchasing HYDRA products.",
+    summary: "The rules for using the HYDRA storefront and purchasing HYDRA products.",
     body: `## Orders
 All orders are subject to availability and confirmation. We may cancel orders with incorrect pricing or suspected fraud and will notify you immediately.
 
 ## Pricing
-Prices are listed in Bangladeshi Taka (BDT) and include applicable VAT. Shipping fees are shown at checkout.
+Prices are listed in USD and may include applicable taxes. Shipping fees are shown at checkout.
 
 ## Authorized sales
-HYDRA products are sold only through hydra.com.bd and authorized resellers.
+HYDRA products are sold only through the official HYDRA storefront and authorized resellers.
 
 ## Liability
 HYDRA protectors reduce the risk of screen damage but cannot guarantee protection against every impact. Our liability is limited to the purchase price of the product.`,
@@ -451,21 +452,21 @@ HYDRA protectors reduce the risk of screen damage but cannot guarantee protectio
   {
     slug: "shipping-policy",
     title: "Shipping Policy",
-    summary: "Delivery times, fees and coverage across Bangladesh.",
+    summary: "Delivery times, fees and worldwide coverage.",
     body: `## Delivery times
-- **Inside Dhaka:** 24–48 hours
-- **Outside Dhaka:** 2–4 business days
+- **Express hubs:** 2–4 business days
+- **Standard worldwide:** 4–8 business days
 
 ## Fees
-- Inside Dhaka: ৳70
-- Outside Dhaka: ৳130
-- **Free delivery** on orders over ৳1,500
+- Express hubs: $8
+- Standard: $14
+- **Free delivery** on orders over $80
 
-## Cash on Delivery
-COD is available nationwide. Please keep the exact amount ready to help our riders.
+## Pay on delivery
+Available in selected markets. Please keep the exact amount ready where COD is offered.
 
 ## Tracking
-You'll receive an SMS with tracking details once your order ships.`,
+You'll receive email updates with tracking details once your order ships.`,
   },
   {
     slug: "return-policy",
@@ -481,15 +482,15 @@ Defective products are replaced free of charge within the 12-month warranty peri
 Returned items must include original packaging and tags in sellable condition.
 
 ## Refund method
-Refunds are processed within 5 business days to your original payment method or bKash.`,
+Refunds are processed within 5 business days to your original payment method.`,
   },
 ];
 
 const announcements = [
-  { message: "Free delivery across Bangladesh on orders over ৳1,500", href: "/shop" },
+  { message: "Free worldwide shipping on orders over $80", href: "/shop" },
   { message: "New: Privacy Armor for iPhone 17 Pro Max is here", href: "/product/privacy-armor-iphone-17-pro-max" },
   { message: "12-month warranty on every HYDRA protector", href: "/support/warranty" },
-  { message: "Cash on delivery available across Bangladesh", href: null },
+  { message: "Pay on delivery available in selected markets", href: null },
 ];
 
 // ─── Run ─────────────────────────────────────────────────────────────────────
@@ -589,6 +590,7 @@ async function main() {
   await db.page.createMany({ data: pages });
   await db.siteSection.createMany({
     data: [
+      { key: "home.hero", title: "Home · Hero slider", data: defaultHomeHeroContent },
       { key: "about", title: "About page", data: defaultAboutContent },
       { key: "home.collections", title: "Home · Collections", data: defaultCollectionsContent },
       { key: "home.howItWorks", title: "Home · How it works", data: defaultHowItWorksContent },
@@ -598,14 +600,14 @@ async function main() {
 
   console.log("Seeding sample orders & inquiries…");
   const sample = [
-    { name: "Tahmid Rahman", phone: "01712345678", city: "Dhaka", status: "DELIVERED" as const, idx: 0, qty: 1 },
-    { name: "Nusrat Jahan", phone: "01898765432", city: "Chattogram", status: "SHIPPED" as const, idx: 10, qty: 2 },
-    { name: "Arif Hossain", phone: "01556677889", city: "Dhaka", status: "PENDING" as const, idx: 3, qty: 1 },
+    { name: "Alex Rivera", phone: "+14155550101", city: "New York", status: "DELIVERED" as const, idx: 0, qty: 1 },
+    { name: "Mina Park", phone: "+6591234567", city: "Singapore", status: "SHIPPED" as const, idx: 10, qty: 2 },
+    { name: "James Cole", phone: "+442071234567", city: "London", status: "PENDING" as const, idx: 3, qty: 1 },
   ];
   for (const [i, o] of sample.entries()) {
     const p = products[o.idx];
     const subtotal = p.price * o.qty;
-    const shipping = subtotal >= 1500 ? 0 : o.city === "Dhaka" ? 70 : 130;
+    const shipping = subtotal >= 80 ? 0 : ["New York","London","Dubai","Singapore","Tokyo","Sydney","Toronto","Berlin","Dhaka"].includes(o.city) ? 8 : 14;
     await db.order.create({
       data: {
         number: `HYD-260${920 + i}-S${i}A${i}B${i}`,
@@ -617,7 +619,7 @@ async function main() {
         phone: o.phone,
         address: "House 12, Road 5",
         city: o.city,
-        area: o.city === "Dhaka" ? "Dhanmondi" : "Agrabad",
+        area: "Downtown",
         subtotal,
         shippingFee: shipping,
         total: subtotal + shipping,

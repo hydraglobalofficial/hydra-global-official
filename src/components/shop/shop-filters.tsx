@@ -73,7 +73,7 @@ export function ShopFilters({ action, categories, devices, sortOptions, current 
       )}
 
       <fieldset className="space-y-2">
-        <legend className="mb-2 font-mono text-[10px] uppercase tracking-[0.2em] text-subtle">Price (৳)</legend>
+        <legend className="mb-2 font-mono text-[10px] uppercase tracking-[0.2em] text-subtle">Price ($)</legend>
         <div className="flex items-center gap-2">
           <input name="min" type="number" min={0} inputMode="numeric" placeholder="Min" defaultValue={current.minPrice} onBlur={submit} className="h-11 w-full rounded-xl border border-line bg-surface-2 px-3 text-sm focus:border-accent/60 focus:outline-none" />
           <span className="text-subtle">–</span>

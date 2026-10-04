@@ -21,7 +21,7 @@ export function LoginForm({ next }: { next?: string }) {
           type="text"
           autoComplete="username"
           required
-          placeholder="owner or admin@hydra.com.bd"
+          placeholder="owner or admin@hydraglobal.com"
         />
       </Field>
       <Field label="Password" htmlFor="password">

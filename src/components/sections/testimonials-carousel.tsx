@@ -24,7 +24,7 @@ const testimonials = [
   {
     name: "Arif H.",
     device: "iPhone 16 Pro",
-    text: "Privacy glass is a game changer on the metro. Delivered next day in Dhaka, installed in two minutes.",
+    text: "Privacy glass is a game changer on the commute. Arrived fast, installed in two minutes.",
     rating: 5,
     hue: "#d4d4d8",
   },
@@ -45,7 +45,7 @@ const testimonials = [
   {
     name: "Rafi A.",
     device: "iPhone 15 Pro Max",
-    text: "COD, next-day Dhaka delivery, bubble-free install. Support actually replied on WhatsApp in minutes.",
+    text: "Fast shipping, bubble-free install. Support actually replied on WhatsApp in minutes.",
     rating: 4.5,
     hue: "#fda4af",
   },

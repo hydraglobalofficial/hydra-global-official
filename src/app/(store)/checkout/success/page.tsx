@@ -70,7 +70,7 @@ export default async function CheckoutSuccessPage({ searchParams }: PageProps<"/
           </div>
           <div className="text-right">
             <p className="text-xs uppercase tracking-[0.2em] text-muted">
-              Total ({order.paymentMethod === "COD" ? "Cash on Delivery" : order.paymentMethod})
+              Total ({order.paymentMethod === "COD" ? "Pay on delivery" : order.paymentMethod})
             </p>
             <p className="mt-1 font-mono text-xl">{formatPrice(order.total)}</p>
           </div>
@@ -88,8 +88,12 @@ export default async function CheckoutSuccessPage({ searchParams }: PageProps<"/
         </ul>
         <div className="grid gap-4 border-t border-line pt-6 text-sm sm:grid-cols-2">
           <p className="flex items-center gap-3 text-muted">
-            <Package size={16} className="text-accent" /> Delivery in{" "}
-            {order.city === "Dhaka" ? "24–48 hours" : "2–4 business days"}
+            <Package size={16} className="text-accent" /> Estimated delivery{" "}
+            {["New York", "London", "Dubai", "Singapore", "Tokyo", "Sydney", "Toronto", "Berlin", "Dhaka"].includes(
+              order.city,
+            )
+              ? "2–4 business days"
+              : "4–8 business days"}
           </p>
           <p className="flex items-center gap-3 text-muted">
             <Phone size={16} className="text-accent" /> Questions? {siteConfig.phone}

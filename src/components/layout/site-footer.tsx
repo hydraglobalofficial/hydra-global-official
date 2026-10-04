@@ -63,10 +63,11 @@ export function SiteFooter() {
         <div className="relative mx-auto flex h-[clamp(4.5rem,18vw,14rem)] w-full max-w-5xl items-end justify-center">
           <Image
             src="/products/Hydra.png"
-            alt=""
+            alt="HYDRA"
             fill
-            sizes="(min-width: 1024px) 1024px, 100vw"
-            className="object-contain object-bottom opacity-90"
+            sizes="(min-width: 1024px) 1100px, 100vw"
+            quality={95}
+            className="object-contain object-bottom opacity-95 brightness-0 invert"
             priority={false}
           />
         </div>

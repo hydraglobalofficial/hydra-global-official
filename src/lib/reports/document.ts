@@ -242,7 +242,7 @@ export function reportDocument({
 
       <footer class="footer">
         <span>${escapeHtml(footerNote ?? "Computer-generated statement. Valid without signature when printed from HYDRA Admin.")}</span>
-        <span>Generated ${escapeHtml(formatReportDateTime())} (Asia/Dhaka)</span>
+        <span>Generated ${escapeHtml(formatReportDateTime())} (UTC)</span>
       </footer>
     </div>
   </div>

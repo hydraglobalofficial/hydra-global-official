@@ -13,6 +13,21 @@ export type AboutContent = {
   values: { title: string; keyword: string; text: string }[];
   divisions: { title: string; text: string; href: string }[];
   journey: { year: string; title: string; text: string; future?: boolean }[];
+  /** Public company block — no registration / tax IDs in defaults. Admin controls show + rows. */
+  company: {
+    visible: boolean;
+    eyebrow: string;
+    title: string;
+    titleMuted: string;
+    description: string;
+    ctaLabel: string;
+    ctaHref: string;
+    sheetTitle: string;
+    sheetBadge: string;
+    commitments: { title: string; text: string }[];
+    /** Public fact rows only. Leave empty to hide the sheet. */
+    facts: { label: string; value: string }[];
+  };
   careers: { title: string; text: string; cta: string };
   partner: { title: string; text: string; cta: string };
 };
@@ -41,6 +56,31 @@ export type CollectionsContent = {
   items: { slug: string; name: string; description: string; image: string }[];
 };
 
+/** Built-in stage visuals; `image` uses the slide's custom media URL. */
+export type HeroVisualKey = "phone" | "glass" | "privacy" | "image";
+
+export type HeroSlide = {
+  key: string;
+  brand: string;
+  title: string;
+  titleAccent: string;
+  text: string;
+  primaryLabel: string;
+  primaryHref: string;
+  secondaryLabel: string;
+  secondaryHref: string;
+  visual: HeroVisualKey;
+  /** Used when visual is `image` (public path or allowlisted host). */
+  image: string;
+};
+
+export type HomeHeroContent = {
+  ratingLabel: string;
+  quickLinks: { label: string; href: string }[];
+  stats: { value: string; label: string }[];
+  slides: HeroSlide[];
+};
+
 export const defaultAboutContent: AboutContent = {
   hero: {
     eyebrow: "About HYDRA",
@@ -50,9 +90,9 @@ export const defaultAboutContent: AboutContent = {
       "HYDRA designs and delivers essentials for flagship phones — screen armor, cases, camera gear and everyday accessories — built on protection, precision and progression. Technology within reach.",
   },
   stats: [
-    { value: "2023", label: "Founded in Dhaka" },
+    { value: "2023", label: "Founded" },
     { value: "50K+", label: "Devices equipped" },
-    { value: "64", label: "Districts served" },
+    { value: "40+", label: "Markets shipped" },
     { value: "18", label: "Flagship models" },
     { value: "4.9★", label: "Customer rating" },
   ],
@@ -62,18 +102,18 @@ export const defaultAboutContent: AboutContent = {
   },
   mission: {
     title: "Our mission",
-    body: "To make world-class mobile accessories affordable and accessible to every smartphone owner in Bangladesh.",
+    body: "To make world-class mobile accessories affordable and accessible to every smartphone owner — wherever they are.",
     bullets: [
       "Device-specific fit across protectors, cases and more",
       "Verified-genuine products at honest, published prices",
-      "Real people on support, in all 64 districts",
+      "Real people on support, across every region we ship",
     ],
   },
   vision: {
     title: "Our vision",
-    body: "To become South Asia's most trusted mobile accessories brand — the name people choose first, and recommend without hesitation.",
+    body: "To become the world's most trusted mobile accessories brand — the name people choose first, and recommend without hesitation.",
     bullets: [
-      "A partner network in every major city",
+      "A partner network in every major market",
       "Expanding categories beyond the screen",
       "Accessories for every device you carry",
     ],
@@ -98,12 +138,12 @@ export const defaultAboutContent: AboutContent = {
     {
       title: "Customer obsessed",
       keyword: "People",
-      text: "A local team that answers personally, a 12-month warranty, and replacements dispatched within 24 hours.",
+      text: "A real team that answers personally, a 12-month warranty, and replacements dispatched as soon as claims are approved.",
     },
     {
       title: "Integrity always",
       keyword: "Trust",
-      text: "Honest pricing, VAT-compliant invoicing and no inflated claims. We would rather lose a sale than a customer's trust.",
+      text: "Honest pricing, clear invoicing and no inflated claims. We would rather lose a sale than a customer's trust.",
     },
     {
       title: "Relentless innovation",
@@ -113,18 +153,18 @@ export const defaultAboutContent: AboutContent = {
     {
       title: "Responsible growth",
       keyword: "Future",
-      text: "Recyclable packaging, fair local employment and partnerships that let small retailers across Bangladesh grow with us.",
+      text: "Recyclable packaging, fair employment and partnerships that help retailers grow with us in every market we enter.",
     },
   ],
   divisions: [
     {
       title: "Retail & e-commerce",
-      text: "Direct-to-customer sales through hydra.com.bd with cash on delivery nationwide.",
+      text: "Direct-to-customer sales online, with pay-on-delivery where available and worldwide shipping.",
       href: "/shop",
     },
     {
       title: "Wholesale & distribution",
-      text: "Trade pricing and priority stock for retailers and repair shops across Bangladesh.",
+      text: "Trade pricing and priority stock for retailers and repair shops worldwide.",
       href: "/contact?topic=wholesale#write",
     },
     {
@@ -136,8 +176,8 @@ export const defaultAboutContent: AboutContent = {
   journey: [
     {
       year: "2023",
-      title: "Founded in Dhaka",
-      text: "Born out of too many cracked screens and too many fake accessories. HYDRA starts as a mobile accessories brand for Bangladesh.",
+      title: "HYDRA launches",
+      text: "Born out of too many cracked screens and too many fake accessories. HYDRA starts as a precision mobile accessories brand.",
     },
     {
       year: "2024",
@@ -147,23 +187,46 @@ export const defaultAboutContent: AboutContent = {
     {
       year: "2025",
       title: "Samsung lineup expands",
-      text: "Galaxy S and Z series join the lineup, with sealed packaging and nationwide COD delivery.",
+      text: "Galaxy S and Z series join the lineup, with sealed packaging and reliable delivery across new markets.",
     },
     {
       year: "2026",
       title: "50,000+ devices equipped",
-      text: "Screen armor, camera armor, cases and nationwide delivery to all 64 districts — with 24-hour dispatch inside Dhaka.",
+      text: "Screen armor, camera armor, cases — and shipping that reaches customers far beyond our first city.",
     },
     {
       year: "Next",
       title: "Full accessories range",
-      text: "Retail partner network and new categories — everyday essentials beyond the screen, engineered for flagships.",
+      text: "Global retail partners and new categories — everyday essentials beyond the screen, engineered for flagships.",
       future: true,
     },
   ],
+  company: {
+    visible: true,
+    eyebrow: "Company information",
+    title: "A registered company",
+    titleMuted: "you can trust.",
+    description:
+      "HYDRA Global Ltd. designs and ships precision mobile accessories worldwide. Partners and corporate buyers can request a full company profile privately.",
+    ctaLabel: "Request company profile",
+    ctaHref: "/contact?topic=corporate#write",
+    sheetTitle: "Company overview",
+    sheetBadge: "Public",
+    commitments: [
+      { title: "Clear invoicing", text: "Official invoices available on request for every qualifying order." },
+      { title: "Transparent delivery", text: "Published shipping rates — no surprise fees at the door." },
+      { title: "Fair trade terms", text: "Written terms for wholesale and distribution partners." },
+    ],
+    facts: [
+      { label: "Registered name", value: "HYDRA Global Ltd." },
+      { label: "Legal form", value: "Private Limited Company" },
+      { label: "Founded", value: "2023" },
+      { label: "Focus", value: "Mobile accessories for flagship phones" },
+    ],
+  },
   careers: {
     title: "Build with HYDRA.",
-    text: "We're growing across product, ops and customer experience in Dhaka.",
+    text: "We're growing across product, ops and customer experience worldwide.",
     cta: "View careers",
   },
   partner: {
@@ -179,7 +242,7 @@ export const defaultHowItWorksContent: HowItWorksContent = {
   titleMuted: "armored.",
   steps: [
     { title: "Pick your armor", text: "Choose your exact model and finish. Every cut is device-specific." },
-    { title: "Fast delivery", text: "24–48 hours inside Dhaka, 2–4 days nationwide. Cash on delivery." },
+    { title: "Ship worldwide", text: "Express hubs in 2–4 days; standard delivery elsewhere. Pay on delivery where available." },
     { title: "Install in 2 minutes", text: "Alignment frame and clean kit included. Bubble-free, first time." },
     { title: "Covered for a year", text: "12-month warranty plus one free replacement for accidental cracks." },
   ],
@@ -232,8 +295,72 @@ export const defaultCollectionsContent: CollectionsContent = {
   ],
 };
 
+export const defaultHomeHeroContent: HomeHeroContent = {
+  ratingLabel: "50,000+ owners · worldwide",
+  quickLinks: [
+    { label: "iPhone", href: "/shop/iphone" },
+    { label: "Samsung", href: "/shop/samsung" },
+    { label: "All products", href: "/shop" },
+  ],
+  stats: [
+    { value: "9H+", label: "Hardness" },
+    { value: "±0.05", label: "mm fit" },
+    { value: "12 mo", label: "Warranty" },
+  ],
+  slides: [
+    {
+      key: "armor",
+      brand: "HYDRA",
+      title: "Technology",
+      titleAccent: "within reach.",
+      text: "Premium cases, screen armor and camera gear for iPhone & Galaxy — cut to fit, built to last.",
+      primaryLabel: "Shop now",
+      primaryHref: "/shop",
+      secondaryLabel: "Our story",
+      secondaryHref: "/about",
+      visual: "phone",
+      image: "",
+    },
+    {
+      key: "clarity",
+      brand: "Clarity glass",
+      title: "Less glare.",
+      titleAccent: "More clarity.",
+      text: "Anti-reflective armor for outdoor readability — tuned for iPhone 17 and Galaxy S25.",
+      primaryLabel: "Shop glass",
+      primaryHref: "/shop?category=tempered-glass",
+      secondaryLabel: "iPhone lineup",
+      secondaryHref: "/shop/iphone",
+      visual: "glass",
+      image: "",
+    },
+    {
+      key: "privacy",
+      brand: "Privacy armor",
+      title: "Your screen.",
+      titleAccent: "Your business.",
+      text: "Side views black out past 30° — privacy for the metro, office and every café seat.",
+      primaryLabel: "Shop privacy",
+      primaryHref: "/shop?category=privacy-glass",
+      secondaryLabel: "Galaxy lineup",
+      secondaryHref: "/shop/samsung",
+      visual: "privacy",
+      image: "",
+    },
+  ],
+};
+
 export const SITE_SECTION_META = [
-  { key: "about", title: "About page", description: "Hero, stats, mission, values, journey and CTAs." },
+  {
+    key: "home.hero",
+    title: "Home · Hero slider",
+    description: "Homepage hero: slides, stage visuals/images, CTAs, quick links and bottom stats — edited separately.",
+  },
+  {
+    key: "about",
+    title: "About page",
+    description: "Full About page: hero, company overview (show/hide + public facts), mission, values, journey and CTAs.",
+  },
   { key: "home.collections", title: "Home · Collections", description: "Shop-by-collection bento: heading, CTA and category cards." },
   { key: "home.howItWorks", title: "Home · How it works", description: "Checkout-to-armored steps on the homepage." },
   { key: "home.newsletter", title: "Home · Newsletter", description: "Members list signup block copy." },

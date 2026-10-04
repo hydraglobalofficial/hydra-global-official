@@ -44,7 +44,7 @@ export function CartView() {
           Checkout <ArrowRight size={18} />
         </ButtonLink>
         <p className="flex items-center justify-center gap-2 text-xs text-subtle">
-          <Lock size={12} /> Secure checkout · Cash on Delivery available
+          <Lock size={12} /> Secure checkout · Pay on delivery where available
         </p>
       </aside>
     </div>

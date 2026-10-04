@@ -104,10 +104,10 @@ export function ProductForm({ initial, categories, devices }: { initial: Product
             <Input id="sku" name="sku" defaultValue={initial.sku} required className="font-mono uppercase" />
           </Field>
           <div className="grid grid-cols-2 gap-4">
-            <Field label="Price (৳)" htmlFor="price" error={e.price}>
+            <Field label="Price ($)" htmlFor="price" error={e.price}>
               <Input id="price" name="price" type="number" min={0} defaultValue={initial.price} required />
             </Field>
-            <Field label="Compare at (৳)" htmlFor="compareAtPrice" error={e.compareAtPrice}>
+            <Field label="Compare at ($)" htmlFor="compareAtPrice" error={e.compareAtPrice}>
               <Input id="compareAtPrice" name="compareAtPrice" type="number" min={0} defaultValue={initial.compareAtPrice} />
             </Field>
           </div>

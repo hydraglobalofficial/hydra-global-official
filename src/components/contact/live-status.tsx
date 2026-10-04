@@ -31,7 +31,7 @@ export function LiveStatus({ className }: { className?: string }) {
           <span className="font-medium">{status.open ? "Support is online" : "We're offline"}</span>
           <span className="text-muted">
             {" "}
-            · {status.open ? `Dhaka ${status.localTime}` : status.nextOpen ? `back ${status.nextOpen}` : `Dhaka ${status.localTime}`}
+            · {status.open ? status.localTime : status.nextOpen ? `back ${status.nextOpen}` : status.localTime}
           </span>
         </span>
       ) : (

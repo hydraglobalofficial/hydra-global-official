@@ -12,14 +12,14 @@ import { siteConfig } from "@/config/site";
 
 export const metadata: Metadata = {
   title: "Contact",
-  description: "Talk to the HYDRA team in Dhaka — WhatsApp, phone, email or message us for orders, wholesale, partnerships and press.",
+  description: "Talk to the HYDRA team — WhatsApp, phone, email or message us for orders, wholesale, partnerships and press.",
   alternates: { canonical: "/contact" },
 };
 
 const heroStats = [
   { value: "~2 hrs", label: "Avg. first reply" },
   { value: "4.9★", label: "Support rating" },
-  { value: "64", label: "Districts served" },
+  { value: "40+", label: "Markets shipped" },
 ];
 
 const selfHelp = [
@@ -33,7 +33,7 @@ const businessPerks = [
   { icon: ReceiptText, text: "Volume pricing from 20+ units" },
   { icon: UserRound, text: "Dedicated account manager" },
   { icon: FileText, text: "VAT invoice & credit terms" },
-  { icon: Truck, text: "Priority nationwide dispatch" },
+  { icon: Truck, text: "Priority worldwide dispatch" },
 ];
 
 const faqs = [
@@ -42,7 +42,7 @@ const faqs = [
     a: `WhatsApp and phone are answered live during support hours (${siteConfig.hours}). Emails and form messages get a reply within one business day — usually in about two hours.`,
   },
   { q: "Where is my order?", a: "Choose “Order support” in the form and add your order number (e.g. HYD-260928-XXXXXX). We'll reply with live courier status." },
-  { q: "Can I visit the office?", a: "Yes — our Gulshan office is open during support hours for pickups and installation help. Message us first so we can have your model ready." },
+  { q: "Can I visit a hub?", a: "Selected partner hubs offer pickup and install help during support hours. Message us first so we can have your model ready." },
   { q: "Do you supply shops and companies?", a: "We do. Pick “Wholesale / bulk” or “Corporate orders” and tell us the models and quantities — you'll get a quote within 24 hours." },
 ];
 
@@ -64,7 +64,7 @@ export default async function ContactPage({ searchParams }: PageProps<"/contact"
               Talk to a human, <span className="text-muted">not a ticket.</span>
             </h1>
             <p className="max-w-lg text-lg text-pretty text-muted">
-              Orders, installs, wholesale or press — our Dhaka team answers every message personally. Pick the channel that suits you.
+              Orders, installs, wholesale or press — our team answers every message personally. Pick the channel that suits you.
             </p>
             <LiveStatus />
             <dl className="grid max-w-md grid-cols-3 gap-6 border-t border-line pt-7">
@@ -104,7 +104,7 @@ export default async function ContactPage({ searchParams }: PageProps<"/contact"
                 <h2 className="text-3xl font-semibold tracking-tight text-balance md:text-4xl">
                   Buying for a store or a team? <span className="text-muted">Let&apos;s talk volume.</span>
                 </h2>
-                <p className="max-w-lg text-muted">Retailers, repair shops and companies across Bangladesh stock HYDRA. Get trade pricing, a named contact and invoices that keep accounts happy.</p>
+                <p className="max-w-lg text-muted">Retailers, repair shops and companies worldwide stock HYDRA. Get trade pricing, a named contact and invoices that keep accounts happy.</p>
                 <div className="flex flex-wrap gap-3 pt-1">
                   <Link
                     href="/contact?topic=wholesale#write"

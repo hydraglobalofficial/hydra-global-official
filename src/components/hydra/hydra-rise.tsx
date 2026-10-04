@@ -32,7 +32,7 @@ export function HydraRise() {
         Meet the <span className="text-muted">HYDRA.</span>
       </h2>
       <p className="mt-4 text-sm text-muted sm:text-base">
-        {siteConfig.slogan}. Accessories for iPhone and Samsung Galaxy, delivered anywhere in Bangladesh.
+        {siteConfig.slogan}. Accessories for iPhone and Samsung Galaxy, shipped worldwide.
       </p>
       <Link href="/shop" className="mt-6 inline-flex items-center gap-2 text-sm font-medium text-fg transition hover:text-accent">
         Shop accessories <ArrowRight size={16} />

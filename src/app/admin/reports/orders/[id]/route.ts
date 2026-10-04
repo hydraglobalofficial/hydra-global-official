@@ -87,7 +87,7 @@ export async function GET(_request: Request, { params }: Params) {
       { label: "Order number", value: order.number },
       { label: "Order date", value: formatReportDate(order.createdAt) },
       { label: "Status", value: order.status },
-      { label: "Currency", value: "BDT" },
+      { label: "Currency", value: "USD" },
     ],
     body,
     footerNote: "This statement is generated from HYDRA Admin order records for internal and customer documentation.",

@@ -9,7 +9,7 @@ import { useBusinessStatus } from "./live-status";
 const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 const WEEK = [6, 0, 1, 2, 3, 4, 5];
 
-/** Stylised Gulshan map: roads, lake and a pulsing HQ pin. Pure SVG. */
+/** Stylised city map: roads, water and a pulsing HQ pin. Pure SVG. */
 function OfficeMap() {
   return (
     <div className="relative aspect-[16/10] overflow-hidden rounded-2xl border border-line bg-[#05070b]">
@@ -48,8 +48,8 @@ function OfficeMap() {
           viewport={{ once: true }}
           transition={{ duration: 2, ease: "easeInOut" }}
         />
-        <text x="30" y="128" fill="#1e40af" fillOpacity="0.5" fontSize="7" letterSpacing="2" fontFamily="ui-monospace, monospace">GULSHAN LAKE</text>
-        <text x="238" y="112" fill="#fff" fillOpacity="0.35" fontSize="6.5" letterSpacing="1.5" fontFamily="ui-monospace, monospace">GULSHAN AVE</text>
+        <text x="30" y="128" fill="#1e40af" fillOpacity="0.5" fontSize="7" letterSpacing="2" fontFamily="ui-monospace, monospace">CITY LAKE</text>
+        <text x="238" y="112" fill="#fff" fillOpacity="0.35" fontSize="6.5" letterSpacing="1.5" fontFamily="ui-monospace, monospace">HQ AVENUE</text>
       </svg>
 
       <div className="absolute left-[66.5%] top-[50%] -translate-x-1/2 -translate-y-full">
@@ -93,7 +93,7 @@ export function OfficeCard() {
 
       <div>
         <p className="mb-3 flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.25em] text-subtle">
-          <Clock size={12} /> Support hours · Dhaka
+          <Clock size={12} /> Support hours
         </p>
         <ul className="grid grid-cols-7 gap-1.5">
           {WEEK.map((d) => {

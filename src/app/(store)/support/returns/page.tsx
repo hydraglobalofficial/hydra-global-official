@@ -18,7 +18,7 @@ export default function ReturnsPage() {
       aside={
         <div className="glass space-y-4 rounded-3xl p-6">
           <p className="font-medium">Start a return</p>
-          <p className="text-sm text-muted">We&apos;ll arrange pickup inside Dhaka or send courier instructions.</p>
+          <p className="text-sm text-muted">We&apos;ll arrange pickup in hub cities or send courier instructions worldwide.</p>
           <ButtonLink href="/support/contact?topic=return" className="w-full">Request return</ButtonLink>
         </div>
       }

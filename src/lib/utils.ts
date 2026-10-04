@@ -4,10 +4,14 @@ export function cn(...classes: ClassValue[]) {
   return classes.filter(Boolean).join(" ");
 }
 
-const bdt = new Intl.NumberFormat("en-BD", { maximumFractionDigits: 0 });
+const money = new Intl.NumberFormat("en-US", {
+  style: "currency",
+  currency: "USD",
+  maximumFractionDigits: 0,
+});
 
 export function formatPrice(amount: number) {
-  return `৳${bdt.format(amount)}`;
+  return money.format(amount);
 }
 
 export function formatDate(date: Date | string) {

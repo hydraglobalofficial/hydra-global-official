@@ -141,7 +141,7 @@ export function PrivacyVisual() {
             <rect x="130" y="130" width="130" height="6" rx="3" fillOpacity="0.25" />
             <rect x="130" y="176" width="140" height="64" rx="14" fill="#1e40af" fillOpacity="0.14" />
             <text x="146" y="206" fill="#1e40af" fontSize="11" letterSpacing="1.5">BALANCE</text>
-            <text x="146" y="228" fill="#fff" fontSize="16" fontWeight="600" fontFamily="ui-monospace, monospace">৳ 84,250</text>
+            <text x="146" y="228" fill="#fff" fontSize="16" fontWeight="600" fontFamily="ui-monospace, monospace">$ 1,249</text>
             {[262, 290, 318, 346].map((y) => (
               <g key={y}>
                 <circle cx="142" cy={y + 6} r="8" fillOpacity="0.12" />
