@@ -16,10 +16,29 @@ export default async function AdminCatalogPage() {
   const session = await requireAdmin();
   const isOwner = session.role === "OWNER";
   const [categories, devices] = await Promise.all([
-    db.category.findMany({ orderBy: { position: "asc" }, include: { _count: { select: { products: true } } } }),
+    db.category.findMany({
+      orderBy: { position: "asc" },
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+        description: true,
+        icon: true,
+        position: true,
+        _count: { select: { products: true } },
+      },
+    }),
     db.device.findMany({
       orderBy: [{ brand: "asc" }, { position: "asc" }],
-      include: { _count: { select: { products: true } } },
+      select: {
+        id: true,
+        brand: true,
+        series: true,
+        model: true,
+        slug: true,
+        position: true,
+        _count: { select: { products: true } },
+      },
     }),
   ]);
 

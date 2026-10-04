@@ -7,6 +7,8 @@ import { db } from "@/lib/db";
 import { requireAdmin } from "@/lib/auth/session";
 import { invalid, productSchema, type FormState } from "@/lib/validations";
 import { slugify } from "@/lib/utils";
+import { adminCachePurgeAll } from "@/lib/admin-cache";
+import { invalidateAdminCache } from "@/server/queries/admin";
 import { CATALOG_TAG, CONTENT_TAG } from "@/server/queries/catalog";
 import { Prisma } from "@/generated/prisma/client";
 import type {
@@ -221,6 +223,7 @@ export async function updateOrder(_prev: FormState, formData: FormData): Promise
   });
 
   updateTag(CATALOG_TAG);
+  await invalidateAdminCache();
   revalidatePath("/admin", "layout");
   return { status: "success", message: "Order updated." };
 }
@@ -233,6 +236,7 @@ export async function setInquiryStatus(formData: FormData) {
     .object({ id: z.string(), status: z.enum(["NEW", "IN_PROGRESS", "RESOLVED"]) })
     .parse(Object.fromEntries(formData));
   await db.inquiry.update({ where: { id }, data: { status } });
+  await invalidateAdminCache();
   revalidatePath("/admin", "layout");
 }
 
@@ -252,7 +256,16 @@ export async function moderateReview(formData: FormData) {
     where: { id: review.productId },
     data: { ratingAverage: agg._avg.rating ?? 0, ratingCount: agg._count },
   });
+  await invalidateAdminCache();
   refreshCatalog(product.slug);
+  revalidatePath("/admin", "layout");
+}
+
+/** Wipe admin Redis/memory cache so the next load is fresh from Postgres. */
+export async function purgeAdminCache() {
+  await requireAdmin();
+  await adminCachePurgeAll();
+  revalidatePath("/admin", "layout");
 }
 
 // ─── Content ─────────────────────────────────────────────────────────────────

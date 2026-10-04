@@ -36,8 +36,8 @@ export function Card({ children, className, glow }: { children: ReactNode; class
   return (
     <div
       className={cn(
-        "admin-card relative overflow-hidden rounded-2xl backdrop-blur-md",
-        glow && "before:pointer-events-none before:absolute before:-right-10 before:-top-12 before:size-48 before:rounded-full before:bg-accent/30 before:blur-3xl before:content-['']",
+        "admin-card relative overflow-hidden rounded-2xl",
+        glow && "before:pointer-events-none before:absolute before:-right-8 before:-top-10 before:size-36 before:rounded-full before:bg-accent/20 before:blur-2xl before:content-['']",
         className,
       )}
     >

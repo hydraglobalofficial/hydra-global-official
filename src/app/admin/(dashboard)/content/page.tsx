@@ -14,7 +14,10 @@ export const metadata = { title: "Content" };
 export default async function AdminContentPage() {
   await requireAdmin();
   const [announcements, pages, sections] = await Promise.all([
-    db.announcement.findMany({ orderBy: { position: "asc" } }),
+    db.announcement.findMany({
+      orderBy: { position: "asc" },
+      select: { id: true, message: true, href: true, position: true, active: true },
+    }),
     db.page.findMany({ orderBy: { slug: "asc" }, select: { slug: true, title: true, updatedAt: true } }),
     db.siteSection.findMany({ select: { key: true, updatedAt: true } }),
   ]);

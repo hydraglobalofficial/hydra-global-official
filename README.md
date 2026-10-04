@@ -6,11 +6,12 @@ Premium screen protection for iPhone and Samsung Galaxy — a worldwide (USD) st
 
 ## Quick start
 
-No Docker needed. Create a free hosted Postgres database on [Neon](https://neon.tech) (or Supabase / Prisma Postgres). Then:
+No Docker needed. Create a free hosted Postgres database on [Neon](https://neon.tech) (or Supabase / Prisma Postgres). Optionally add free [Upstash Redis](https://console.upstash.com) for admin cache + rate limits. Then:
 
 ```bash
 pnpm install              # also runs `prisma generate`
 cp .env.example .env      # set DATABASE_URL, DIRECT_URL, AUTH_SECRET (32+ chars)
+                          # optional: UPSTASH_REDIS_REST_URL + UPSTASH_REDIS_REST_TOKEN
 pnpm db:deploy            # apply migrations
 pnpm db:seed              # demo catalog, pages, sections, orders, owner account
 pnpm dev                  # http://localhost:3000
@@ -87,7 +88,7 @@ src/
 - **Checkout** re-prices every line from the database and decrements stock atomically inside a transaction.
 - **Site sections:** About + home blocks (collections, how-it-works, newsletter) are editable JSON in admin (`SiteSection`), with safe href/image validation on save and normalize-on-read.
 - **Reports:** Admin can download HTML/CSV order and product statements from the orders and products screens.
-- **Caching:** catalog pages use ISR and tag-based revalidation. Admin edits refresh the storefront immediately.
+- **Caching:** catalog pages use ISR and tag-based revalidation. Admin uses a versioned cache-aside layer (`src/lib/admin-cache.ts`) on Upstash Redis with tag invalidation, hit metadata, and Overview → Purge cache. Rate limits also use Redis. Without `UPSTASH_REDIS_*`, both fall back to process memory.
 - **Security:** bcrypt passwords, an HS256 JWT session cookie, Zod on storefront inputs, honeypot fields, rate limiting, and strict security headers.
 - **Analytics:** GTM and Meta Pixel load only after cookie consent (`NEXT_PUBLIC_GTM_ID`, `NEXT_PUBLIC_META_PIXEL_ID`).
 
@@ -98,5 +99,4 @@ src/
 - Transactional email.
 - Image upload. Product images are entered as URLs.
 - Editing product variants in the admin form. Variants are seeded.
-- A shared rate-limit store. The current limiter is in-memory, so each Vercel function instance counts requests separately; switch to Upstash Redis for strict limits.
 - Phase 2 items: multi-currency, blog, and affiliate pages.

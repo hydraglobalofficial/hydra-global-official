@@ -39,7 +39,7 @@ export default async function AdminOrdersPage({ searchParams }: PageProps<"/admi
       }),
     },
     orderBy: { createdAt: "desc" },
-    take: 100,
+    take: 60,
     select: {
       id: true,
       number: true,

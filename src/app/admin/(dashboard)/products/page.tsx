@@ -20,6 +20,7 @@ export default async function AdminProductsPage({ searchParams }: PageProps<"/ad
       ? { OR: [{ name: { contains: query, mode: "insensitive" } }, { sku: { contains: query, mode: "insensitive" } }] }
       : undefined,
     orderBy: { updatedAt: "desc" },
+    take: 120,
     select: {
       id: true,
       name: true,
