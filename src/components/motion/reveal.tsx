@@ -1,16 +1,10 @@
 "use client";
 
-import { motion, type Variants } from "motion/react";
+import { motion, useReducedMotion } from "motion/react";
 import type { ReactNode } from "react";
-import { useHasMounted } from "@/hooks/use-has-mounted";
 import { cn } from "@/lib/utils";
 
 const ease = [0.22, 1, 0.36, 1] as const;
-
-const variants: Variants = {
-  hidden: { opacity: 0, y: 24 },
-  show: { opacity: 1, y: 0 },
-};
 
 type Props = {
   children: ReactNode;
@@ -20,30 +14,31 @@ type Props = {
   once?: boolean;
 };
 
-/** Fades + slides an element up into view once it scrolls into the viewport. */
+/**
+ * Fade + slide into view. Never leaves content stuck at opacity 0 —
+ * generous viewport margins + reduced-motion skip.
+ */
 export function Reveal({ children, className, delay = 0, once = true }: Props) {
-  const mounted = useHasMounted();
+  const reduce = useReducedMotion();
 
-  // Avoid motion SSR style mismatches (opacity: 0 vs "0").
-  if (!mounted) {
-    return <div className={cn(className, "translate-y-6 opacity-0")}>{children}</div>;
+  if (reduce) {
+    return <div className={className}>{children}</div>;
   }
 
   return (
     <motion.div
       className={className}
-      initial="hidden"
-      whileInView="show"
-      viewport={{ once, margin: "-8% 0px" }}
-      variants={variants}
-      transition={{ duration: 0.7, delay, ease }}
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once, amount: 0.08, margin: "120px 0px" }}
+      transition={{ duration: 0.55, delay, ease }}
     >
       {children}
     </motion.div>
   );
 }
 
-/** Reveals children with a staggered delay — pass items as direct children. */
+/** Stagger children as they enter the viewport. */
 export function RevealGroup({
   children,
   className,
@@ -55,9 +50,9 @@ export function RevealGroup({
   stagger?: number;
   once?: boolean;
 }) {
-  const mounted = useHasMounted();
+  const reduce = useReducedMotion();
 
-  if (!mounted) {
+  if (reduce) {
     return <div className={className}>{children}</div>;
   }
 
@@ -66,11 +61,11 @@ export function RevealGroup({
       className={className}
       initial="hidden"
       whileInView="show"
-      viewport={{ once, amount: 0.12, margin: "0px 0px -6% 0px" }}
+      viewport={{ once, amount: 0.06, margin: "140px 0px" }}
       variants={{
         hidden: {},
         show: {
-          transition: { staggerChildren: stagger, delayChildren: 0.04 },
+          transition: { staggerChildren: stagger, delayChildren: 0.02 },
         },
       }}
     >
@@ -82,16 +77,16 @@ export function RevealGroup({
 export function RevealItem({
   children,
   className,
-  y = 28,
+  y = 24,
 }: {
   children: ReactNode;
   className?: string;
   y?: number;
 }) {
-  const mounted = useHasMounted();
+  const reduce = useReducedMotion();
 
-  if (!mounted) {
-    return <div className={cn(className, "opacity-0")} style={{ transform: `translateY(${y}px)` }}>{children}</div>;
+  if (reduce) {
+    return <div className={className}>{children}</div>;
   }
 
   return (
@@ -102,9 +97,13 @@ export function RevealItem({
         show: {
           opacity: 1,
           y: 0,
-          transition: { duration: 0.65, ease },
+          transition: { duration: 0.55, ease },
         },
       }}
+      // Safety net: if parent stagger never fires, still reveal this item alone.
+      whileInView="show"
+      viewport={{ once: true, amount: 0.05, margin: "100px 0px" }}
+      initial="hidden"
     >
       {children}
     </motion.div>

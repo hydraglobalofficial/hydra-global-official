@@ -313,6 +313,12 @@ function refreshAnnouncements() {
   updateTag(CONTENT_TAG);
   revalidatePath("/", "layout");
   revalidatePath("/admin/content");
+  void invalidateAdminCache("dashboard");
+}
+
+async function bumpAdminContentHub() {
+  await invalidateAdminCache("dashboard");
+  revalidatePath("/admin/content");
 }
 
 export async function saveAnnouncement(formData: FormData) {
@@ -524,8 +530,9 @@ export async function saveAboutSection(_prev: FormState, formData: FormData): Pr
     });
     updateTag(CONTENT_TAG);
     revalidatePath("/about");
-    revalidatePath("/admin/content");
+    revalidatePath("/admin/about");
     revalidatePath("/admin/content/sections/about");
+    await bumpAdminContentHub();
     return { status: "success", message: "About page published." };
   } catch (error) {
     console.error("[saveAboutSection]", error);
@@ -565,7 +572,7 @@ export async function saveHowItWorksSection(_prev: FormState, formData: FormData
     });
     updateTag(CONTENT_TAG);
     revalidatePath("/");
-    revalidatePath("/admin/content");
+    await bumpAdminContentHub();
     return { status: "success", message: "How it works published." };
   } catch (error) {
     console.error("[saveHowItWorksSection]", error);
@@ -636,8 +643,9 @@ export async function saveInstallationSection(_prev: FormState, formData: FormDa
     revalidatePath("/installation");
     revalidatePath("/installation/iphone");
     revalidatePath("/installation/samsung");
-    revalidatePath("/admin/content");
+    revalidatePath("/admin/installation");
     revalidatePath("/admin/content/sections/installation");
+    await bumpAdminContentHub();
     return { status: "success", message: "Installation guide published." };
   } catch (error) {
     console.error("[saveInstallationSection]", error);
@@ -668,7 +676,7 @@ export async function saveNewsletterSection(_prev: FormState, formData: FormData
     });
     updateTag(CONTENT_TAG);
     revalidatePath("/");
-    revalidatePath("/admin/content");
+    await bumpAdminContentHub();
     return { status: "success", message: "Newsletter block published." };
   } catch (error) {
     console.error("[saveNewsletterSection]", error);
@@ -766,8 +774,8 @@ export async function saveHomeHeroSection(_prev: FormState, formData: FormData):
     });
     updateTag(CONTENT_TAG);
     revalidatePath("/");
-    revalidatePath("/admin/content");
     revalidatePath("/admin/content/sections/home.hero");
+    await bumpAdminContentHub();
     return { status: "success", message: "Hero slider published." };
   } catch (error) {
     console.error("[saveHomeHeroSection]", error);
@@ -831,8 +839,9 @@ export async function saveCollectionsSection(_prev: FormState, formData: FormDat
     });
     updateTag(CONTENT_TAG);
     revalidatePath("/");
-    revalidatePath("/admin/content");
+    revalidatePath("/admin/collections");
     revalidatePath("/admin/content/sections/home.collections");
+    await bumpAdminContentHub();
     return { status: "success", message: "Collections section published." };
   } catch (error) {
     console.error("[saveCollectionsSection]", error);

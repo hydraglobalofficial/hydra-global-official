@@ -20,7 +20,7 @@ import {
   normalizeInstallationContent,
   normalizeNewsletterContent,
 } from "@/lib/normalize-sections";
-import { db } from "@/lib/db";
+import { getSiteSectionRow } from "@/server/queries/content";
 
 export const metadata = { title: "Edit section" };
 
@@ -33,7 +33,7 @@ export default async function EditSiteSectionPage({ params }: Props) {
   const meta = SITE_SECTION_META.find((s) => s.key === key);
   if (!meta) notFound();
 
-  const row = await db.siteSection.findUnique({ where: { key } });
+  const row = await getSiteSectionRow(key);
 
   return (
     <>

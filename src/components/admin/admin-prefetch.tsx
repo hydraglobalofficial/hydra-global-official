@@ -13,6 +13,7 @@ const PREFETCH_ROUTES = [
   "/admin/products/new",
   "/admin/catalog",
   "/admin/content",
+  "/admin/collections",
   "/admin/about",
   "/admin/installation",
   "/admin/team",
