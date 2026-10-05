@@ -25,7 +25,7 @@ export function PageEditor({ page }: { page: { slug: string; title: string; summ
         <Field label="Body" htmlFor="body" error={state.fieldErrors?.body} hint="## Heading · ### Subheading · - list item · **bold** · blank line between blocks">
           <Textarea id="body" name="body" value={body} onChange={(e) => setBody(e.target.value)} className="min-h-[32rem] font-mono text-xs leading-relaxed" />
         </Field>
-        <FormMessage status={state.status} message={state.message} />
+        <FormMessage status={state.status} message={state.message} toast />
         <Button type="submit" disabled={pending}>
           {pending && <Loader2 size={16} className="animate-spin" />} Publish
         </Button>

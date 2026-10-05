@@ -52,8 +52,10 @@ export type OrderMinAggregateOutputType = {
   email: string | null
   phone: string | null
   address: string | null
+  country: string | null
   city: string | null
   area: string | null
+  postalCode: string | null
   notes: string | null
   subtotal: number | null
   shippingFee: number | null
@@ -76,8 +78,10 @@ export type OrderMaxAggregateOutputType = {
   email: string | null
   phone: string | null
   address: string | null
+  country: string | null
   city: string | null
   area: string | null
+  postalCode: string | null
   notes: string | null
   subtotal: number | null
   shippingFee: number | null
@@ -100,8 +104,10 @@ export type OrderCountAggregateOutputType = {
   email: number
   phone: number
   address: number
+  country: number
   city: number
   area: number
+  postalCode: number
   notes: number
   subtotal: number
   shippingFee: number
@@ -140,8 +146,10 @@ export type OrderMinAggregateInputType = {
   email?: true
   phone?: true
   address?: true
+  country?: true
   city?: true
   area?: true
+  postalCode?: true
   notes?: true
   subtotal?: true
   shippingFee?: true
@@ -164,8 +172,10 @@ export type OrderMaxAggregateInputType = {
   email?: true
   phone?: true
   address?: true
+  country?: true
   city?: true
   area?: true
+  postalCode?: true
   notes?: true
   subtotal?: true
   shippingFee?: true
@@ -188,8 +198,10 @@ export type OrderCountAggregateInputType = {
   email?: true
   phone?: true
   address?: true
+  country?: true
   city?: true
   area?: true
+  postalCode?: true
   notes?: true
   subtotal?: true
   shippingFee?: true
@@ -299,8 +311,10 @@ export type OrderGroupByOutputType = {
   email: string
   phone: string
   address: string
+  country: string
   city: string
   area: string | null
+  postalCode: string | null
   notes: string | null
   subtotal: number
   shippingFee: number
@@ -346,8 +360,10 @@ export type OrderWhereInput = {
   email?: Prisma.StringFilter<"Order"> | string
   phone?: Prisma.StringFilter<"Order"> | string
   address?: Prisma.StringFilter<"Order"> | string
+  country?: Prisma.StringFilter<"Order"> | string
   city?: Prisma.StringFilter<"Order"> | string
   area?: Prisma.StringNullableFilter<"Order"> | string | null
+  postalCode?: Prisma.StringNullableFilter<"Order"> | string | null
   notes?: Prisma.StringNullableFilter<"Order"> | string | null
   subtotal?: Prisma.IntFilter<"Order"> | number
   shippingFee?: Prisma.IntFilter<"Order"> | number
@@ -372,8 +388,10 @@ export type OrderOrderByWithRelationInput = {
   email?: Prisma.SortOrder
   phone?: Prisma.SortOrder
   address?: Prisma.SortOrder
+  country?: Prisma.SortOrder
   city?: Prisma.SortOrder
   area?: Prisma.SortOrderInput | Prisma.SortOrder
+  postalCode?: Prisma.SortOrderInput | Prisma.SortOrder
   notes?: Prisma.SortOrderInput | Prisma.SortOrder
   subtotal?: Prisma.SortOrder
   shippingFee?: Prisma.SortOrder
@@ -401,8 +419,10 @@ export type OrderWhereUniqueInput = Prisma.AtLeast<{
   email?: Prisma.StringFilter<"Order"> | string
   phone?: Prisma.StringFilter<"Order"> | string
   address?: Prisma.StringFilter<"Order"> | string
+  country?: Prisma.StringFilter<"Order"> | string
   city?: Prisma.StringFilter<"Order"> | string
   area?: Prisma.StringNullableFilter<"Order"> | string | null
+  postalCode?: Prisma.StringNullableFilter<"Order"> | string | null
   notes?: Prisma.StringNullableFilter<"Order"> | string | null
   subtotal?: Prisma.IntFilter<"Order"> | number
   shippingFee?: Prisma.IntFilter<"Order"> | number
@@ -427,8 +447,10 @@ export type OrderOrderByWithAggregationInput = {
   email?: Prisma.SortOrder
   phone?: Prisma.SortOrder
   address?: Prisma.SortOrder
+  country?: Prisma.SortOrder
   city?: Prisma.SortOrder
   area?: Prisma.SortOrderInput | Prisma.SortOrder
+  postalCode?: Prisma.SortOrderInput | Prisma.SortOrder
   notes?: Prisma.SortOrderInput | Prisma.SortOrder
   subtotal?: Prisma.SortOrder
   shippingFee?: Prisma.SortOrder
@@ -459,8 +481,10 @@ export type OrderScalarWhereWithAggregatesInput = {
   email?: Prisma.StringWithAggregatesFilter<"Order"> | string
   phone?: Prisma.StringWithAggregatesFilter<"Order"> | string
   address?: Prisma.StringWithAggregatesFilter<"Order"> | string
+  country?: Prisma.StringWithAggregatesFilter<"Order"> | string
   city?: Prisma.StringWithAggregatesFilter<"Order"> | string
   area?: Prisma.StringNullableWithAggregatesFilter<"Order"> | string | null
+  postalCode?: Prisma.StringNullableWithAggregatesFilter<"Order"> | string | null
   notes?: Prisma.StringNullableWithAggregatesFilter<"Order"> | string | null
   subtotal?: Prisma.IntWithAggregatesFilter<"Order"> | number
   shippingFee?: Prisma.IntWithAggregatesFilter<"Order"> | number
@@ -482,8 +506,10 @@ export type OrderCreateInput = {
   email: string
   phone: string
   address: string
+  country?: string
   city: string
   area?: string | null
+  postalCode?: string | null
   notes?: string | null
   subtotal: number
   shippingFee: number
@@ -508,8 +534,10 @@ export type OrderUncheckedCreateInput = {
   email: string
   phone: string
   address: string
+  country?: string
   city: string
   area?: string | null
+  postalCode?: string | null
   notes?: string | null
   subtotal: number
   shippingFee: number
@@ -532,8 +560,10 @@ export type OrderUpdateInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.StringFieldUpdateOperationsInput | string
   address?: Prisma.StringFieldUpdateOperationsInput | string
+  country?: Prisma.StringFieldUpdateOperationsInput | string
   city?: Prisma.StringFieldUpdateOperationsInput | string
   area?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  postalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subtotal?: Prisma.IntFieldUpdateOperationsInput | number
   shippingFee?: Prisma.IntFieldUpdateOperationsInput | number
@@ -558,8 +588,10 @@ export type OrderUncheckedUpdateInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.StringFieldUpdateOperationsInput | string
   address?: Prisma.StringFieldUpdateOperationsInput | string
+  country?: Prisma.StringFieldUpdateOperationsInput | string
   city?: Prisma.StringFieldUpdateOperationsInput | string
   area?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  postalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subtotal?: Prisma.IntFieldUpdateOperationsInput | number
   shippingFee?: Prisma.IntFieldUpdateOperationsInput | number
@@ -583,8 +615,10 @@ export type OrderCreateManyInput = {
   email: string
   phone: string
   address: string
+  country?: string
   city: string
   area?: string | null
+  postalCode?: string | null
   notes?: string | null
   subtotal: number
   shippingFee: number
@@ -606,8 +640,10 @@ export type OrderUpdateManyMutationInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.StringFieldUpdateOperationsInput | string
   address?: Prisma.StringFieldUpdateOperationsInput | string
+  country?: Prisma.StringFieldUpdateOperationsInput | string
   city?: Prisma.StringFieldUpdateOperationsInput | string
   area?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  postalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subtotal?: Prisma.IntFieldUpdateOperationsInput | number
   shippingFee?: Prisma.IntFieldUpdateOperationsInput | number
@@ -630,8 +666,10 @@ export type OrderUncheckedUpdateManyInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.StringFieldUpdateOperationsInput | string
   address?: Prisma.StringFieldUpdateOperationsInput | string
+  country?: Prisma.StringFieldUpdateOperationsInput | string
   city?: Prisma.StringFieldUpdateOperationsInput | string
   area?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  postalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subtotal?: Prisma.IntFieldUpdateOperationsInput | number
   shippingFee?: Prisma.IntFieldUpdateOperationsInput | number
@@ -664,8 +702,10 @@ export type OrderCountOrderByAggregateInput = {
   email?: Prisma.SortOrder
   phone?: Prisma.SortOrder
   address?: Prisma.SortOrder
+  country?: Prisma.SortOrder
   city?: Prisma.SortOrder
   area?: Prisma.SortOrder
+  postalCode?: Prisma.SortOrder
   notes?: Prisma.SortOrder
   subtotal?: Prisma.SortOrder
   shippingFee?: Prisma.SortOrder
@@ -695,8 +735,10 @@ export type OrderMaxOrderByAggregateInput = {
   email?: Prisma.SortOrder
   phone?: Prisma.SortOrder
   address?: Prisma.SortOrder
+  country?: Prisma.SortOrder
   city?: Prisma.SortOrder
   area?: Prisma.SortOrder
+  postalCode?: Prisma.SortOrder
   notes?: Prisma.SortOrder
   subtotal?: Prisma.SortOrder
   shippingFee?: Prisma.SortOrder
@@ -719,8 +761,10 @@ export type OrderMinOrderByAggregateInput = {
   email?: Prisma.SortOrder
   phone?: Prisma.SortOrder
   address?: Prisma.SortOrder
+  country?: Prisma.SortOrder
   city?: Prisma.SortOrder
   area?: Prisma.SortOrder
+  postalCode?: Prisma.SortOrder
   notes?: Prisma.SortOrder
   subtotal?: Prisma.SortOrder
   shippingFee?: Prisma.SortOrder
@@ -822,8 +866,10 @@ export type OrderCreateWithoutUserInput = {
   email: string
   phone: string
   address: string
+  country?: string
   city: string
   area?: string | null
+  postalCode?: string | null
   notes?: string | null
   subtotal: number
   shippingFee: number
@@ -846,8 +892,10 @@ export type OrderUncheckedCreateWithoutUserInput = {
   email: string
   phone: string
   address: string
+  country?: string
   city: string
   area?: string | null
+  postalCode?: string | null
   notes?: string | null
   subtotal: number
   shippingFee: number
@@ -900,8 +948,10 @@ export type OrderScalarWhereInput = {
   email?: Prisma.StringFilter<"Order"> | string
   phone?: Prisma.StringFilter<"Order"> | string
   address?: Prisma.StringFilter<"Order"> | string
+  country?: Prisma.StringFilter<"Order"> | string
   city?: Prisma.StringFilter<"Order"> | string
   area?: Prisma.StringNullableFilter<"Order"> | string | null
+  postalCode?: Prisma.StringNullableFilter<"Order"> | string | null
   notes?: Prisma.StringNullableFilter<"Order"> | string | null
   subtotal?: Prisma.IntFilter<"Order"> | number
   shippingFee?: Prisma.IntFilter<"Order"> | number
@@ -923,8 +973,10 @@ export type OrderCreateWithoutItemsInput = {
   email: string
   phone: string
   address: string
+  country?: string
   city: string
   area?: string | null
+  postalCode?: string | null
   notes?: string | null
   subtotal: number
   shippingFee: number
@@ -948,8 +1000,10 @@ export type OrderUncheckedCreateWithoutItemsInput = {
   email: string
   phone: string
   address: string
+  country?: string
   city: string
   area?: string | null
+  postalCode?: string | null
   notes?: string | null
   subtotal: number
   shippingFee: number
@@ -987,8 +1041,10 @@ export type OrderUpdateWithoutItemsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.StringFieldUpdateOperationsInput | string
   address?: Prisma.StringFieldUpdateOperationsInput | string
+  country?: Prisma.StringFieldUpdateOperationsInput | string
   city?: Prisma.StringFieldUpdateOperationsInput | string
   area?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  postalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subtotal?: Prisma.IntFieldUpdateOperationsInput | number
   shippingFee?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1012,8 +1068,10 @@ export type OrderUncheckedUpdateWithoutItemsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.StringFieldUpdateOperationsInput | string
   address?: Prisma.StringFieldUpdateOperationsInput | string
+  country?: Prisma.StringFieldUpdateOperationsInput | string
   city?: Prisma.StringFieldUpdateOperationsInput | string
   area?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  postalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subtotal?: Prisma.IntFieldUpdateOperationsInput | number
   shippingFee?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1035,8 +1093,10 @@ export type OrderCreateManyUserInput = {
   email: string
   phone: string
   address: string
+  country?: string
   city: string
   area?: string | null
+  postalCode?: string | null
   notes?: string | null
   subtotal: number
   shippingFee: number
@@ -1058,8 +1118,10 @@ export type OrderUpdateWithoutUserInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.StringFieldUpdateOperationsInput | string
   address?: Prisma.StringFieldUpdateOperationsInput | string
+  country?: Prisma.StringFieldUpdateOperationsInput | string
   city?: Prisma.StringFieldUpdateOperationsInput | string
   area?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  postalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subtotal?: Prisma.IntFieldUpdateOperationsInput | number
   shippingFee?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1082,8 +1144,10 @@ export type OrderUncheckedUpdateWithoutUserInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.StringFieldUpdateOperationsInput | string
   address?: Prisma.StringFieldUpdateOperationsInput | string
+  country?: Prisma.StringFieldUpdateOperationsInput | string
   city?: Prisma.StringFieldUpdateOperationsInput | string
   area?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  postalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subtotal?: Prisma.IntFieldUpdateOperationsInput | number
   shippingFee?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1106,8 +1170,10 @@ export type OrderUncheckedUpdateManyWithoutUserInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.StringFieldUpdateOperationsInput | string
   address?: Prisma.StringFieldUpdateOperationsInput | string
+  country?: Prisma.StringFieldUpdateOperationsInput | string
   city?: Prisma.StringFieldUpdateOperationsInput | string
   area?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  postalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   subtotal?: Prisma.IntFieldUpdateOperationsInput | number
   shippingFee?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1161,8 +1227,10 @@ export type OrderSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   email?: boolean
   phone?: boolean
   address?: boolean
+  country?: boolean
   city?: boolean
   area?: boolean
+  postalCode?: boolean
   notes?: boolean
   subtotal?: boolean
   shippingFee?: boolean
@@ -1188,8 +1256,10 @@ export type OrderSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   email?: boolean
   phone?: boolean
   address?: boolean
+  country?: boolean
   city?: boolean
   area?: boolean
+  postalCode?: boolean
   notes?: boolean
   subtotal?: boolean
   shippingFee?: boolean
@@ -1213,8 +1283,10 @@ export type OrderSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   email?: boolean
   phone?: boolean
   address?: boolean
+  country?: boolean
   city?: boolean
   area?: boolean
+  postalCode?: boolean
   notes?: boolean
   subtotal?: boolean
   shippingFee?: boolean
@@ -1238,8 +1310,10 @@ export type OrderSelectScalar = {
   email?: boolean
   phone?: boolean
   address?: boolean
+  country?: boolean
   city?: boolean
   area?: boolean
+  postalCode?: boolean
   notes?: boolean
   subtotal?: boolean
   shippingFee?: boolean
@@ -1250,7 +1324,7 @@ export type OrderSelectScalar = {
   updatedAt?: boolean
 }
 
-export type OrderOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "number" | "userId" | "status" | "paymentMethod" | "paymentStatus" | "paymentRef" | "customerName" | "email" | "phone" | "address" | "city" | "area" | "notes" | "subtotal" | "shippingFee" | "discount" | "total" | "fulfillmentNote" | "createdAt" | "updatedAt", ExtArgs["result"]["order"]>
+export type OrderOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "number" | "userId" | "status" | "paymentMethod" | "paymentStatus" | "paymentRef" | "customerName" | "email" | "phone" | "address" | "country" | "city" | "area" | "postalCode" | "notes" | "subtotal" | "shippingFee" | "discount" | "total" | "fulfillmentNote" | "createdAt" | "updatedAt", ExtArgs["result"]["order"]>
 export type OrderInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.Order$userArgs<ExtArgs>
   items?: boolean | Prisma.Order$itemsArgs<ExtArgs>
@@ -1281,8 +1355,10 @@ export type $OrderPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     email: string
     phone: string
     address: string
+    country: string
     city: string
     area: string | null
+    postalCode: string | null
     notes: string | null
     subtotal: number
     shippingFee: number
@@ -1727,8 +1803,10 @@ export interface OrderFieldRefs {
   readonly email: Prisma.FieldRef<"Order", 'String'>
   readonly phone: Prisma.FieldRef<"Order", 'String'>
   readonly address: Prisma.FieldRef<"Order", 'String'>
+  readonly country: Prisma.FieldRef<"Order", 'String'>
   readonly city: Prisma.FieldRef<"Order", 'String'>
   readonly area: Prisma.FieldRef<"Order", 'String'>
+  readonly postalCode: Prisma.FieldRef<"Order", 'String'>
   readonly notes: Prisma.FieldRef<"Order", 'String'>
   readonly subtotal: Prisma.FieldRef<"Order", 'Int'>
   readonly shippingFee: Prisma.FieldRef<"Order", 'Int'>

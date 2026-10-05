@@ -5,22 +5,15 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/form";
 import { SITE_SECTION_META } from "@/content/site-sections";
 import { requireAdmin } from "@/lib/auth/session";
-import { db } from "@/lib/db";
 import { formatDate } from "@/lib/utils";
 import { deleteAnnouncement, saveAnnouncement } from "@/server/actions/admin";
+import { getAdminContentIndex } from "@/server/queries/admin";
 
 export const metadata = { title: "Content" };
 
 export default async function AdminContentPage() {
   await requireAdmin();
-  const [announcements, pages, sections] = await Promise.all([
-    db.announcement.findMany({
-      orderBy: { position: "asc" },
-      select: { id: true, message: true, href: true, position: true, active: true },
-    }),
-    db.page.findMany({ orderBy: { slug: "asc" }, select: { slug: true, title: true, updatedAt: true } }),
-    db.siteSection.findMany({ select: { key: true, updatedAt: true } }),
-  ]);
+  const { announcements, pages, sections } = await getAdminContentIndex();
 
   const sectionUpdated = new Map(sections.map((s) => [s.key, s.updatedAt]));
   const liveCount = announcements.filter((a) => a.active).length;
@@ -147,6 +140,40 @@ export default async function AdminContentPage() {
       <section className="mt-10 space-y-4">
         <div>
           <h2 className="flex items-center gap-2 font-medium">
+            <LayoutTemplate size={16} className="text-accent" /> Shop by collection
+          </h2>
+          <p className="mt-1 text-sm text-muted">
+            Homepage bento — five category cards, featured tile, heading and “All products” link.
+          </p>
+        </div>
+        {SITE_SECTION_META.filter((s) => s.key === "home.collections").map((s) => (
+          <Link
+            key={s.key}
+            href="/admin/collections"
+            className="block rounded-2xl border border-white/10 bg-gradient-to-br from-white/[0.04] via-white/[0.02] to-transparent p-5 transition-colors hover:border-accent/35"
+          >
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <p className="text-[10px] font-medium uppercase tracking-[0.18em] text-accent">Featured · Home</p>
+                <p className="mt-1 text-base font-medium">{s.title}</p>
+                <p className="mt-1 text-sm text-muted">{s.description}</p>
+                <p className="mt-2 text-xs text-subtle">
+                  {sectionUpdated.has(s.key)
+                    ? `Updated ${formatDate(sectionUpdated.get(s.key)!)}`
+                    : "Using defaults until you publish"}
+                </p>
+              </div>
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-white/10 px-3 py-1.5 text-xs text-muted">
+                <Pencil size={12} /> Edit
+              </span>
+            </div>
+          </Link>
+        ))}
+      </section>
+
+      <section className="mt-10 space-y-4">
+        <div>
+          <h2 className="flex items-center gap-2 font-medium">
             <LayoutTemplate size={16} className="text-accent" /> About page
           </h2>
           <p className="mt-1 text-sm text-muted">
@@ -218,7 +245,11 @@ export default async function AdminContentPage() {
         </h2>
         <Card className="divide-y divide-line">
           {SITE_SECTION_META.filter(
-            (s) => s.key !== "home.hero" && s.key !== "about" && s.key !== "installation",
+            (s) =>
+              s.key !== "home.hero" &&
+              s.key !== "home.collections" &&
+              s.key !== "about" &&
+              s.key !== "installation",
           ).map((s) => (
             <Link
               key={s.key}

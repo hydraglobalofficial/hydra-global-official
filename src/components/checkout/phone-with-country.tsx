@@ -1,0 +1,73 @@
+"use client";
+
+import { useEffect, useMemo, useState } from "react";
+import { Input, Select } from "@/components/ui/form";
+import { cn } from "@/lib/utils";
+import {
+  DEFAULT_DIAL,
+  composePhone,
+  dialCodes,
+  dialForCountry,
+} from "@/lib/phone-codes";
+
+type Props = {
+  /** Delivery country — keeps dial code in sync when it changes. */
+  country?: string;
+  error?: boolean;
+  id?: string;
+  name?: string;
+};
+
+export function PhoneWithCountryCode({
+  country = "Bangladesh",
+  error,
+  id = "phoneLocal",
+  name = "phone",
+}: Props) {
+  const [dial, setDial] = useState(() => dialForCountry(country) || DEFAULT_DIAL);
+  const [local, setLocal] = useState("");
+
+  // When delivery country changes, prefer that country's dial (once user hasn't typed yet is ideal —
+  // always syncing is clearer for checkout: Bangladesh → +880).
+  useEffect(() => {
+    setDial(dialForCountry(country));
+  }, [country]);
+
+  const meta = useMemo(() => dialCodes.find((d) => d.dial === dial) ?? dialCodes[0], [dial]);
+  const full = composePhone(dial, local);
+
+  return (
+    <div className="flex gap-2">
+      <Select
+        id="phoneDial"
+        name="phoneDial"
+        value={dial}
+        onChange={(e) => setDial(e.target.value)}
+        aria-label="Country code"
+        className={cn(
+          "w-[9.5rem] shrink-0 bg-[length:0.65rem] bg-[right_0.65rem_center] pl-2.5 pr-7 text-[12px] sm:w-[11rem] sm:text-[13px]",
+        )}
+      >
+        {dialCodes.map((d) => (
+          <option key={`${d.iso}-${d.dial}`} value={d.dial}>
+            {d.dial} · {d.country}
+          </option>
+        ))}
+      </Select>
+      <Input
+        id={id}
+        type="tel"
+        inputMode="tel"
+        autoComplete="tel-national"
+        placeholder={meta?.placeholder ?? "Mobile number"}
+        value={local}
+        onChange={(e) => setLocal(e.target.value)}
+        required
+        aria-invalid={error || undefined}
+        className="min-w-0 flex-1"
+      />
+      {/* Combined E.164 value submitted to the server */}
+      <input type="hidden" name={name} value={full} />
+    </div>
+  );
+}

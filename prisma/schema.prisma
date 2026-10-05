@@ -202,8 +202,10 @@ model Order {
   email           String
   phone           String
   address         String
+  country         String        @default("Bangladesh")
   city            String
   area            String?
+  postalCode      String?
   notes           String?
   subtotal        Int
   shippingFee     Int

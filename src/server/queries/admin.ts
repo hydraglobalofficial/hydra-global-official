@@ -15,8 +15,9 @@ export type AdminNavBadges = {
 };
 
 const TTL = {
-  badges: 60,
-  overview: 45,
+  badges: 180,
+  overview: 120,
+  contentIndex: 90,
 } as const;
 
 async function loadAdminNavBadges(): Promise<AdminNavBadges> {
@@ -123,6 +124,36 @@ export async function getAdminOverview(): Promise<AdminOverview> {
       status: getAdminCacheStatus(),
     },
   };
+}
+
+export type AdminContentIndex = {
+  announcements: {
+    id: string;
+    message: string;
+    href: string | null;
+    position: number;
+    active: boolean;
+  }[];
+  pages: { slug: string; title: string; updatedAt: Date }[];
+  sections: { key: string; updatedAt: Date }[];
+};
+
+async function loadAdminContentIndex(): Promise<AdminContentIndex> {
+  const [announcements, pages, sections] = await Promise.all([
+    db.announcement.findMany({
+      orderBy: { position: "asc" },
+      select: { id: true, message: true, href: true, position: true, active: true },
+    }),
+    db.page.findMany({ orderBy: { slug: "asc" }, select: { slug: true, title: true, updatedAt: true } }),
+    db.siteSection.findMany({ select: { key: true, updatedAt: true } }),
+  ]);
+  return { announcements, pages, sections };
+}
+
+/** Content hub lists — Redis tagged `dashboard`. */
+export async function getAdminContentIndex() {
+  const { value } = await adminCached("content-index", TTL.contentIndex, ["dashboard"], loadAdminContentIndex);
+  return value;
 }
 
 /** Call after orders / inquiries / reviews change. */

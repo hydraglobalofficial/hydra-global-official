@@ -4,12 +4,12 @@ import { SectionHeading } from "@/components/ui/primitives";
 import { ProductGrid } from "@/components/product/product-card";
 import { Hero } from "@/components/sections/hero";
 import { DeviceFinder } from "@/components/sections/device-finder";
-import { ClarityCompare } from "@/components/sections/clarity-compare";
 import { BrandMarquee } from "@/components/sections/brand-marquee";
 import { SectionDivider } from "@/components/ui/section-divider";
-import { HowItWorks, NewsletterBlock, ShopByDevice, TechGrid } from "@/components/sections/home-sections";
-import { Testimonials } from "@/components/sections/testimonials-carousel";
-import { CollectionBento, DropTest, ImpactStat, VideoShowcase } from "@/components/sections/showcase-sections";
+import { ShopByDevice } from "@/components/sections/home-sections";
+import { CollectionBento } from "@/components/sections/collection-bento";
+import { HomeBelowFold } from "@/components/sections/home-below-fold";
+import { HydraRise } from "@/components/hydra/hydra-rise-lazy";
 import { JsonLd, organizationJsonLd } from "@/lib/seo";
 import { getFeaturedProducts, getNavigationData } from "@/server/queries/catalog";
 import { defaultCollectionsContent, defaultHomeHeroContent } from "@/content/site-sections";
@@ -20,9 +20,9 @@ import {
   getNewsletterContent,
 } from "@/server/queries/content";
 import { Reveal } from "@/components/motion/reveal";
-import { HydraRise } from "@/components/hydra/hydra-rise";
 
-export const revalidate = 300;
+/** Longer ISR — catalog/CMS tags still purge on publish. */
+export const revalidate = 900;
 
 export default async function HomePage() {
   const [featured, nav, collections, howItWorks, newsletter, hero] = await Promise.all([
@@ -53,30 +53,29 @@ export default async function HomePage() {
       <ShopByDevice devices={nav.devices} />
       <SectionDivider />
       <CollectionBento content={collectionsContent} />
-      <ImpactStat />
-      <DropTest />
 
-      <section className="container-page py-24">
-        <SectionHeading
-          eyebrow="Bestsellers"
-          title={<>The armor everyone&apos;s <span className="text-muted">talking about.</span></>}
-          action={
-            <ButtonLink href="/shop" variant="outline">
-              View all <ArrowRight size={16} />
-            </ButtonLink>
-          }
-        />
-        <ProductGrid products={featured} priorityCount={2} />
-      </section>
-
-      <SectionDivider />
-      <Reveal><ClarityCompare /></Reveal>
-      <Testimonials />
-      <VideoShowcase />
-      <SectionDivider />
-      <TechGrid />
-      <HowItWorks content={howItWorks} />
-      <NewsletterBlock content={newsletter} />
+      <HomeBelowFold
+        howItWorks={howItWorks}
+        newsletter={newsletter}
+        bestsellers={
+          <section className="container-page py-24">
+            <SectionHeading
+              eyebrow="Bestsellers"
+              title={
+                <>
+                  The armor everyone&apos;s <span className="text-muted">talking about.</span>
+                </>
+              }
+              action={
+                <ButtonLink href="/shop" variant="outline">
+                  View all <ArrowRight size={16} />
+                </ButtonLink>
+              }
+            />
+            <ProductGrid products={featured} priorityCount={2} />
+          </section>
+        }
+      />
     </>
   );
 }

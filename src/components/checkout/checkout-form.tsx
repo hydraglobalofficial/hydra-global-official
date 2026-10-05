@@ -1,89 +1,256 @@
 "use client";
 
 import { useActionState, useEffect, useRef, useState } from "react";
+import { Loader2, Lock, MapPin, Package, Truck, User } from "lucide-react";
 import { track } from "@/lib/analytics";
-import { Loader2, Lock } from "lucide-react";
 import { useCart } from "@/components/cart/cart-provider";
 import { ProductImage } from "@/components/product/product-image";
 import { Button, ButtonLink } from "@/components/ui/button";
 import { Field, FormMessage, Input, Select, Textarea } from "@/components/ui/form";
 import { EmptyState } from "@/components/ui/primitives";
-import { cities, paymentMethods, shippingFee, shippingLabel } from "@/lib/pricing";
+import { PhoneWithCountryCode } from "@/components/checkout/phone-with-country";
+import { countries, paymentMethods, shippingFee, shippingLabel } from "@/lib/pricing";
 import { initialFormState } from "@/lib/validations";
 import { cn, formatPrice } from "@/lib/utils";
 import { placeOrder } from "@/server/actions/checkout";
 
+function SectionTitle({
+  step,
+  icon: Icon,
+  title,
+  subtitle,
+}: {
+  step: string;
+  icon: typeof User;
+  title: string;
+  subtitle: string;
+}) {
+  return (
+    <div className="mb-5 flex items-start gap-3 sm:gap-4">
+      <span className="grid size-10 shrink-0 place-items-center rounded-2xl border border-accent/25 bg-accent/10 text-accent">
+        <Icon size={18} />
+      </span>
+      <div className="min-w-0 pt-0.5">
+        <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-accent">Step {step}</p>
+        <h2 className="mt-0.5 text-lg font-semibold tracking-tight sm:text-xl">{title}</h2>
+        <p className="mt-0.5 text-sm text-muted">{subtitle}</p>
+      </div>
+    </div>
+  );
+}
+
 export function CheckoutForm() {
   const { lines, subtotal, hydrated } = useCart();
   const [state, action, pending] = useActionState(placeOrder, initialFormState);
-  const [city, setCity] = useState("New York");
+  const [country, setCountry] = useState("Bangladesh");
+  const [city, setCity] = useState("");
   const [payment, setPayment] = useState("COD");
   const errors = state.fieldErrors ?? {};
-  const shipping = shippingFee(subtotal, city);
+  const shipping = shippingFee(subtotal, city, country);
 
   const checkoutTracked = useRef(false);
   useEffect(() => {
     if (!hydrated || lines.length === 0 || checkoutTracked.current) return;
     checkoutTracked.current = true;
-    track("begin_checkout", { items: lines.map((l) => ({ id: l.productId, name: l.name, variant: l.variantName, price: l.price, quantity: l.quantity })) });
+    track("begin_checkout", {
+      items: lines.map((l) => ({
+        id: l.productId,
+        name: l.name,
+        variant: l.variantName,
+        price: l.price,
+        quantity: l.quantity,
+      })),
+    });
   }, [hydrated, lines]);
+
+  useEffect(() => {
+    let cancelled = false;
+    async function syncLoading() {
+      const { alertClose, alertLoading } = await import("@/lib/swal");
+      if (cancelled) return;
+      if (pending) {
+        void alertLoading("Placing your order…", "We're verifying your details and preparing everything.");
+      } else {
+        alertClose();
+      }
+    }
+    void syncLoading();
+    return () => {
+      cancelled = true;
+    };
+  }, [pending]);
 
   if (!hydrated) return <div className="h-96 animate-pulse rounded-3xl bg-surface" />;
   if (lines.length === 0) {
-    return <EmptyState title="Your cart is empty" description="Add something before checking out." action={<ButtonLink href="/shop">Shop now</ButtonLink>} />;
+    return (
+      <EmptyState
+        title="Your cart is empty"
+        description="Add something before checking out."
+        action={<ButtonLink href="/shop">Shop now</ButtonLink>}
+      />
+    );
   }
 
-  const payload = JSON.stringify(lines.map((l) => ({ productId: l.productId, variantId: l.variantId, quantity: l.quantity })));
+  const payload = JSON.stringify(
+    lines.map((l) => ({ productId: l.productId, variantId: l.variantId, quantity: l.quantity })),
+  );
 
   return (
-    <form action={action} className="grid gap-10 lg:grid-cols-[1fr_26rem]" noValidate>
+    <form action={action} className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_26rem]" noValidate>
       <input type="hidden" name="lines" value={payload} />
-      <div className="space-y-10">
-        <section className="space-y-5">
-          <h2 className="flex items-center gap-3 text-lg font-semibold">
-            <span className="grid size-7 place-items-center rounded-full bg-accent/15 font-mono text-xs text-accent">1</span> Contact
-          </h2>
-          <div className="grid gap-5 sm:grid-cols-2">
-            <Field label="Full name" htmlFor="customerName" error={errors.customerName}>
-              <Input id="customerName" name="customerName" autoComplete="name" required aria-invalid={!!errors.customerName} />
+
+      <div className="space-y-6 md:space-y-8">
+        {/* 1 · Contact */}
+        <section className="rounded-[1.75rem] border border-white/[0.08] bg-gradient-to-br from-white/[0.04] via-transparent to-accent/[0.03] p-5 sm:p-7">
+          <SectionTitle
+            step="01"
+            icon={User}
+            title="Your details"
+            subtitle="We’ll use these to confirm and deliver your order."
+          />
+          <div className="grid gap-4 sm:grid-cols-2 sm:gap-5">
+            <Field label="Full name" htmlFor="customerName" error={errors.customerName} required>
+              <Input
+                id="customerName"
+                name="customerName"
+                autoComplete="name"
+                placeholder="As on your delivery label"
+                required
+                aria-invalid={!!errors.customerName}
+              />
             </Field>
-            <Field label="Mobile number" htmlFor="phone" error={errors.phone}>
-              <Input id="phone" name="phone" type="tel" autoComplete="tel" placeholder="+1 415 555 0147" required aria-invalid={!!errors.phone} />
+            <Field
+              label="Contact number"
+              htmlFor="phoneLocal"
+              error={errors.phone}
+              required
+              hint="Country code defaults to Bangladesh (+880)"
+            >
+              <PhoneWithCountryCode country={country} error={!!errors.phone} />
             </Field>
-            <Field label="Email" htmlFor="email" error={errors.email} className="sm:col-span-2" hint="Order confirmation and tracking will be sent here.">
-              <Input id="email" name="email" type="email" autoComplete="email" required aria-invalid={!!errors.email} />
+            <Field
+              label="Email address"
+              htmlFor="email"
+              error={errors.email}
+              required
+              className="sm:col-span-2"
+              hint="Order confirmation and tracking land here."
+            >
+              <Input
+                id="email"
+                name="email"
+                type="email"
+                autoComplete="email"
+                placeholder="you@example.com"
+                required
+                aria-invalid={!!errors.email}
+              />
             </Field>
           </div>
         </section>
 
-        <section className="space-y-5">
-          <h2 className="flex items-center gap-3 text-lg font-semibold">
-            <span className="grid size-7 place-items-center rounded-full bg-accent/15 font-mono text-xs text-accent">2</span> Delivery
-          </h2>
-          <div className="grid gap-5 sm:grid-cols-2">
-            <Field label="City" htmlFor="city" error={errors.city}>
-              <Select id="city" name="city" value={city} onChange={(e) => setCity(e.target.value)}>
-                {cities.map((c) => (
-                  <option key={c} value={c}>{c}</option>
+        {/* 2 · Delivery */}
+        <section className="rounded-[1.75rem] border border-white/[0.08] bg-gradient-to-br from-white/[0.04] via-transparent to-blue-500/[0.03] p-5 sm:p-7">
+          <SectionTitle
+            step="02"
+            icon={MapPin}
+            title="Delivery address"
+            subtitle="Where should we send your HYDRA armor?"
+          />
+          <div className="grid gap-4 sm:grid-cols-2 sm:gap-5">
+            <Field label="Country" htmlFor="country" error={errors.country} required>
+              <Select
+                id="country"
+                name="country"
+                value={country}
+                onChange={(e) => setCountry(e.target.value)}
+                autoComplete="country-name"
+                required
+                aria-invalid={!!errors.country}
+              >
+                {countries.map((c) => (
+                  <option key={c} value={c}>
+                    {c}
+                  </option>
                 ))}
               </Select>
             </Field>
-            <Field label="Area / district" htmlFor="area" error={errors.area}>
-              <Input id="area" name="area" placeholder="e.g. Downtown" />
+            <Field label="City" htmlFor="city" error={errors.city} hint="Optional — helps with express routing">
+              <Input
+                id="city"
+                name="city"
+                value={city}
+                onChange={(e) => setCity(e.target.value)}
+                autoComplete="address-level2"
+                placeholder="e.g. Dhaka"
+                aria-invalid={!!errors.city}
+              />
             </Field>
-            <Field label="Full address" htmlFor="address" error={errors.address} className="sm:col-span-2">
-              <Input id="address" name="address" autoComplete="street-address" placeholder="Street, building, apartment" required aria-invalid={!!errors.address} />
+            <Field label="District" htmlFor="area" error={errors.area} required>
+              <Input
+                id="area"
+                name="area"
+                autoComplete="address-level1"
+                placeholder="e.g. Gulshan, Mirpur, Chattogram"
+                required
+                aria-invalid={!!errors.area}
+              />
             </Field>
-            <Field label="Order notes (optional)" htmlFor="notes" className="sm:col-span-2">
-              <Textarea id="notes" name="notes" className="min-h-20" placeholder="Landmark, delivery time preference…" />
+            <Field label="Zip / postal code" htmlFor="postalCode" error={errors.postalCode}>
+              <Input
+                id="postalCode"
+                name="postalCode"
+                autoComplete="postal-code"
+                placeholder="e.g. 1212"
+                inputMode="numeric"
+                aria-invalid={!!errors.postalCode}
+              />
+            </Field>
+            <Field
+              label="Full address"
+              htmlFor="address"
+              error={errors.address}
+              className="sm:col-span-2"
+              hint="House, road, block, landmark — as detailed as you can"
+            >
+              <Textarea
+                id="address"
+                name="address"
+                autoComplete="street-address"
+                className="min-h-[5.5rem]"
+                placeholder="House / flat, road, block, nearby landmark…"
+                aria-invalid={!!errors.address}
+              />
             </Field>
           </div>
         </section>
 
-        <section className="space-y-5">
-          <h2 className="flex items-center gap-3 text-lg font-semibold">
-            <span className="grid size-7 place-items-center rounded-full bg-accent/15 font-mono text-xs text-accent">3</span> Payment
-          </h2>
+        {/* 3 · Instructions */}
+        <section className="rounded-[1.75rem] border border-white/[0.08] bg-gradient-to-br from-white/[0.04] via-transparent to-transparent p-5 sm:p-7">
+          <SectionTitle
+            step="03"
+            icon={Truck}
+            title="Delivery instructions"
+            subtitle="Anything the courier should know — optional."
+          />
+          <Field label="Instructions" htmlFor="notes" error={errors.notes}>
+            <Textarea
+              id="notes"
+              name="notes"
+              className="min-h-24"
+              placeholder="Gate code, preferred delivery window, leave with security…"
+            />
+          </Field>
+        </section>
+
+        {/* 4 · Payment */}
+        <section className="rounded-[1.75rem] border border-white/[0.08] bg-gradient-to-br from-white/[0.04] via-transparent to-accent/[0.04] p-5 sm:p-7">
+          <SectionTitle
+            step="04"
+            icon={Package}
+            title="Payment"
+            subtitle="Choose how you’d like to pay."
+          />
           <div className="grid gap-3 sm:grid-cols-2">
             {paymentMethods.map((m) => (
               <label
@@ -91,7 +258,7 @@ export function CheckoutForm() {
                 className={cn(
                   "flex cursor-pointer items-start gap-3 rounded-2xl border p-4 transition-all",
                   !m.enabled && "cursor-not-allowed opacity-40",
-                  payment === m.value ? "border-accent bg-accent/5" : "border-line hover:border-line-strong",
+                  payment === m.value ? "border-accent bg-accent/5 shadow-[0_0_0_1px_rgba(59,130,246,0.25)]" : "border-line hover:border-line-strong",
                 )}
               >
                 <input
@@ -113,14 +280,16 @@ export function CheckoutForm() {
         </section>
       </div>
 
-      <aside className="glass h-fit space-y-6 rounded-3xl p-6 lg:sticky lg:top-28">
-        <h2 className="text-lg font-semibold">Order summary</h2>
+      <aside className="glass h-fit space-y-6 rounded-[1.75rem] border border-white/[0.08] p-6 lg:sticky lg:top-28">
+        <h2 className="text-lg font-semibold tracking-tight">Order summary</h2>
         <ul className="max-h-72 space-y-4 overflow-y-auto pr-1">
           {lines.map((l) => (
             <li key={`${l.productId}:${l.variantId}`} className="flex items-center gap-3">
               <span className="relative size-14 shrink-0 overflow-hidden rounded-xl border border-line bg-surface-2">
                 {l.image && <ProductImage src={l.image} alt={l.name} fill sizes="56px" className="object-contain p-1.5" />}
-                <span className="absolute -right-1 -top-1 grid size-5 place-items-center rounded-full bg-accent font-mono text-[10px] text-black">{l.quantity}</span>
+                <span className="absolute -right-1 -top-1 grid size-5 place-items-center rounded-full bg-accent font-mono text-[10px] text-black">
+                  {l.quantity}
+                </span>
               </span>
               <span className="min-w-0 flex-1">
                 <span className="line-clamp-1 text-sm">{l.name}</span>
@@ -131,10 +300,15 @@ export function CheckoutForm() {
           ))}
         </ul>
         <dl className="space-y-3 border-t border-line pt-5 text-sm">
-          <div className="flex justify-between"><dt className="text-muted">Subtotal</dt><dd className="font-mono tabular-nums">{formatPrice(subtotal)}</dd></div>
           <div className="flex justify-between">
-            <dt className="text-muted">Shipping ({shippingLabel(city)})</dt>
-            <dd className="font-mono tabular-nums">{shipping === 0 ? <span className="text-success">Free</span> : formatPrice(shipping)}</dd>
+            <dt className="text-muted">Subtotal</dt>
+            <dd className="font-mono tabular-nums">{formatPrice(subtotal)}</dd>
+          </div>
+          <div className="flex justify-between">
+            <dt className="text-muted">Shipping ({shippingLabel(city, country)})</dt>
+            <dd className="font-mono tabular-nums">
+              {shipping === 0 ? <span className="text-success">Free</span> : formatPrice(shipping)}
+            </dd>
           </div>
           <div className="flex justify-between border-t border-line pt-3 text-base">
             <dt className="font-medium">Total</dt>

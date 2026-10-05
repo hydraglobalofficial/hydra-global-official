@@ -127,6 +127,7 @@ export async function adminCacheInvalidate(tags: AdminCacheTag[] | "all" = "all"
   // Known entries for this version (safe even if tag index is empty).
   keys.add(entryKey("badges"));
   keys.add(entryKey("overview"));
+  keys.add(entryKey("content-index"));
   if (list.includes("catalog") || tags === "all") keys.add(entryKey("catalog-stats"));
 
   await redisDel(...keys);

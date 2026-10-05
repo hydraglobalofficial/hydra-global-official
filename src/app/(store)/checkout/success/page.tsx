@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { CheckCircle2, Package, Phone } from "lucide-react";
 import { ButtonLink } from "@/components/ui/button";
 import { ClearCart } from "@/components/cart/clear-cart";
+import { OrderReadyAlert } from "@/components/checkout/order-ready-alert";
 import { TrackEvent } from "@/components/analytics/track-event";
 import { db } from "@/lib/db";
 import { verifyOrderAccess } from "@/lib/order-access";
@@ -28,6 +29,7 @@ export default async function CheckoutSuccessPage({ searchParams }: PageProps<"/
       shippingFee: true,
       paymentMethod: true,
       city: true,
+      country: true,
       items: { select: { name: true, variantName: true, unitPrice: true, quantity: true } },
     },
   });
@@ -38,6 +40,7 @@ export default async function CheckoutSuccessPage({ searchParams }: PageProps<"/
   return (
     <div className="container-page max-w-3xl py-20">
       <ClearCart />
+      <OrderReadyAlert orderNumber={order.number} customerName={order.customerName} />
       <TrackEvent
         event="purchase"
         onceKey={`purchase.${order.number}`}
@@ -89,9 +92,9 @@ export default async function CheckoutSuccessPage({ searchParams }: PageProps<"/
         <div className="grid gap-4 border-t border-line pt-6 text-sm sm:grid-cols-2">
           <p className="flex items-center gap-3 text-muted">
             <Package size={16} className="text-accent" /> Estimated delivery{" "}
-            {["New York", "London", "Dubai", "Singapore", "Tokyo", "Sydney", "Toronto", "Berlin", "Dhaka"].includes(
+            {["Dhaka", "Chattogram", "Sylhet", "New York", "London", "Dubai", "Singapore", "Tokyo", "Sydney", "Toronto", "Berlin"].includes(
               order.city,
-            )
+            ) || order.country === "Bangladesh"
               ? "2–4 business days"
               : "4–8 business days"}
           </p>

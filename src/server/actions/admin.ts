@@ -3,7 +3,7 @@
 import { redirect } from "next/navigation";
 import { revalidatePath, updateTag } from "next/cache";
 import { z } from "zod";
-import { db } from "@/lib/db";
+import { db, withTransaction } from "@/lib/db";
 import { requireAdmin } from "@/lib/auth/session";
 import { invalid, productSchema, type FormState } from "@/lib/validations";
 import { slugify } from "@/lib/utils";
@@ -60,7 +60,7 @@ export async function saveProduct(productId: string | null, _prev: FormState, fo
   const images = lines(imageUrls).map((url, position) => ({ url, alt: data.name, position }));
 
   try {
-    const product = await db.$transaction(async (tx) => {
+    const product = await withTransaction(async (tx) => {
       const base = {
         ...data,
         tagline: tagline || null,
@@ -248,7 +248,7 @@ export async function updateOrder(_prev: FormState, formData: FormData): Promise
   if (!parsed.success) return invalid(parsed.error);
   const { id, ...data } = parsed.data;
 
-  await db.$transaction(async (tx) => {
+  await withTransaction(async (tx) => {
     const current = await tx.order.findUniqueOrThrow({ where: { id }, include: { items: true } });
     const restock = (s: string) => s === "CANCELLED" || s === "RETURNED";
     // Return stock to inventory exactly once when an order is cancelled/returned.
@@ -312,6 +312,12 @@ export async function purgeAdminCache() {
 function refreshAnnouncements() {
   updateTag(CONTENT_TAG);
   revalidatePath("/", "layout");
+  revalidatePath("/admin/content");
+  void invalidateAdminCache("dashboard");
+}
+
+async function bumpAdminContentHub() {
+  await invalidateAdminCache("dashboard");
   revalidatePath("/admin/content");
 }
 
@@ -524,8 +530,9 @@ export async function saveAboutSection(_prev: FormState, formData: FormData): Pr
     });
     updateTag(CONTENT_TAG);
     revalidatePath("/about");
-    revalidatePath("/admin/content");
+    revalidatePath("/admin/about");
     revalidatePath("/admin/content/sections/about");
+    await bumpAdminContentHub();
     return { status: "success", message: "About page published." };
   } catch (error) {
     console.error("[saveAboutSection]", error);
@@ -565,7 +572,7 @@ export async function saveHowItWorksSection(_prev: FormState, formData: FormData
     });
     updateTag(CONTENT_TAG);
     revalidatePath("/");
-    revalidatePath("/admin/content");
+    await bumpAdminContentHub();
     return { status: "success", message: "How it works published." };
   } catch (error) {
     console.error("[saveHowItWorksSection]", error);
@@ -590,7 +597,7 @@ export async function saveInstallationSection(_prev: FormState, formData: FormDa
         video: safeVideoUrl(videos[i], ""),
       }))
       .filter((s) => s.title && s.body)
-      .slice(0, 10)
+      .slice(0, 16)
       .map((s) => ({
         title: s.title,
         body: s.body,
@@ -607,7 +614,7 @@ export async function saveInstallationSection(_prev: FormState, formData: FormDa
         fix: clampText(fixes[i], 400),
       }))
       .filter((t) => t.problem && t.fix)
-      .slice(0, 10);
+      .slice(0, 12);
 
     const title = clampText(formData.get("title"), 80);
     if (!title || steps.length === 0) {
@@ -636,8 +643,9 @@ export async function saveInstallationSection(_prev: FormState, formData: FormDa
     revalidatePath("/installation");
     revalidatePath("/installation/iphone");
     revalidatePath("/installation/samsung");
-    revalidatePath("/admin/content");
+    revalidatePath("/admin/installation");
     revalidatePath("/admin/content/sections/installation");
+    await bumpAdminContentHub();
     return { status: "success", message: "Installation guide published." };
   } catch (error) {
     console.error("[saveInstallationSection]", error);
@@ -668,7 +676,7 @@ export async function saveNewsletterSection(_prev: FormState, formData: FormData
     });
     updateTag(CONTENT_TAG);
     revalidatePath("/");
-    revalidatePath("/admin/content");
+    await bumpAdminContentHub();
     return { status: "success", message: "Newsletter block published." };
   } catch (error) {
     console.error("[saveNewsletterSection]", error);
@@ -766,8 +774,8 @@ export async function saveHomeHeroSection(_prev: FormState, formData: FormData):
     });
     updateTag(CONTENT_TAG);
     revalidatePath("/");
-    revalidatePath("/admin/content");
     revalidatePath("/admin/content/sections/home.hero");
+    await bumpAdminContentHub();
     return { status: "success", message: "Hero slider published." };
   } catch (error) {
     console.error("[saveHomeHeroSection]", error);
@@ -831,8 +839,9 @@ export async function saveCollectionsSection(_prev: FormState, formData: FormDat
     });
     updateTag(CONTENT_TAG);
     revalidatePath("/");
-    revalidatePath("/admin/content");
+    revalidatePath("/admin/collections");
     revalidatePath("/admin/content/sections/home.collections");
+    await bumpAdminContentHub();
     return { status: "success", message: "Collections section published." };
   } catch (error) {
     console.error("[saveCollectionsSection]", error);

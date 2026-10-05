@@ -128,3 +128,8 @@ export const listSiteSections = cache(async () =>
     orderBy: { key: "asc" },
   }),
 );
+
+/** Per-request dedupe for admin section editors. */
+export const getSiteSectionRow = cache(async (key: string) =>
+  db.siteSection.findUnique({ where: { key }, select: { data: true, updatedAt: true } }),
+);

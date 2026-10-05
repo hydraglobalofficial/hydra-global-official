@@ -8,6 +8,7 @@ import {
   FolderTree,
   Inbox,
   LayoutDashboard,
+  LayoutGrid,
   Package,
   ShoppingCart,
   Star,
@@ -45,6 +46,7 @@ const groups: { label: string; items: NavItem[] }[] = [
     label: "Site",
     items: [
       { href: "/admin/content", label: "Content", short: "Content", icon: FileText },
+      { href: "/admin/collections", label: "Collections", short: "Bento", icon: LayoutGrid },
       { href: "/admin/about", label: "About", short: "About", icon: BookOpen },
       { href: "/admin/installation", label: "Installation", short: "Install", icon: Wrench },
       { href: "/admin/team", label: "Team", short: "Team", icon: Users },

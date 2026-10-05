@@ -4,13 +4,13 @@ import { AdminHeader } from "@/components/admin/admin-ui";
 import { InstallationSectionEditor } from "@/components/admin/section-editors";
 import { requireAdmin } from "@/lib/auth/session";
 import { normalizeInstallationContent } from "@/lib/normalize-sections";
-import { db } from "@/lib/db";
+import { getSiteSectionRow } from "@/server/queries/content";
 
 export const metadata = { title: "Installation guide" };
 
 export default async function AdminInstallationPage() {
   await requireAdmin();
-  const row = await db.siteSection.findUnique({ where: { key: "installation" } });
+  const row = await getSiteSectionRow("installation");
 
   return (
     <div className="space-y-6">

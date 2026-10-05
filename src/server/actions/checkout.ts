@@ -3,13 +3,14 @@
 import { randomBytes } from "node:crypto";
 import { redirect } from "next/navigation";
 import { updateTag } from "next/cache";
-import { db } from "@/lib/db";
+import { withTransaction } from "@/lib/db";
 import { checkoutSchema, invalid, type FormState } from "@/lib/validations";
 import { isPaymentEnabled, shippingFee } from "@/lib/pricing";
 import { signOrderAccess } from "@/lib/order-access";
 import { rateLimit } from "@/lib/rate-limit";
 import { invalidateAdminCache } from "@/server/queries/admin";
 import { CATALOG_TAG } from "@/server/queries/catalog";
+import { Prisma } from "@/generated/prisma/client";
 
 class CheckoutError extends Error {}
 
@@ -42,7 +43,7 @@ export async function placeOrder(_prev: FormState, formData: FormData): Promise<
 
   let number: string;
   try {
-    number = await db.$transaction(async (tx) => {
+    number = await withTransaction(async (tx) => {
       const products = await tx.product.findMany({
         where: { id: { in: input.lines.map((l) => l.productId) }, status: "ACTIVE" },
         include: { variants: true },
@@ -82,7 +83,11 @@ export async function placeOrder(_prev: FormState, formData: FormData): Promise<
       }
 
       const subtotal = items.reduce((sum, i) => sum + i.unitPrice * i.quantity, 0);
-      const shipping = shippingFee(subtotal, input.city);
+      const city = input.city?.trim() || "";
+      const shipping = shippingFee(subtotal, city, input.country);
+      const street =
+        input.address?.trim() ||
+        [input.area, city, input.country].filter(Boolean).join(", ");
       const order = await tx.order.create({
         data: {
           number: orderNumber(),
@@ -90,9 +95,11 @@ export async function placeOrder(_prev: FormState, formData: FormData): Promise<
           customerName: input.customerName,
           email: input.email,
           phone: input.phone,
-          address: input.address,
-          city: input.city,
-          area: input.area || null,
+          address: street,
+          country: input.country,
+          city: city || input.country,
+          area: input.area,
+          postalCode: input.postalCode?.trim() || null,
           notes: input.notes || null,
           subtotal,
           shippingFee: shipping,
@@ -104,12 +111,20 @@ export async function placeOrder(_prev: FormState, formData: FormData): Promise<
     });
   } catch (error) {
     if (error instanceof CheckoutError) return { status: "error", message: error.message };
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2028") {
+      console.error("[checkout] transaction start timeout", error);
+      return {
+        status: "error",
+        message: "The store is busy right now. Please wait a moment and place the order again.",
+      };
+    }
     console.error("[checkout]", error);
     return { status: "error", message: "We couldn't place your order. Please try again." };
   }
 
   updateTag(CATALOG_TAG);
-  await invalidateAdminCache();
+  // Don't block the redirect on cache wipe — fire-and-forget.
+  void invalidateAdminCache();
   const access = signOrderAccess(number);
   redirect(`/checkout/success?order=${encodeURIComponent(number)}&t=${encodeURIComponent(access)}`);
 }

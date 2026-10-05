@@ -4,13 +4,13 @@ import { AdminHeader } from "@/components/admin/admin-ui";
 import { AboutSectionEditor } from "@/components/admin/section-editors";
 import { requireAdmin } from "@/lib/auth/session";
 import { normalizeAboutContent } from "@/lib/normalize-sections";
-import { db } from "@/lib/db";
+import { getSiteSectionRow } from "@/server/queries/content";
 
 export const metadata = { title: "About page" };
 
 export default async function AdminAboutPage() {
   await requireAdmin();
-  const row = await db.siteSection.findUnique({ where: { key: "about" } });
+  const row = await getSiteSectionRow("about");
 
   return (
     <div className="space-y-6">
