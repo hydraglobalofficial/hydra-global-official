@@ -100,12 +100,17 @@ export default async function AdminOrderPage({ params }: PageProps<"/admin/order
                 {order.email}
               </a>
             </p>
-            <p className="flex items-start gap-2">
+            <p className="flex items-start gap-2 md:col-span-3">
               <MapPin size={14} className="mt-0.5 shrink-0 text-accent" />
-              {order.customerName}, {order.address}
-              {order.area && `, ${order.area}`}, {order.city}
+              <span>
+                <span className="font-medium">{order.customerName}</span>
+                <br />
+                {[order.address, order.area, order.city, order.postalCode, order.country]
+                  .filter(Boolean)
+                  .join(", ")}
+              </span>
             </p>
-            {order.notes && <p className="text-muted md:col-span-3">Note: {order.notes}</p>}
+            {order.notes && <p className="text-muted md:col-span-3">Instructions: {order.notes}</p>}
           </Card>
         </div>
         <Card className="h-fit p-5">

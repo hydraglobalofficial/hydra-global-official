@@ -32,7 +32,9 @@ export async function GET(_request: Request, { params }: Params) {
     )
     .join("");
 
-  const address = [order.address, order.area, order.city].filter(Boolean).join(", ");
+  const address = [order.address, order.area, order.city, order.postalCode, order.country]
+    .filter(Boolean)
+    .join(", ");
 
   const body = `
     <table class="data">

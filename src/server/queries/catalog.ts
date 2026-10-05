@@ -99,7 +99,7 @@ export const listProducts = unstable_cache(
     };
   },
   ["list-products"],
-  { tags: [CATALOG_TAG], revalidate: 300 },
+  { tags: [CATALOG_TAG], revalidate: 600 },
 );
 
 export const getFeaturedProducts = unstable_cache(
@@ -120,7 +120,7 @@ export const getFeaturedProducts = unstable_cache(
     return [...featured, ...fill].map(publicProductCard);
   },
   ["featured-products"],
-  { tags: [CATALOG_TAG], revalidate: 300 },
+  { tags: [CATALOG_TAG], revalidate: 600 },
 );
 
 export const getBestSellers = unstable_cache(
@@ -134,7 +134,7 @@ export const getBestSellers = unstable_cache(
     return items.map(publicProductCard);
   },
   ["best-sellers"],
-  { tags: [CATALOG_TAG], revalidate: 300 },
+  { tags: [CATALOG_TAG], revalidate: 600 },
 );
 
 export const getNavigationData = unstable_cache(

@@ -4,7 +4,7 @@ import { AnnouncementBar } from "@/components/layout/announcement-bar";
 import { AmbientBackground } from "@/components/layout/ambient-background";
 import { SiteHeader } from "@/components/layout/site-header";
 import { SiteFooter } from "@/components/layout/site-footer";
-import { SplashScreen } from "@/components/layout/splash-screen";
+import { SplashScreen } from "@/components/layout/splash-screen-lazy";
 import { NewsletterPopup } from "@/components/layout/newsletter-popup";
 import { ConsentAnalytics } from "@/components/analytics/consent-analytics";
 import { getAnnouncements } from "@/server/queries/content";

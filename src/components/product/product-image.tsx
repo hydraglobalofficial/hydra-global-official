@@ -16,10 +16,12 @@ function resolveSrc(src: ImageProps["src"] | undefined, failed: boolean) {
 }
 
 /** Product media with SVG passthrough + broken-image fallback. */
-export function ProductImage({ src, alt, className, onError, ...props }: ImageProps) {
+export function ProductImage({ src, alt, className, onError, priority, loading, ...props }: ImageProps) {
   const [failed, setFailed] = useState(false);
   const resolved = resolveSrc(src, failed);
   const isSvg = typeof resolved === "string" && resolved.endsWith(".svg");
+  // Above-the-fold product/LCP images must be eager (Next warns when priority is omitted).
+  const eager = priority === true || loading === "eager";
 
   return (
     <Image
@@ -27,6 +29,8 @@ export function ProductImage({ src, alt, className, onError, ...props }: ImagePr
       src={resolved}
       alt={alt || "HYDRA product"}
       unoptimized={isSvg}
+      priority={priority}
+      loading={eager ? "eager" : loading}
       className={cn(className)}
       onError={(e) => {
         if (!failed) setFailed(true);

@@ -1,6 +1,8 @@
 import type { ComponentProps, ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
+export { FormMessage } from "@/components/ui/form-message";
+
 const control =
   "w-full rounded-xl border border-line bg-surface-2 px-4 text-sm text-fg placeholder:text-subtle transition-colors focus:border-accent/60 focus:bg-surface-3 focus:outline-none aria-[invalid=true]:border-danger/60";
 
@@ -25,6 +27,7 @@ export function Field({
   htmlFor,
   error,
   hint,
+  required,
   children,
   className,
 }: {
@@ -32,13 +35,15 @@ export function Field({
   htmlFor: string;
   error?: string[];
   hint?: string;
+  required?: boolean;
   children: ReactNode;
   className?: string;
 }) {
   return (
     <div className={cn("space-y-2", className)}>
-      <label htmlFor={htmlFor} className="block text-xs font-medium uppercase tracking-[0.14em] text-muted">
-        {label}
+      <label htmlFor={htmlFor} className="flex items-center gap-1 text-xs font-medium uppercase tracking-[0.14em] text-muted">
+        <span>{label}</span>
+        {required ? <span className="text-accent" aria-hidden>*</span> : null}
       </label>
       {children}
       {error?.length ? (
@@ -49,20 +54,5 @@ export function Field({
         <p className="text-xs text-subtle">{hint}</p>
       ) : null}
     </div>
-  );
-}
-
-export function FormMessage({ status, message }: { status: "idle" | "success" | "error"; message?: string }) {
-  if (status === "idle" || !message) return null;
-  return (
-    <p
-      role="status"
-      className={cn(
-        "rounded-xl border px-4 py-3 text-sm",
-        status === "success" ? "border-success/30 bg-success/10 text-success" : "border-danger/30 bg-danger/10 text-danger",
-      )}
-    >
-      {message}
-    </p>
   );
 }

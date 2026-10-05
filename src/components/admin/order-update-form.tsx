@@ -31,7 +31,7 @@ export function OrderUpdateForm({ id, status, paymentStatus, fulfillmentNote }: 
       <Field label="Fulfilment note" htmlFor="fulfillmentNote" hint="Courier, tracking number, internal notes.">
         <Textarea id="fulfillmentNote" name="fulfillmentNote" defaultValue={fulfillmentNote ?? ""} className="min-h-24" />
       </Field>
-      <FormMessage status={state.status} message={state.message} />
+      <FormMessage status={state.status} message={state.message} toast />
       <Button type="submit" className="w-full" disabled={pending}>
         {pending && <Loader2 size={16} className="animate-spin" />} Update order
       </Button>

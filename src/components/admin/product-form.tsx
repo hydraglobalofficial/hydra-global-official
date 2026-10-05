@@ -132,7 +132,7 @@ export function ProductForm({
             <Input id="stock" name="stock" type="number" min={0} defaultValue={initial.stock} required />
           </Field>
         </div>
-        <FormMessage status={state.status} message={state.message} />
+        <FormMessage status={state.status} message={state.message} toast />
         <Button type="submit" size="lg" className="w-full" disabled={pending}>
           {pending ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />} Save product
         </Button>

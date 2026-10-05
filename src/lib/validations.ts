@@ -1,11 +1,15 @@
 import { z } from "zod";
 
-/** International-friendly mobile: optional +, 8–15 digits. */
+/** International mobile: + and 8–15 digits total (E.164-ish). */
 const intlPhone = z
   .string()
   .trim()
   .transform((v) => v.replace(/[\s()-]/g, ""))
-  .pipe(z.string().regex(/^\+?[1-9]\d{7,14}$/, "Enter a valid mobile number with country code"));
+  .pipe(
+    z
+      .string()
+      .regex(/^\+[1-9]\d{7,14}$/, "Enter a valid mobile number"),
+  );
 
 export const inquirySchema = z.object({
   type: z.enum(["CONTACT", "SUPPORT", "WARRANTY", "RETURN"]).default("CONTACT"),
@@ -29,11 +33,19 @@ export const cartLineSchema = z.object({
 
 export const checkoutSchema = z.object({
   customerName: z.string().trim().min(2, "Enter your full name").max(80),
-  email: z.email("Enter a valid email").trim().toLowerCase(),
   phone: intlPhone,
-  address: z.string().trim().min(6, "Enter a complete delivery address").max(300),
-  city: z.string().trim().min(2, "Select a city").max(60),
-  area: z.string().trim().max(80).optional().or(z.literal("")),
+  country: z.string().trim().min(2, "Select your country").max(80),
+  city: z.string().trim().max(80).optional().or(z.literal("")),
+  area: z.string().trim().min(2, "Enter your district").max(80),
+  postalCode: z
+    .string()
+    .trim()
+    .max(20)
+    .optional()
+    .or(z.literal(""))
+    .refine((v) => !v || /^[A-Za-z0-9][A-Za-z0-9\s-]{1,18}$/.test(v), "Enter a valid zip / postal code"),
+  address: z.string().trim().max(300).optional().or(z.literal("")),
+  email: z.email("Enter a valid email").trim().toLowerCase(),
   notes: z.string().trim().max(500).optional().or(z.literal("")),
   paymentMethod: z.enum(["COD", "BKASH", "NAGAD", "SSLCOMMERZ"]),
   lines: z.array(cartLineSchema).min(1, "Your cart is empty").max(50),

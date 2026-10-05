@@ -1,7 +1,7 @@
 "use client";
 
-import { useActionState, type ReactNode } from "react";
-import { Loader2 } from "lucide-react";
+import { useActionState, useState, type ReactNode } from "react";
+import { Loader2, Plus, Trash2 } from "lucide-react";
 import {
   saveAboutSection,
   saveCollectionsSection,
@@ -232,7 +232,7 @@ export function AboutSectionEditor({ content }: { content: AboutContent }) {
         </div>
       </Section>
 
-      <FormMessage status={state.status} message={state.message} />
+      <FormMessage status={state.status} message={state.message} toast />
       <Button type="submit" disabled={pending}>
         {pending && <Loader2 size={16} className="animate-spin" />} Publish About
       </Button>
@@ -261,7 +261,7 @@ export function HowItWorksSectionEditor({ content }: { content: HowItWorksConten
           ))}
         </div>
       </Section>
-      <FormMessage status={state.status} message={state.message} />
+      <FormMessage status={state.status} message={state.message} toast />
       <Button type="submit" disabled={pending}>
         {pending && <Loader2 size={16} className="animate-spin" />} Publish
       </Button>
@@ -412,7 +412,7 @@ export function HomeHeroSectionEditor({ content }: { content: HomeHeroContent })
         </div>
       </Section>
 
-      <FormMessage status={state.status} message={state.message} />
+      <FormMessage status={state.status} message={state.message} toast />
       <Button type="submit" disabled={pending}>
         {pending && <Loader2 size={16} className="animate-spin" />} Publish hero
       </Button>
@@ -432,7 +432,7 @@ export function NewsletterSectionEditor({ content }: { content: NewsletterConten
         </div>
         <Label label="Description"><Textarea name="description" defaultValue={content.description} className="min-h-24" required /></Label>
       </Section>
-      <FormMessage status={state.status} message={state.message} />
+      <FormMessage status={state.status} message={state.message} toast />
       <Button type="submit" disabled={pending}>
         {pending && <Loader2 size={16} className="animate-spin" />} Publish
       </Button>
@@ -494,7 +494,7 @@ export function CollectionsSectionEditor({ content }: { content: CollectionsCont
           ))}
         </div>
       </Section>
-      <FormMessage status={state.status} message={state.message} />
+      <FormMessage status={state.status} message={state.message} toast />
       <Button type="submit" disabled={pending}>
         {pending && <Loader2 size={16} className="animate-spin" />} Publish
       </Button>
@@ -502,28 +502,58 @@ export function CollectionsSectionEditor({ content }: { content: CollectionsCont
   );
 }
 
+type InstallStepDraft = {
+  key: string;
+  title: string;
+  body: string;
+  tip: string;
+  image: string;
+  video: string;
+};
+
+type TroubleDraft = { key: string; problem: string; fix: string };
+
+const emptyStep = (): InstallStepDraft => ({
+  key: crypto.randomUUID(),
+  title: "",
+  body: "",
+  tip: "",
+  image: "",
+  video: "",
+});
+
+const emptyTrouble = (): TroubleDraft => ({
+  key: crypto.randomUUID(),
+  problem: "",
+  fix: "",
+});
+
+const MAX_INSTALL_STEPS = 16;
+const MAX_TROUBLES = 12;
+
 export function InstallationSectionEditor({ content }: { content: InstallationContent }) {
   const [state, action, pending] = useActionState(saveInstallationSection, initialFormState);
-  const steps =
+  const [steps, setSteps] = useState<InstallStepDraft[]>(() =>
     content.steps.length > 0
-      ? [...content.steps, ...Array.from({ length: Math.max(0, 8 - content.steps.length) }, () => ({
-          title: "",
-          body: "",
-          tip: "",
-          image: "",
-          video: "",
-        }))].slice(0, 8)
-      : Array.from({ length: 6 }, () => ({ title: "", body: "", tip: "", image: "", video: "" }));
-  const troubles =
+      ? content.steps.map((s) => ({
+          key: crypto.randomUUID(),
+          title: s.title,
+          body: s.body,
+          tip: s.tip ?? "",
+          image: s.image ?? "",
+          video: s.video ?? "",
+        }))
+      : [emptyStep(), emptyStep()],
+  );
+  const [troubles, setTroubles] = useState<TroubleDraft[]>(() =>
     content.troubleshooting.length > 0
-      ? [
-          ...content.troubleshooting,
-          ...Array.from({ length: Math.max(0, 6 - content.troubleshooting.length) }, () => ({
-            problem: "",
-            fix: "",
-          })),
-        ].slice(0, 6)
-      : Array.from({ length: 4 }, () => ({ problem: "", fix: "" }));
+      ? content.troubleshooting.map((t) => ({
+          key: crypto.randomUUID(),
+          problem: t.problem,
+          fix: t.fix,
+        }))
+      : [emptyTrouble()],
+  );
 
   return (
     <form action={action} className="space-y-5">
@@ -563,36 +593,84 @@ export function InstallationSectionEditor({ content }: { content: InstallationCo
       </Section>
 
       <Section title="Steps">
-        <p className="text-xs text-subtle">
-          Each step can have an image and/or a YouTube (or R2) video. Empty title rows are skipped.
-        </p>
+        <div className="flex flex-wrap items-end justify-between gap-3">
+          <p className="text-xs text-subtle">
+            Add or remove steps anytime. Each can have an image and/or YouTube / R2 video. Empty rows are skipped on publish.
+          </p>
+          <Button
+            type="button"
+            variant="secondary"
+            size="sm"
+            disabled={steps.length >= MAX_INSTALL_STEPS}
+            onClick={() => setSteps((prev) => (prev.length >= MAX_INSTALL_STEPS ? prev : [...prev, emptyStep()]))}
+          >
+            <Plus size={14} /> Add step
+          </Button>
+        </div>
         <div className="space-y-4">
           {steps.map((step, i) => (
-            <div key={i} className="space-y-3 rounded-xl border border-white/[0.06] p-3">
-              <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-subtle">
-                Step {String(i + 1).padStart(2, "0")}
-              </p>
-              <Input name="stepTitle" defaultValue={step.title} placeholder="Step title" />
-              <Textarea name="stepBody" defaultValue={step.body} className="min-h-20" placeholder="What to do" />
-              <Input name="stepTip" defaultValue={step.tip ?? ""} placeholder="Optional tip" />
+            <div key={step.key} className="space-y-3 rounded-xl border border-white/[0.06] p-3">
+              <div className="flex items-center justify-between gap-2">
+                <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-subtle">
+                  Step {String(i + 1).padStart(2, "0")}
+                </p>
+                <button
+                  type="button"
+                  disabled={steps.length <= 1}
+                  onClick={() => setSteps((prev) => (prev.length <= 1 ? prev : prev.filter((s) => s.key !== step.key)))}
+                  className="inline-flex items-center gap-1.5 rounded-full border border-white/10 px-2.5 py-1 text-[11px] text-muted transition hover:border-danger/40 hover:text-danger disabled:cursor-not-allowed disabled:opacity-30"
+                  aria-label={`Remove step ${i + 1}`}
+                >
+                  <Trash2 size={12} /> Remove
+                </button>
+              </div>
+              <Input
+                name="stepTitle"
+                defaultValue={step.title}
+                placeholder="Step title"
+                onChange={(e) => {
+                  const v = e.target.value;
+                  setSteps((prev) => prev.map((s) => (s.key === step.key ? { ...s, title: v } : s)));
+                }}
+              />
+              <Textarea
+                name="stepBody"
+                defaultValue={step.body}
+                className="min-h-20"
+                placeholder="What to do"
+                onChange={(e) => {
+                  const v = e.target.value;
+                  setSteps((prev) => prev.map((s) => (s.key === step.key ? { ...s, body: v } : s)));
+                }}
+              />
+              <Input
+                name="stepTip"
+                defaultValue={step.tip}
+                placeholder="Optional tip"
+                onChange={(e) => {
+                  const v = e.target.value;
+                  setSteps((prev) => prev.map((s) => (s.key === step.key ? { ...s, tip: v } : s)));
+                }}
+              />
               <div className="grid gap-3 sm:grid-cols-2">
                 <Label label="Step image" hint="Optional — R2 upload or paste URL">
                   <ImageUrlField
                     name="stepImage"
-                    defaultValue={step.image ?? ""}
+                    defaultValue={step.image}
                     folder="content"
                     placeholder="/products/glass-clear.jpg"
                   />
                 </Label>
-                <Label
-                  label="Step video"
-                  hint="Optional — YouTube link or R2 mp4/webm"
-                >
+                <Label label="Step video" hint="Optional — YouTube link or R2 mp4/webm">
                   <Input
                     name="stepVideo"
-                    defaultValue={step.video ?? ""}
+                    defaultValue={step.video}
                     placeholder="https://www.youtube.com/watch?v=…"
                     className="font-mono text-xs"
+                    onChange={(e) => {
+                      const v = e.target.value;
+                      setSteps((prev) => prev.map((s) => (s.key === step.key ? { ...s, video: v } : s)));
+                    }}
                   />
                 </Label>
               </div>
@@ -602,17 +680,64 @@ export function InstallationSectionEditor({ content }: { content: InstallationCo
       </Section>
 
       <Section title="Troubleshooting">
+        <div className="flex flex-wrap items-end justify-between gap-3">
+          <p className="text-xs text-subtle">Add common issues — or remove ones you don&apos;t need.</p>
+          <Button
+            type="button"
+            variant="secondary"
+            size="sm"
+            disabled={troubles.length >= MAX_TROUBLES}
+            onClick={() =>
+              setTroubles((prev) => (prev.length >= MAX_TROUBLES ? prev : [...prev, emptyTrouble()]))
+            }
+          >
+            <Plus size={14} /> Add issue
+          </Button>
+        </div>
         <div className="space-y-3">
           {troubles.map((t, i) => (
-            <div key={i} className="grid gap-2 rounded-xl border border-white/[0.06] p-3">
-              <Input name="troubleProblem" defaultValue={t.problem} placeholder="Problem" />
-              <Textarea name="troubleFix" defaultValue={t.fix} className="min-h-16" placeholder="Fix" />
+            <div key={t.key} className="grid gap-2 rounded-xl border border-white/[0.06] p-3">
+              <div className="flex items-center justify-between gap-2">
+                <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-subtle">
+                  Issue {String(i + 1).padStart(2, "0")}
+                </p>
+                <button
+                  type="button"
+                  disabled={troubles.length <= 1}
+                  onClick={() =>
+                    setTroubles((prev) => (prev.length <= 1 ? prev : prev.filter((x) => x.key !== t.key)))
+                  }
+                  className="inline-flex items-center gap-1.5 rounded-full border border-white/10 px-2.5 py-1 text-[11px] text-muted transition hover:border-danger/40 hover:text-danger disabled:cursor-not-allowed disabled:opacity-30"
+                  aria-label={`Remove issue ${i + 1}`}
+                >
+                  <Trash2 size={12} /> Remove
+                </button>
+              </div>
+              <Input
+                name="troubleProblem"
+                defaultValue={t.problem}
+                placeholder="Problem"
+                onChange={(e) => {
+                  const v = e.target.value;
+                  setTroubles((prev) => prev.map((x) => (x.key === t.key ? { ...x, problem: v } : x)));
+                }}
+              />
+              <Textarea
+                name="troubleFix"
+                defaultValue={t.fix}
+                className="min-h-16"
+                placeholder="Fix"
+                onChange={(e) => {
+                  const v = e.target.value;
+                  setTroubles((prev) => prev.map((x) => (x.key === t.key ? { ...x, fix: v } : x)));
+                }}
+              />
             </div>
           ))}
         </div>
       </Section>
 
-      <FormMessage status={state.status} message={state.message} />
+      <FormMessage status={state.status} message={state.message} toast />
       <Button type="submit" disabled={pending}>
         {pending && <Loader2 size={16} className="animate-spin" />} Publish installation
       </Button>

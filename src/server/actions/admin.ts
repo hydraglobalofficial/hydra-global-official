@@ -3,7 +3,7 @@
 import { redirect } from "next/navigation";
 import { revalidatePath, updateTag } from "next/cache";
 import { z } from "zod";
-import { db } from "@/lib/db";
+import { db, withTransaction } from "@/lib/db";
 import { requireAdmin } from "@/lib/auth/session";
 import { invalid, productSchema, type FormState } from "@/lib/validations";
 import { slugify } from "@/lib/utils";
@@ -60,7 +60,7 @@ export async function saveProduct(productId: string | null, _prev: FormState, fo
   const images = lines(imageUrls).map((url, position) => ({ url, alt: data.name, position }));
 
   try {
-    const product = await db.$transaction(async (tx) => {
+    const product = await withTransaction(async (tx) => {
       const base = {
         ...data,
         tagline: tagline || null,
@@ -248,7 +248,7 @@ export async function updateOrder(_prev: FormState, formData: FormData): Promise
   if (!parsed.success) return invalid(parsed.error);
   const { id, ...data } = parsed.data;
 
-  await db.$transaction(async (tx) => {
+  await withTransaction(async (tx) => {
     const current = await tx.order.findUniqueOrThrow({ where: { id }, include: { items: true } });
     const restock = (s: string) => s === "CANCELLED" || s === "RETURNED";
     // Return stock to inventory exactly once when an order is cancelled/returned.
@@ -597,7 +597,7 @@ export async function saveInstallationSection(_prev: FormState, formData: FormDa
         video: safeVideoUrl(videos[i], ""),
       }))
       .filter((s) => s.title && s.body)
-      .slice(0, 10)
+      .slice(0, 16)
       .map((s) => ({
         title: s.title,
         body: s.body,
@@ -614,7 +614,7 @@ export async function saveInstallationSection(_prev: FormState, formData: FormDa
         fix: clampText(fixes[i], 400),
       }))
       .filter((t) => t.problem && t.fix)
-      .slice(0, 10);
+      .slice(0, 12);
 
     const title = clampText(formData.get("title"), 80);
     if (!title || steps.length === 0) {

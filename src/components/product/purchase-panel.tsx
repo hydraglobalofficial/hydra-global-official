@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Minus, Plus, ShieldCheck, ShoppingBag, Zap } from "lucide-react";
 import { useCart } from "@/components/cart/cart-provider";
 import { Button } from "@/components/ui/button";
+import { alertToast } from "@/lib/swal";
 import { cn, discountPercent, formatPrice } from "@/lib/utils";
 
 type Variant = { id: string; name: string; priceOverride: number | null; stock: number };
@@ -49,7 +50,12 @@ export function PurchasePanel({ product, variants }: Props) {
       quantity,
       { openDrawer },
     );
-    if (!openDrawer) router.push("/checkout");
+    if (openDrawer) {
+      void alertToast("Added to cart", "success");
+    } else {
+      void alertToast("Taking you to checkout…", "success");
+      router.push("/checkout");
+    }
   }
 
   return (

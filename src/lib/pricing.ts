@@ -1,7 +1,27 @@
 import { siteConfig } from "@/config/site";
 
+/** Countries offered at checkout (Bangladesh first). */
+export const countries = [
+  "Bangladesh",
+  "United States",
+  "United Kingdom",
+  "United Arab Emirates",
+  "Singapore",
+  "India",
+  "Canada",
+  "Australia",
+  "Germany",
+  "Japan",
+  "Other",
+] as const;
+
 /** Major hubs get express shipping; everything else is standard. */
 export const cities = [
+  "Dhaka",
+  "Chattogram",
+  "Sylhet",
+  "Khulna",
+  "Rajshahi",
   "New York",
   "London",
   "Dubai",
@@ -10,20 +30,36 @@ export const cities = [
   "Sydney",
   "Toronto",
   "Berlin",
-  "Dhaka",
   "Other",
 ] as const;
 
-const expressCities = new Set<string>(["New York", "London", "Dubai", "Singapore", "Tokyo", "Sydney", "Toronto", "Berlin", "Dhaka"]);
+const expressCities = new Set<string>([
+  "Dhaka",
+  "Chattogram",
+  "Sylhet",
+  "New York",
+  "London",
+  "Dubai",
+  "Singapore",
+  "Tokyo",
+  "Sydney",
+  "Toronto",
+  "Berlin",
+]);
 
-export function shippingFee(subtotal: number, city: string) {
+const expressCountries = new Set<string>(["Bangladesh"]);
+
+export function shippingFee(subtotal: number, city: string, country = "") {
   if (subtotal <= 0) return 0;
   if (subtotal >= siteConfig.freeShippingThreshold) return 0;
-  return expressCities.has(city) ? siteConfig.shippingFee.express : siteConfig.shippingFee.standard;
+  if (expressCities.has(city) || expressCountries.has(country)) {
+    return siteConfig.shippingFee.express;
+  }
+  return siteConfig.shippingFee.standard;
 }
 
-export function shippingLabel(city: string) {
-  return expressCities.has(city) ? "express" : "standard";
+export function shippingLabel(city: string, country = "") {
+  return expressCities.has(city) || expressCountries.has(country) ? "express" : "standard";
 }
 
 export const paymentMethods = [
