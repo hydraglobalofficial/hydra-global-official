@@ -19,14 +19,16 @@ import type {
   HowItWorksContent,
   NewsletterContent,
 } from "@/content/site-sections";
-import { clampText, safeInternalHref, safeMediaUrl, safeSlug } from "@/lib/content-safety";
+import { clampText, safeInternalHref, safeMediaUrl, safeSlug, safeVideoUrl } from "@/lib/content-safety";
 import {
   normalizeAboutContent,
   normalizeCollectionsContent,
   normalizeHomeHeroContent,
   normalizeHowItWorksContent,
+  normalizeInstallationContent,
   normalizeNewsletterContent,
 } from "@/lib/normalize-sections";
+import type { InstallationContent } from "@/content/installation";
 
 const HERO_VISUALS = new Set<HeroVisualKey>(["phone", "glass", "privacy", "image"]);
 
@@ -568,6 +570,78 @@ export async function saveHowItWorksSection(_prev: FormState, formData: FormData
   } catch (error) {
     console.error("[saveHowItWorksSection]", error);
     return { status: "error", message: "Could not publish How it works." };
+  }
+}
+
+export async function saveInstallationSection(_prev: FormState, formData: FormData): Promise<FormState> {
+  await requireAdmin();
+  try {
+    const titles = formData.getAll("stepTitle").map(String);
+    const bodies = formData.getAll("stepBody").map(String);
+    const tips = formData.getAll("stepTip").map(String);
+    const images = formData.getAll("stepImage").map(String);
+    const videos = formData.getAll("stepVideo").map(String);
+    const steps = titles
+      .map((title, i) => ({
+        title: clampText(title, 100),
+        body: clampText(bodies[i], 600),
+        tip: clampText(tips[i], 240, ""),
+        image: safeMediaUrl(images[i], ""),
+        video: safeVideoUrl(videos[i], ""),
+      }))
+      .filter((s) => s.title && s.body)
+      .slice(0, 10)
+      .map((s) => ({
+        title: s.title,
+        body: s.body,
+        ...(s.tip ? { tip: s.tip } : {}),
+        ...(s.image ? { image: s.image } : {}),
+        ...(s.video ? { video: s.video } : {}),
+      }));
+
+    const problems = formData.getAll("troubleProblem").map(String);
+    const fixes = formData.getAll("troubleFix").map(String);
+    const troubleshooting = problems
+      .map((problem, i) => ({
+        problem: clampText(problem, 120),
+        fix: clampText(fixes[i], 400),
+      }))
+      .filter((t) => t.problem && t.fix)
+      .slice(0, 10);
+
+    const title = clampText(formData.get("title"), 80);
+    if (!title || steps.length === 0) {
+      return { status: "error", message: "Title and at least one install step are required." };
+    }
+
+    const data = normalizeInstallationContent({
+      eyebrow: clampText(formData.get("eyebrow"), 60),
+      title,
+      titleAccent: clampText(formData.get("titleAccent"), 80),
+      intro: clampText(formData.get("intro"), 500),
+      duration: clampText(formData.get("duration"), 40),
+      videoUrl: safeVideoUrl(formData.get("videoUrl"), ""),
+      brandsNote: clampText(formData.get("brandsNote"), 80),
+      kit: lines(String(formData.get("kit") ?? "")),
+      steps,
+      troubleshooting,
+    } satisfies InstallationContent);
+
+    await db.siteSection.upsert({
+      where: { key: "installation" },
+      create: { key: "installation", title: "Installation guide", data },
+      update: { data, title: "Installation guide" },
+    });
+    updateTag(CONTENT_TAG);
+    revalidatePath("/installation");
+    revalidatePath("/installation/iphone");
+    revalidatePath("/installation/samsung");
+    revalidatePath("/admin/content");
+    revalidatePath("/admin/content/sections/installation");
+    return { status: "success", message: "Installation guide published." };
+  } catch (error) {
+    console.error("[saveInstallationSection]", error);
+    return { status: "error", message: "Could not publish installation guide." };
   }
 }
 

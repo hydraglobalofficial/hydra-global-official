@@ -15,8 +15,8 @@ export type AdminNavBadges = {
 };
 
 const TTL = {
-  badges: 30,
-  overview: 20,
+  badges: 60,
+  overview: 45,
 } as const;
 
 async function loadAdminNavBadges(): Promise<AdminNavBadges> {

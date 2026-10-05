@@ -14,12 +14,14 @@ import {
   type HowItWorksContent,
   type NewsletterContent,
 } from "@/content/site-sections";
+import { defaultInstallationContent, type InstallationContent } from "@/content/installation";
 import { safeInternalHref } from "@/lib/content-safety";
 import {
   normalizeAboutContent,
   normalizeCollectionsContent,
   normalizeHomeHeroContent,
   normalizeHowItWorksContent,
+  normalizeInstallationContent,
   normalizeNewsletterContent,
 } from "@/lib/normalize-sections";
 import { CONTENT_TAG } from "./catalog";
@@ -104,6 +106,19 @@ export const getHomeHeroContent = unstable_cache(
     }
   },
   ["site-section-home-hero"],
+  { tags: [CONTENT_TAG], revalidate: 3600 },
+);
+
+export const getInstallationContent = unstable_cache(
+  async (): Promise<InstallationContent> => {
+    try {
+      const row = await db.siteSection.findUnique({ where: { key: "installation" }, select: { data: true } });
+      return normalizeInstallationContent(row?.data ?? defaultInstallationContent);
+    } catch {
+      return defaultInstallationContent;
+    }
+  },
+  ["site-section-installation-v3"],
   { tags: [CONTENT_TAG], revalidate: 3600 },
 );
 

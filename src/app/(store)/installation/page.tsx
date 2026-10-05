@@ -1,36 +1,41 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import { ArrowRight, Clock } from "lucide-react";
-import { PageHeader } from "@/components/ui/primitives";
-import { brands } from "@/config/site";
-import { installationGuides } from "@/content/installation";
+import { InstallExperience } from "@/components/installation/install-experience";
+import { getInstallationContent } from "@/server/queries/content";
+import { JsonLd } from "@/lib/seo";
 
 export const metadata: Metadata = {
-  title: "Installation Guides",
-  description: "Step-by-step installation guides for HYDRA accessories on iPhone and Samsung Galaxy.",
+  title: "Installation Guide",
+  description:
+    "One HYDRA install for iPhone and Samsung Galaxy — alignment frame, clean kit, step-by-step with optional video.",
   alternates: { canonical: "/installation" },
 };
 
-export default function InstallationIndexPage() {
+export default async function InstallationPage() {
+  const content = await getInstallationContent();
+
   return (
     <>
-      <PageHeader eyebrow="Installation" title="Perfect fit, first try." description="Every HYDRA box includes an alignment frame and clean-room kit. Pick your device for a guided walkthrough." />
-      <section className="container-page grid gap-5 py-16 md:grid-cols-2">
-        {Object.values(installationGuides).map((guide) => (
-          <Link key={guide.brand} href={`/installation/${guide.brand}`} className="group border-gradient flex flex-col justify-between gap-10 rounded-3xl p-8 md:p-10">
-            <div className="space-y-3">
-              <p className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.2em] text-accent">
-                <Clock size={12} /> {guide.duration} · {guide.steps.length} steps
-              </p>
-              <h2 className="text-3xl font-semibold">{brands[guide.brand].label}</h2>
-              <p className="text-muted">{guide.intro}</p>
-            </div>
-            <span className="flex items-center gap-2 text-sm font-medium">
-              Start guide <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
-            </span>
-          </Link>
-        ))}
-      </section>
+      <JsonLd
+        data={{
+          "@context": "https://schema.org",
+          "@type": "HowTo",
+          name: `${content.title} ${content.titleAccent}`.trim(),
+          description: content.intro,
+          totalTime: "PT3M",
+          tool: content.kit.map((name) => ({ "@type": "HowToTool", name })),
+          step: content.steps.map((s, i) => ({
+            "@type": "HowToStep",
+            position: i + 1,
+            name: s.title,
+            text: s.body,
+            ...(s.image ? { image: s.image } : {}),
+          })),
+          ...(content.videoUrl
+            ? { video: { "@type": "VideoObject", name: "HYDRA installation", contentUrl: content.videoUrl } }
+            : {}),
+        }}
+      />
+      <InstallExperience content={content} />
     </>
   );
 }

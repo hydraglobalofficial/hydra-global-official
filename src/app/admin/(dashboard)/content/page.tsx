@@ -156,7 +156,7 @@ export default async function AdminContentPage() {
         {SITE_SECTION_META.filter((s) => s.key === "about").map((s) => (
           <Link
             key={s.key}
-            href={`/admin/content/sections/${encodeURIComponent(s.key)}`}
+            href="/admin/about"
             className="block rounded-2xl border border-white/10 bg-gradient-to-br from-white/[0.04] via-white/[0.02] to-transparent p-5 transition-colors hover:border-accent/35"
           >
             <div className="flex items-start justify-between gap-3">
@@ -179,11 +179,47 @@ export default async function AdminContentPage() {
       </section>
 
       <section className="mt-10 space-y-4">
+        <div>
+          <h2 className="flex items-center gap-2 font-medium">
+            <LayoutTemplate size={16} className="text-accent" /> Installation guide
+          </h2>
+          <p className="mt-1 text-sm text-muted">
+            One shared Apple + Samsung flow — video, kit, animated steps with images, troubleshooting.
+          </p>
+        </div>
+        {SITE_SECTION_META.filter((s) => s.key === "installation").map((s) => (
+          <Link
+            key={s.key}
+            href="/admin/installation"
+            className="block rounded-2xl border border-white/10 bg-gradient-to-br from-white/[0.04] via-white/[0.02] to-transparent p-5 transition-colors hover:border-accent/35"
+          >
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <p className="text-[10px] font-medium uppercase tracking-[0.18em] text-accent">Featured · Install</p>
+                <p className="mt-1 text-base font-medium">{s.title}</p>
+                <p className="mt-1 text-sm text-muted">{s.description}</p>
+                <p className="mt-2 text-xs text-subtle">
+                  {sectionUpdated.has(s.key)
+                    ? `Updated ${formatDate(sectionUpdated.get(s.key)!)}`
+                    : "Using defaults until you publish"}
+                </p>
+              </div>
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-white/10 px-3 py-1.5 text-xs text-muted">
+                <Pencil size={12} /> Edit
+              </span>
+            </div>
+          </Link>
+        ))}
+      </section>
+
+      <section className="mt-10 space-y-4">
         <h2 className="flex items-center gap-2 font-medium">
           <LayoutTemplate size={16} className="text-accent" /> Other site sections
         </h2>
         <Card className="divide-y divide-line">
-          {SITE_SECTION_META.filter((s) => s.key !== "home.hero" && s.key !== "about").map((s) => (
+          {SITE_SECTION_META.filter(
+            (s) => s.key !== "home.hero" && s.key !== "about" && s.key !== "installation",
+          ).map((s) => (
             <Link
               key={s.key}
               href={`/admin/content/sections/${encodeURIComponent(s.key)}`}

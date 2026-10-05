@@ -7,6 +7,7 @@ import {
   CollectionsSectionEditor,
   HomeHeroSectionEditor,
   HowItWorksSectionEditor,
+  InstallationSectionEditor,
   NewsletterSectionEditor,
 } from "@/components/admin/section-editors";
 import { SITE_SECTION_META } from "@/content/site-sections";
@@ -16,6 +17,7 @@ import {
   normalizeCollectionsContent,
   normalizeHomeHeroContent,
   normalizeHowItWorksContent,
+  normalizeInstallationContent,
   normalizeNewsletterContent,
 } from "@/lib/normalize-sections";
 import { db } from "@/lib/db";
@@ -50,6 +52,9 @@ export default async function EditSiteSectionPage({ params }: Props) {
       )}
       {key === "home.newsletter" && (
         <NewsletterSectionEditor content={normalizeNewsletterContent(row?.data)} />
+      )}
+      {key === "installation" && (
+        <InstallationSectionEditor content={normalizeInstallationContent(row?.data)} />
       )}
     </>
   );

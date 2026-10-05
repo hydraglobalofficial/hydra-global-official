@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
+  BookOpen,
   FileText,
   FolderTree,
   Inbox,
@@ -11,6 +12,7 @@ import {
   ShoppingCart,
   Star,
   Users,
+  Wrench,
   type LucideIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -43,6 +45,8 @@ const groups: { label: string; items: NavItem[] }[] = [
     label: "Site",
     items: [
       { href: "/admin/content", label: "Content", short: "Content", icon: FileText },
+      { href: "/admin/about", label: "About", short: "About", icon: BookOpen },
+      { href: "/admin/installation", label: "Installation", short: "Install", icon: Wrench },
       { href: "/admin/team", label: "Team", short: "Team", icon: Users },
     ],
   },

@@ -7,6 +7,7 @@ import {
   saveCollectionsSection,
   saveHomeHeroSection,
   saveHowItWorksSection,
+  saveInstallationSection,
   saveNewsletterSection,
 } from "@/server/actions/admin";
 import type {
@@ -16,6 +17,7 @@ import type {
   HowItWorksContent,
   NewsletterContent,
 } from "@/content/site-sections";
+import type { InstallationContent } from "@/content/installation";
 import { initialFormState } from "@/lib/validations";
 import { ImageUrlField } from "@/components/admin/media-uploader";
 import { Button } from "@/components/ui/button";
@@ -495,6 +497,124 @@ export function CollectionsSectionEditor({ content }: { content: CollectionsCont
       <FormMessage status={state.status} message={state.message} />
       <Button type="submit" disabled={pending}>
         {pending && <Loader2 size={16} className="animate-spin" />} Publish
+      </Button>
+    </form>
+  );
+}
+
+export function InstallationSectionEditor({ content }: { content: InstallationContent }) {
+  const [state, action, pending] = useActionState(saveInstallationSection, initialFormState);
+  const steps =
+    content.steps.length > 0
+      ? [...content.steps, ...Array.from({ length: Math.max(0, 8 - content.steps.length) }, () => ({
+          title: "",
+          body: "",
+          tip: "",
+          image: "",
+          video: "",
+        }))].slice(0, 8)
+      : Array.from({ length: 6 }, () => ({ title: "", body: "", tip: "", image: "", video: "" }));
+  const troubles =
+    content.troubleshooting.length > 0
+      ? [
+          ...content.troubleshooting,
+          ...Array.from({ length: Math.max(0, 6 - content.troubleshooting.length) }, () => ({
+            problem: "",
+            fix: "",
+          })),
+        ].slice(0, 6)
+      : Array.from({ length: 4 }, () => ({ problem: "", fix: "" }));
+
+  return (
+    <form action={action} className="space-y-5">
+      <Section title="Hero">
+        <p className="text-xs text-subtle">
+          One shared guide for Apple & Samsung — no separate brand pages needed.
+        </p>
+        <div className="grid gap-3 sm:grid-cols-2">
+          <Label label="Eyebrow"><Input name="eyebrow" defaultValue={content.eyebrow} required /></Label>
+          <Label label="Duration"><Input name="duration" defaultValue={content.duration} required /></Label>
+        </div>
+        <div className="grid gap-3 sm:grid-cols-2">
+          <Label label="Title"><Input name="title" defaultValue={content.title} required /></Label>
+          <Label label="Title accent"><Input name="titleAccent" defaultValue={content.titleAccent} required /></Label>
+        </div>
+        <Label label="Intro"><Textarea name="intro" defaultValue={content.intro} className="min-h-24" required /></Label>
+        <Label label="Brands note" hint={'Shown as a badge, e.g. "Same process for Apple & Samsung"'}>
+          <Input name="brandsNote" defaultValue={content.brandsNote} required />
+        </Label>
+        <Label
+          label="Video URL"
+          hint="YouTube link or direct mp4/webm on Cloudflare R2. Leave blank to hide the player."
+        >
+          <Input
+            name="videoUrl"
+            defaultValue={content.videoUrl}
+            placeholder="https://www.youtube.com/watch?v=… or https://….r2.dev/…/install.mp4"
+            className="font-mono text-xs"
+          />
+        </Label>
+      </Section>
+
+      <Section title="Kit (in the box)">
+        <Label label="Items" hint="One per line">
+          <Textarea name="kit" defaultValue={content.kit.join("\n")} className="min-h-28 font-mono text-xs" required />
+        </Label>
+      </Section>
+
+      <Section title="Steps">
+        <p className="text-xs text-subtle">
+          Each step can have an image and/or a YouTube (or R2) video. Empty title rows are skipped.
+        </p>
+        <div className="space-y-4">
+          {steps.map((step, i) => (
+            <div key={i} className="space-y-3 rounded-xl border border-white/[0.06] p-3">
+              <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-subtle">
+                Step {String(i + 1).padStart(2, "0")}
+              </p>
+              <Input name="stepTitle" defaultValue={step.title} placeholder="Step title" />
+              <Textarea name="stepBody" defaultValue={step.body} className="min-h-20" placeholder="What to do" />
+              <Input name="stepTip" defaultValue={step.tip ?? ""} placeholder="Optional tip" />
+              <div className="grid gap-3 sm:grid-cols-2">
+                <Label label="Step image" hint="Optional — R2 upload or paste URL">
+                  <ImageUrlField
+                    name="stepImage"
+                    defaultValue={step.image ?? ""}
+                    folder="content"
+                    placeholder="/products/glass-clear.jpg"
+                  />
+                </Label>
+                <Label
+                  label="Step video"
+                  hint="Optional — YouTube link or R2 mp4/webm"
+                >
+                  <Input
+                    name="stepVideo"
+                    defaultValue={step.video ?? ""}
+                    placeholder="https://www.youtube.com/watch?v=…"
+                    className="font-mono text-xs"
+                  />
+                </Label>
+              </div>
+            </div>
+          ))}
+        </div>
+      </Section>
+
+      <Section title="Troubleshooting">
+        <div className="space-y-3">
+          {troubles.map((t, i) => (
+            <div key={i} className="grid gap-2 rounded-xl border border-white/[0.06] p-3">
+              <Input name="troubleProblem" defaultValue={t.problem} placeholder="Problem" />
+              <Textarea name="troubleFix" defaultValue={t.fix} className="min-h-16" placeholder="Fix" />
+            </div>
+          ))}
+        </div>
+      </Section>
+
+      <FormMessage status={state.status} message={state.message} />
+      <Button type="submit" disabled={pending}>
+        {pending && <Loader2 size={16} className="animate-spin" />} Publish installation
       </Button>
     </form>
   );

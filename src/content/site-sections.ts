@@ -364,6 +364,11 @@ export const SITE_SECTION_META = [
   { key: "home.collections", title: "Home · Collections", description: "Shop-by-collection bento: heading, CTA and category cards." },
   { key: "home.howItWorks", title: "Home · How it works", description: "Checkout-to-armored steps on the homepage." },
   { key: "home.newsletter", title: "Home · Newsletter", description: "Members list signup block copy." },
+  {
+    key: "installation",
+    title: "Installation guide",
+    description: "One shared install flow for iPhone & Galaxy: hero copy, video, kit, animated steps (with images), troubleshooting.",
+  },
 ] as const;
 
 export type SiteSectionKey = (typeof SITE_SECTION_META)[number]["key"];

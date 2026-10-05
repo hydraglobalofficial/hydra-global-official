@@ -5,6 +5,7 @@
 
 const MAX_HREF = 200;
 const MAX_IMAGE = 400;
+const MAX_VIDEO = 500;
 const MAX_SLUG = 80;
 
 /** Relative site paths only: /shop, /about#team — not //evil, javascript:, https://… */
@@ -50,6 +51,35 @@ export function safeMediaUrl(raw: unknown, fallback = ""): string {
       host === "imagebb.com" ||
       host.endsWith(".ibb.co") ||
       host.endsWith(".imagebb.com") ||
+      host.endsWith(".r2.dev") ||
+      host.endsWith(".amazonaws.com") ||
+      (configuredR2 !== "" && host === configuredR2);
+    return allowed ? parsed.toString() : fallback;
+  } catch {
+    return fallback;
+  }
+}
+
+/** YouTube watch/share/embed links or allowlisted https media (R2 mp4/webm). */
+export function safeVideoUrl(raw: unknown, fallback = ""): string {
+  if (typeof raw !== "string") return fallback;
+  const url = raw.trim();
+  if (!url || url.length > MAX_VIDEO) return fallback;
+  try {
+    const parsed = new URL(url);
+    if (parsed.protocol !== "https:") return fallback;
+    const host = parsed.hostname.toLowerCase();
+    if (
+      host === "youtu.be" ||
+      host === "youtube.com" ||
+      host === "www.youtube.com" ||
+      host === "m.youtube.com" ||
+      host === "www.youtube-nocookie.com"
+    ) {
+      return parsed.toString();
+    }
+    const configuredR2 = r2PublicHost();
+    const allowed =
       host.endsWith(".r2.dev") ||
       host.endsWith(".amazonaws.com") ||
       (configuredR2 !== "" && host === configuredR2);

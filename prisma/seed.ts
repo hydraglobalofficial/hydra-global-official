@@ -9,6 +9,7 @@ import {
   defaultHowItWorksContent,
   defaultNewsletterContent,
 } from "../src/content/site-sections";
+import { defaultInstallationContent } from "../src/content/installation";
 
 if (process.env.NODE_ENV === "production" && process.env.SEED_FORCE !== "1") {
   console.error("Refusing to reset a production database. Set SEED_FORCE=1 if you really mean it.");
@@ -595,6 +596,7 @@ async function main() {
       { key: "home.collections", title: "Home · Collections", data: defaultCollectionsContent },
       { key: "home.howItWorks", title: "Home · How it works", data: defaultHowItWorksContent },
       { key: "home.newsletter", title: "Home · Newsletter", data: defaultNewsletterContent },
+      { key: "installation", title: "Installation guide", data: defaultInstallationContent },
     ],
   });
 

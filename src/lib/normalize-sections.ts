@@ -12,7 +12,8 @@ import {
   type HowItWorksContent,
   type NewsletterContent,
 } from "@/content/site-sections";
-import { asStringArray, clampText, safeInternalHref, safeMediaUrl, safeSlug } from "@/lib/content-safety";
+import { asStringArray, clampText, safeInternalHref, safeMediaUrl, safeSlug, safeVideoUrl } from "@/lib/content-safety";
+import { defaultInstallationContent, type InstallationContent } from "@/content/installation";
 
 const HERO_VISUALS = new Set<HeroVisualKey>(["phone", "glass", "privacy", "image"]);
 
@@ -204,6 +205,61 @@ export function normalizeNewsletterContent(raw: unknown): NewsletterContent {
     title: clampText(data.title, 80, defaultNewsletterContent.title),
     titleAccent: clampText(data.titleAccent, 40, defaultNewsletterContent.titleAccent),
     description: clampText(data.description, 400, defaultNewsletterContent.description),
+  };
+}
+
+export function normalizeInstallationContent(raw: unknown): InstallationContent {
+  const data = isRecord(raw) ? raw : {};
+  const defaults = defaultInstallationContent;
+
+  const steps = Array.isArray(data.steps)
+    ? data.steps
+        .map((row, index) => {
+          if (!isRecord(row)) return null;
+          const title = clampText(row.title, 100);
+          const body = clampText(row.body, 600);
+          if (!title || !body) return null;
+          const tip = clampText(row.tip, 240, "");
+          const fallback = defaults.steps[index];
+          const image = safeMediaUrl(row.image, "") || fallback?.image || "";
+          const video = safeVideoUrl(row.video, "") || fallback?.video || "";
+          return {
+            title,
+            body,
+            ...(tip ? { tip } : {}),
+            ...(image ? { image } : {}),
+            ...(video ? { video } : {}),
+          };
+        })
+        .filter((row): row is InstallationContent["steps"][number] => !!row)
+        .slice(0, 10)
+    : [];
+
+  const troubleshooting = Array.isArray(data.troubleshooting)
+    ? data.troubleshooting
+        .map((row) => {
+          if (!isRecord(row)) return null;
+          const problem = clampText(row.problem, 120);
+          const fix = clampText(row.fix, 400);
+          return problem && fix ? { problem, fix } : null;
+        })
+        .filter((row): row is InstallationContent["troubleshooting"][number] => !!row)
+        .slice(0, 10)
+    : [];
+
+  const kit = asStringArray(data.kit, 12, 80);
+
+  return {
+    eyebrow: clampText(data.eyebrow, 60, defaults.eyebrow),
+    title: clampText(data.title, 80, defaults.title),
+    titleAccent: clampText(data.titleAccent, 80, defaults.titleAccent),
+    intro: clampText(data.intro, 500, defaults.intro),
+    duration: clampText(data.duration, 40, defaults.duration),
+    videoUrl: safeVideoUrl(data.videoUrl, ""),
+    brandsNote: clampText(data.brandsNote, 80, defaults.brandsNote),
+    kit: kit.length > 0 ? kit : defaults.kit,
+    steps: steps.length > 0 ? steps : defaults.steps,
+    troubleshooting: troubleshooting.length > 0 ? troubleshooting : defaults.troubleshooting,
   };
 }
 

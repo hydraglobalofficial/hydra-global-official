@@ -3,12 +3,17 @@ import {
   AlertTriangle,
   ArrowUpRight,
   Banknote,
+  BookOpen,
   FileText,
+  FolderTree,
   Inbox,
   Package,
   PackagePlus,
   ShoppingCart,
   Star,
+  Users,
+  Wrench,
+  type LucideIcon,
 } from "lucide-react";
 import { AdminCachePanel } from "@/components/admin/cache-status";
 import { AdminHeader, Card, Panel, StatCard, StatusBadge, Table } from "@/components/admin/admin-ui";
@@ -18,11 +23,23 @@ import { getAdminOverview } from "@/server/queries/admin";
 
 export const metadata = { title: "Overview" };
 
-const quickActions = [
-  { href: "/admin/orders", label: "Orders", hint: "Confirm & fulfill", icon: ShoppingCart },
-  { href: "/admin/products/new", label: "Add product", hint: "List new armor", icon: PackagePlus },
-  { href: "/admin/reviews", label: "Reviews", hint: "Moderate feedback", icon: Star },
-  { href: "/admin/content", label: "Edit content", hint: "About & site copy", icon: FileText },
+const launchpad: {
+  href: string;
+  label: string;
+  hint: string;
+  icon: LucideIcon;
+  badgeKey?: "orders" | "inquiries" | "reviews";
+}[] = [
+  { href: "/admin/orders", label: "Orders", hint: "Confirm & fulfill", icon: ShoppingCart, badgeKey: "orders" },
+  { href: "/admin/products", label: "Products", hint: "Catalog & stock", icon: Package },
+  { href: "/admin/products/new", label: "Add product", hint: "One-click new SKU", icon: PackagePlus },
+  { href: "/admin/catalog", label: "Categories", hint: "Devices & taxonomy", icon: FolderTree },
+  { href: "/admin/inquiries", label: "Inquiries", hint: "Customer inbox", icon: Inbox, badgeKey: "inquiries" },
+  { href: "/admin/reviews", label: "Reviews", hint: "Moderate feedback", icon: Star, badgeKey: "reviews" },
+  { href: "/admin/about", label: "About", hint: "Company page CMS", icon: BookOpen },
+  { href: "/admin/installation", label: "Installation", hint: "Guide · images · video", icon: Wrench },
+  { href: "/admin/content", label: "Content", hint: "Hero · home · policies", icon: FileText },
+  { href: "/admin/team", label: "Team", hint: "Staff accounts", icon: Users },
 ];
 
 export default async function AdminOverviewPage() {
@@ -32,15 +49,22 @@ export default async function AdminOverviewPage() {
     await getAdminOverview();
   const { pendingOrders: pending, newInquiries: newInquiryCount, pendingReviews } = badges;
 
+  const badgeMap = {
+    orders: pending,
+    inquiries: newInquiryCount,
+    reviews: pendingReviews,
+  };
+
   return (
     <div className="space-y-6 sm:space-y-7">
       <AdminHeader
         eyebrow="Command overview"
         title={`Welcome back, ${firstName}`}
-        description="Orders, stock and customer signals from the last 30 days."
+        description="One click to every desk. Queues, stock and site content — built to feel instant."
         action={
           <Link
             href="/admin/orders"
+            prefetch
             className="inline-flex items-center gap-1.5 rounded-full border border-white/12 bg-white/[0.05] px-3.5 py-2 text-sm text-fg transition-colors hover:border-accent/45 hover:bg-accent/15"
           >
             Review orders <ArrowUpRight size={14} />
@@ -52,15 +76,20 @@ export default async function AdminOverviewPage() {
 
       <div className="flex flex-wrap gap-2">
         {[
-          pending > 0 && `${pending} pending orders`,
-          newInquiryCount > 0 && `${newInquiryCount} new inquiries`,
-          pendingReviews > 0 && `${pendingReviews} reviews to approve`,
+          pending > 0 && { href: "/admin/orders", text: `${pending} pending orders` },
+          newInquiryCount > 0 && { href: "/admin/inquiries", text: `${newInquiryCount} new inquiries` },
+          pendingReviews > 0 && { href: "/admin/reviews", text: `${pendingReviews} reviews to approve` },
         ]
-          .filter(Boolean)
+          .filter((item): item is { href: string; text: string } => Boolean(item))
           .map((item) => (
-            <span key={String(item)} className="rounded-full border border-warning/25 bg-warning/10 px-3 py-1 text-xs text-warning">
-              {item}
-            </span>
+            <Link
+              key={item.href}
+              href={item.href}
+              prefetch
+              className="rounded-full border border-warning/25 bg-warning/10 px-3 py-1 text-xs text-warning transition hover:border-warning/50"
+            >
+              {item.text}
+            </Link>
           ))}
         {pending === 0 && newInquiryCount === 0 && pendingReviews === 0 && (
           <span className="rounded-full border border-success/25 bg-success/10 px-3 py-1 text-xs text-success">
@@ -82,28 +111,46 @@ export default async function AdminOverviewPage() {
         <StatCard label="New inquiries" value={newInquiryCount} icon={<Inbox size={16} />} />
       </div>
 
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
-        {quickActions.map(({ href, label, hint, icon: Icon }) => (
-          <Link key={href} href={href} className="group">
-            <Card className="h-full p-4 transition-colors hover:border-accent/35 sm:p-5">
-              <div className="flex items-start justify-between gap-2">
-                <span className="grid size-9 place-items-center rounded-xl border border-accent/25 bg-accent/10 text-accent">
-                  <Icon size={16} />
-                </span>
-                <ArrowUpRight size={14} className="text-subtle transition-colors group-hover:text-accent" />
-              </div>
-              <p className="mt-4 text-sm font-medium">{label}</p>
-              <p className="mt-1 text-xs text-subtle">{hint}</p>
-            </Card>
-          </Link>
-        ))}
-      </div>
+      <section>
+        <div className="mb-3 flex items-end justify-between gap-3">
+          <div>
+            <h2 className="text-sm font-medium tracking-tight">Go anywhere</h2>
+            <p className="mt-0.5 text-xs text-subtle">One click — every admin screen, prefetched.</p>
+          </div>
+        </div>
+        <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 sm:gap-3 lg:grid-cols-5">
+          {launchpad.map(({ href, label, hint, icon: Icon, badgeKey }) => {
+            const count = badgeKey ? badgeMap[badgeKey] : 0;
+            return (
+              <Link key={href} href={href} prefetch className="group">
+                <Card className="relative h-full p-3.5 transition-colors hover:border-accent/40 hover:bg-accent/[0.06] sm:p-4">
+                  {count > 0 ? (
+                    <span className="absolute right-2.5 top-2.5 grid min-w-[1.25rem] place-items-center rounded-full bg-accent/35 px-1.5 py-0.5 font-mono text-[10px] font-semibold text-blue-50">
+                      {count}
+                    </span>
+                  ) : (
+                    <ArrowUpRight
+                      size={13}
+                      className="absolute right-2.5 top-2.5 text-subtle opacity-0 transition group-hover:opacity-100 group-hover:text-accent"
+                    />
+                  )}
+                  <span className="grid size-8 place-items-center rounded-lg border border-accent/25 bg-accent/10 text-accent">
+                    <Icon size={15} />
+                  </span>
+                  <p className="mt-3 text-sm font-medium leading-tight">{label}</p>
+                  <p className="mt-0.5 text-[11px] leading-snug text-subtle">{hint}</p>
+                </Card>
+              </Link>
+            );
+          })}
+        </div>
+      </section>
 
       <div className="grid gap-4 lg:gap-5 xl:grid-cols-[minmax(0,1.4fr)_minmax(17rem,0.85fr)]">
         <Panel
           title="Recent orders"
           action={
-            <Link href="/admin/orders" className="text-xs text-muted transition-colors hover:text-accent sm:text-sm">
+            <Link href="/admin/orders" prefetch className="text-xs text-muted transition-colors hover:text-accent sm:text-sm">
               View all →
             </Link>
           }
@@ -114,7 +161,7 @@ export default async function AdminOverviewPage() {
               <li key={o.id} className="px-4 py-3.5">
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
-                    <Link href={`/admin/orders/${o.id}`} className="font-mono text-sm text-accent">
+                    <Link href={`/admin/orders/${o.id}`} prefetch className="font-mono text-sm text-accent">
                       {o.number}
                     </Link>
                     <p className="mt-0.5 truncate text-sm text-fg">{o.customerName}</p>
@@ -144,7 +191,7 @@ export default async function AdminOverviewPage() {
                 {recentOrders.map((o) => (
                   <tr key={o.id}>
                     <td>
-                      <Link href={`/admin/orders/${o.id}`} className="font-mono text-accent transition-colors hover:text-fg">
+                      <Link href={`/admin/orders/${o.id}`} prefetch className="font-mono text-accent transition-colors hover:text-fg">
                         {o.number}
                       </Link>
                       <p className="text-xs text-subtle">{formatDate(o.createdAt)}</p>
@@ -175,6 +222,7 @@ export default async function AdminOverviewPage() {
                 <li key={p.id} className="flex items-center justify-between gap-3 px-3 py-3 sm:px-4">
                   <Link
                     href={`/admin/products/${p.id}`}
+                    prefetch
                     className="line-clamp-2 text-sm leading-snug transition-colors hover:text-accent"
                   >
                     {p.name}
@@ -197,7 +245,7 @@ export default async function AdminOverviewPage() {
           <Panel
             title="New inquiries"
             action={
-              <Link href="/admin/inquiries" className="text-xs text-muted transition-colors hover:text-accent sm:text-sm">
+              <Link href="/admin/inquiries" prefetch className="text-xs text-muted transition-colors hover:text-accent sm:text-sm">
                 Inbox →
               </Link>
             }
