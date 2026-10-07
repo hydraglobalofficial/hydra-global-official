@@ -2,12 +2,13 @@
 
 import { useEffect, useRef } from "react";
 import { animate, motion, useInView, useMotionValue, useReducedMotion, useTransform, type MotionValue } from "motion/react";
-import { HydraCreature } from "@/components/hydra/hydra-creature";
 import { useHasMounted } from "@/hooks/use-has-mounted";
 import { interpolate } from "@/lib/interpolate";
 import { cn } from "@/lib/utils";
 
-/** Manifesto: words light up while the HYDRA rises — no sticky scroll lock. */
+const VIDEO_SRC = "/brand/hydra-animation.mp4";
+
+/** Manifesto: words light up — brand video as soft background (no SVG draw). */
 export function Manifesto({ text, highlight }: { text: string; highlight: readonly string[] }) {
   const mounted = useHasMounted();
   const ref = useRef<HTMLElement>(null);
@@ -27,10 +28,10 @@ export function Manifesto({ text, highlight }: { text: string; highlight: readon
       <div className="bg-grid pointer-events-none absolute inset-0 opacity-30 [mask-image:radial-gradient(ellipse_at_center,#000,transparent_72%)]" />
       <div className="bg-noise pointer-events-none absolute inset-0 opacity-[0.035]" />
       <div
-        className="pointer-events-none absolute -right-[8%] top-1/2 w-[min(92vw,42rem)] -translate-y-1/2 opacity-45 md:-right-[4%] md:w-[min(58vw,40rem)]"
+        className="pointer-events-none absolute -right-[8%] top-1/2 w-[min(92vw,42rem)] -translate-y-1/2 opacity-40 md:-right-[4%] md:w-[min(58vw,40rem)]"
         aria-hidden
       >
-        <HydraCreature progress={progress} ghost className="w-full" />
+        <video src={VIDEO_SRC} className="w-full object-contain" autoPlay muted loop playsInline preload="metadata" />
       </div>
       <div className="pointer-events-none absolute left-1/3 top-1/2 size-[32rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#1e3a8a]/25 blur-[130px]" />
       <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-accent/40 to-transparent" />
@@ -38,7 +39,7 @@ export function Manifesto({ text, highlight }: { text: string; highlight: readon
 
       <div className="container-page relative">
         <p className="mb-8 font-mono text-[11px] uppercase tracking-[0.3em] text-accent">Manifesto</p>
-        <p className="max-w-3xl text-3xl font-semibold leading-[1.18] tracking-tight md:max-w-4xl md:text-5xl lg:text-6xl">
+        <p className="max-w-3xl text-[1.65rem] font-semibold leading-[1.18] tracking-tight sm:text-3xl md:max-w-4xl md:text-5xl lg:text-6xl">
           {words.map((word, i) => {
             const highlighted = highlight.includes(word.replace(/[^\w']/g, ""));
             if (!mounted) {

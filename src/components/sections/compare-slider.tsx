@@ -24,7 +24,7 @@ export function CompareSlider({ before, after, beforeLabel = "Before", afterLabe
   return (
     <div
       ref={ref}
-      className="relative aspect-[16/10] w-full cursor-ew-resize touch-none select-none overflow-hidden rounded-3xl border border-line"
+      className="relative aspect-[16/10] w-full max-w-full cursor-ew-resize touch-none select-none overflow-hidden rounded-2xl border border-line sm:rounded-3xl"
       onPointerDown={(e) => {
         e.currentTarget.setPointerCapture(e.pointerId);
         update(e.clientX);
@@ -36,10 +36,10 @@ export function CompareSlider({ before, after, beforeLabel = "Before", afterLabe
         {after}
       </div>
 
-      <span className="absolute left-4 top-4 rounded-full bg-black/60 px-3 py-1 font-mono text-[10px] uppercase tracking-widest text-muted backdrop-blur">
+      <span className="absolute left-2 top-2 max-w-[42%] truncate rounded-full bg-black/60 px-2.5 py-1 font-mono text-[9px] uppercase tracking-wider text-muted backdrop-blur sm:left-4 sm:top-4 sm:max-w-none sm:px-3 sm:text-[10px] sm:tracking-widest">
         {beforeLabel}
       </span>
-      <span className="absolute right-4 top-4 rounded-full bg-accent/20 px-3 py-1 font-mono text-[10px] uppercase tracking-widest text-accent backdrop-blur">
+      <span className="absolute right-2 top-2 max-w-[42%] truncate rounded-full bg-accent/20 px-2.5 py-1 font-mono text-[9px] uppercase tracking-wider text-accent backdrop-blur sm:right-4 sm:top-4 sm:max-w-none sm:px-3 sm:text-[10px] sm:tracking-widest">
         {afterLabel}
       </span>
 

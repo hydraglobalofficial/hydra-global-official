@@ -57,21 +57,21 @@ export default async function ContactPage({ searchParams }: PageProps<"/contact"
         <div className="pointer-events-none absolute -left-32 top-0 size-[30rem] rounded-full bg-accent/15 blur-[140px] animate-aurora-2" />
         <div className="pointer-events-none absolute -right-20 top-24 size-[26rem] rounded-full bg-white/[0.04] blur-[140px] animate-aurora-1" />
 
-        <div className="container-page relative grid items-center gap-12 py-16 md:py-24 lg:grid-cols-[1.05fr_1fr]">
-          <Reveal className="space-y-7">
+        <div className="container-page relative grid items-center gap-10 py-12 sm:gap-12 sm:py-16 md:py-24 lg:grid-cols-[1.05fr_1fr]">
+          <Reveal className="min-w-0 space-y-6 sm:space-y-7">
             <Eyebrow>Contact HYDRA</Eyebrow>
-            <h1 className="text-5xl font-semibold leading-[1.02] tracking-tight text-balance md:text-7xl">
+            <h1 className="text-[2.35rem] font-semibold leading-[1.02] tracking-tight text-balance sm:text-5xl md:text-7xl">
               Talk to a human, <span className="text-muted">not a ticket.</span>
             </h1>
-            <p className="max-w-lg text-lg text-pretty text-muted">
+            <p className="max-w-lg text-base text-pretty text-muted sm:text-lg">
               Orders, installs, wholesale or press — our team answers every message personally. Pick the channel that suits you.
             </p>
             <LiveStatus />
-            <dl className="grid max-w-md grid-cols-3 gap-6 border-t border-line pt-7">
+            <dl className="grid max-w-md grid-cols-3 gap-3 border-t border-line pt-6 sm:gap-6 sm:pt-7">
               {heroStats.map((s) => (
-                <div key={s.label} className="flex flex-col-reverse">
-                  <dt className="mt-1 text-xs text-muted">{s.label}</dt>
-                  <dd className="font-mono text-2xl font-semibold tracking-tight">{s.value}</dd>
+                <div key={s.label} className="flex min-w-0 flex-col-reverse">
+                  <dt className="mt-1 text-[10px] leading-snug text-muted sm:text-xs">{s.label}</dt>
+                  <dd className="font-mono text-lg font-semibold tracking-tight sm:text-2xl">{s.value}</dd>
                 </div>
               ))}
             </dl>
@@ -80,8 +80,8 @@ export default async function ContactPage({ searchParams }: PageProps<"/contact"
         </div>
       </section>
 
-      <section id="write" className="container-page scroll-mt-28 py-20">
-        <div className="grid gap-6 lg:grid-cols-[1fr_26rem]">
+      <section id="write" className="container-page scroll-mt-28 py-12 sm:py-16 md:py-20">
+        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_26rem]">
           <Reveal>
             <ContactForm key={defaultTopic} defaultTopic={defaultTopic} />
           </Reveal>
@@ -93,15 +93,15 @@ export default async function ContactPage({ searchParams }: PageProps<"/contact"
 
       <section className="container-page pb-20">
         <Reveal>
-          <div className="card-premium relative overflow-hidden rounded-[2rem] p-8 md:p-12">
+          <div className="card-premium relative overflow-hidden rounded-[1.5rem] p-5 sm:rounded-[2rem] sm:p-8 md:p-12">
             <div className="bg-dots pointer-events-none absolute inset-0 opacity-50 [mask-image:linear-gradient(to_left,#000,transparent_70%)]" />
             <div className="pointer-events-none absolute -right-24 -top-24 size-80 rounded-full bg-accent/10 blur-[100px]" />
-            <div className="relative grid items-center gap-10 lg:grid-cols-[1.2fr_1fr]">
-              <div className="space-y-5">
+            <div className="relative grid items-center gap-8 sm:gap-10 lg:grid-cols-[1.2fr_1fr]">
+              <div className="min-w-0 space-y-5">
                 <span className="inline-flex items-center gap-2 rounded-full border border-accent/30 bg-accent/10 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.2em] text-accent">
                   <Building2 size={12} /> HYDRA for Business
                 </span>
-                <h2 className="text-3xl font-semibold tracking-tight text-balance md:text-4xl">
+                <h2 className="text-2xl font-semibold tracking-tight text-balance sm:text-3xl md:text-4xl">
                   Buying for a store or a team? <span className="text-muted">Let&apos;s talk volume.</span>
                 </h2>
                 <p className="max-w-lg text-muted">Retailers, repair shops and companies worldwide stock HYDRA. Get trade pricing, a named contact and invoices that keep accounts happy.</p>

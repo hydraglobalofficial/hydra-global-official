@@ -13,8 +13,8 @@ export function PageEditor({ page }: { page: { slug: string; title: string; summ
   const [body, setBody] = useState(page.body);
 
   return (
-    <form action={action} className="grid gap-8 xl:grid-cols-2">
-      <div className="space-y-5">
+    <form action={action} className="grid gap-5 sm:gap-8 xl:grid-cols-2">
+      <div className="space-y-4 sm:space-y-5">
         <input type="hidden" name="slug" value={page.slug} />
         <Field label="Title" htmlFor="title" error={state.fieldErrors?.title}>
           <Input id="title" name="title" defaultValue={page.title} required />
@@ -23,14 +23,20 @@ export function PageEditor({ page }: { page: { slug: string; title: string; summ
           <Input id="summary" name="summary" defaultValue={page.summary ?? ""} />
         </Field>
         <Field label="Body" htmlFor="body" error={state.fieldErrors?.body} hint="## Heading · ### Subheading · - list item · **bold** · blank line between blocks">
-          <Textarea id="body" name="body" value={body} onChange={(e) => setBody(e.target.value)} className="min-h-[32rem] font-mono text-xs leading-relaxed" />
+          <Textarea
+            id="body"
+            name="body"
+            value={body}
+            onChange={(e) => setBody(e.target.value)}
+            className="min-h-[18rem] font-mono text-xs leading-relaxed sm:min-h-[32rem]"
+          />
         </Field>
         <FormMessage status={state.status} message={state.message} toast />
-        <Button type="submit" disabled={pending}>
+        <Button type="submit" className="w-full sm:w-auto" disabled={pending}>
           {pending && <Loader2 size={16} className="animate-spin" />} Publish
         </Button>
       </div>
-      <div className="rounded-2xl border border-line bg-surface p-6">
+      <div className="rounded-2xl border border-line bg-surface p-4 sm:p-6">
         <p className="mb-4 font-mono text-[10px] uppercase tracking-[0.2em] text-subtle">Live preview</p>
         <RichText source={body} />
       </div>

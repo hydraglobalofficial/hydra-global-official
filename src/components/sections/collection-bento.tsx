@@ -17,7 +17,7 @@ export function CollectionBento({ content }: { content?: CollectionsContent | nu
         ? content.items
         : defaultCollectionsContent.items,
   };
-  const items = section.items.slice(0, 5);
+  const items = section.items.slice(0, 8);
 
   return (
     <section className="container-page py-14 sm:py-20 md:py-24">
@@ -71,8 +71,8 @@ export function CollectionBento({ content }: { content?: CollectionsContent | nu
                       <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-subtle">{index}</p>
                       <h3
                         className={cn(
-                          "mt-1.5 font-semibold tracking-tight sm:mt-2",
-                          hero ? "text-3xl sm:text-4xl md:text-5xl" : "text-xl sm:text-2xl",
+                          "mt-1.5 font-semibold tracking-tight text-balance sm:mt-2",
+                          hero ? "text-2xl sm:text-4xl md:text-5xl" : "text-lg sm:text-2xl",
                         )}
                       >
                         {c.name}

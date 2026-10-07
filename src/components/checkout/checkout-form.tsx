@@ -96,12 +96,12 @@ export function CheckoutForm() {
   );
 
   return (
-    <form action={action} className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_26rem]" noValidate>
+    <form action={action} className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_26rem] lg:gap-10" noValidate>
       <input type="hidden" name="lines" value={payload} />
 
-      <div className="space-y-6 md:space-y-8">
+      <div className="min-w-0 space-y-5 sm:space-y-6 md:space-y-8">
         {/* 1 · Contact */}
-        <section className="rounded-[1.75rem] border border-white/[0.08] bg-gradient-to-br from-white/[0.04] via-transparent to-accent/[0.03] p-5 sm:p-7">
+        <section className="rounded-[1.35rem] border border-white/[0.08] bg-gradient-to-br from-white/[0.04] via-transparent to-accent/[0.03] p-4 sm:rounded-[1.75rem] sm:p-7">
           <SectionTitle
             step="01"
             icon={User}
@@ -150,7 +150,7 @@ export function CheckoutForm() {
         </section>
 
         {/* 2 · Delivery */}
-        <section className="rounded-[1.75rem] border border-white/[0.08] bg-gradient-to-br from-white/[0.04] via-transparent to-blue-500/[0.03] p-5 sm:p-7">
+        <section className="rounded-[1.35rem] border border-white/[0.08] bg-gradient-to-br from-white/[0.04] via-transparent to-blue-500/[0.03] p-4 sm:rounded-[1.75rem] sm:p-7">
           <SectionTitle
             step="02"
             icon={MapPin}
@@ -226,7 +226,7 @@ export function CheckoutForm() {
         </section>
 
         {/* 3 · Instructions */}
-        <section className="rounded-[1.75rem] border border-white/[0.08] bg-gradient-to-br from-white/[0.04] via-transparent to-transparent p-5 sm:p-7">
+        <section className="rounded-[1.35rem] border border-white/[0.08] bg-gradient-to-br from-white/[0.04] via-transparent to-transparent p-4 sm:rounded-[1.75rem] sm:p-7">
           <SectionTitle
             step="03"
             icon={Truck}
@@ -244,7 +244,7 @@ export function CheckoutForm() {
         </section>
 
         {/* 4 · Payment */}
-        <section className="rounded-[1.75rem] border border-white/[0.08] bg-gradient-to-br from-white/[0.04] via-transparent to-accent/[0.04] p-5 sm:p-7">
+        <section className="rounded-[1.35rem] border border-white/[0.08] bg-gradient-to-br from-white/[0.04] via-transparent to-accent/[0.04] p-4 sm:rounded-[1.75rem] sm:p-7">
           <SectionTitle
             step="04"
             icon={Package}
@@ -280,9 +280,9 @@ export function CheckoutForm() {
         </section>
       </div>
 
-      <aside className="glass h-fit space-y-6 rounded-[1.75rem] border border-white/[0.08] p-6 lg:sticky lg:top-28">
+      <aside className="glass h-fit space-y-5 rounded-[1.35rem] border border-white/[0.08] p-5 sm:space-y-6 sm:rounded-[1.75rem] sm:p-6 lg:sticky lg:top-28">
         <h2 className="text-lg font-semibold tracking-tight">Order summary</h2>
-        <ul className="max-h-72 space-y-4 overflow-y-auto pr-1">
+        <ul className="max-h-72 space-y-4 overflow-y-auto overscroll-contain pr-1">
           {lines.map((l) => (
             <li key={`${l.productId}:${l.variantId}`} className="flex items-center gap-3">
               <span className="relative size-14 shrink-0 overflow-hidden rounded-xl border border-line bg-surface-2">
@@ -295,31 +295,31 @@ export function CheckoutForm() {
                 <span className="line-clamp-1 text-sm">{l.name}</span>
                 {l.variantName && <span className="text-xs text-muted">{l.variantName}</span>}
               </span>
-              <span className="font-mono text-sm tabular-nums">{formatPrice(l.price * l.quantity)}</span>
+              <span className="shrink-0 font-mono text-sm tabular-nums">{formatPrice(l.price * l.quantity)}</span>
             </li>
           ))}
         </ul>
         <dl className="space-y-3 border-t border-line pt-5 text-sm">
-          <div className="flex justify-between">
+          <div className="flex justify-between gap-3">
             <dt className="text-muted">Subtotal</dt>
             <dd className="font-mono tabular-nums">{formatPrice(subtotal)}</dd>
           </div>
-          <div className="flex justify-between">
-            <dt className="text-muted">Shipping ({shippingLabel(city, country)})</dt>
-            <dd className="font-mono tabular-nums">
+          <div className="flex justify-between gap-3">
+            <dt className="min-w-0 text-muted">Shipping ({shippingLabel(city, country)})</dt>
+            <dd className="shrink-0 font-mono tabular-nums">
               {shipping === 0 ? <span className="text-success">Free</span> : formatPrice(shipping)}
             </dd>
           </div>
-          <div className="flex justify-between border-t border-line pt-3 text-base">
+          <div className="flex justify-between gap-3 border-t border-line pt-3 text-base">
             <dt className="font-medium">Total</dt>
             <dd className="font-mono text-xl tabular-nums">{formatPrice(subtotal + shipping)}</dd>
           </div>
         </dl>
         <FormMessage status={state.status} message={state.message} />
-        <Button type="submit" size="lg" className="w-full" disabled={pending}>
+        <Button type="submit" size="lg" className="min-h-12 w-full" disabled={pending}>
           {pending ? <Loader2 size={18} className="animate-spin" /> : <Lock size={16} />} Place order
         </Button>
-        <p className="text-center text-xs text-subtle">Prices and stock are confirmed when you place the order.</p>
+        <p className="pb-[env(safe-area-inset-bottom)] text-center text-xs text-subtle lg:pb-0">Prices and stock are confirmed when you place the order.</p>
       </aside>
     </form>
   );

@@ -25,21 +25,21 @@ export default function SupportPage() {
   return (
     <>
       <PageHeader eyebrow="Help Center" title="How can we help?" description="Find answers fast, or reach the HYDRA support team directly." />
-      <section className="container-page grid gap-4 py-16 sm:grid-cols-2 lg:grid-cols-3">
+      <section className="container-page grid gap-3 py-10 sm:grid-cols-2 sm:gap-4 sm:py-16 lg:grid-cols-3">
         {topics.map(({ href, icon: Icon, title, text }) => (
-          <Link key={href + title} href={href} className="group glass relative rounded-3xl p-7 transition-all hover:-translate-y-0.5 hover:border-accent/30">
-            <ArrowUpRight size={18} className="absolute right-6 top-6 text-subtle transition-colors group-hover:text-accent" />
+          <Link key={href + title} href={href} className="group glass relative min-h-[11rem] rounded-2xl p-5 transition-all hover:-translate-y-0.5 hover:border-accent/30 sm:rounded-3xl sm:p-7">
+            <ArrowUpRight size={18} className="absolute right-5 top-5 text-subtle transition-colors group-hover:text-accent sm:right-6 sm:top-6" />
             <Icon className="text-accent" />
-            <h2 className="mt-8 text-lg font-medium">{title}</h2>
+            <h2 className="mt-6 text-lg font-medium sm:mt-8">{title}</h2>
             <p className="mt-1 text-sm text-muted">{text}</p>
           </Link>
         ))}
       </section>
       <section className="container-page pb-8">
-        <h2 className="mb-6 text-2xl font-semibold">Popular questions</h2>
-        <div className="grid gap-4 md:grid-cols-2">
+        <h2 className="mb-5 text-xl font-semibold sm:mb-6 sm:text-2xl">Popular questions</h2>
+        <div className="grid gap-3 sm:gap-4 md:grid-cols-2">
           {popular.map((f) => (
-            <div key={f.question} className="rounded-2xl border border-line p-6">
+            <div key={f.question} className="rounded-2xl border border-line p-5 sm:p-6">
               <p className="font-medium">{f.question}</p>
               <p className="mt-2 text-sm text-muted">{f.answer}</p>
             </div>

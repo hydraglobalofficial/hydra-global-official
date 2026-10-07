@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 import dynamic from "next/dynamic";
 import { SectionDivider } from "@/components/ui/section-divider";
 import { Reveal } from "@/components/motion/reveal";
-import type { HowItWorksContent, NewsletterContent } from "@/content/site-sections";
+import type { HowItWorksContent, NewsletterContent, ShowcaseContent } from "@/content/site-sections";
 
 const ImpactStat = dynamic(
   () => import("@/components/sections/showcase-sections").then((m) => m.ImpactStat),
@@ -13,10 +13,6 @@ const ImpactStat = dynamic(
 const DropTest = dynamic(
   () => import("@/components/sections/showcase-sections").then((m) => m.DropTest),
   { loading: () => <div className="h-80 animate-pulse bg-white/[0.02]" aria-hidden /> },
-);
-const VideoShowcase = dynamic(
-  () => import("@/components/sections/showcase-sections").then((m) => m.VideoShowcase),
-  { loading: () => <div className="h-64 animate-pulse bg-white/[0.02]" aria-hidden /> },
 );
 const ClarityCompare = dynamic(
   () => import("@/components/sections/clarity-compare").then((m) => m.ClarityCompare),
@@ -42,10 +38,11 @@ export function HomeBelowFold({
 }: {
   howItWorks: HowItWorksContent;
   newsletter: NewsletterContent;
+  showcase?: ShowcaseContent;
   bestsellers: ReactNode;
 }) {
   return (
-    <>
+    <div>
       <ImpactStat />
       <DropTest />
       {bestsellers}
@@ -54,11 +51,10 @@ export function HomeBelowFold({
         <ClarityCompare />
       </Reveal>
       <Testimonials />
-      <VideoShowcase />
       <SectionDivider />
       <TechGrid />
       <HowItWorks content={howItWorks} />
       <NewsletterBlock content={newsletter} />
-    </>
+    </div>
   );
 }

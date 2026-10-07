@@ -2,13 +2,48 @@ import Image from "next/image";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 
-/** Creature crest (Hydra_Animation) for compact mark. */
+/** Creature crest — header left + compact mark. */
 export const MARK_SRC = "/products/Hydra_Mark.png";
 export const CREST_SRC = "/products/Hydra_Animation.png";
-/** Full HYDRA wordmark + tagline (real brand PNG). */
+/** Real brand wordmark: HYDRA + SMART ACCESSORIES. */
 export const WORDMARK_SRC = "/products/Hydra.png";
 
-/** Creature mark — from Hydra_Animation.png */
+/**
+ * TM sits at the top-right of the trailing A of HYDRA — same placement every breakpoint.
+ * Zero-size host + scaled child: Chrome min-font safe, no unscaled white bar.
+ */
+function TmMark() {
+  return (
+    <span
+      data-logo-tm
+      aria-hidden
+      className="pointer-events-none absolute z-20 select-none"
+      style={{
+        top: -2,
+        left: "84%",
+        width: 0,
+        height: 0,
+        overflow: "visible",
+      }}
+    >
+      <span
+        className="block whitespace-nowrap text-white"
+        style={{
+          fontSize: 16,
+          fontWeight: 800,
+          letterSpacing: "0.05em",
+          lineHeight: 1,
+          transform: "scale(0.45)",
+          transformOrigin: "left top",
+        }}
+      >
+        TM
+      </span>
+    </span>
+  );
+}
+
+/** Creature mark only — login, favicon-style spots. */
 export function LogoMark({
   className,
   priority = false,
@@ -33,7 +68,7 @@ export function LogoMark({
   );
 }
 
-/** Real HYDRA wordmark image (includes SMART ACCESSORIES). */
+/** Full real wordmark image. */
 export function WordmarkImage({
   className,
   priority = false,
@@ -59,47 +94,49 @@ export function WordmarkImage({
 }
 
 /**
- * Brand lockup: crest + full HYDRA wordmark, TM tucked on the A (not far away).
+ * Header / footer lockup: crest + Hydra.png wordmark + TM above the A.
+ * Word box width tracks image aspect (≈3:1) so 84% stays on the A on phone + desktop.
+ * Mobile heights are slightly smaller; placement math is identical.
  */
 export function Logo({ className }: { className?: string }) {
   return (
     <Link
       href="/"
-      className={cn(
-        "group relative inline-flex max-w-[70vw] shrink-0 items-center gap-1.5 sm:max-w-none sm:gap-2",
-        className,
-      )}
+      className={cn("group relative inline-flex shrink-0 items-center gap-0 overflow-visible", className)}
       aria-label="HYDRA home"
     >
-      <span className="relative block size-9 shrink-0 sm:size-10 md:size-11">
+      <span
+        data-logo-crest
+        className="relative block shrink-0"
+        style={{ width: 32, height: 32, marginRight: -4 }}
+      >
         <Image
           src={MARK_SRC}
           alt=""
           fill
           sizes="48px"
           priority
-          quality={92}
-          className="object-contain object-center"
+          quality={95}
+          className="object-contain object-center scale-[1.08]"
         />
       </span>
 
-      <span className="relative block h-9 w-[7.5rem] sm:h-11 sm:w-[9.25rem] md:h-12 md:w-[10.5rem]">
+      {/* Aspect ≈ 3:1 — box matches mark so TM @ 84% lands on the A (mobile slightly smaller). */}
+      <span
+        data-logo-word
+        className="relative block shrink-0 overflow-visible"
+        style={{ width: 84, height: 28 }}
+      >
         <Image
           src={WORDMARK_SRC}
-          alt="HYDRA"
+          alt="HYDRA — Smart Accessories"
           fill
-          sizes="200px"
+          sizes="120px"
           priority
           quality={95}
           className="object-contain object-left brightness-0 invert transition-opacity duration-300 group-hover:opacity-90"
         />
-        {/* Sit on the A — left% beats right-edge padding in the PNG */}
-        <span
-          className="pointer-events-none absolute left-[86%] top-0 select-none font-sans text-[7px] font-extrabold leading-none tracking-tighter text-white sm:left-[87%] sm:text-[8px] md:left-[88%] md:text-[9px]"
-          aria-hidden
-        >
-          TM
-        </span>
+        <TmMark />
       </span>
     </Link>
   );

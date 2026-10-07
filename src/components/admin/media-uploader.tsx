@@ -1,7 +1,7 @@
 "use client";
 
 import { useId, useRef, useState, useTransition } from "react";
-import { GripVertical, ImagePlus, Loader2, Trash2, Upload, X } from "lucide-react";
+import { Film, GripVertical, ImagePlus, Loader2, Trash2, Upload, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/form";
 import { cn } from "@/lib/utils";
@@ -9,10 +9,11 @@ import { cn } from "@/lib/utils";
 type UploadOk = { url: string };
 type UploadErr = { error: string };
 
-async function uploadFile(file: File, folder: string): Promise<string> {
+async function uploadFile(file: File, folder: string, kind: "image" | "video" = "image"): Promise<string> {
   const body = new FormData();
   body.set("file", file);
   body.set("folder", folder);
+  body.set("kind", kind);
   const res = await fetch("/api/admin/upload", { method: "POST", body });
   const data = (await res.json()) as UploadOk & UploadErr;
   if (!res.ok || !data.url) {
@@ -303,6 +304,91 @@ export function ImageUrlField({
         </div>
       ) : null}
       {message ? <p className="text-xs text-muted">{message}</p> : null}
+    </div>
+  );
+}
+
+/** Video URL (YouTube or R2) + device upload for mp4/webm. */
+export function VideoUrlField({
+  id: idProp,
+  name,
+  defaultValue = "",
+  folder = "videos",
+  placeholder = "https://youtube.com/watch?v=… or upload mp4",
+}: SingleProps) {
+  const autoId = useId();
+  const id = idProp ?? autoId;
+  const inputRef = useRef<HTMLInputElement>(null);
+  const fileRef = useRef<HTMLInputElement>(null);
+  const [value, setValue] = useState(defaultValue);
+  const [message, setMessage] = useState<string | null>(null);
+  const [pending, startTransition] = useTransition();
+
+  function onPick(files: FileList | null) {
+    const file = files?.[0];
+    if (!file) return;
+    setMessage(null);
+    startTransition(async () => {
+      try {
+        const url = await uploadFile(file, folder, "video");
+        if (inputRef.current) {
+          inputRef.current.value = url;
+          inputRef.current.dispatchEvent(new Event("input", { bubbles: true }));
+        }
+        setValue(url);
+        setMessage("Video uploaded to Cloudflare R2.");
+      } catch (err) {
+        setMessage(err instanceof Error ? err.message : "Upload failed.");
+      } finally {
+        if (fileRef.current) fileRef.current.value = "";
+      }
+    });
+  }
+
+  const isFile = /\.(mp4|webm|mov)(\?|$)/i.test(value);
+
+  return (
+    <div className="space-y-2">
+      <div className="flex gap-2">
+        <Input
+          ref={inputRef}
+          id={id}
+          name={name}
+          defaultValue={defaultValue}
+          placeholder={placeholder}
+          className="font-mono text-xs"
+          onChange={(e) => setValue(e.currentTarget.value)}
+        />
+        <input
+          ref={fileRef}
+          type="file"
+          accept="video/mp4,video/webm,video/quicktime,.mp4,.webm,.mov"
+          className="sr-only"
+          onChange={(e) => onPick(e.target.files)}
+        />
+        <Button
+          type="button"
+          variant="secondary"
+          size="sm"
+          className="shrink-0"
+          disabled={pending}
+          onClick={() => fileRef.current?.click()}
+          aria-label="Upload video from device"
+        >
+          {pending ? <Loader2 size={14} className="animate-spin" /> : <Film size={14} />}
+        </Button>
+      </div>
+      {isFile ? (
+        <video
+          src={value}
+          className="max-h-36 w-full max-w-xs rounded-xl border border-line object-cover"
+          muted
+          playsInline
+          preload="metadata"
+        />
+      ) : null}
+      {message ? <p className="text-xs text-muted">{message}</p> : null}
+      <p className="text-xs text-subtle">Upload MP4/WebM (max 40MB) or paste a YouTube / R2 URL.</p>
     </div>
   );
 }

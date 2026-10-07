@@ -43,9 +43,9 @@ export function ProductForm({
   const e = state.fieldErrors ?? {};
 
   return (
-    <form action={action} className="grid gap-8 xl:grid-cols-[1fr_22rem]">
-      <div className="space-y-6 rounded-2xl border border-line bg-surface p-6">
-        <div className="grid gap-5 md:grid-cols-2">
+    <form action={action} className="grid gap-5 sm:gap-8 xl:grid-cols-[1fr_22rem]">
+      <div className="space-y-5 rounded-2xl border border-line bg-surface p-4 sm:space-y-6 sm:p-6">
+        <div className="grid gap-4 sm:gap-5 md:grid-cols-2">
           <Field label="Name" htmlFor="name" error={e.name}>
             <Input
               id="name"
@@ -92,8 +92,8 @@ export function ProductForm({
         </fieldset>
       </div>
 
-      <div className="space-y-6">
-        <div className="space-y-5 rounded-2xl border border-line bg-surface p-6">
+      <div className="space-y-4 sm:space-y-6">
+        <div className="space-y-4 rounded-2xl border border-line bg-surface p-4 sm:space-y-5 sm:p-6">
           <Field label="Status" htmlFor="status">
             <Select id="status" name="status" defaultValue={initial.status}>
               <option value="ACTIVE">Active</option>
@@ -116,11 +116,11 @@ export function ProductForm({
             Featured on homepage
           </label>
         </div>
-        <div className="space-y-5 rounded-2xl border border-line bg-surface p-6">
+        <div className="space-y-4 rounded-2xl border border-line bg-surface p-4 sm:space-y-5 sm:p-6">
           <Field label="SKU" htmlFor="sku" error={e.sku}>
             <Input id="sku" name="sku" defaultValue={initial.sku} required className="font-mono uppercase" />
           </Field>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-3 sm:gap-4">
             <Field label="Price ($)" htmlFor="price" error={e.price}>
               <Input id="price" name="price" type="number" min={0} defaultValue={initial.price} required />
             </Field>

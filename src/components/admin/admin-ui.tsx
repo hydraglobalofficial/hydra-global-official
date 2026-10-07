@@ -14,20 +14,22 @@ export function AdminHeader({
   action?: ReactNode;
 }) {
   return (
-    <div className="mb-6 flex flex-col gap-4 sm:mb-8 md:mb-10 md:flex-row md:items-end md:justify-between">
-      <div className="min-w-0 space-y-2.5">
+    <div className="mb-5 flex flex-col gap-3.5 sm:mb-8 sm:gap-4 md:mb-10 md:flex-row md:items-end md:justify-between">
+      <div className="min-w-0 space-y-2 sm:space-y-2.5">
         {eyebrow && (
           <p className="inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.28em] text-accent sm:text-[11px]">
             <span className="size-1.5 rounded-full bg-accent shadow-[0_0_10px_var(--color-accent)]" aria-hidden />
             {eyebrow}
           </p>
         )}
-        <h1 className="text-balance text-2xl font-semibold tracking-tight text-fg sm:text-3xl lg:text-[2.25rem] lg:leading-tight">
+        <h1 className="text-balance text-xl font-semibold tracking-tight text-fg sm:text-3xl lg:text-[2.25rem] lg:leading-tight">
           {title}
         </h1>
-        {description && <p className="max-w-xl text-sm leading-relaxed text-muted sm:text-[15px]">{description}</p>}
+        {description && <p className="max-w-xl text-[13px] leading-relaxed text-muted sm:text-[15px]">{description}</p>}
       </div>
-      {action ? <div className="flex shrink-0 flex-wrap items-center gap-2">{action}</div> : null}
+      {action ? (
+        <div className="flex w-full shrink-0 flex-wrap items-center gap-2 sm:w-auto">{action}</div>
+      ) : null}
     </div>
   );
 }
@@ -91,7 +93,7 @@ export function StatCard({
           {icon}
         </span>
       </div>
-      <p className="mt-3 font-mono text-2xl font-semibold tracking-tight tabular-nums text-fg sm:mt-4 sm:text-3xl">{value}</p>
+      <p className="mt-3 break-words font-mono text-xl font-semibold tracking-tight tabular-nums text-fg sm:mt-4 sm:text-3xl">{value}</p>
       {hint && <p className="mt-1.5 text-xs text-subtle">{hint}</p>}
     </Card>
   );
@@ -112,14 +114,14 @@ export function Panel({
 }) {
   return (
     <Card className={cn("flex flex-col", className)}>
-      <div className="flex items-center justify-between gap-3 border-b border-white/[0.06] bg-gradient-to-r from-white/[0.03] to-transparent px-4 py-3.5 sm:px-5 sm:py-4">
-        <h2 className="flex items-center gap-2.5 text-sm font-medium tracking-tight sm:text-[15px]">
+      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-white/[0.06] bg-gradient-to-r from-white/[0.03] to-transparent px-3.5 py-3 sm:gap-3 sm:px-5 sm:py-4">
+        <h2 className="flex min-w-0 items-center gap-2.5 text-sm font-medium tracking-tight sm:text-[15px]">
           {icon ? (
-            <span className="grid size-7 place-items-center rounded-lg border border-white/8 bg-white/[0.03]">{icon}</span>
+            <span className="grid size-7 shrink-0 place-items-center rounded-lg border border-white/8 bg-white/[0.03]">{icon}</span>
           ) : null}
-          {title}
+          <span className="truncate">{title}</span>
         </h2>
-        {action}
+        {action ? <div className="shrink-0">{action}</div> : null}
       </div>
       <div className="min-w-0 flex-1">{children}</div>
     </Card>

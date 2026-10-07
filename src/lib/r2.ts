@@ -11,7 +11,15 @@ const ALLOWED_TYPES = new Map([
   ["image/gif", "gif"],
 ]);
 
-export const R2_MAX_BYTES = 5 * 1024 * 1024; // 5 MB
+const ALLOWED_VIDEO_TYPES = new Map([
+  ["video/mp4", "mp4"],
+  ["video/webm", "webm"],
+  ["video/quicktime", "mov"],
+]);
+
+export const R2_MAX_BYTES = 5 * 1024 * 1024; // 5 MB images
+/** Showcase / install clips — keep lean for admin uploads. */
+export const R2_VIDEO_MAX_BYTES = 40 * 1024 * 1024; // 40 MB
 
 export type R2UploadResult = {
   key: string;
@@ -100,11 +108,15 @@ export function isAllowedImageType(type: string) {
   return ALLOWED_TYPES.has(type.toLowerCase());
 }
 
+export function isAllowedVideoType(type: string) {
+  return ALLOWED_VIDEO_TYPES.has(type.toLowerCase());
+}
+
 function extensionFor(type: string, filename?: string) {
-  const mapped = ALLOWED_TYPES.get(type.toLowerCase());
+  const mapped = ALLOWED_TYPES.get(type.toLowerCase()) ?? ALLOWED_VIDEO_TYPES.get(type.toLowerCase());
   if (mapped) return mapped;
   const fromName = filename?.split(".").pop()?.toLowerCase();
-  if (fromName && ["jpg", "jpeg", "png", "webp", "avif", "gif"].includes(fromName)) {
+  if (fromName && ["jpg", "jpeg", "png", "webp", "avif", "gif", "mp4", "webm", "mov"].includes(fromName)) {
     return fromName === "jpeg" ? "jpg" : fromName;
   }
   return "bin";
@@ -116,20 +128,12 @@ function buildObjectKey(folder: string, ext: string) {
   return `${safeFolder}/${stamp}/${randomUUID()}.${ext}`;
 }
 
-/** Upload a binary image buffer to Cloudflare R2 and return its public URL. */
-export async function uploadImageToR2(input: {
+async function putToR2(input: {
   body: Buffer | Uint8Array;
   contentType: string;
   filename?: string;
   folder?: string;
 }): Promise<R2UploadResult> {
-  if (!isAllowedImageType(input.contentType)) {
-    throw new Error("Only JPEG, PNG, WebP, AVIF or GIF images are allowed.");
-  }
-  if (input.body.byteLength <= 0 || input.body.byteLength > R2_MAX_BYTES) {
-    throw new Error(`Image must be between 1 byte and ${R2_MAX_BYTES / (1024 * 1024)}MB.`);
-  }
-
   const ext = extensionFor(input.contentType, input.filename);
   const key = buildObjectKey(input.folder ?? "products", ext);
   const body = Buffer.isBuffer(input.body) ? input.body : Buffer.from(input.body);
@@ -150,4 +154,36 @@ export async function uploadImageToR2(input: {
     contentType: input.contentType,
     bytes: body.byteLength,
   };
+}
+
+/** Upload a binary image buffer to Cloudflare R2 and return its public URL. */
+export async function uploadImageToR2(input: {
+  body: Buffer | Uint8Array;
+  contentType: string;
+  filename?: string;
+  folder?: string;
+}): Promise<R2UploadResult> {
+  if (!isAllowedImageType(input.contentType)) {
+    throw new Error("Only JPEG, PNG, WebP, AVIF or GIF images are allowed.");
+  }
+  if (input.body.byteLength <= 0 || input.body.byteLength > R2_MAX_BYTES) {
+    throw new Error(`Image must be between 1 byte and ${R2_MAX_BYTES / (1024 * 1024)}MB.`);
+  }
+  return putToR2(input);
+}
+
+/** Upload mp4/webm (or mov) to Cloudflare R2. */
+export async function uploadVideoToR2(input: {
+  body: Buffer | Uint8Array;
+  contentType: string;
+  filename?: string;
+  folder?: string;
+}): Promise<R2UploadResult> {
+  if (!isAllowedVideoType(input.contentType)) {
+    throw new Error("Only MP4, WebM or MOV videos are allowed.");
+  }
+  if (input.body.byteLength <= 0 || input.body.byteLength > R2_VIDEO_MAX_BYTES) {
+    throw new Error(`Video must be between 1 byte and ${R2_VIDEO_MAX_BYTES / (1024 * 1024)}MB.`);
+  }
+  return putToR2({ ...input, folder: input.folder ?? "videos" });
 }

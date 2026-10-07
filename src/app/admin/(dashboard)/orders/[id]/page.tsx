@@ -39,36 +39,59 @@ export default async function AdminOrderPage({ params }: PageProps<"/admin/order
       <div className="grid gap-6 xl:grid-cols-[1fr_22rem] xl:gap-8">
         <div className="space-y-6">
           <Panel title="Line items">
-            <Table>
-              <thead>
-                <tr>
-                  <th>Item</th>
-                  <th>SKU</th>
-                  <th className="text-right">Qty</th>
-                  <th className="text-right">Price</th>
-                  <th className="text-right">Total</th>
-                </tr>
-              </thead>
-              <tbody>
-                {order.items.map((i) => (
-                  <tr key={i.id}>
-                    <td>
-                      <Link href={`/product/${i.product.slug}`} target="_blank" className="hover:text-accent">
+            <ul className="divide-y divide-white/[0.05] sm:hidden">
+              {order.items.map((i) => (
+                <li key={i.id} className="px-4 py-3.5">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <Link href={`/product/${i.product.slug}`} target="_blank" className="text-sm hover:text-accent">
                         {i.name}
                       </Link>
-                      {i.variantName && <p className="text-xs text-subtle">{i.variantName}</p>}
-                    </td>
-                    <td className="font-mono text-xs text-muted">{i.sku}</td>
-                    <td className="text-right font-mono tabular-nums">{i.quantity}</td>
-                    <td className="text-right font-mono tabular-nums">{formatPrice(i.unitPrice)}</td>
-                    <td className="text-right font-mono tabular-nums">{formatPrice(i.unitPrice * i.quantity)}</td>
+                      {i.variantName && <p className="mt-0.5 text-xs text-subtle">{i.variantName}</p>}
+                      <p className="mt-1 font-mono text-[11px] text-muted">{i.sku}</p>
+                    </div>
+                    <div className="shrink-0 text-right">
+                      <p className="font-mono text-sm tabular-nums">{formatPrice(i.unitPrice * i.quantity)}</p>
+                      <p className="mt-1 text-[11px] text-subtle">
+                        {i.quantity} × {formatPrice(i.unitPrice)}
+                      </p>
+                    </div>
+                  </div>
+                </li>
+              ))}
+            </ul>
+            <div className="hidden sm:block">
+              <Table>
+                <thead>
+                  <tr>
+                    <th>Item</th>
+                    <th>SKU</th>
+                    <th className="text-right">Qty</th>
+                    <th className="text-right">Price</th>
+                    <th className="text-right">Total</th>
                   </tr>
-                ))}
-              </tbody>
-            </Table>
+                </thead>
+                <tbody>
+                  {order.items.map((i) => (
+                    <tr key={i.id}>
+                      <td>
+                        <Link href={`/product/${i.product.slug}`} target="_blank" className="hover:text-accent">
+                          {i.name}
+                        </Link>
+                        {i.variantName && <p className="text-xs text-subtle">{i.variantName}</p>}
+                      </td>
+                      <td className="font-mono text-xs text-muted">{i.sku}</td>
+                      <td className="text-right font-mono tabular-nums">{i.quantity}</td>
+                      <td className="text-right font-mono tabular-nums">{formatPrice(i.unitPrice)}</td>
+                      <td className="text-right font-mono tabular-nums">{formatPrice(i.unitPrice * i.quantity)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </Table>
+            </div>
           </Panel>
 
-          <Card className="ml-auto max-w-sm space-y-2 p-5 text-sm">
+          <Card className="w-full space-y-2 p-4 text-sm sm:ml-auto sm:max-w-sm sm:p-5">
             <div className="flex justify-between">
               <span className="text-muted">Subtotal</span>
               <span className="font-mono tabular-nums">{formatPrice(order.subtotal)}</span>
@@ -89,13 +112,13 @@ export default async function AdminOrderPage({ params }: PageProps<"/admin/order
             </div>
           </Card>
 
-          <Card className="grid gap-4 p-5 text-sm md:grid-cols-3">
+          <Card className="grid gap-3 p-4 text-sm sm:gap-4 sm:p-5 md:grid-cols-3">
             <p className="flex items-start gap-2">
-              <Phone size={14} className="mt-0.5 text-accent" />
+              <Phone size={14} className="mt-0.5 shrink-0 text-accent" />
               <a href={`tel:${order.phone}`}>{order.phone}</a>
             </p>
             <p className="flex items-start gap-2">
-              <Mail size={14} className="mt-0.5 text-accent" />
+              <Mail size={14} className="mt-0.5 shrink-0 text-accent" />
               <a href={`mailto:${order.email}`} className="break-all">
                 {order.email}
               </a>
@@ -113,7 +136,7 @@ export default async function AdminOrderPage({ params }: PageProps<"/admin/order
             {order.notes && <p className="text-muted md:col-span-3">Instructions: {order.notes}</p>}
           </Card>
         </div>
-        <Card className="h-fit p-5">
+        <Card className="h-fit p-4 sm:p-5">
           <OrderUpdateForm
             id={order.id}
             status={order.status}

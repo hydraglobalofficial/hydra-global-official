@@ -18,6 +18,7 @@ import type {
   HomeHeroContent,
   HowItWorksContent,
   NewsletterContent,
+  ShowcaseContent,
 } from "@/content/site-sections";
 import { clampText, safeInternalHref, safeMediaUrl, safeSlug, safeVideoUrl } from "@/lib/content-safety";
 import {
@@ -27,6 +28,7 @@ import {
   normalizeHowItWorksContent,
   normalizeInstallationContent,
   normalizeNewsletterContent,
+  normalizeShowcaseContent,
 } from "@/lib/normalize-sections";
 import type { InstallationContent } from "@/content/installation";
 
@@ -681,6 +683,54 @@ export async function saveNewsletterSection(_prev: FormState, formData: FormData
   } catch (error) {
     console.error("[saveNewsletterSection]", error);
     return { status: "error", message: "Could not publish newsletter block." };
+  }
+}
+
+export async function saveShowcaseSection(_prev: FormState, formData: FormData): Promise<FormState> {
+  await requireAdmin();
+  try {
+    const titles = formData.getAll("videoTitle").map(String);
+    const captions = formData.getAll("videoCaption").map(String);
+    const durations = formData.getAll("videoDuration").map(String);
+    const posters = formData.getAll("videoPoster").map(String);
+    const videoUrls = formData.getAll("videoUrl").map(String);
+    const hrefs = formData.getAll("videoHref").map(String);
+
+    const videos = titles.map((_, i) => ({
+      title: titles[i] ?? "",
+      caption: captions[i] ?? "",
+      duration: durations[i] ?? "",
+      poster: posters[i] ?? "",
+      videoUrl: videoUrls[i] ?? "",
+      href: hrefs[i] ?? "/shop",
+    }));
+
+    const data = normalizeShowcaseContent({
+      eyebrow: clampText(formData.get("eyebrow"), 60),
+      title: clampText(formData.get("title"), 80),
+      titleMuted: clampText(formData.get("titleMuted"), 80),
+      channelLabel: clampText(formData.get("channelLabel"), 40),
+      channelHref: clampText(formData.get("channelHref"), 240),
+      videos,
+    } satisfies ShowcaseContent);
+
+    if (data.videos.length === 0) {
+      return { status: "error", message: "Add at least one video card with title, caption, duration and poster." };
+    }
+
+    await db.siteSection.upsert({
+      where: { key: "home.showcase" },
+      create: { key: "home.showcase", title: "Home · Video showcase", data },
+      update: { data, title: "Home · Video showcase" },
+    });
+    updateTag(CONTENT_TAG);
+    revalidatePath("/");
+    revalidatePath("/admin/content/sections/home.showcase");
+    await bumpAdminContentHub();
+    return { status: "success", message: "Video showcase published." };
+  } catch (error) {
+    console.error("[saveShowcaseSection]", error);
+    return { status: "error", message: "Could not publish video showcase." };
   }
 }
 

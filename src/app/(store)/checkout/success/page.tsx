@@ -38,7 +38,7 @@ export default async function CheckoutSuccessPage({ searchParams }: PageProps<"/
   const firstName = order.customerName.trim().split(/\s+/)[0] || "there";
 
   return (
-    <div className="container-page max-w-3xl py-20">
+    <div className="container-page max-w-3xl py-12 sm:py-16 md:py-20">
       <ClearCart />
       <OrderReadyAlert orderNumber={order.number} customerName={order.customerName} />
       <TrackEvent
@@ -57,58 +57,58 @@ export default async function CheckoutSuccessPage({ searchParams }: PageProps<"/
         }}
       />
       <div className="text-center">
-        <div className="relative mx-auto mb-8 grid size-20 place-items-center">
+        <div className="relative mx-auto mb-6 grid size-16 place-items-center sm:mb-8 sm:size-20">
           <div className="absolute inset-0 rounded-full bg-success/30 blur-xl animate-pulse-glow" />
-          <CheckCircle2 size={56} className="relative text-success" />
+          <CheckCircle2 size={48} className="relative text-success sm:size-14" />
         </div>
-        <h1 className="text-4xl font-semibold tracking-tight md:text-5xl">Thank you, {firstName}!</h1>
-        <p className="mt-4 text-lg text-muted">Your order is confirmed. We&apos;ll call you shortly to confirm delivery details.</p>
+        <h1 className="text-3xl font-semibold tracking-tight text-balance sm:text-4xl md:text-5xl">Thank you, {firstName}!</h1>
+        <p className="mt-3 text-base text-muted sm:mt-4 sm:text-lg">Your order is confirmed. We&apos;ll call you shortly to confirm delivery details.</p>
       </div>
 
-      <div className="glass mt-12 space-y-6 rounded-3xl p-8">
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <div>
+      <div className="glass mt-8 space-y-5 rounded-2xl p-5 sm:mt-12 sm:space-y-6 sm:rounded-3xl sm:p-8">
+        <div className="flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
+          <div className="min-w-0">
             <p className="text-xs uppercase tracking-[0.2em] text-muted">Order number</p>
-            <p className="mt-1 font-mono text-xl tracking-wider">{order.number}</p>
+            <p className="mt-1 break-all font-mono text-lg tracking-wider sm:text-xl">{order.number}</p>
           </div>
-          <div className="text-right">
+          <div className="sm:text-right">
             <p className="text-xs uppercase tracking-[0.2em] text-muted">
               Total ({order.paymentMethod === "COD" ? "Pay on delivery" : order.paymentMethod})
             </p>
             <p className="mt-1 font-mono text-xl">{formatPrice(order.total)}</p>
           </div>
         </div>
-        <ul className="space-y-2 border-t border-line pt-6 text-sm">
+        <ul className="space-y-2 border-t border-line pt-5 text-sm sm:pt-6">
           {order.items.map((i, idx) => (
-            <li key={idx} className="flex justify-between text-muted">
-              <span>
+            <li key={idx} className="flex justify-between gap-3 text-muted">
+              <span className="min-w-0 break-words">
                 {i.name}
                 {i.variantName && ` · ${i.variantName}`}
               </span>
-              <span className="font-mono">×{i.quantity}</span>
+              <span className="shrink-0 font-mono">×{i.quantity}</span>
             </li>
           ))}
         </ul>
-        <div className="grid gap-4 border-t border-line pt-6 text-sm sm:grid-cols-2">
-          <p className="flex items-center gap-3 text-muted">
-            <Package size={16} className="text-accent" /> Estimated delivery{" "}
+        <div className="grid gap-4 border-t border-line pt-5 text-sm sm:grid-cols-2 sm:pt-6">
+          <p className="flex items-start gap-3 text-muted">
+            <Package size={16} className="mt-0.5 shrink-0 text-accent" /> Estimated delivery{" "}
             {["Dhaka", "Chattogram", "Sylhet", "New York", "London", "Dubai", "Singapore", "Tokyo", "Sydney", "Toronto", "Berlin"].includes(
               order.city,
             ) || order.country === "Bangladesh"
               ? "2–4 business days"
               : "4–8 business days"}
           </p>
-          <p className="flex items-center gap-3 text-muted">
-            <Phone size={16} className="text-accent" /> Questions? {siteConfig.phone}
+          <p className="flex items-start gap-3 text-muted">
+            <Phone size={16} className="mt-0.5 shrink-0 text-accent" /> Questions? {siteConfig.phone}
           </p>
         </div>
       </div>
 
-      <div className="mt-10 flex flex-wrap justify-center gap-3">
-        <ButtonLink href="/installation" variant="outline">
+      <div className="mt-8 flex flex-col gap-3 sm:mt-10 sm:flex-row sm:flex-wrap sm:justify-center">
+        <ButtonLink href="/installation" variant="outline" className="min-h-11 w-full sm:w-auto">
           View installation guide
         </ButtonLink>
-        <ButtonLink href="/shop">Continue shopping</ButtonLink>
+        <ButtonLink href="/shop" className="min-h-11 w-full sm:w-auto">Continue shopping</ButtonLink>
       </div>
     </div>
   );

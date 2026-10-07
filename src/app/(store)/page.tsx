@@ -9,7 +9,7 @@ import { SectionDivider } from "@/components/ui/section-divider";
 import { ShopByDevice } from "@/components/sections/home-sections";
 import { CollectionBento } from "@/components/sections/collection-bento";
 import { HomeBelowFold } from "@/components/sections/home-below-fold";
-import { HydraRise } from "@/components/hydra/hydra-rise-lazy";
+import { HydraRise } from "@/components/hydra/hydra-rise";
 import { JsonLd, organizationJsonLd } from "@/lib/seo";
 import { getFeaturedProducts, getNavigationData } from "@/server/queries/catalog";
 import { defaultCollectionsContent, defaultHomeHeroContent } from "@/content/site-sections";
@@ -58,7 +58,7 @@ export default async function HomePage() {
         howItWorks={howItWorks}
         newsletter={newsletter}
         bestsellers={
-          <section className="container-page py-24">
+          <section className="container-page py-14 sm:py-20 md:py-24">
             <SectionHeading
               eyebrow="Bestsellers"
               title={
@@ -67,7 +67,7 @@ export default async function HomePage() {
                 </>
               }
               action={
-                <ButtonLink href="/shop" variant="outline">
+                <ButtonLink href="/shop" variant="outline" className="min-h-11">
                   View all <ArrowRight size={16} />
                 </ButtonLink>
               }

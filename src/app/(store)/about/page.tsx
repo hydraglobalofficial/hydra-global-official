@@ -4,7 +4,6 @@ import {
   ArrowRight,
   ArrowUpRight,
   Briefcase,
-  Building2,
   CheckCircle2,
   Eye,
   Handshake,
@@ -46,15 +45,15 @@ export default async function AboutPage() {
         <div className="pointer-events-none absolute -left-24 top-1/3 size-[28rem] rounded-full bg-accent/20 blur-[140px]" />
         <div className="pointer-events-none absolute -right-16 bottom-0 size-80 rounded-full bg-white/[0.04] blur-[110px]" />
 
-        <div className="container-page relative grid min-h-[min(72vh,40rem)] items-center gap-10 pb-10 pt-16 md:gap-14 md:pt-24 lg:grid-cols-[1.15fr_1fr] lg:pb-14">
-          <Reveal className="space-y-7 md:space-y-8">
+        <div className="container-page relative grid min-h-[min(72vh,40rem)] items-center gap-8 pb-8 pt-12 sm:gap-10 sm:pb-10 sm:pt-16 md:gap-14 md:pt-24 lg:grid-cols-[1.15fr_1fr] lg:pb-14">
+          <Reveal className="min-w-0 space-y-6 sm:space-y-7 md:space-y-8">
             <Eyebrow>{content.hero.eyebrow}</Eyebrow>
-            <h1 className="text-balance text-5xl font-semibold tracking-tight md:text-7xl lg:text-[5.25rem] lg:leading-[0.95]">
+            <h1 className="text-balance text-[2.35rem] font-semibold tracking-tight sm:text-5xl md:text-7xl lg:text-[5.25rem] lg:leading-[0.95]">
               {content.hero.title}
               <br />
               <span className="text-accent">{content.hero.titleAccent}</span>
             </h1>
-            <p className="max-w-xl text-lg text-pretty leading-relaxed text-muted md:text-xl">{content.hero.description}</p>
+            <p className="max-w-xl text-base text-pretty leading-relaxed text-muted sm:text-lg md:text-xl">{content.hero.description}</p>
             <div className="flex flex-wrap gap-3 pt-1">
               <ButtonLink href="/shop" size="lg">
                 Shop accessories <ArrowRight size={18} />
@@ -73,19 +72,19 @@ export default async function AboutPage() {
           <HeroEmblem />
         </div>
 
-        <div className="container-page relative pb-20 md:pb-24">
+        <div className="container-page relative pb-14 sm:pb-20 md:pb-24">
           <RevealGroup
-            className="card-premium grid grid-cols-2 overflow-hidden rounded-[1.75rem] md:grid-cols-5 md:divide-x md:divide-white/[0.06]"
+            className="card-premium grid grid-cols-2 overflow-hidden rounded-[1.25rem] sm:rounded-[1.75rem] md:grid-cols-5 md:divide-x md:divide-white/[0.06]"
             stagger={0.06}
           >
             {content.stats.map((s) => (
               <RevealItem
                 key={s.label}
-                className="group relative border-b border-white/[0.06] px-5 py-7 text-center last:border-b-0 odd:border-r odd:border-white/[0.06] md:border-b-0 md:border-r-0 md:px-6 md:py-9 odd:md:border-r-0"
+                className="group relative min-w-0 border-b border-white/[0.06] px-3 py-5 text-center last:border-b-0 odd:border-r odd:border-white/[0.06] sm:px-5 sm:py-7 md:border-b-0 md:border-r-0 md:px-6 md:py-9 odd:md:border-r-0"
               >
                 <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-accent/[0.07] to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
-                <p className="relative text-3xl font-semibold tracking-tight md:text-4xl">{s.value}</p>
-                <p className="relative mt-2 text-[10px] uppercase tracking-[0.2em] text-muted md:text-xs">{s.label}</p>
+                <p className="relative text-2xl font-semibold tracking-tight sm:text-3xl md:text-4xl">{s.value}</p>
+                <p className="relative mt-1.5 text-[9px] uppercase leading-snug tracking-[0.16em] text-muted sm:mt-2 sm:text-[10px] sm:tracking-[0.2em] md:text-xs">{s.label}</p>
               </RevealItem>
             ))}
           </RevealGroup>
@@ -162,13 +161,13 @@ export default async function AboutPage() {
         </div>
       </section>
 
-      <section className="container-page grid gap-10 py-24 lg:grid-cols-[0.85fr_1.15fr] lg:gap-14">
-        <div className="lg:sticky lg:top-[7.25rem] lg:self-start">
+      <section className="container-page grid gap-8 py-14 sm:gap-10 sm:py-20 md:py-24 lg:grid-cols-[0.85fr_1.15fr] lg:gap-14">
+        <div className="min-w-0 lg:sticky lg:top-[7.25rem] lg:self-start">
           <Eyebrow>Core values</Eyebrow>
-          <h2 className="mt-4 text-4xl font-semibold tracking-tight text-balance md:text-5xl">
+          <h2 className="mt-4 text-3xl font-semibold tracking-tight text-balance sm:text-4xl md:text-5xl">
             {content.valuesIntro.title} <span className="text-muted">{content.valuesIntro.titleMuted}</span>
           </h2>
-          <p className="mt-5 max-w-md text-lg text-muted">{content.valuesIntro.description}</p>
+          <p className="mt-4 max-w-md text-base text-muted sm:mt-5 sm:text-lg">{content.valuesIntro.description}</p>
           <p className="mt-8 hidden font-mono text-[11px] uppercase tracking-[0.28em] text-subtle lg:block">
             Scroll to stack →
           </p>
@@ -240,13 +239,7 @@ export default async function AboutPage() {
 
       {company.visible && (
         <section id="corporate" className="scroll-mt-28 border-y border-line/60 bg-white/[0.015] py-24 md:py-28">
-          <div
-            className={
-              company.facts.length > 0
-                ? "container-page grid gap-12 lg:grid-cols-[0.95fr_1.05fr] lg:gap-16"
-                : "container-page max-w-3xl"
-            }
-          >
+          <div className="container-page max-w-3xl">
             <Reveal>
               <Eyebrow>{company.eyebrow}</Eyebrow>
               <h2 className="mt-4 text-4xl font-semibold tracking-tight text-balance md:text-5xl">
@@ -274,32 +267,6 @@ export default async function AboutPage() {
                 </ButtonLink>
               )}
             </Reveal>
-
-            {company.facts.length > 0 && (
-              <Reveal delay={0.1}>
-                <div className="card-premium relative overflow-hidden rounded-[2rem]">
-                  <div className="flex items-center justify-between border-b border-line px-7 py-5">
-                    <div className="flex items-center gap-3">
-                      <Building2 size={18} className="text-accent" />
-                      <p className="font-medium">{company.sheetTitle}</p>
-                    </div>
-                    {company.sheetBadge ? (
-                      <span className="rounded-full border border-success/30 bg-success/10 px-2.5 py-0.5 text-[11px] font-medium uppercase tracking-wider text-success">
-                        {company.sheetBadge}
-                      </span>
-                    ) : null}
-                  </div>
-                  <dl className="divide-y divide-line">
-                    {company.facts.map((row) => (
-                      <div key={row.label} className="grid gap-1 px-7 py-4 sm:grid-cols-[12rem_1fr] sm:gap-6">
-                        <dt className="text-sm text-muted">{row.label}</dt>
-                        <dd className="font-mono text-sm text-fg">{row.value}</dd>
-                      </div>
-                    ))}
-                  </dl>
-                </div>
-              </Reveal>
-            )}
           </div>
         </section>
       )}
@@ -308,27 +275,27 @@ export default async function AboutPage() {
         <Reveal>
           <div className="card-premium relative overflow-hidden rounded-[2rem] p-1">
             <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,rgba(30,64,175,0.22),transparent_45%),radial-gradient(ellipse_at_bottom_right,rgba(255,255,255,0.05),transparent_40%)]" />
-            <div className="relative grid gap-px overflow-hidden rounded-[1.85rem] bg-white/[0.04] lg:grid-cols-2">
-              <div className="relative overflow-hidden bg-black/40 p-8 md:p-10">
+            <div className="relative grid gap-px overflow-hidden rounded-[1.35rem] bg-white/[0.04] sm:rounded-[1.85rem] lg:grid-cols-2">
+              <div className="relative overflow-hidden bg-black/40 p-6 sm:p-8 md:p-10">
                 <div className="pointer-events-none absolute -bottom-24 -right-16 size-72 rounded-full bg-accent/20 blur-3xl" />
                 <Briefcase className="relative text-accent" size={26} strokeWidth={1.6} />
-                <h3 className="relative mt-6 text-2xl font-semibold tracking-tight md:text-3xl">{content.careers.title}</h3>
-                <p className="relative mt-3 max-w-md text-muted">{content.careers.text}</p>
+                <h3 className="relative mt-6 text-xl font-semibold tracking-tight sm:text-2xl md:text-3xl">{content.careers.title}</h3>
+                <p className="relative mt-3 max-w-md text-sm text-muted sm:text-base">{content.careers.text}</p>
                 <a
                   href={`mailto:careers@hydraglobal.com?subject=${encodeURIComponent("Careers at HYDRA")}`}
-                  className="relative mt-8 inline-flex items-center gap-2 rounded-full bg-fg px-6 py-3 text-sm font-medium text-black transition-transform hover:scale-[1.03]"
+                  className="relative mt-8 inline-flex min-h-11 items-center gap-2 rounded-full bg-fg px-6 py-3 text-sm font-medium text-black transition-transform hover:scale-[1.03]"
                 >
                   {content.careers.cta} <ArrowRight size={16} />
                 </a>
               </div>
-              <div className="relative overflow-hidden bg-black/40 p-8 md:p-10">
+              <div className="relative overflow-hidden bg-black/40 p-6 sm:p-8 md:p-10">
                 <div className="pointer-events-none absolute -bottom-24 -right-16 size-72 rounded-full bg-white/[0.06] blur-3xl" />
                 <Handshake className="relative text-accent" size={26} strokeWidth={1.6} />
-                <h3 className="relative mt-6 text-2xl font-semibold tracking-tight md:text-3xl">{content.partner.title}</h3>
-                <p className="relative mt-3 max-w-md text-muted">{content.partner.text}</p>
+                <h3 className="relative mt-6 text-xl font-semibold tracking-tight sm:text-2xl md:text-3xl">{content.partner.title}</h3>
+                <p className="relative mt-3 max-w-md text-sm text-muted sm:text-base">{content.partner.text}</p>
                 <Link
                   href="/contact?topic=partnership#write"
-                  className="relative mt-8 inline-flex items-center gap-2 rounded-full border border-line-strong px-6 py-3 text-sm text-fg transition-colors hover:border-accent/40 hover:bg-accent/10"
+                  className="relative mt-8 inline-flex min-h-11 items-center gap-2 rounded-full border border-line-strong px-6 py-3 text-sm text-fg transition-colors hover:border-accent/40 hover:bg-accent/10"
                 >
                   {content.partner.cta} <ArrowRight size={16} />
                 </Link>

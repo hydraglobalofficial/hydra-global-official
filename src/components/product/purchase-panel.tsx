@@ -59,12 +59,12 @@ export function PurchasePanel({ product, variants }: Props) {
   }
 
   return (
-    <div className="space-y-7">
-      <div className="flex items-baseline gap-3">
-        <span className="font-mono text-4xl tabular-nums">{formatPrice(price)}</span>
+    <div className="space-y-6 sm:space-y-7">
+      <div className="flex flex-wrap items-baseline gap-2 sm:gap-3">
+        <span className="font-mono text-3xl tabular-nums sm:text-4xl">{formatPrice(price)}</span>
         {off > 0 && (
           <>
-            <span className="font-mono text-lg text-subtle line-through tabular-nums">{formatPrice(product.compareAtPrice!)}</span>
+            <span className="font-mono text-base text-subtle line-through tabular-nums sm:text-lg">{formatPrice(product.compareAtPrice!)}</span>
             <span className="rounded-full bg-accent/10 px-2.5 py-1 text-xs font-medium text-accent">Save {off}%</span>
           </>
         )}
@@ -87,7 +87,7 @@ export function PurchasePanel({ product, variants }: Props) {
                 disabled={v.stock <= 0}
                 aria-pressed={v.id === variantId}
                 className={cn(
-                  "rounded-full border px-5 py-2.5 text-sm transition-all disabled:cursor-not-allowed disabled:line-through disabled:opacity-40",
+                  "min-h-11 rounded-full border px-5 py-2.5 text-sm transition-all disabled:cursor-not-allowed disabled:line-through disabled:opacity-40",
                   v.id === variantId
                     ? "border-accent bg-accent/10 text-fg shadow-[0_0_20px_-6px_var(--color-accent)]"
                     : "border-line text-muted hover:border-line-strong hover:text-fg",
@@ -107,33 +107,35 @@ export function PurchasePanel({ product, variants }: Props) {
         </span>
       </div>
 
-      <div className="flex flex-col gap-3 sm:flex-row">
-        <div className="flex h-13 items-center justify-between rounded-full border border-line px-2 sm:w-36">
-          <button
-            type="button"
-            className="grid size-9 place-items-center rounded-full text-muted hover:bg-white/5 hover:text-fg"
-            onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-            aria-label="Decrease quantity"
-          >
-            <Minus size={14} />
-          </button>
-          <span className="font-mono tabular-nums" aria-live="polite">{quantity}</span>
-          <button
-            type="button"
-            className="grid size-9 place-items-center rounded-full text-muted hover:bg-white/5 hover:text-fg disabled:opacity-30"
-            onClick={() => setQuantity((q) => Math.min(available, q + 1))}
-            disabled={quantity >= available}
-            aria-label="Increase quantity"
-          >
-            <Plus size={14} />
-          </button>
+      <div className="sticky bottom-0 z-30 -mx-4 mt-2 border-t border-line/80 bg-black/90 px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur-xl sm:static sm:mx-0 sm:mt-0 sm:border-0 sm:bg-transparent sm:p-0 sm:backdrop-blur-none">
+        <div className="flex flex-col gap-2.5 sm:flex-row sm:gap-3">
+          <div className="flex h-12 items-center justify-between rounded-full border border-line px-1.5 sm:h-13 sm:w-40">
+            <button
+              type="button"
+              className="touch-target grid place-items-center rounded-full text-muted hover:bg-white/5 hover:text-fg"
+              onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+              aria-label="Decrease quantity"
+            >
+              <Minus size={14} />
+            </button>
+            <span className="font-mono tabular-nums" aria-live="polite">{quantity}</span>
+            <button
+              type="button"
+              className="touch-target grid place-items-center rounded-full text-muted hover:bg-white/5 hover:text-fg disabled:opacity-30"
+              onClick={() => setQuantity((q) => Math.min(available, q + 1))}
+              disabled={quantity >= available}
+              aria-label="Increase quantity"
+            >
+              <Plus size={14} />
+            </button>
+          </div>
+          <Button size="lg" variant="secondary" className="min-h-12 flex-1" disabled={soldOut} onClick={() => addToCart(true)}>
+            <ShoppingBag size={18} /> Add to cart
+          </Button>
+          <Button size="lg" className="min-h-12 flex-1" disabled={soldOut} onClick={() => addToCart(false)}>
+            <Zap size={18} /> Buy now
+          </Button>
         </div>
-        <Button size="lg" variant="secondary" className="flex-1" disabled={soldOut} onClick={() => addToCart(true)}>
-          <ShoppingBag size={18} /> Add to cart
-        </Button>
-        <Button size="lg" className="flex-1" disabled={soldOut} onClick={() => addToCart(false)}>
-          <Zap size={18} /> Buy now
-        </Button>
       </div>
 
       <p className="flex items-center gap-2 text-xs text-muted">

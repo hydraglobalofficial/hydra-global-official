@@ -4,6 +4,7 @@ import {
   defaultHomeHeroContent,
   defaultHowItWorksContent,
   defaultNewsletterContent,
+  defaultShowcaseContent,
   type AboutContent,
   type CollectionsContent,
   type HeroSlide,
@@ -11,8 +12,18 @@ import {
   type HomeHeroContent,
   type HowItWorksContent,
   type NewsletterContent,
+  type ShowcaseContent,
+  type ShowcaseVideoItem,
 } from "@/content/site-sections";
-import { asStringArray, clampText, safeInternalHref, safeMediaUrl, safeSlug, safeVideoUrl } from "@/lib/content-safety";
+import {
+  asStringArray,
+  clampText,
+  safeInternalHref,
+  safeMediaUrl,
+  safeSlug,
+  safeVideoUrl,
+  safeYoutubeUrl,
+} from "@/lib/content-safety";
 import { defaultInstallationContent, type InstallationContent } from "@/content/installation";
 
 const HERO_VISUALS = new Set<HeroVisualKey>(["phone", "glass", "privacy", "image"]);
@@ -276,7 +287,7 @@ export function normalizeCollectionsContent(raw: unknown): CollectionsContent {
           return slug && name && image ? { slug, name, description, image } : null;
         })
         .filter((row): row is CollectionsContent["items"][number] => !!row)
-        .slice(0, 5)
+        .slice(0, 8)
     : [];
 
   return {
@@ -320,6 +331,38 @@ function normalizeHeroSlide(row: unknown, fallback?: HeroSlide): HeroSlide | nul
     secondaryHref,
     visual,
     image,
+  };
+}
+
+export function normalizeShowcaseContent(raw: unknown): ShowcaseContent {
+  const data = isRecord(raw) ? raw : {};
+  const defaults = defaultShowcaseContent;
+
+  const videos: ShowcaseVideoItem[] = Array.isArray(data.videos)
+    ? data.videos
+        .map((row, i) => {
+          if (!isRecord(row)) return null;
+          const fallback = defaults.videos[i];
+          const title = clampText(row.title, 100, fallback?.title ?? "");
+          const caption = clampText(row.caption, 200, fallback?.caption ?? "");
+          const duration = clampText(row.duration, 40, fallback?.duration ?? "");
+          const poster = safeMediaUrl(row.poster, fallback?.poster ?? "");
+          const videoUrl = safeYoutubeUrl(row.videoUrl, "") || safeYoutubeUrl(row.youtubeId, "");
+          const href = safeInternalHref(row.href, fallback?.href ?? "/shop");
+          if (!title || !caption || !duration || !poster) return null;
+          return { title, caption, duration, poster, videoUrl, href };
+        })
+        .filter((row): row is ShowcaseVideoItem => !!row)
+        .slice(0, 6)
+    : [];
+
+  return {
+    eyebrow: clampText(data.eyebrow, 60, defaults.eyebrow),
+    title: clampText(data.title, 80, defaults.title),
+    titleMuted: clampText(data.titleMuted, 80, defaults.titleMuted),
+    channelLabel: clampText(data.channelLabel, 40, defaults.channelLabel),
+    channelHref: clampText(data.channelHref, 240, defaults.channelHref) || defaults.channelHref,
+    videos: videos.length > 0 ? videos : defaults.videos,
   };
 }
 

@@ -350,6 +350,59 @@ export const defaultHomeHeroContent: HomeHeroContent = {
   ],
 };
 
+export type ShowcaseVideoItem = {
+  title: string;
+  caption: string;
+  duration: string;
+  poster: string;
+  /** YouTube watch/share/embed URL only. Empty → card links to `href`. */
+  videoUrl: string;
+  href: string;
+};
+
+export type ShowcaseContent = {
+  eyebrow: string;
+  title: string;
+  titleMuted: string;
+  channelLabel: string;
+  channelHref: string;
+  videos: ShowcaseVideoItem[];
+};
+
+export const defaultShowcaseContent: ShowcaseContent = {
+  eyebrow: "Watch & learn",
+  title: "See HYDRA",
+  titleMuted: "in action.",
+  channelLabel: "YouTube channel",
+  channelHref: "https://youtube.com/@hydraglobal",
+  videos: [
+    {
+      title: "Bubble-free install in 2 minutes",
+      caption: "The alignment frame does the work — no skill needed.",
+      duration: "Guide · 2 min",
+      poster: "/products/glass-clear.jpg",
+      videoUrl: "",
+      href: "/installation",
+    },
+    {
+      title: "Privacy glass, side by side",
+      caption: "What your neighbour on the train sees — nothing.",
+      duration: "Demo · 1 min",
+      poster: "/products/glass-privacy.jpg",
+      videoUrl: "",
+      href: "/shop?category=privacy-glass",
+    },
+    {
+      title: "Camera armor drop test",
+      caption: "Sapphire-coated rings versus a 2-meter fall.",
+      duration: "Lab · 90 sec",
+      poster: "/products/camera-lens.jpg",
+      videoUrl: "",
+      href: "/shop?category=camera-armor",
+    },
+  ],
+};
+
 export const SITE_SECTION_META = [
   {
     key: "home.hero",
@@ -362,6 +415,11 @@ export const SITE_SECTION_META = [
     description: "Full About page: hero, company overview (show/hide + public facts), mission, values, journey and CTAs.",
   },
   { key: "home.collections", title: "Home · Collections", description: "Shop-by-collection bento: heading, CTA and category cards." },
+  {
+    key: "home.showcase",
+    title: "Home · Video showcase",
+    description: "“See HYDRA in action” cards — poster image + YouTube link per card (no file upload).",
+  },
   { key: "home.howItWorks", title: "Home · How it works", description: "Checkout-to-armored steps on the homepage." },
   { key: "home.newsletter", title: "Home · Newsletter", description: "Members list signup block copy." },
   {

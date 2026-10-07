@@ -28,7 +28,7 @@ export function ProductCard({ product, priority }: { product: ProductCardData; p
     >
       <Link
         href={`/product/${product.slug}`}
-        className="card-premium group flex h-full flex-col overflow-hidden rounded-3xl hover:shadow-[0_30px_70px_-25px_rgba(30,64,175,0.4)]"
+        className="card-premium group flex h-full min-w-0 flex-col overflow-hidden rounded-2xl hover:shadow-[0_30px_70px_-25px_rgba(30,64,175,0.4)] sm:rounded-3xl"
       >
         <div className="relative aspect-square overflow-hidden bg-[radial-gradient(circle_at_50%_40%,#1a1a22_0%,#08080b_72%)]">
           <div className="bg-dots pointer-events-none absolute inset-0 opacity-40 [mask-image:radial-gradient(circle_at_50%_50%,#000,transparent_70%)]" />
@@ -40,7 +40,7 @@ export function ProductCard({ product, priority }: { product: ProductCardData; p
             priority={priority}
             sizes="(min-width: 1280px) 22vw, (min-width: 768px) 33vw, 50vw"
             className={cn(
-              "object-contain p-8 transition-all duration-700 group-hover:scale-105",
+              "object-contain p-4 transition-all duration-700 group-hover:scale-105 sm:p-8",
               secondary && "group-hover:opacity-0",
             )}
           />
@@ -50,28 +50,28 @@ export function ProductCard({ product, priority }: { product: ProductCardData; p
               alt={secondary.alt || product.name}
               fill
               sizes="(min-width: 1280px) 22vw, (min-width: 768px) 33vw, 50vw"
-              className="object-contain p-8 opacity-0 transition-all duration-700 group-hover:scale-105 group-hover:opacity-100"
+              className="object-contain p-4 opacity-0 transition-all duration-700 group-hover:scale-105 group-hover:opacity-100 sm:p-8"
             />
           ) : null}
-          <div className="absolute left-4 top-4 flex flex-col gap-2">
+          <div className="absolute left-2.5 top-2.5 flex flex-col gap-1.5 sm:left-4 sm:top-4 sm:gap-2">
             {soldOut ? <Badge tone="danger">Sold out</Badge> : off > 0 && <Badge tone="accent">-{off}%</Badge>}
             {product.featured && !soldOut && <Badge>Bestseller</Badge>}
           </div>
-          <span className="absolute right-4 top-4 grid size-9 translate-y-1 place-items-center rounded-full border border-line bg-black/60 text-fg opacity-0 backdrop-blur transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
+          <span className="absolute right-4 top-4 hidden size-9 translate-y-1 place-items-center rounded-full border border-line bg-black/60 text-fg opacity-0 backdrop-blur transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100 sm:grid">
             <ArrowUpRight size={16} />
           </span>
         </div>
 
-        <div className="flex flex-1 flex-col gap-2 p-5">
-          <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-subtle">{product.category.name}</p>
-          <h3 className="line-clamp-2 font-medium leading-snug text-fg transition-colors group-hover:text-accent">
+        <div className="flex min-w-0 flex-1 flex-col gap-1.5 p-3.5 sm:gap-2 sm:p-5">
+          <p className="truncate font-mono text-[9px] uppercase tracking-[0.18em] text-subtle sm:text-[10px] sm:tracking-[0.2em]">{product.category.name}</p>
+          <h3 className="line-clamp-2 text-sm font-medium leading-snug text-fg transition-colors group-hover:text-accent sm:text-base">
             {product.name}
           </h3>
           {product.ratingCount > 0 && <Rating value={product.ratingAverage} count={product.ratingCount} size={12} />}
-          <div className="mt-auto flex items-baseline gap-2 pt-2">
-            <span className="font-mono text-lg tabular-nums">{formatPrice(product.price)}</span>
+          <div className="mt-auto flex min-w-0 flex-wrap items-baseline gap-1.5 pt-1.5 sm:gap-2 sm:pt-2">
+            <span className="font-mono text-base tabular-nums sm:text-lg">{formatPrice(product.price)}</span>
             {off > 0 && (
-              <span className="font-mono text-sm text-subtle line-through tabular-nums">
+              <span className="font-mono text-xs text-subtle line-through tabular-nums sm:text-sm">
                 {formatPrice(product.compareAtPrice!)}
               </span>
             )}
@@ -84,7 +84,7 @@ export function ProductCard({ product, priority }: { product: ProductCardData; p
 
 export function ProductGrid({ products, priorityCount = 0 }: { products: ProductCardData[]; priorityCount?: number }) {
   return (
-    <div className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-5 xl:grid-cols-4">
+    <div className="grid grid-cols-2 gap-2.5 sm:gap-3 md:grid-cols-3 md:gap-5 xl:grid-cols-4">
       {products.map((p, i) => (
         <ProductCard key={p.id} product={p} priority={i < priorityCount} />
       ))}

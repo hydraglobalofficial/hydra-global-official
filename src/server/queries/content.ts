@@ -8,11 +8,13 @@ import {
   defaultHomeHeroContent,
   defaultHowItWorksContent,
   defaultNewsletterContent,
+  defaultShowcaseContent,
   type AboutContent,
   type CollectionsContent,
   type HomeHeroContent,
   type HowItWorksContent,
   type NewsletterContent,
+  type ShowcaseContent,
 } from "@/content/site-sections";
 import { defaultInstallationContent, type InstallationContent } from "@/content/installation";
 import { safeInternalHref } from "@/lib/content-safety";
@@ -23,6 +25,7 @@ import {
   normalizeHowItWorksContent,
   normalizeInstallationContent,
   normalizeNewsletterContent,
+  normalizeShowcaseContent,
 } from "@/lib/normalize-sections";
 import { CONTENT_TAG } from "./catalog";
 
@@ -106,6 +109,19 @@ export const getHomeHeroContent = unstable_cache(
     }
   },
   ["site-section-home-hero"],
+  { tags: [CONTENT_TAG], revalidate: 3600 },
+);
+
+export const getShowcaseContent = unstable_cache(
+  async (): Promise<ShowcaseContent> => {
+    try {
+      const row = await db.siteSection.findUnique({ where: { key: "home.showcase" }, select: { data: true } });
+      return normalizeShowcaseContent(row?.data ?? defaultShowcaseContent);
+    } catch {
+      return defaultShowcaseContent;
+    }
+  },
+  ["site-section-showcase"],
   { tags: [CONTENT_TAG], revalidate: 3600 },
 );
 

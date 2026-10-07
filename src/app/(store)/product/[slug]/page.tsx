@@ -63,30 +63,30 @@ export default async function ProductPage({ params }: PageProps<"/product/[slug]
         ]}
       />
 
-      <div className="container-page py-8">
-        <nav aria-label="Breadcrumb" className="flex flex-wrap items-center gap-1.5 text-xs text-muted">
+      <div className="container-page py-5 sm:py-8">
+        <nav aria-label="Breadcrumb" className="flex min-w-0 flex-wrap items-center gap-1.5 text-xs text-muted">
           <Link href="/" className="hover:text-fg">Home</Link>
-          <ChevronRight size={12} />
+          <ChevronRight size={12} className="shrink-0" />
           <Link href="/shop" className="hover:text-fg">Shop</Link>
-          <ChevronRight size={12} />
+          <ChevronRight size={12} className="shrink-0" />
           <Link href={`/shop?category=${product.category.slug}`} className="hover:text-fg">{product.category.name}</Link>
-          <ChevronRight size={12} />
-          <span className="text-fg">{product.name}</span>
+          <ChevronRight size={12} className="hidden shrink-0 sm:inline" />
+          <span className="hidden max-w-[12rem] truncate text-fg sm:inline md:max-w-none">{product.name}</span>
         </nav>
       </div>
 
-      <section className="container-page grid gap-10 lg:grid-cols-2 lg:gap-16">
-        <div className="lg:sticky lg:top-28 lg:self-start">
+      <section className="container-page grid gap-8 lg:grid-cols-2 lg:gap-16">
+        <div className="min-w-0 lg:sticky lg:top-28 lg:self-start">
           <ProductGallery images={product.images} name={product.name} />
         </div>
 
-        <div className="space-y-8">
-          <div className="space-y-4">
+        <div className="min-w-0 space-y-7 sm:space-y-8">
+          <div className="space-y-3 sm:space-y-4">
             <div className="flex flex-wrap items-center gap-2">
               <Badge tone="accent">{product.category.name}</Badge>
               {product.featured && <Badge>Bestseller</Badge>}
             </div>
-            <h1 className="text-3xl font-semibold tracking-tight text-balance md:text-5xl">{product.name}</h1>
+            <h1 className="text-[1.65rem] font-semibold tracking-tight text-balance sm:text-3xl md:text-5xl">{product.name}</h1>
             {product.ratingCount > 0 && (
               <a href="#reviews" className="inline-flex items-center gap-2 text-sm text-muted hover:text-fg">
                 <Rating value={product.ratingAverage} size={14} />
@@ -146,23 +146,23 @@ export default async function ProductPage({ params }: PageProps<"/product/[slug]
         </div>
       </section>
 
-      <section className="container-page grid gap-10 py-24 lg:grid-cols-2 lg:gap-16">
-        <div className="space-y-4">
-          <h2 className="text-2xl font-semibold">About this product</h2>
-          <div className="space-y-4 leading-relaxed text-muted">
+      <section className="container-page grid gap-8 py-14 sm:gap-10 sm:py-20 md:py-24 lg:grid-cols-2 lg:gap-16">
+        <div className="min-w-0 space-y-4">
+          <h2 className="text-xl font-semibold sm:text-2xl">About this product</h2>
+          <div className="space-y-4 text-sm leading-relaxed text-muted sm:text-base">
             {product.description.split(/\n{2,}/).map((para, i) => (
               <p key={i}>{para}</p>
             ))}
           </div>
         </div>
         {specs.length > 0 && (
-          <div className="space-y-4">
-            <h2 className="text-2xl font-semibold">Specifications</h2>
+          <div className="min-w-0 space-y-4">
+            <h2 className="text-xl font-semibold sm:text-2xl">Specifications</h2>
             <dl className="divide-y divide-line overflow-hidden rounded-2xl border border-line">
               {specs.map(([k, v]) => (
-                <div key={k} className="grid grid-cols-2 gap-4 bg-surface px-5 py-4 text-sm">
+                <div key={k} className="grid grid-cols-1 gap-1 bg-surface px-4 py-3.5 text-sm sm:grid-cols-2 sm:gap-4 sm:px-5 sm:py-4">
                   <dt className="text-muted">{k}</dt>
-                  <dd className="font-mono">{v}</dd>
+                  <dd className="min-w-0 break-words font-mono">{v}</dd>
                 </div>
               ))}
             </dl>
@@ -174,9 +174,9 @@ export default async function ProductPage({ params }: PageProps<"/product/[slug]
         <TrustBadges />
       </section>
 
-      <section id="reviews" className="container-page scroll-mt-28 py-24">
+      <section id="reviews" className="container-page scroll-mt-28 py-14 sm:py-20 md:py-24">
         <SectionHeading eyebrow="Reviews" title="What owners say" />
-        <div className="grid gap-12 lg:grid-cols-[20rem_1fr]">
+        <div className="grid gap-8 sm:gap-12 lg:grid-cols-[20rem_minmax(0,1fr)]">
           <div className="space-y-6">
             <div className="glass rounded-3xl p-6">
               <p className="font-mono text-5xl font-semibold">{product.ratingAverage.toFixed(1)}</p>

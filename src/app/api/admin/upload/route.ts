@@ -3,14 +3,17 @@ import { getSession } from "@/lib/auth/session";
 import { rateLimit } from "@/lib/rate-limit";
 import {
   isAllowedImageType,
+  isAllowedVideoType,
   R2_MAX_BYTES,
+  R2_VIDEO_MAX_BYTES,
   r2Configured,
   uploadImageToR2,
+  uploadVideoToR2,
 } from "@/lib/r2";
 
 export const runtime = "nodejs";
 
-const FOLDERS = new Set(["products", "content", "hero", "collections", "uploads"]);
+const FOLDERS = new Set(["products", "content", "hero", "collections", "uploads", "videos"]);
 
 export async function POST(request: NextRequest) {
   const session = await getSession();
@@ -42,32 +45,56 @@ export async function POST(request: NextRequest) {
 
   const file = form.get("file");
   if (!(file instanceof File) || file.size <= 0) {
-    return NextResponse.json({ error: "Missing image file." }, { status: 400 });
-  }
-  if (file.size > R2_MAX_BYTES) {
-    return NextResponse.json(
-      { error: `Image must be ${R2_MAX_BYTES / (1024 * 1024)}MB or smaller.` },
-      { status: 400 },
-    );
-  }
-  if (!isAllowedImageType(file.type)) {
-    return NextResponse.json(
-      { error: "Only JPEG, PNG, WebP, AVIF or GIF images are allowed." },
-      { status: 400 },
-    );
+    return NextResponse.json({ error: "Missing file." }, { status: 400 });
   }
 
-  const rawFolder = String(form.get("folder") ?? "products");
-  const folder = FOLDERS.has(rawFolder) ? rawFolder : "uploads";
+  const kindRaw = String(form.get("kind") ?? "").toLowerCase();
+  const isVideo =
+    kindRaw === "video" || isAllowedVideoType(file.type) || /\.(mp4|webm|mov)$/i.test(file.name);
+
+  if (isVideo) {
+    if (file.size > R2_VIDEO_MAX_BYTES) {
+      return NextResponse.json(
+        { error: `Video must be ${R2_VIDEO_MAX_BYTES / (1024 * 1024)}MB or smaller.` },
+        { status: 400 },
+      );
+    }
+    if (!isAllowedVideoType(file.type)) {
+      return NextResponse.json({ error: "Only MP4, WebM or MOV videos are allowed." }, { status: 400 });
+    }
+  } else {
+    if (file.size > R2_MAX_BYTES) {
+      return NextResponse.json(
+        { error: `Image must be ${R2_MAX_BYTES / (1024 * 1024)}MB or smaller.` },
+        { status: 400 },
+      );
+    }
+    if (!isAllowedImageType(file.type)) {
+      return NextResponse.json(
+        { error: "Only JPEG, PNG, WebP, AVIF or GIF images are allowed." },
+        { status: 400 },
+      );
+    }
+  }
+
+  const rawFolder = String(form.get("folder") ?? (isVideo ? "videos" : "products"));
+  const folder = FOLDERS.has(rawFolder) ? rawFolder : isVideo ? "videos" : "uploads";
 
   try {
     const buffer = Buffer.from(await file.arrayBuffer());
-    const uploaded = await uploadImageToR2({
-      body: buffer,
-      contentType: file.type,
-      filename: file.name,
-      folder,
-    });
+    const uploaded = isVideo
+      ? await uploadVideoToR2({
+          body: buffer,
+          contentType: file.type,
+          filename: file.name,
+          folder,
+        })
+      : await uploadImageToR2({
+          body: buffer,
+          contentType: file.type,
+          filename: file.name,
+          folder,
+        });
     return NextResponse.json({
       url: uploaded.url,
       key: uploaded.key,
@@ -88,6 +115,8 @@ export async function GET() {
   return NextResponse.json({
     configured: r2Configured(),
     maxBytes: R2_MAX_BYTES,
+    videoMaxBytes: R2_VIDEO_MAX_BYTES,
     accept: "image/jpeg,image/png,image/webp,image/avif,image/gif",
+    videoAccept: "video/mp4,video/webm,video/quicktime",
   });
 }

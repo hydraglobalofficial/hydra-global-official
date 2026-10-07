@@ -23,28 +23,28 @@ export function CartView() {
   }
 
   return (
-    <div className="grid gap-10 lg:grid-cols-[1fr_24rem]">
-      <ul className="divide-y divide-line rounded-3xl border border-line bg-surface px-6">
+    <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_24rem] lg:gap-10">
+      <ul className="min-w-0 divide-y divide-line rounded-2xl border border-line bg-surface px-4 sm:rounded-3xl sm:px-6">
         {lines.map((line) => (
           <CartLineItem key={`${line.productId}:${line.variantId}`} line={line} />
         ))}
       </ul>
-      <aside className="glass h-fit space-y-6 rounded-3xl p-6 lg:sticky lg:top-28">
+      <aside className="glass h-fit space-y-5 rounded-2xl p-5 sm:space-y-6 sm:rounded-3xl sm:p-6 lg:sticky lg:top-28">
         <h2 className="text-lg font-semibold">Order summary</h2>
         <FreeShippingMeter subtotal={subtotal} />
-        <div className="flex justify-between text-sm">
+        <div className="flex justify-between gap-3 text-sm">
           <span className="text-muted">Subtotal</span>
           <span className="font-mono tabular-nums">{formatPrice(subtotal)}</span>
         </div>
-        <div className="flex justify-between text-sm">
+        <div className="flex justify-between gap-3 text-sm">
           <span className="text-muted">Shipping</span>
-          <span className="text-muted">Calculated at checkout</span>
+          <span className="shrink-0 text-muted">Calculated at checkout</span>
         </div>
-        <ButtonLink href="/checkout" size="lg" className="w-full">
+        <ButtonLink href="/checkout" size="lg" className="min-h-12 w-full">
           Checkout <ArrowRight size={18} />
         </ButtonLink>
-        <p className="flex items-center justify-center gap-2 text-xs text-subtle">
-          <Lock size={12} /> Secure checkout · Pay on delivery where available
+        <p className="flex items-center justify-center gap-2 text-center text-xs text-subtle">
+          <Lock size={12} className="shrink-0" /> Secure checkout · Pay on delivery where available
         </p>
       </aside>
     </div>
