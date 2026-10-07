@@ -24,16 +24,23 @@ export default async function AdminInquiriesPage({ searchParams }: PageProps<"/a
   return (
     <>
       <AdminHeader title="Inquiries" description="Contact, support, warranty and return requests." />
-      <div className="mb-6 flex gap-1">
+      <div className="no-scrollbar mb-5 flex gap-1 overflow-x-auto pb-0.5 sm:mb-6">
         {filters.map((f) => (
-          <Link key={f} href={`/admin/inquiries?status=${f}`} className={cn("rounded-full px-3 py-1.5 text-xs", f === active ? "bg-white/10 text-fg" : "text-muted hover:text-fg")}>
+          <Link
+            key={f}
+            href={`/admin/inquiries?status=${f}`}
+            className={cn(
+              "shrink-0 rounded-full px-3 py-1.5 text-xs",
+              f === active ? "bg-white/10 text-fg" : "text-muted hover:text-fg",
+            )}
+          >
             {f.replace("_", " ").toLowerCase()}
           </Link>
         ))}
       </div>
       <div className="space-y-3">
         {inquiries.map((i) => (
-          <Card key={i.id} className="space-y-4 p-5">
+          <Card key={i.id} className="space-y-3.5 p-4 sm:space-y-4 sm:p-5">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div className="flex flex-wrap items-center gap-3">
                 <p className="font-medium">{i.name}</p>

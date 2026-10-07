@@ -9,28 +9,36 @@ export const CREST_SRC = "/products/Hydra_Animation.png";
 export const WORDMARK_SRC = "/products/Hydra.png";
 
 /**
- * TM sits above the trailing A of HYDRA.
- * Inline `left` (not Tailwind) so the class can never fail to emit and park TM at 0% (crest).
- * 16px + scale avoids Chrome min-font blow-up/clip in the header pill.
+ * TM sits at the top-right of the trailing A of HYDRA — same placement every breakpoint.
+ * Zero-size host + scaled child: Chrome min-font safe, no unscaled white bar.
  */
 function TmMark() {
   return (
     <span
       data-logo-tm
       aria-hidden
-      className="pointer-events-none absolute z-20 block select-none text-white"
+      className="pointer-events-none absolute z-20 select-none"
       style={{
-        top: 0,
-        left: "72%",
-        fontSize: 16,
-        fontWeight: 800,
-        letterSpacing: "0.05em",
-        lineHeight: 1,
-        transform: "scale(0.45)",
-        transformOrigin: "left top",
+        top: -2,
+        left: "84%",
+        width: 0,
+        height: 0,
+        overflow: "visible",
       }}
     >
-      TM
+      <span
+        className="block whitespace-nowrap text-white"
+        style={{
+          fontSize: 16,
+          fontWeight: 800,
+          letterSpacing: "0.05em",
+          lineHeight: 1,
+          transform: "scale(0.45)",
+          transformOrigin: "left top",
+        }}
+      >
+        TM
+      </span>
     </span>
   );
 }
@@ -87,6 +95,8 @@ export function WordmarkImage({
 
 /**
  * Header / footer lockup: crest + Hydra.png wordmark + TM above the A.
+ * Word box width tracks image aspect (≈3:1) so 84% stays on the A on phone + desktop.
+ * Mobile heights are slightly smaller; placement math is identical.
  */
 export function Logo({ className }: { className?: string }) {
   return (
@@ -95,7 +105,11 @@ export function Logo({ className }: { className?: string }) {
       className={cn("group relative inline-flex shrink-0 items-center gap-0 overflow-visible", className)}
       aria-label="HYDRA home"
     >
-      <span data-logo-crest className="relative block size-9 shrink-0 sm:size-11 md:size-12" style={{ marginRight: -4 }}>
+      <span
+        data-logo-crest
+        className="relative block shrink-0"
+        style={{ width: 32, height: 32, marginRight: -4 }}
+      >
         <Image
           src={MARK_SRC}
           alt=""
@@ -107,22 +121,21 @@ export function Logo({ className }: { className?: string }) {
         />
       </span>
 
+      {/* Aspect ≈ 3:1 — box matches mark so TM @ 84% lands on the A (mobile slightly smaller). */}
       <span
         data-logo-word
-        className="relative block h-9 overflow-hidden pt-2 sm:h-11 sm:pt-2.5 md:h-[3.25rem] md:pt-3"
-        style={{ width: "clamp(7.25rem, 46vw, 9.75rem)" }}
+        className="relative block shrink-0 overflow-visible"
+        style={{ width: 84, height: 28 }}
       >
-        <span className="relative block h-full overflow-hidden" style={{ width: "114%", marginLeft: "-2%" }}>
-          <Image
-            src={WORDMARK_SRC}
-            alt="HYDRA — Smart Accessories"
-            width={6516}
-            height={2172}
-            priority
-            quality={95}
-            className="h-full w-full object-contain object-left brightness-0 invert transition-opacity duration-300 group-hover:opacity-90"
-          />
-        </span>
+        <Image
+          src={WORDMARK_SRC}
+          alt="HYDRA — Smart Accessories"
+          fill
+          sizes="120px"
+          priority
+          quality={95}
+          className="object-contain object-left brightness-0 invert transition-opacity duration-300 group-hover:opacity-90"
+        />
         <TmMark />
       </span>
     </Link>

@@ -21,7 +21,6 @@ import { cn } from "@/lib/utils";
 type NavItem = {
   href: string;
   label: string;
-  short: string;
   icon: LucideIcon;
 };
 
@@ -29,27 +28,27 @@ const groups: { label: string; items: NavItem[] }[] = [
   {
     label: "Operations",
     items: [
-      { href: "/admin", label: "Overview", short: "Home", icon: LayoutDashboard },
-      { href: "/admin/orders", label: "Orders", short: "Orders", icon: ShoppingCart },
-      { href: "/admin/inquiries", label: "Inquiries", short: "Inbox", icon: Inbox },
-      { href: "/admin/reviews", label: "Reviews", short: "Reviews", icon: Star },
+      { href: "/admin", label: "Overview", icon: LayoutDashboard },
+      { href: "/admin/orders", label: "Orders", icon: ShoppingCart },
+      { href: "/admin/inquiries", label: "Inquiries", icon: Inbox },
+      { href: "/admin/reviews", label: "Reviews", icon: Star },
     ],
   },
   {
     label: "Catalog",
     items: [
-      { href: "/admin/products", label: "Products", short: "Products", icon: Package },
-      { href: "/admin/catalog", label: "Categories", short: "Catalog", icon: FolderTree },
+      { href: "/admin/products", label: "Products", icon: Package },
+      { href: "/admin/catalog", label: "Categories", icon: FolderTree },
     ],
   },
   {
     label: "Site",
     items: [
-      { href: "/admin/content", label: "Content", short: "Content", icon: FileText },
-      { href: "/admin/collections", label: "Collections", short: "Bento", icon: LayoutGrid },
-      { href: "/admin/about", label: "About", short: "About", icon: BookOpen },
-      { href: "/admin/installation", label: "Installation", short: "Install", icon: Wrench },
-      { href: "/admin/team", label: "Team", short: "Team", icon: Users },
+      { href: "/admin/content", label: "Content", icon: FileText },
+      { href: "/admin/collections", label: "Collections", icon: LayoutGrid },
+      { href: "/admin/about", label: "About", icon: BookOpen },
+      { href: "/admin/installation", label: "Installation", icon: Wrench },
+      { href: "/admin/team", label: "Team", icon: Users },
     ],
   },
 ];
@@ -57,7 +56,6 @@ const groups: { label: string; items: NavItem[] }[] = [
 function NavLink({
   href,
   label,
-  short,
   icon: Icon,
   badge,
   active,
@@ -74,18 +72,14 @@ function NavLink({
       )}
     >
       {active && (
-        <span
-          className="absolute inset-y-2 left-0 hidden w-[3px] rounded-full bg-accent lg:block"
-          aria-hidden
-        />
+        <span className="absolute inset-y-2 left-0 w-[3px] rounded-full bg-accent" aria-hidden />
       )}
       <Icon
         size={17}
         strokeWidth={active ? 2.1 : 1.7}
         className={cn("shrink-0", active ? "text-blue-300" : "text-zinc-500 group-hover:text-zinc-300")}
       />
-      <span className="lg:hidden">{short}</span>
-      <span className="hidden min-w-0 flex-1 truncate lg:inline">{label}</span>
+      <span className="min-w-0 flex-1 truncate">{label}</span>
       {!!badge && (
         <span
           className={cn(
@@ -100,31 +94,23 @@ function NavLink({
   );
 }
 
+/** Desktop sidebar nav (lg+). */
 export function AdminNav({ badges }: { badges: Partial<Record<string, number>> }) {
   const pathname = usePathname();
-  const flat = groups.flatMap((g) => g.items);
   const isActive = (href: string) => (href === "/admin" ? pathname === href : pathname.startsWith(href));
 
   return (
-    <>
-      <nav className="admin-nav-scroll flex gap-2 overflow-x-auto pb-1 lg:hidden" aria-label="Admin">
-        {flat.map((item) => (
-          <NavLink key={item.href} {...item} badge={badges[item.href]} active={isActive(item.href)} />
-        ))}
-      </nav>
-
-      <nav className="hidden space-y-6 lg:block" aria-label="Admin">
-        {groups.map((group) => (
-          <div key={group.label}>
-            <p className="mb-2 px-3 font-mono text-[10px] uppercase tracking-[0.22em] text-zinc-500">{group.label}</p>
-            <div className="space-y-1">
-              {group.items.map((item) => (
-                <NavLink key={item.href} {...item} badge={badges[item.href]} active={isActive(item.href)} />
-              ))}
-            </div>
+    <nav className="space-y-6" aria-label="Admin">
+      {groups.map((group) => (
+        <div key={group.label}>
+          <p className="mb-2 px-3 font-mono text-[10px] uppercase tracking-[0.22em] text-zinc-500">{group.label}</p>
+          <div className="space-y-1">
+            {group.items.map((item) => (
+              <NavLink key={item.href} {...item} badge={badges[item.href]} active={isActive(item.href)} />
+            ))}
           </div>
-        ))}
-      </nav>
-    </>
+        </div>
+      ))}
+    </nav>
   );
 }

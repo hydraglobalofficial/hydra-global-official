@@ -89,6 +89,30 @@ export function safeVideoUrl(raw: unknown, fallback = ""): string {
   }
 }
 
+/** YouTube watch/share/embed links only (homepage showcase). */
+export function safeYoutubeUrl(raw: unknown, fallback = ""): string {
+  if (typeof raw !== "string") return fallback;
+  const url = raw.trim();
+  if (!url || url.length > MAX_VIDEO) return fallback;
+  try {
+    const parsed = new URL(url);
+    if (parsed.protocol !== "https:") return fallback;
+    const host = parsed.hostname.toLowerCase();
+    if (
+      host === "youtu.be" ||
+      host === "youtube.com" ||
+      host === "www.youtube.com" ||
+      host === "m.youtube.com" ||
+      host === "www.youtube-nocookie.com"
+    ) {
+      return parsed.toString();
+    }
+    return fallback;
+  } catch {
+    return fallback;
+  }
+}
+
 export function safeSlug(raw: unknown, fallback = ""): string {
   if (typeof raw !== "string") return fallback;
   const slug = raw.trim().toLowerCase();

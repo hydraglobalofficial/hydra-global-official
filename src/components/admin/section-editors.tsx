@@ -9,6 +9,7 @@ import {
   saveHowItWorksSection,
   saveInstallationSection,
   saveNewsletterSection,
+  saveShowcaseSection,
 } from "@/server/actions/admin";
 import type {
   AboutContent,
@@ -16,6 +17,7 @@ import type {
   HomeHeroContent,
   HowItWorksContent,
   NewsletterContent,
+  ShowcaseContent,
 } from "@/content/site-sections";
 import type { InstallationContent } from "@/content/installation";
 import { initialFormState } from "@/lib/validations";
@@ -43,21 +45,79 @@ function Label({ label, hint, children }: { label: string; hint?: string; childr
   );
 }
 
-function padRows<T>(rows: T[], min: number, empty: T): T[] {
-  if (rows.length >= min) return rows;
-  return [...rows, ...Array.from({ length: min - rows.length }, () => empty)];
+function rowKey() {
+  return `r-${Math.random().toString(36).slice(2, 10)}`;
+}
+
+type Keyed<T> = T & { key: string };
+
+function toKeyed<T extends object>(rows: T[]): Keyed<T>[] {
+  return rows.map((row) => ({ ...row, key: rowKey() }));
+}
+
+function ListHeader({
+  hint,
+  addLabel,
+  onAdd,
+  canAdd,
+}: {
+  hint: string;
+  addLabel: string;
+  onAdd: () => void;
+  canAdd: boolean;
+}) {
+  return (
+    <div className="flex flex-wrap items-end justify-between gap-3">
+      <p className="text-xs text-subtle">{hint}</p>
+      <Button type="button" variant="secondary" size="sm" disabled={!canAdd} onClick={onAdd}>
+        <Plus size={14} /> {addLabel}
+      </Button>
+    </div>
+  );
+}
+
+function RemoveBtn({ onClick, disabled, label }: { onClick: () => void; disabled?: boolean; label: string }) {
+  return (
+    <button
+      type="button"
+      disabled={disabled}
+      onClick={onClick}
+      className="inline-flex items-center gap-1.5 rounded-full border border-white/10 px-2.5 py-1 text-[11px] text-muted transition hover:border-danger/40 hover:text-danger disabled:cursor-not-allowed disabled:opacity-30"
+      aria-label={label}
+    >
+      <Trash2 size={12} /> Remove
+    </button>
+  );
 }
 
 export function AboutSectionEditor({ content }: { content: AboutContent }) {
   const [state, action, pending] = useActionState(saveAboutSection, initialFormState);
-  const stats = padRows(content.stats, 6, { value: "", label: "" });
-  const missionBullets = padRows(content.mission.bullets, 4, "");
-  const visionBullets = padRows(content.vision.bullets, 4, "");
-  const values = padRows(content.values, 7, { title: "", keyword: "", text: "" });
-  const divisions = padRows(content.divisions, 4, { title: "", text: "", href: "" });
-  const journey = padRows(content.journey, 6, { year: "", title: "", text: "" });
-  const commitments = padRows(content.company.commitments, 5, { title: "", text: "" });
-  const facts = padRows(content.company.facts, 8, { label: "", value: "" });
+  const [stats, setStats] = useState(() =>
+    toKeyed(content.stats.length > 0 ? content.stats : [{ value: "", label: "" }]),
+  );
+  const [missionBullets, setMissionBullets] = useState(() =>
+    toKeyed(
+      (content.mission.bullets.length > 0 ? content.mission.bullets : [""]).map((value) => ({ value })),
+    ),
+  );
+  const [visionBullets, setVisionBullets] = useState(() =>
+    toKeyed((content.vision.bullets.length > 0 ? content.vision.bullets : [""]).map((value) => ({ value }))),
+  );
+  const [values, setValues] = useState(() =>
+    toKeyed(content.values.length > 0 ? content.values : [{ title: "", keyword: "", text: "" }]),
+  );
+  const [divisions, setDivisions] = useState(() =>
+    toKeyed(content.divisions.length > 0 ? content.divisions : [{ title: "", text: "", href: "" }]),
+  );
+  const [journey, setJourney] = useState(() =>
+    toKeyed(content.journey.length > 0 ? content.journey : [{ year: "", title: "", text: "", future: false }]),
+  );
+  const [commitments, setCommitments] = useState(() =>
+    toKeyed(content.company.commitments.length > 0 ? content.company.commitments : [{ title: "", text: "" }]),
+  );
+  const [facts, setFacts] = useState(() =>
+    toKeyed(content.company.facts.length > 0 ? content.company.facts : [{ label: "", value: "" }]),
+  );
 
   return (
     <form action={action} className="space-y-5">
@@ -71,12 +131,24 @@ export function AboutSectionEditor({ content }: { content: AboutContent }) {
       </Section>
 
       <Section title="Stats">
-        <p className="text-xs text-subtle">Leave a row blank to skip it. Aim for ~5 filled rows.</p>
+        <ListHeader
+          hint="Add or remove rows (blank rows skipped on publish)."
+          addLabel="Add stat"
+          canAdd={stats.length < 8}
+          onAdd={() => setStats((prev) => (prev.length >= 8 ? prev : [...prev, { key: rowKey(), value: "", label: "" }]))}
+        />
         <div className="space-y-3">
           {stats.map((s, i) => (
-            <div key={i} className="grid gap-3 sm:grid-cols-2">
-              <Input name="statValue" defaultValue={s.value} placeholder="Value" />
-              <Input name="statLabel" defaultValue={s.label} placeholder="Label" />
+            <div key={s.key} className="flex flex-col gap-2 rounded-xl border border-white/[0.06] p-3 sm:flex-row sm:items-start">
+              <div className="grid flex-1 gap-3 sm:grid-cols-2">
+                <Input name="statValue" defaultValue={s.value} placeholder="Value" />
+                <Input name="statLabel" defaultValue={s.label} placeholder="Label" />
+              </div>
+              <RemoveBtn
+                label={`Remove stat ${i + 1}`}
+                disabled={stats.length <= 1}
+                onClick={() => setStats((prev) => (prev.length <= 1 ? prev : prev.filter((row) => row.key !== s.key)))}
+              />
             </div>
           ))}
         </div>
@@ -96,17 +168,55 @@ export function AboutSectionEditor({ content }: { content: AboutContent }) {
       <Section title="Mission">
         <Label label="Title"><Input name="missionTitle" defaultValue={content.mission.title} required /></Label>
         <Label label="Body"><Textarea name="missionBody" defaultValue={content.mission.body} className="min-h-24" required /></Label>
-        {missionBullets.map((b, i) => (
-          <Input key={i} name="missionBullet" defaultValue={b} placeholder={`Bullet ${i + 1}`} />
-        ))}
+        <ListHeader
+          hint="Bullet points under mission."
+          addLabel="Add bullet"
+          canAdd={missionBullets.length < 8}
+          onAdd={() =>
+            setMissionBullets((prev) => (prev.length >= 8 ? prev : [...prev, { key: rowKey(), value: "" }]))
+          }
+        />
+        <div className="space-y-2">
+          {missionBullets.map((b, i) => (
+            <div key={b.key} className="flex gap-2">
+              <Input name="missionBullet" defaultValue={b.value} placeholder={`Bullet ${i + 1}`} className="flex-1" />
+              <RemoveBtn
+                label={`Remove mission bullet ${i + 1}`}
+                disabled={missionBullets.length <= 1}
+                onClick={() =>
+                  setMissionBullets((prev) => (prev.length <= 1 ? prev : prev.filter((row) => row.key !== b.key)))
+                }
+              />
+            </div>
+          ))}
+        </div>
       </Section>
 
       <Section title="Vision">
         <Label label="Title"><Input name="visionTitle" defaultValue={content.vision.title} required /></Label>
         <Label label="Body"><Textarea name="visionBody" defaultValue={content.vision.body} className="min-h-24" required /></Label>
-        {visionBullets.map((b, i) => (
-          <Input key={i} name="visionBullet" defaultValue={b} placeholder={`Bullet ${i + 1}`} />
-        ))}
+        <ListHeader
+          hint="Bullet points under vision."
+          addLabel="Add bullet"
+          canAdd={visionBullets.length < 8}
+          onAdd={() =>
+            setVisionBullets((prev) => (prev.length >= 8 ? prev : [...prev, { key: rowKey(), value: "" }]))
+          }
+        />
+        <div className="space-y-2">
+          {visionBullets.map((b, i) => (
+            <div key={b.key} className="flex gap-2">
+              <Input name="visionBullet" defaultValue={b.value} placeholder={`Bullet ${i + 1}`} className="flex-1" />
+              <RemoveBtn
+                label={`Remove vision bullet ${i + 1}`}
+                disabled={visionBullets.length <= 1}
+                onClick={() =>
+                  setVisionBullets((prev) => (prev.length <= 1 ? prev : prev.filter((row) => row.key !== b.key)))
+                }
+              />
+            </div>
+          ))}
+        </div>
       </Section>
 
       <Section title="Values intro">
@@ -118,23 +228,59 @@ export function AboutSectionEditor({ content }: { content: AboutContent }) {
       </Section>
 
       <Section title="Values">
-        <p className="text-xs text-subtle">Blank cards are skipped. At least one complete value is required.</p>
+        <ListHeader
+          hint="Blank cards are skipped. At least one complete value is required."
+          addLabel="Add value"
+          canAdd={values.length < 12}
+          onAdd={() =>
+            setValues((prev) =>
+              prev.length >= 12 ? prev : [...prev, { key: rowKey(), title: "", keyword: "", text: "" }],
+            )
+          }
+        />
         <div className="space-y-4">
           {values.map((v, i) => (
-            <div key={i} className="grid gap-3 rounded-xl border border-white/[0.06] p-3 sm:grid-cols-[1fr_8rem]">
-              <Input name="valueTitle" defaultValue={v.title} placeholder="Title" />
-              <Input name="valueKeyword" defaultValue={v.keyword} placeholder="Keyword" />
-              <Textarea name="valueText" defaultValue={v.text} className="min-h-20 sm:col-span-2" />
+            <div key={v.key} className="space-y-3 rounded-xl border border-white/[0.06] p-3">
+              <div className="flex justify-end">
+                <RemoveBtn
+                  label={`Remove value ${i + 1}`}
+                  disabled={values.length <= 1}
+                  onClick={() => setValues((prev) => (prev.length <= 1 ? prev : prev.filter((row) => row.key !== v.key)))}
+                />
+              </div>
+              <div className="grid gap-3 sm:grid-cols-[1fr_8rem]">
+                <Input name="valueTitle" defaultValue={v.title} placeholder="Title" />
+                <Input name="valueKeyword" defaultValue={v.keyword} placeholder="Keyword" />
+                <Textarea name="valueText" defaultValue={v.text} className="min-h-20 sm:col-span-2" />
+              </div>
             </div>
           ))}
         </div>
       </Section>
 
       <Section title="Divisions">
-        <p className="text-xs text-subtle">Blank cards are skipped.</p>
+        <ListHeader
+          hint="Blank cards are skipped."
+          addLabel="Add division"
+          canAdd={divisions.length < 6}
+          onAdd={() =>
+            setDivisions((prev) =>
+              prev.length >= 6 ? prev : [...prev, { key: rowKey(), title: "", text: "", href: "" }],
+            )
+          }
+        />
         <div className="space-y-4">
           {divisions.map((d, i) => (
-            <div key={i} className="grid gap-3 rounded-xl border border-white/[0.06] p-3">
+            <div key={d.key} className="space-y-3 rounded-xl border border-white/[0.06] p-3">
+              <div className="flex justify-end">
+                <RemoveBtn
+                  label={`Remove division ${i + 1}`}
+                  disabled={divisions.length <= 1}
+                  onClick={() =>
+                    setDivisions((prev) => (prev.length <= 1 ? prev : prev.filter((row) => row.key !== d.key)))
+                  }
+                />
+              </div>
               <Input name="divisionTitle" defaultValue={d.title} placeholder="Title" />
               <Textarea name="divisionText" defaultValue={d.text} className="min-h-20" />
               <Input name="divisionHref" defaultValue={d.href} placeholder="/shop" />
@@ -144,24 +290,46 @@ export function AboutSectionEditor({ content }: { content: AboutContent }) {
       </Section>
 
       <Section title="Journey">
-        <p className="text-xs text-subtle">Blank milestones are skipped.</p>
+        <ListHeader
+          hint="Blank milestones are skipped."
+          addLabel="Add milestone"
+          canAdd={journey.length < 12}
+          onAdd={() =>
+            setJourney((prev) =>
+              prev.length >= 12
+                ? prev
+                : [...prev, { key: rowKey(), year: "", title: "", text: "", future: false }],
+            )
+          }
+        />
         <div className="space-y-4">
           {journey.map((j, i) => (
-            <div key={i} className="grid gap-3 rounded-xl border border-white/[0.06] p-3 sm:grid-cols-[6rem_1fr_auto]">
-              <Input name="journeyYear" defaultValue={j.year} placeholder="Year" />
-              <Input name="journeyTitle" defaultValue={j.title} placeholder="Title" />
-              <label className="flex items-center gap-2 text-xs text-muted">
-                Future
-                <select
-                  name="journeyFuture"
-                  defaultValue={j.future ? "yes" : "no"}
-                  className="rounded-lg border border-white/10 bg-black/40 px-2 py-1.5 text-xs text-fg"
-                >
-                  <option value="no">No</option>
-                  <option value="yes">Yes</option>
-                </select>
-              </label>
-              <Textarea name="journeyText" defaultValue={j.text} className="min-h-20 sm:col-span-3" />
+            <div key={j.key} className="space-y-3 rounded-xl border border-white/[0.06] p-3">
+              <div className="flex justify-end">
+                <RemoveBtn
+                  label={`Remove milestone ${i + 1}`}
+                  disabled={journey.length <= 1}
+                  onClick={() =>
+                    setJourney((prev) => (prev.length <= 1 ? prev : prev.filter((row) => row.key !== j.key)))
+                  }
+                />
+              </div>
+              <div className="grid gap-3 sm:grid-cols-[6rem_1fr_auto]">
+                <Input name="journeyYear" defaultValue={j.year} placeholder="Year" />
+                <Input name="journeyTitle" defaultValue={j.title} placeholder="Title" />
+                <label className="flex items-center gap-2 text-xs text-muted">
+                  Future
+                  <select
+                    name="journeyFuture"
+                    defaultValue={j.future ? "yes" : "no"}
+                    className="rounded-lg border border-white/10 bg-black/40 px-2 py-1.5 text-xs text-fg"
+                  >
+                    <option value="no">No</option>
+                    <option value="yes">Yes</option>
+                  </select>
+                </label>
+                <Textarea name="journeyText" defaultValue={j.text} className="min-h-20 sm:col-span-3" />
+              </div>
             </div>
           ))}
         </div>
@@ -198,20 +366,52 @@ export function AboutSectionEditor({ content }: { content: AboutContent }) {
         </div>
         <Label label="Overview card title"><Input name="companySheetTitle" defaultValue={content.company.sheetTitle} /></Label>
         <div className="space-y-3">
-          <p className="text-xs font-medium uppercase tracking-[0.14em] text-muted">Commitments</p>
+          <ListHeader
+            hint="Commitments under company info."
+            addLabel="Add commitment"
+            canAdd={commitments.length < 8}
+            onAdd={() =>
+              setCommitments((prev) =>
+                prev.length >= 8 ? prev : [...prev, { key: rowKey(), title: "", text: "" }],
+              )
+            }
+          />
           {commitments.map((c, i) => (
-            <div key={i} className="grid gap-3 rounded-xl border border-white/[0.06] p-3 sm:grid-cols-2">
-              <Input name="companyCommitmentTitle" defaultValue={c.title} placeholder="Title" />
-              <Input name="companyCommitmentText" defaultValue={c.text} placeholder="Short text" />
+            <div key={c.key} className="flex flex-col gap-2 rounded-xl border border-white/[0.06] p-3 sm:flex-row sm:items-start">
+              <div className="grid flex-1 gap-3 sm:grid-cols-2">
+                <Input name="companyCommitmentTitle" defaultValue={c.title} placeholder="Title" />
+                <Input name="companyCommitmentText" defaultValue={c.text} placeholder="Short text" />
+              </div>
+              <RemoveBtn
+                label={`Remove commitment ${i + 1}`}
+                disabled={commitments.length <= 1}
+                onClick={() =>
+                  setCommitments((prev) => (prev.length <= 1 ? prev : prev.filter((row) => row.key !== c.key)))
+                }
+              />
             </div>
           ))}
         </div>
         <div className="space-y-3">
-          <p className="text-xs font-medium uppercase tracking-[0.14em] text-muted">Public overview rows</p>
+          <ListHeader
+            hint="Public overview rows (optional)."
+            addLabel="Add fact"
+            canAdd={facts.length < 16}
+            onAdd={() =>
+              setFacts((prev) => (prev.length >= 16 ? prev : [...prev, { key: rowKey(), label: "", value: "" }]))
+            }
+          />
           {facts.map((f, i) => (
-            <div key={i} className="grid gap-3 rounded-xl border border-white/[0.06] p-3 sm:grid-cols-2">
-              <Input name="companyFactLabel" defaultValue={f.label} placeholder="Label" />
-              <Input name="companyFactValue" defaultValue={f.value} placeholder="Value" />
+            <div key={f.key} className="flex flex-col gap-2 rounded-xl border border-white/[0.06] p-3 sm:flex-row sm:items-start">
+              <div className="grid flex-1 gap-3 sm:grid-cols-2">
+                <Input name="companyFactLabel" defaultValue={f.label} placeholder="Label" />
+                <Input name="companyFactValue" defaultValue={f.value} placeholder="Value" />
+              </div>
+              <RemoveBtn
+                label={`Remove fact ${i + 1}`}
+                disabled={facts.length <= 1}
+                onClick={() => setFacts((prev) => (prev.length <= 1 ? prev : prev.filter((row) => row.key !== f.key)))}
+              />
             </div>
           ))}
         </div>
@@ -242,6 +442,10 @@ export function AboutSectionEditor({ content }: { content: AboutContent }) {
 
 export function HowItWorksSectionEditor({ content }: { content: HowItWorksContent }) {
   const [state, action, pending] = useActionState(saveHowItWorksSection, initialFormState);
+  const [steps, setSteps] = useState(() =>
+    toKeyed(content.steps.length > 0 ? content.steps : [{ title: "", text: "" }]),
+  );
+
   return (
     <form action={action} className="space-y-5">
       <Section title="Heading">
@@ -252,11 +456,29 @@ export function HowItWorksSectionEditor({ content }: { content: HowItWorksConten
         </div>
       </Section>
       <Section title="Steps">
+        <ListHeader
+          hint="Add or remove steps (1–8). Empty rows are skipped on publish."
+          addLabel="Add step"
+          canAdd={steps.length < 8}
+          onAdd={() =>
+            setSteps((prev) => (prev.length >= 8 ? prev : [...prev, { key: rowKey(), title: "", text: "" }]))
+          }
+        />
         <div className="space-y-3">
-          {content.steps.map((s, i) => (
-            <div key={i} className="grid gap-3 rounded-xl border border-white/[0.06] p-3">
-              <Input name="stepTitle" defaultValue={s.title} placeholder="Step title" required />
-              <Textarea name="stepText" defaultValue={s.text} className="min-h-20" required />
+          {steps.map((s, i) => (
+            <div key={s.key} className="space-y-3 rounded-xl border border-white/[0.06] p-3">
+              <div className="flex items-center justify-between gap-2">
+                <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-subtle">
+                  Step {String(i + 1).padStart(2, "0")}
+                </p>
+                <RemoveBtn
+                  label={`Remove step ${i + 1}`}
+                  disabled={steps.length <= 1}
+                  onClick={() => setSteps((prev) => (prev.length <= 1 ? prev : prev.filter((row) => row.key !== s.key)))}
+                />
+              </div>
+              <Input name="stepTitle" defaultValue={s.title} placeholder="Step title" />
+              <Textarea name="stepText" defaultValue={s.text} className="min-h-20" />
             </div>
           ))}
         </div>
@@ -283,29 +505,29 @@ const emptyHeroSlide = {
   image: "",
 };
 
+type HeroSlideDraft = typeof emptyHeroSlide & { uid: string };
+
 export function HomeHeroSectionEditor({ content }: { content: HomeHeroContent }) {
   const [state, action, pending] = useActionState(saveHomeHeroSection, initialFormState);
-  const baseSlides = Array.isArray(content?.slides) && content.slides.length > 0 ? content.slides : [];
-  const slides = [...baseSlides, ...Array.from({ length: Math.max(0, 4 - baseSlides.length) }, () => emptyHeroSlide)].slice(
-    0,
-    4,
+  const [slides, setSlides] = useState<HeroSlideDraft[]>(() =>
+    (Array.isArray(content?.slides) && content.slides.length > 0 ? content.slides : [{ ...emptyHeroSlide }]).map(
+      (s) => ({ ...s, uid: rowKey() }),
+    ),
   );
-  const stats =
-    Array.isArray(content?.stats) && content.stats.length > 0
-      ? content.stats
-      : [
-          { value: "", label: "" },
-          { value: "", label: "" },
-          { value: "", label: "" },
-        ];
-  const quickLinks =
-    Array.isArray(content?.quickLinks) && content.quickLinks.length > 0
-      ? content.quickLinks
-      : [
-          { label: "", href: "" },
-          { label: "", href: "" },
-          { label: "", href: "" },
-        ];
+  const [stats, setStats] = useState(() =>
+    toKeyed(
+      Array.isArray(content?.stats) && content.stats.length > 0
+        ? content.stats
+        : [{ value: "", label: "" }],
+    ),
+  );
+  const [quickLinks, setQuickLinks] = useState(() =>
+    toKeyed(
+      Array.isArray(content?.quickLinks) && content.quickLinks.length > 0
+        ? content.quickLinks
+        : [{ label: "", href: "" }],
+    ),
+  );
 
   return (
     <form action={action} className="space-y-5">
@@ -313,47 +535,95 @@ export function HomeHeroSectionEditor({ content }: { content: HomeHeroContent })
         <Label label="Rating line" hint="Shown under the CTAs next to the stars.">
           <Input name="ratingLabel" defaultValue={content.ratingLabel} required />
         </Label>
+        <ListHeader
+          hint="Quick links under the hero CTAs (1–6)."
+          addLabel="Add link"
+          canAdd={quickLinks.length < 6}
+          onAdd={() =>
+            setQuickLinks((prev) =>
+              prev.length >= 6 ? prev : [...prev, { key: rowKey(), label: "", href: "" }],
+            )
+          }
+        />
         <div className="space-y-3">
           {quickLinks.map((link, i) => (
-            <div key={i} className="grid gap-3 sm:grid-cols-2">
-              <Label label={`Link ${i + 1} label`}>
-                <Input name="linkLabel" defaultValue={link.label} />
-              </Label>
-              <Label label={`Link ${i + 1} href`}>
-                <Input name="linkHref" defaultValue={link.href} placeholder="/shop/iphone" />
-              </Label>
+            <div key={link.key} className="flex flex-col gap-2 rounded-xl border border-white/[0.06] p-3 sm:flex-row sm:items-end">
+              <div className="grid flex-1 gap-3 sm:grid-cols-2">
+                <Label label={`Link ${i + 1} label`}>
+                  <Input name="linkLabel" defaultValue={link.label} />
+                </Label>
+                <Label label={`Link ${i + 1} href`}>
+                  <Input name="linkHref" defaultValue={link.href} placeholder="/shop/iphone" />
+                </Label>
+              </div>
+              <RemoveBtn
+                label={`Remove link ${i + 1}`}
+                disabled={quickLinks.length <= 1}
+                onClick={() =>
+                  setQuickLinks((prev) => (prev.length <= 1 ? prev : prev.filter((row) => row.key !== link.key)))
+                }
+              />
             </div>
           ))}
         </div>
       </Section>
 
       <Section title="Bottom stats bar">
-        <p className="text-xs text-subtle">Hardness / fit / warranty strip under the hero.</p>
+        <ListHeader
+          hint="Hardness / fit / warranty strip under the hero (1–4)."
+          addLabel="Add stat"
+          canAdd={stats.length < 4}
+          onAdd={() =>
+            setStats((prev) => (prev.length >= 4 ? prev : [...prev, { key: rowKey(), value: "", label: "" }]))
+          }
+        />
         <div className="space-y-3">
           {stats.map((stat, i) => (
-            <div key={i} className="grid gap-3 sm:grid-cols-2">
-              <Label label={`Stat ${i + 1} value`}>
-                <Input name="statValue" defaultValue={stat.value} placeholder="9H+" />
-              </Label>
-              <Label label={`Stat ${i + 1} label`}>
-                <Input name="statLabel" defaultValue={stat.label} placeholder="Hardness" />
-              </Label>
+            <div key={stat.key} className="flex flex-col gap-2 rounded-xl border border-white/[0.06] p-3 sm:flex-row sm:items-end">
+              <div className="grid flex-1 gap-3 sm:grid-cols-2">
+                <Label label={`Stat ${i + 1} value`}>
+                  <Input name="statValue" defaultValue={stat.value} placeholder="9H+" />
+                </Label>
+                <Label label={`Stat ${i + 1} label`}>
+                  <Input name="statLabel" defaultValue={stat.label} placeholder="Hardness" />
+                </Label>
+              </div>
+              <RemoveBtn
+                label={`Remove stat ${i + 1}`}
+                disabled={stats.length <= 1}
+                onClick={() => setStats((prev) => (prev.length <= 1 ? prev : prev.filter((row) => row.key !== stat.key)))}
+              />
             </div>
           ))}
         </div>
       </Section>
 
       <Section title="Hero slides">
-        <p className="text-xs text-subtle">
-          Each slide has its own left-side copy and right-side stage. Leave a slot blank to skip it. Visual:
-          built-in phone / glass / privacy, or a custom image URL.
-        </p>
+        <ListHeader
+          hint="Each slide has left copy + right stage. Blank slides skipped. Visual: phone / glass / privacy / custom image."
+          addLabel="Add slide"
+          canAdd={slides.length < 6}
+          onAdd={() =>
+            setSlides((prev) =>
+              prev.length >= 6 ? prev : [...prev, { ...emptyHeroSlide, uid: rowKey() }],
+            )
+          }
+        />
         <div className="space-y-4">
           {slides.map((slide, i) => (
-            <div key={`${slide.key}-${i}`} className="space-y-3 rounded-xl border border-white/[0.06] p-3 sm:p-4">
-              <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-subtle">
-                Slide {String(i + 1).padStart(2, "0")}
-              </p>
+            <div key={slide.uid} className="space-y-3 rounded-xl border border-white/[0.06] p-3 sm:p-4">
+              <div className="flex items-center justify-between gap-2">
+                <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-subtle">
+                  Slide {String(i + 1).padStart(2, "0")}
+                </p>
+                <RemoveBtn
+                  label={`Remove slide ${i + 1}`}
+                  disabled={slides.length <= 1}
+                  onClick={() =>
+                    setSlides((prev) => (prev.length <= 1 ? prev : prev.filter((row) => row.uid !== slide.uid)))
+                  }
+                />
+              </div>
               <div className="grid gap-3 sm:grid-cols-2">
                 <Label label="Key (unique id)">
                   <Input name="slideKey" defaultValue={slide.key} placeholder="clarity" />
@@ -440,18 +710,134 @@ export function NewsletterSectionEditor({ content }: { content: NewsletterConten
   );
 }
 
+const MAX_SHOWCASE_VIDEOS = 6;
+
+function emptyShowcaseVideo() {
+  return {
+    key: `v-${Math.random().toString(36).slice(2, 9)}`,
+    title: "",
+    caption: "",
+    duration: "",
+    poster: "",
+    videoUrl: "",
+    href: "/shop",
+  };
+}
+
+export function ShowcaseSectionEditor({ content }: { content: ShowcaseContent }) {
+  const [state, action, pending] = useActionState(saveShowcaseSection, initialFormState);
+  const [videos, setVideos] = useState(() => {
+    const rows =
+      content.videos.length > 0
+        ? content.videos.map((v) => ({ ...v, key: `v-${Math.random().toString(36).slice(2, 9)}` }))
+        : [emptyShowcaseVideo(), emptyShowcaseVideo(), emptyShowcaseVideo()];
+    return rows;
+  });
+
+  return (
+    <form action={action} className="space-y-5">
+      <Section title="Heading">
+        <Label label="Eyebrow">
+          <Input name="eyebrow" defaultValue={content.eyebrow} required />
+        </Label>
+        <div className="grid gap-3 sm:grid-cols-2">
+          <Label label="Title">
+            <Input name="title" defaultValue={content.title} required />
+          </Label>
+          <Label label="Muted title">
+            <Input name="titleMuted" defaultValue={content.titleMuted} required />
+          </Label>
+        </div>
+        <div className="grid gap-3 sm:grid-cols-2">
+          <Label label="Channel button label">
+            <Input name="channelLabel" defaultValue={content.channelLabel} required />
+          </Label>
+          <Label label="Channel URL">
+            <Input name="channelHref" defaultValue={content.channelHref} required />
+          </Label>
+        </div>
+      </Section>
+
+      <Section title="Video cards">
+        <div className="flex flex-wrap items-end justify-between gap-3">
+          <p className="text-xs text-subtle">
+            Add or remove cards anytime (1–{MAX_SHOWCASE_VIDEOS}). YouTube link only — no MP4. Poster required. Empty
+            YouTube → card opens the fallback link.
+          </p>
+          <Button
+            type="button"
+            variant="secondary"
+            size="sm"
+            disabled={videos.length >= MAX_SHOWCASE_VIDEOS}
+            onClick={() =>
+              setVideos((prev) => (prev.length >= MAX_SHOWCASE_VIDEOS ? prev : [...prev, emptyShowcaseVideo()]))
+            }
+          >
+            <Plus size={14} /> Add card
+          </Button>
+        </div>
+        <div className="space-y-6">
+          {videos.map((v, i) => (
+            <div key={v.key} className="space-y-3 rounded-2xl border border-line p-4">
+              <div className="flex items-center justify-between gap-2">
+                <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-subtle">Card {i + 1}</p>
+                <button
+                  type="button"
+                  disabled={videos.length <= 1}
+                  onClick={() => setVideos((prev) => (prev.length <= 1 ? prev : prev.filter((row) => row.key !== v.key)))}
+                  className="inline-flex items-center gap-1.5 rounded-full border border-white/10 px-2.5 py-1 text-[11px] text-muted transition hover:border-danger/40 hover:text-danger disabled:cursor-not-allowed disabled:opacity-30"
+                  aria-label={`Remove card ${i + 1}`}
+                >
+                  <Trash2 size={12} /> Remove
+                </button>
+              </div>
+              <div className="grid gap-3 sm:grid-cols-2">
+                <Label label="Title">
+                  <Input name="videoTitle" defaultValue={v.title} placeholder="Video title" />
+                </Label>
+                <Label label="Duration label">
+                  <Input name="videoDuration" defaultValue={v.duration} placeholder="Guide · 2 min" />
+                </Label>
+              </div>
+              <Label label="Caption">
+                <Input name="videoCaption" defaultValue={v.caption} placeholder="Short caption" />
+              </Label>
+              <Label label="Poster image" hint="Shown before play">
+                <ImageUrlField name="videoPoster" defaultValue={v.poster} folder="content" />
+              </Label>
+              <Label label="YouTube link" hint="https://www.youtube.com/watch?v=… or youtu.be/…">
+                <Input
+                  name="videoUrl"
+                  defaultValue={v.videoUrl}
+                  placeholder="https://www.youtube.com/watch?v=…"
+                  className="font-mono text-xs"
+                />
+              </Label>
+              <Label label="Fallback link" hint="Used when no YouTube link is set">
+                <Input name="videoHref" defaultValue={v.href} placeholder="/installation" />
+              </Label>
+            </div>
+          ))}
+        </div>
+      </Section>
+
+      <FormMessage status={state.status} message={state.message} toast />
+      <Button type="submit" disabled={pending}>
+        {pending && <Loader2 size={16} className="animate-spin" />} Publish
+      </Button>
+    </form>
+  );
+}
+
 export function CollectionsSectionEditor({ content }: { content: CollectionsContent }) {
   const [state, action, pending] = useActionState(saveCollectionsSection, initialFormState);
-  const items =
-    Array.isArray(content?.items) && content.items.length > 0
-      ? content.items
-      : [
-          { slug: "", name: "", description: "", image: "" },
-          { slug: "", name: "", description: "", image: "" },
-          { slug: "", name: "", description: "", image: "" },
-          { slug: "", name: "", description: "", image: "" },
-          { slug: "", name: "", description: "", image: "" },
-        ];
+  const [items, setItems] = useState(() =>
+    toKeyed(
+      Array.isArray(content?.items) && content.items.length > 0
+        ? content.items
+        : [{ slug: "", name: "", description: "", image: "" }],
+    ),
+  );
 
   return (
     <form action={action} className="space-y-5">
@@ -467,16 +853,36 @@ export function CollectionsSectionEditor({ content }: { content: CollectionsCont
         </div>
       </Section>
       <Section title="Collection cards">
-        <p className="text-xs text-subtle">First card is the large featured tile. Slug must match a shop category (e.g. tempered-glass).</p>
+        <ListHeader
+          hint="First card is the large featured tile. Slug must match a shop category (e.g. tempered-glass). Max 8."
+          addLabel="Add card"
+          canAdd={items.length < 8}
+          onAdd={() =>
+            setItems((prev) =>
+              prev.length >= 8
+                ? prev
+                : [...prev, { key: rowKey(), slug: "", name: "", description: "", image: "" }],
+            )
+          }
+        />
         <div className="space-y-4">
           {items.map((item, i) => (
-            <div key={i} className="space-y-3 rounded-xl border border-white/[0.06] p-3">
-              <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-subtle">
-                {String(i + 1).padStart(2, "0")} {i === 0 ? "· Featured" : ""}
-              </p>
+            <div key={item.key} className="space-y-3 rounded-xl border border-white/[0.06] p-3">
+              <div className="flex items-center justify-between gap-2">
+                <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-subtle">
+                  {String(i + 1).padStart(2, "0")} {i === 0 ? "· Featured" : ""}
+                </p>
+                <RemoveBtn
+                  label={`Remove collection ${i + 1}`}
+                  disabled={items.length <= 1}
+                  onClick={() =>
+                    setItems((prev) => (prev.length <= 1 ? prev : prev.filter((row) => row.key !== item.key)))
+                  }
+                />
+              </div>
               <div className="grid gap-3 sm:grid-cols-2">
-                <Label label="Name"><Input name="itemName" defaultValue={item.name} required /></Label>
-                <Label label="Slug"><Input name="itemSlug" defaultValue={item.slug} required /></Label>
+                <Label label="Name"><Input name="itemName" defaultValue={item.name} /></Label>
+                <Label label="Slug"><Input name="itemSlug" defaultValue={item.slug} /></Label>
               </div>
               <Label label="Description">
                 <Textarea name="itemDescription" defaultValue={item.description} className="min-h-16" />
@@ -487,7 +893,6 @@ export function CollectionsSectionEditor({ content }: { content: CollectionsCont
                   defaultValue={item.image}
                   folder="collections"
                   placeholder="/products/glass-clear.jpg"
-                  required
                 />
               </Label>
             </div>

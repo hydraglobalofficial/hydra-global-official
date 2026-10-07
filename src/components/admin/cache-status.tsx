@@ -1,3 +1,6 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import { Database, RefreshCw, Zap } from "lucide-react";
 import { purgeAdminCache } from "@/server/actions/admin";
 import type { AdminCacheStatus } from "@/lib/admin-cache";
@@ -46,9 +49,19 @@ export function AdminCachePanel({
   hit: boolean;
   cachedAt: string;
 }) {
-  const ageSec = Math.max(0, Math.round((Date.now() - new Date(cachedAt).getTime()) / 1000));
+  const [ageLabel, setAgeLabel] = useState("...");
+  useEffect(() => {
+    const tick = () => {
+      const ageSec = Math.max(0, Math.round((Date.now() - new Date(cachedAt).getTime()) / 1000));
+      setAgeLabel(ageSec < 5 ? "just now" : `${ageSec}s ago`);
+    };
+    tick();
+    const id = window.setInterval(tick, 5000);
+    return () => window.clearInterval(id);
+  }, [cachedAt]);
+
   return (
-    <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-white/[0.07] bg-white/[0.03] px-4 py-3">
+    <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-white/[0.07] bg-white/[0.03] px-3 py-3 sm:px-4">
       <div className="min-w-0 space-y-1">
         <div className="flex flex-wrap items-center gap-2">
           <p className="text-xs font-medium text-zinc-200">Admin cache</p>
@@ -57,7 +70,7 @@ export function AdminCachePanel({
         <p className="text-[11px] text-zinc-500">
           Version v{status.version}
           <span className="mx-1.5 text-zinc-700">·</span>
-          Snapshot {ageSec < 5 ? "just now" : `${ageSec}s ago`}
+          Snapshot {ageLabel}
           <span className="mx-1.5 text-zinc-700">·</span>
           Tags: nav · dashboard
         </p>

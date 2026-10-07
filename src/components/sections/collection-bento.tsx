@@ -17,7 +17,7 @@ export function CollectionBento({ content }: { content?: CollectionsContent | nu
         ? content.items
         : defaultCollectionsContent.items,
   };
-  const items = section.items.slice(0, 5);
+  const items = section.items.slice(0, 8);
 
   return (
     <section className="container-page py-14 sm:py-20 md:py-24">

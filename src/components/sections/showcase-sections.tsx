@@ -9,10 +9,25 @@ import { ProductImage } from "@/components/product/product-image";
 import { SectionHeading } from "@/components/ui/primitives";
 import { SpotlightCard } from "@/components/ui/spotlight-card";
 import { ImpactPhone3D } from "@/components/sections/impact-phone-3d";
-import { showcaseVideos, siteConfig } from "@/config/site";
+import type { ShowcaseContent, ShowcaseVideoItem } from "@/content/site-sections";
 import { cn } from "@/lib/utils";
 
 export { CollectionBento } from "@/components/sections/collection-bento";
+
+function youtubeIdFromUrl(url: string): string | null {
+  if (!url) return null;
+  if (/^[\w-]{11}$/.test(url)) return url;
+  try {
+    const u = new URL(url);
+    if (u.hostname.includes("youtu.be")) return u.pathname.slice(1).split("/")[0] || null;
+    if (u.searchParams.get("v")) return u.searchParams.get("v");
+    const embed = u.pathname.match(/\/embed\/([^/]+)/);
+    return embed?.[1] ?? null;
+  } catch {
+    return null;
+  }
+}
+
 
 function CountUp({ to, className }: { to: number; className?: string }) {
   const ref = useRef<HTMLSpanElement>(null);
@@ -106,57 +121,49 @@ export function DropTest() {
 
 const videoTint = ["from-accent/30 via-accent/5", "from-white/15 via-white/[0.03]", "from-accent/20 via-accent/[0.03]"];
 
-export function VideoShowcase() {
-  const [playing, setPlaying] = useState<number | null>(null);
+const FALLBACK_VIDEOS: ShowcaseVideoItem[] = [
+  {
+    title: "Bubble-free install in 2 minutes",
+    caption: "The alignment frame does the work — no skill needed.",
+    duration: "Guide · 2 min",
+    poster: "/products/glass-clear.jpg",
+    videoUrl: "",
+    href: "/installation",
+  },
+  {
+    title: "Privacy glass, side by side",
+    caption: "What your neighbour on the train sees — nothing.",
+    duration: "Demo · 1 min",
+    poster: "/products/glass-privacy.jpg",
+    videoUrl: "",
+    href: "/shop?category=privacy-glass",
+  },
+  {
+    title: "Camera armor drop test",
+    caption: "Sapphire-coated rings versus a 2-meter fall.",
+    duration: "Lab · 90 sec",
+    poster: "/products/camera-lens.jpg",
+    videoUrl: "",
+    href: "/shop?category=camera-armor",
+  },
+];
 
-  return (
-    <section className="container-page py-14 sm:py-20 md:py-24">
-      <SectionHeading
-        eyebrow="Watch & learn"
-        title={
-          <>
-            See HYDRA <span className="text-muted">in action.</span>
-          </>
-        }
-        action={
-          <a
-            href={siteConfig.social.youtube}
-            target="_blank"
-            rel="noreferrer"
-            className="group inline-flex items-center gap-2 rounded-full border border-line-strong bg-white/5 px-5 py-2.5 text-sm transition-all hover:border-danger/50 hover:bg-danger/10"
-          >
-            <Play size={14} className="fill-danger text-danger" /> YouTube channel
-          </a>
-        }
-      />
-      {/* One-by-one on scroll: staggerChildren reveals each card in sequence */}
-      <RevealGroup
-        className="no-scrollbar -mx-4 flex snap-x gap-3 overflow-x-auto px-4 pb-2 sm:-mx-5 sm:gap-4 sm:px-5 md:mx-0 md:grid md:grid-cols-3 md:gap-5 md:overflow-visible md:px-0"
-        stagger={0.2}
-      >
-        {showcaseVideos.map((v, i) => (
-          <RevealItem key={v.title} className="w-[78vw] max-w-[20rem] shrink-0 snap-start sm:w-72 md:w-auto md:max-w-none" y={44}>
-            <SpotlightCard className="group aspect-[9/14] overflow-hidden">
-              {playing === i && v.youtubeId ? (
-                <iframe
-                  className="absolute inset-0 h-full w-full rounded-3xl"
-                  src={`https://www.youtube-nocookie.com/embed/${v.youtubeId}?autoplay=1&rel=0`}
-                  title={v.title}
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                />
-              ) : (
-                <VideoPoster video={v} tint={videoTint[i % videoTint.length]} onPlay={() => setPlaying(i)} />
-              )}
-            </SpotlightCard>
-          </RevealItem>
-        ))}
-      </RevealGroup>
-    </section>
-  );
+/** Temporarily disabled — was crashing homepage error boundary. */
+export function VideoShowcase(_props: { content?: ShowcaseContent | null }) {
+  return null;
 }
 
-function VideoPoster({ video, tint, onPlay }: { video: (typeof showcaseVideos)[number]; tint: string; onPlay: () => void }) {
+function VideoPoster({
+  video,
+  tint,
+  canPlay,
+  onPlay,
+}: {
+  video: ShowcaseVideoItem;
+  tint: string;
+  canPlay: boolean;
+  onPlay: () => void;
+}) {
   const content = (
     <>
       <div className={cn("absolute inset-0 bg-gradient-to-b to-black", tint)} />
@@ -175,7 +182,7 @@ function VideoPoster({ video, tint, onPlay }: { video: (typeof showcaseVideos)[n
     </>
   );
 
-  return video.youtubeId ? (
+  return canPlay ? (
     <button type="button" onClick={onPlay} className="absolute inset-0 overflow-hidden rounded-3xl" aria-label={`Play video: ${video.title}`}>
       {content}
     </button>

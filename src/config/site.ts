@@ -41,34 +41,6 @@ export const companyInfo = {
   registeredOffice: "Level 7, Gulshan Avenue, Dhaka 1212, Bangladesh",
 } as const;
 
-/** Add a YouTube video ID to embed it inline; without one the card links to `href`. */
-export const showcaseVideos: { title: string; caption: string; duration: string; poster: string; youtubeId: string; href: string }[] = [
-  {
-    title: "Bubble-free install in 2 minutes",
-    caption: "The alignment frame does the work — no skill needed.",
-    duration: "Guide · 2 min",
-    poster: "/products/glass-clear.jpg",
-    youtubeId: "",
-    href: "/installation",
-  },
-  {
-    title: "Privacy glass, side by side",
-    caption: "What your neighbour on the train sees — nothing.",
-    duration: "Demo · 1 min",
-    poster: "/products/glass-privacy.jpg",
-    youtubeId: "",
-    href: "/shop?category=privacy-glass",
-  },
-  {
-    title: "Camera armor drop test",
-    caption: "Sapphire-coated rings versus a 2-meter fall.",
-    duration: "Lab · 90 sec",
-    poster: "/products/camera-lens.jpg",
-    youtubeId: "",
-    href: "/shop?category=camera-armor",
-  },
-];
-
 export type BrandSlug = "iphone" | "samsung";
 
 export const brands: Record<BrandSlug, { label: string; enum: "APPLE" | "SAMSUNG"; blurb: string }> = {

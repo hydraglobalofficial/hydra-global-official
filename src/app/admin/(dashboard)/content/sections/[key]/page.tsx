@@ -9,6 +9,7 @@ import {
   HowItWorksSectionEditor,
   InstallationSectionEditor,
   NewsletterSectionEditor,
+  ShowcaseSectionEditor,
 } from "@/components/admin/section-editors";
 import { SITE_SECTION_META } from "@/content/site-sections";
 import { requireAdmin } from "@/lib/auth/session";
@@ -19,6 +20,7 @@ import {
   normalizeHowItWorksContent,
   normalizeInstallationContent,
   normalizeNewsletterContent,
+  normalizeShowcaseContent,
 } from "@/lib/normalize-sections";
 import { getSiteSectionRow } from "@/server/queries/content";
 
@@ -49,6 +51,9 @@ export default async function EditSiteSectionPage({ params }: Props) {
       )}
       {key === "home.howItWorks" && (
         <HowItWorksSectionEditor content={normalizeHowItWorksContent(row?.data)} />
+      )}
+      {key === "home.showcase" && (
+        <ShowcaseSectionEditor content={normalizeShowcaseContent(row?.data)} />
       )}
       {key === "home.newsletter" && (
         <NewsletterSectionEditor content={normalizeNewsletterContent(row?.data)} />

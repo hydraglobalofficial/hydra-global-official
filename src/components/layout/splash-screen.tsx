@@ -2,26 +2,19 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useReducedMotion } from "motion/react";
-import { cn } from "@/lib/utils";
 
 const SEEN_KEY = "hydra-splash-seen";
 const VIDEO_SRC = "/brand/hydra-animation.mp4";
-/** Hard cap so splash never feels slow even if the file is longer. */
-const MAX_MS = 900;
-const EXIT_MS = 220;
-/** Speed up playback — “super fast” intro. */
-const PLAYBACK_RATE = 1.75;
-
-type Phase = "play" | "exit" | "done";
 
 /**
- * Fast page-load intro: plays the HYDRA animation MP4, then fades into the site.
+ * Simple welcome: black screen + your HYDRA mp4, then enter the site.
+ * No loading bars, no creature morph — just the video you provided.
  */
 export function SplashScreen() {
   const [mounted, setMounted] = useState(false);
-  const [phase, setPhase] = useState<Phase>("play");
+  const [show, setShow] = useState(true);
   const videoRef = useRef<HTMLVideoElement>(null);
-  const finished = useRef(false);
+  const done = useRef(false);
   const reduced = useReducedMotion();
 
   useEffect(() => {
@@ -31,66 +24,48 @@ export function SplashScreen() {
   useEffect(() => {
     if (!mounted) return;
     if (reduced || sessionStorage.getItem(SEEN_KEY) === "1") {
-      setPhase("done");
+      setShow(false);
       return;
     }
     document.documentElement.dataset.splash = "playing";
+    const video = videoRef.current;
+    if (!video) return;
+    video.muted = true;
+    video.playbackRate = 1;
+    void video.play().catch(() => close());
   }, [mounted, reduced]);
 
-  const finish = () => {
-    if (finished.current) return;
-    finished.current = true;
-    setPhase("exit");
-  };
-
-  useEffect(() => {
-    if (!mounted || phase !== "play" || reduced) return;
-
-    const video = videoRef.current;
-    if (video) {
-      video.playbackRate = PLAYBACK_RATE;
-      video.muted = true;
-      void video.play().catch(() => {
-        /* autoplay blocked — still exit on timeout */
-      });
-    }
-
-    const cap = window.setTimeout(finish, MAX_MS);
-    return () => window.clearTimeout(cap);
-  }, [mounted, phase, reduced]);
-
-  useEffect(() => {
-    if (phase !== "exit") return;
-    const done = window.setTimeout(() => {
+  function close() {
+    if (done.current) return;
+    done.current = true;
+    try {
       sessionStorage.setItem(SEEN_KEY, "1");
-      document.documentElement.dataset.splash = "seen";
-      setPhase("done");
-    }, EXIT_MS);
-    return () => window.clearTimeout(done);
-  }, [phase]);
+    } catch {
+      /* ignore */
+    }
+    document.documentElement.dataset.splash = "seen";
+    setShow(false);
+  }
 
-  if (!mounted || phase === "done") return null;
+  if (!mounted || !show) return null;
 
   return (
     <div
-      className={cn(
-        "fixed inset-0 z-[100] grid place-items-center overflow-hidden bg-black transition-opacity duration-200 ease-out",
-        phase === "exit" && "pointer-events-none opacity-0",
-      )}
-      onClick={finish}
+      className="fixed inset-0 z-[100] grid place-items-center bg-black"
+      onClick={close}
       role="presentation"
       aria-hidden
     >
       <video
         ref={videoRef}
         src={VIDEO_SRC}
-        className="h-full w-full max-h-[min(100dvh,40rem)] max-w-[min(100vw,40rem)] object-contain"
+        className="h-auto w-auto max-h-full max-w-full object-contain"
         autoPlay
         muted
         playsInline
         preload="auto"
-        onEnded={finish}
-        onError={finish}
+        onEnded={close}
+        onError={close}
       />
     </div>
   );

@@ -22,7 +22,7 @@ export default async function AdminReviewsPage() {
       <AdminHeader title="Reviews" description="Approve reviews before they appear on product pages. Ratings update automatically." />
       <div className="space-y-3">
         {reviews.map((r) => (
-          <Card key={r.id} className="flex flex-col gap-4 p-5 md:flex-row md:items-start">
+          <Card key={r.id} className="flex flex-col gap-3.5 p-4 sm:gap-4 sm:p-5 md:flex-row md:items-start">
             <div className="flex-1 space-y-2">
               <div className="flex flex-wrap items-center gap-3">
                 <Rating value={r.rating} size={12} />
