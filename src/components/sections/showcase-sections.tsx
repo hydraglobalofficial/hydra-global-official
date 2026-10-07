@@ -34,7 +34,7 @@ function CountUp({ to, className }: { to: number; className?: string }) {
 
 export function ImpactStat() {
   return (
-    <section className="relative overflow-hidden py-28 md:py-36">
+    <section className="relative overflow-x-clip py-16 sm:py-24 md:py-36">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_70%_60%_at_50%_40%,rgba(30,64,175,0.18),transparent_65%)]" />
       <div className="bg-grid pointer-events-none absolute inset-0 opacity-40 [mask-image:radial-gradient(ellipse_at_center,#000,transparent_70%)]" />
       <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-accent/40 to-transparent" />
@@ -47,19 +47,19 @@ export function ImpactStat() {
         >
           Protected worldwide
         </motion.p>
-        <p className="mt-4 text-[clamp(4rem,15vw,12rem)] font-semibold leading-none tracking-[-0.06em]">
+        <p className="mt-4 text-[clamp(3.25rem,18vw,12rem)] font-semibold leading-none tracking-[-0.06em]">
           <CountUp to={50000} className="bg-gradient-to-b from-white via-fg to-white/55 bg-clip-text text-transparent tabular-nums" />
           <span className="text-muted">+</span>
         </p>
         <motion.div
-          className="mx-auto mt-8 max-w-2xl space-y-4"
+          className="mx-auto mt-6 max-w-2xl space-y-3 sm:mt-8 sm:space-y-4"
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.2 }}
         >
-          <h2 className="text-2xl font-semibold tracking-tight md:text-3xl">Devices equipped by HYDRA.</h2>
-          <p className="text-pretty text-muted">
+          <h2 className="text-xl font-semibold tracking-tight sm:text-2xl md:text-3xl">Devices equipped by HYDRA.</h2>
+          <p className="text-sm text-pretty text-muted sm:text-base">
             Engineered for the flagship phones people actually carry. Screen armor, cases, camera kits and more — cut per model,
             quality-checked and shipped worldwide — with real humans on support when you need them.
           </p>
@@ -77,11 +77,11 @@ const dropStats = [
 
 export function DropTest() {
   return (
-    <section className="container-page py-10 sm:py-14 md:py-16">
-      <div className="relative overflow-hidden rounded-[1.5rem] border border-line bg-surface px-4 pb-8 pt-10 sm:rounded-[2rem] sm:px-6 sm:pb-12 sm:pt-16 md:rounded-[2.5rem] md:px-12 md:pt-20">
+    <section className="container-page py-8 sm:py-14 md:py-16">
+      <div className="relative overflow-hidden rounded-[1.25rem] border border-line bg-surface px-3 pb-7 pt-8 sm:rounded-[2rem] sm:px-6 sm:pb-12 sm:pt-16 md:rounded-[2.5rem] md:px-12 md:pt-20">
         <div className="relative mx-auto max-w-2xl text-center">
           <p className="font-mono text-[11px] uppercase tracking-[0.3em] text-accent">Impact lab</p>
-          <h2 className="mt-3 text-3xl font-semibold tracking-tight text-balance sm:mt-4 sm:text-4xl md:text-6xl">
+          <h2 className="mt-3 text-[1.65rem] font-semibold tracking-tight text-balance sm:mt-4 sm:text-4xl md:text-6xl">
             Glass breaks. <span className="text-muted">Your screen doesn&apos;t.</span>
           </h2>
           <p className="mt-3 text-sm text-muted sm:mt-4 sm:text-base">

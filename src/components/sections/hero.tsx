@@ -204,13 +204,13 @@ export function Hero({ content }: { content: HomeHeroContent }) {
       <div className="bg-grid pointer-events-none absolute inset-0 opacity-30" />
       <div className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-[#03050a] via-[#03050a]/80 to-transparent" />
 
-      <div className="container-page relative grid min-h-[100svh] items-center gap-6 pb-24 pt-8 lg:grid-cols-[0.92fr_1.08fr] lg:gap-4 lg:pb-20 lg:pt-6">
-        <div className="relative z-10 max-w-xl space-y-8 lg:space-y-9">
-          <div className="grid min-h-[16.5rem] sm:min-h-[18rem]">
+      <div className="container-page relative grid min-h-[100svh] items-center gap-6 pb-28 pt-6 sm:pb-24 sm:pt-8 lg:grid-cols-[0.92fr_1.08fr] lg:gap-4 lg:pb-20 lg:pt-6">
+        <div className="relative z-10 max-w-xl space-y-6 sm:space-y-8 lg:space-y-9">
+          <div className="grid min-h-[14.5rem] sm:min-h-[18rem]">
             <AnimatePresence initial={false} mode="popLayout">
               <motion.div
                 key={slide.key}
-                className="col-start-1 row-start-1 space-y-6 sm:space-y-7"
+                className="col-start-1 row-start-1 space-y-5 sm:space-y-7"
                 initial="hidden"
                 animate="show"
                 exit="exit"
@@ -220,28 +220,28 @@ export function Hero({ content }: { content: HomeHeroContent }) {
               >
                 <motion.p
                   variants={item}
-                  className="font-mono text-[11px] uppercase tracking-[0.35em] text-accent"
+                  className="font-mono text-[10px] uppercase tracking-[0.3em] text-accent sm:text-[11px] sm:tracking-[0.35em]"
                 >
                   {slide.brand}
                 </motion.p>
 
                 <motion.h1
                   variants={item}
-                  className="text-[2.85rem] font-semibold leading-[0.98] tracking-tight text-balance sm:text-6xl md:text-7xl lg:text-[4.6rem] lg:leading-[0.96]"
+                  className="text-[clamp(2.15rem,9.5vw,2.85rem)] font-semibold leading-[0.98] tracking-tight text-balance sm:text-6xl md:text-7xl lg:text-[4.6rem] lg:leading-[0.96]"
                 >
                   {slide.title}
                   <span className="block text-accent">{slide.titleAccent}</span>
                 </motion.h1>
 
-                <motion.p variants={item} className="max-w-md text-base leading-relaxed text-muted sm:text-lg">
+                <motion.p variants={item} className="max-w-md text-[0.95rem] leading-relaxed text-muted sm:text-lg">
                   {slide.text}
                 </motion.p>
 
-                <motion.div variants={item} className="flex flex-wrap items-center gap-3">
-                  <ButtonLink href={slide.primaryHref} size="lg" className="min-w-[9.5rem] text-[15px]">
+                <motion.div variants={item} className="flex flex-wrap items-center gap-2.5 sm:gap-3">
+                  <ButtonLink href={slide.primaryHref} size="lg" className="min-h-11 min-w-[9rem] text-[15px] sm:min-w-[9.5rem]">
                     {slide.primaryLabel} <ArrowRight size={17} />
                   </ButtonLink>
-                  <ButtonLink href={slide.secondaryHref} size="lg" variant="outline">
+                  <ButtonLink href={slide.secondaryHref} size="lg" variant="outline" className="min-h-11">
                     {slide.secondaryLabel}
                   </ButtonLink>
                 </motion.div>
@@ -265,16 +265,16 @@ export function Hero({ content }: { content: HomeHeroContent }) {
           </div>
         </div>
 
-        <div className="relative mx-auto w-full max-w-[34rem] lg:max-w-none lg:translate-x-2">
+        <div className="relative mx-auto w-full min-w-0 max-w-[34rem] lg:max-w-none lg:translate-x-2">
           <Stage>
-            <div className="relative mx-auto flex aspect-[4/5] w-full items-center justify-center">
+            <div className="relative mx-auto flex aspect-[4/5] w-full max-w-full items-center justify-center overflow-hidden sm:overflow-visible">
               <div
                 aria-hidden
                 className="pointer-events-none absolute left-1/2 top-[45%] size-[120%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(30,64,175,0.45)_0%,transparent_62%)] blur-3xl"
               />
               <div aria-hidden className="pointer-events-none absolute inset-x-[18%] bottom-[4%] h-20 rounded-[100%] bg-black/70 blur-3xl" />
 
-              <div className="relative z-[1] w-full scale-[1.02] sm:scale-105 lg:scale-110">
+              <div className="relative z-[1] w-full max-w-full scale-100 sm:scale-105 lg:scale-110">
                 <div className="grid">
                   <AnimatePresence initial={false} mode="popLayout">
                     <motion.div
@@ -309,16 +309,16 @@ export function Hero({ content }: { content: HomeHeroContent }) {
         </div>
       </div>
 
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 z-20">
-        <div className="container-page pointer-events-auto pb-5 pt-2 sm:pb-7">
-          <div className="rounded-2xl border border-white/[0.07] bg-black/50 px-3 py-3 backdrop-blur-xl sm:rounded-full sm:px-5">
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 z-20 pb-[env(safe-area-inset-bottom)]">
+        <div className="container-page pointer-events-auto pb-4 pt-2 sm:pb-7">
+          <div className="rounded-2xl border border-white/[0.07] bg-black/50 px-2 py-2.5 backdrop-blur-xl sm:rounded-full sm:px-5 sm:py-3">
             <dl className="grid grid-cols-3 divide-x divide-white/[0.06] sm:flex sm:justify-center sm:divide-x">
               {stats.map((s) => (
-                <div key={s.label} className="flex flex-col items-center px-3 py-1 sm:flex-row sm:gap-2 sm:px-8">
-                  <dt className="order-2 text-[10px] uppercase tracking-[0.14em] text-subtle sm:order-1 sm:text-xs">
+                <div key={s.label} className="flex min-w-0 flex-col items-center px-1.5 py-1 sm:flex-row sm:gap-2 sm:px-8">
+                  <dt className="order-2 max-w-full truncate text-center text-[9px] uppercase tracking-[0.12em] text-subtle sm:order-1 sm:text-xs sm:tracking-[0.14em]">
                     {s.label}
                   </dt>
-                  <dd className="order-1 font-mono text-sm font-semibold tabular-nums sm:order-2 sm:text-base">
+                  <dd className="order-1 font-mono text-xs font-semibold tabular-nums sm:order-2 sm:text-base">
                     {s.value}
                   </dd>
                 </div>

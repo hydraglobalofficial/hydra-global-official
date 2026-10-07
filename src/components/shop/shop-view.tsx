@@ -54,10 +54,10 @@ export async function ShopView({ params, brand }: { params: RawParams; brand?: B
   const devices = brand ? nav.devices.filter((d) => d.brand === brands[brand].enum) : nav.devices;
 
   return (
-    <div className="container-page grid gap-10 py-12 lg:grid-cols-[16rem_1fr]">
-      <aside className="lg:sticky lg:top-28 lg:self-start">
-        <details className="group glass rounded-2xl p-5 lg:!block lg:border-0 lg:bg-transparent lg:p-0 lg:backdrop-blur-none" open>
-          <summary className="cursor-pointer list-none text-sm font-medium lg:hidden">Filter &amp; sort</summary>
+    <div className="container-page grid gap-8 py-8 sm:gap-10 sm:py-12 lg:grid-cols-[16rem_minmax(0,1fr)]">
+      <aside className="min-w-0 lg:sticky lg:top-28 lg:self-start">
+        <details className="group glass rounded-2xl p-4 sm:p-5 lg:!block lg:border-0 lg:bg-transparent lg:p-0 lg:backdrop-blur-none" open>
+          <summary className="flex min-h-11 cursor-pointer list-none items-center text-sm font-medium lg:hidden">Filter &amp; sort</summary>
           <div className="mt-6 lg:mt-0">
             <ShopFilters
               key={JSON.stringify(filters)}
@@ -71,8 +71,8 @@ export async function ShopView({ params, brand }: { params: RawParams; brand?: B
         </details>
       </aside>
 
-      <div>
-        <div className="mb-6 flex items-center justify-between text-sm text-muted">
+      <div className="min-w-0">
+        <div className="mb-5 flex items-center justify-between gap-3 text-sm text-muted sm:mb-6">
           <p>
             <span className="font-mono text-fg">{result.total}</span> product{result.total === 1 ? "" : "s"}
           </p>

@@ -2,13 +2,40 @@ import Image from "next/image";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 
-/** Creature crest (Hydra_Animation) for compact mark. */
+/** Creature crest — header left + compact mark. */
 export const MARK_SRC = "/products/Hydra_Mark.png";
 export const CREST_SRC = "/products/Hydra_Animation.png";
-/** Full HYDRA wordmark + tagline (real brand PNG). */
+/** Real brand wordmark: HYDRA + SMART ACCESSORIES. */
 export const WORDMARK_SRC = "/products/Hydra.png";
 
-/** Creature mark — from Hydra_Animation.png */
+/**
+ * TM sits above the trailing A of HYDRA.
+ * Inline `left` (not Tailwind) so the class can never fail to emit and park TM at 0% (crest).
+ * 16px + scale avoids Chrome min-font blow-up/clip in the header pill.
+ */
+function TmMark() {
+  return (
+    <span
+      data-logo-tm
+      aria-hidden
+      className="pointer-events-none absolute z-20 block select-none text-white"
+      style={{
+        top: 0,
+        left: "72%",
+        fontSize: 16,
+        fontWeight: 800,
+        letterSpacing: "0.05em",
+        lineHeight: 1,
+        transform: "scale(0.45)",
+        transformOrigin: "left top",
+      }}
+    >
+      TM
+    </span>
+  );
+}
+
+/** Creature mark only — login, favicon-style spots. */
 export function LogoMark({
   className,
   priority = false,
@@ -33,7 +60,7 @@ export function LogoMark({
   );
 }
 
-/** Real HYDRA wordmark image (includes SMART ACCESSORIES). */
+/** Full real wordmark image. */
 export function WordmarkImage({
   className,
   priority = false,
@@ -59,47 +86,44 @@ export function WordmarkImage({
 }
 
 /**
- * Brand lockup: crest + full HYDRA wordmark, TM tucked on the A (not far away).
+ * Header / footer lockup: crest + Hydra.png wordmark + TM above the A.
  */
 export function Logo({ className }: { className?: string }) {
   return (
     <Link
       href="/"
-      className={cn(
-        "group relative inline-flex max-w-[70vw] shrink-0 items-center gap-1.5 sm:max-w-none sm:gap-2",
-        className,
-      )}
+      className={cn("group relative inline-flex shrink-0 items-center gap-0 overflow-visible", className)}
       aria-label="HYDRA home"
     >
-      <span className="relative block size-9 shrink-0 sm:size-10 md:size-11">
+      <span data-logo-crest className="relative block size-9 shrink-0 sm:size-11 md:size-12" style={{ marginRight: -4 }}>
         <Image
           src={MARK_SRC}
           alt=""
           fill
           sizes="48px"
           priority
-          quality={92}
-          className="object-contain object-center"
+          quality={95}
+          className="object-contain object-center scale-[1.08]"
         />
       </span>
 
-      <span className="relative block h-9 w-[7.5rem] sm:h-11 sm:w-[9.25rem] md:h-12 md:w-[10.5rem]">
-        <Image
-          src={WORDMARK_SRC}
-          alt="HYDRA"
-          fill
-          sizes="200px"
-          priority
-          quality={95}
-          className="object-contain object-left brightness-0 invert transition-opacity duration-300 group-hover:opacity-90"
-        />
-        {/* Sit on the A — left% beats right-edge padding in the PNG */}
-        <span
-          className="pointer-events-none absolute left-[86%] top-0 select-none font-sans text-[7px] font-extrabold leading-none tracking-tighter text-white sm:left-[87%] sm:text-[8px] md:left-[88%] md:text-[9px]"
-          aria-hidden
-        >
-          TM
+      <span
+        data-logo-word
+        className="relative block h-9 overflow-hidden pt-2 sm:h-11 sm:pt-2.5 md:h-[3.25rem] md:pt-3"
+        style={{ width: "clamp(7.25rem, 46vw, 9.75rem)" }}
+      >
+        <span className="relative block h-full overflow-hidden" style={{ width: "114%", marginLeft: "-2%" }}>
+          <Image
+            src={WORDMARK_SRC}
+            alt="HYDRA — Smart Accessories"
+            width={6516}
+            height={2172}
+            priority
+            quality={95}
+            className="h-full w-full object-contain object-left brightness-0 invert transition-opacity duration-300 group-hover:opacity-90"
+          />
         </span>
+        <TmMark />
       </span>
     </Link>
   );

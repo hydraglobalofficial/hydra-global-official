@@ -12,7 +12,7 @@ export function SearchForm({ defaultQuery = "" }: { defaultQuery?: string }) {
   const typing = useTypingPlaceholder(undefined, !focused && !value);
 
   return (
-    <Form action="/search" className="border-gradient mx-auto flex max-w-3xl items-center gap-3 rounded-full p-2 pl-6">
+    <Form action="/search" className="border-gradient mx-auto flex w-full max-w-3xl items-center gap-2 rounded-full p-1.5 pl-4 sm:gap-3 sm:p-2 sm:pl-6">
       <Search size={20} className="shrink-0 text-accent" />
       <input
         name="q"
@@ -25,9 +25,9 @@ export function SearchForm({ defaultQuery = "" }: { defaultQuery?: string }) {
         minLength={1}
         placeholder={typing}
         aria-label="Search"
-        className="h-12 min-w-0 flex-1 bg-transparent text-lg placeholder:text-subtle focus:outline-none"
+        className="h-11 min-w-0 flex-1 bg-transparent text-base placeholder:text-subtle focus:outline-none sm:h-12 sm:text-lg"
       />
-      <button type="submit" className={buttonStyles({ size: "md", className: "shrink-0" })}>
+      <button type="submit" className={buttonStyles({ size: "md", className: "touch-target shrink-0 px-4 sm:px-5" })}>
         Search
       </button>
     </Form>

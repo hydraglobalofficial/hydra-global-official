@@ -58,7 +58,7 @@ export default async function HomePage() {
         howItWorks={howItWorks}
         newsletter={newsletter}
         bestsellers={
-          <section className="container-page py-24">
+          <section className="container-page py-14 sm:py-20 md:py-24">
             <SectionHeading
               eyebrow="Bestsellers"
               title={
@@ -67,7 +67,7 @@ export default async function HomePage() {
                 </>
               }
               action={
-                <ButtonLink href="/shop" variant="outline">
+                <ButtonLink href="/shop" variant="outline" className="min-h-11">
                   View all <ArrowRight size={16} />
                 </ButtonLink>
               }

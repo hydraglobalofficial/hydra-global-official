@@ -45,7 +45,7 @@ export function PhoneWithCountryCode({
         onChange={(e) => setDial(e.target.value)}
         aria-label="Country code"
         className={cn(
-          "w-[9.5rem] shrink-0 bg-[length:0.65rem] bg-[right_0.65rem_center] pl-2.5 pr-7 text-[12px] sm:w-[11rem] sm:text-[13px]",
+          "w-[8.25rem] shrink-0 bg-[length:0.65rem] bg-[right_0.55rem_center] pl-2 pr-6 text-[11px] sm:w-[11rem] sm:bg-[right_0.65rem_center] sm:pl-2.5 sm:pr-7 sm:text-[13px]",
         )}
       >
         {dialCodes.map((d) => (

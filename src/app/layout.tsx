@@ -35,20 +35,34 @@ export const metadata: Metadata = {
   },
   twitter: { card: "summary_large_image" },
   alternates: { canonical: "/" },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: siteConfig.name,
+  },
+  formatDetection: {
+    telephone: false,
+    email: false,
+    address: false,
+  },
 };
 
 export const viewport: Viewport = {
-  themeColor: "#000000",
+  themeColor: [
+    { media: "(prefers-color-scheme: dark)", color: "#000000" },
+    { color: "#000000" },
+  ],
   colorScheme: "dark",
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
+  interactiveWidget: "resizes-content",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable} antialiased`} suppressHydrationWarning>
-      <body className="flex min-h-dvh flex-col font-sans">{children}</body>
+      <body className="flex min-h-dvh flex-col font-sans antialiased">{children}</body>
     </html>
   );
 }

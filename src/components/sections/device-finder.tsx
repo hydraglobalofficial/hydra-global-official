@@ -53,7 +53,7 @@ export function DeviceFinder({ devices }: { devices: DeviceOption[] }) {
                   }}
                   aria-pressed={brand === b.value}
                   className={cn(
-                    "h-12 rounded-xl border px-5 text-sm transition-all",
+                    "min-h-12 flex-1 rounded-xl border px-4 text-sm transition-all sm:flex-none sm:px-5",
                     brand === b.value ? "border-accent bg-accent/10 text-fg" : "border-line bg-surface-2 text-muted hover:text-fg",
                   )}
                 >

@@ -394,13 +394,13 @@ export function InstallExperience({ content }: { content: InstallationContent })
             <span className="size-1.5 rounded-full bg-accent shadow-[0_0_14px_var(--color-accent)]" />
             {content.eyebrow}
           </p>
-          <h1 className="mt-5 text-4xl font-semibold tracking-tight text-balance md:text-6xl">
+          <h1 className="mt-5 text-3xl font-semibold tracking-tight text-balance sm:text-4xl md:text-6xl">
             {content.title}{" "}
             <span className="bg-gradient-to-r from-blue-200 via-white to-zinc-400 bg-clip-text text-transparent">
               {content.titleAccent}
             </span>
           </h1>
-          <p className="mx-auto mt-5 max-w-2xl text-base text-pretty text-muted md:text-lg">{content.intro}</p>
+          <p className="mx-auto mt-4 max-w-2xl text-sm text-pretty text-muted sm:mt-5 sm:text-base md:text-lg">{content.intro}</p>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
             <span className="inline-flex items-center gap-2 rounded-full border border-accent/25 bg-accent/10 px-4 py-2 font-mono text-[11px] uppercase tracking-[0.16em] text-blue-100">
               <Smartphone size={13} /> {content.brandsNote}
@@ -441,7 +441,7 @@ export function InstallExperience({ content }: { content: InstallationContent })
                     <button
                       type="button"
                       onClick={() => setActive(i)}
-                      className="relative z-[1] flex w-full items-center gap-3 rounded-2xl px-3 py-2.5 text-left"
+                      className="relative z-[1] flex min-h-11 w-full items-center gap-3 rounded-2xl px-3 py-2.5 text-left"
                     >
                       <span
                         className={cn(

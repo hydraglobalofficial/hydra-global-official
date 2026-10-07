@@ -71,18 +71,18 @@ function Scene({ damaged }: { damaged?: boolean }) {
 
 export function ClarityCompare() {
   return (
-    <section className="container-page py-24">
-      <div className="grid items-center gap-12 lg:grid-cols-[1fr_1.4fr]">
-        <div>
+    <section className="container-page py-14 sm:py-20 md:py-24">
+      <div className="grid items-center gap-8 sm:gap-12 lg:grid-cols-[1fr_1.4fr]">
+        <div className="min-w-0">
           <SectionHeading
             eyebrow="See the difference"
             title="Clarity you can feel."
             description="Drag the slider. Ordinary glass scatters light, holds fingerprints and scratches in weeks. HYDRA's nano-coated glass stays optically pure."
           />
-          <ul className="-mt-4 space-y-3">
+          <ul className="-mt-2 space-y-3 sm:-mt-4">
             {["Oleophobic nano-coating repels smudges", "Anti-glare optical layer", "Touch sensitivity preserved at 100%", "Bubble-free adhesive, full-edge coverage"].map((f) => (
-              <li key={f} className="flex items-center gap-3 text-sm text-muted">
-                <span className="grid size-5 place-items-center rounded-full bg-accent/15 text-accent">
+              <li key={f} className="flex items-start gap-3 text-sm text-muted">
+                <span className="mt-0.5 grid size-5 shrink-0 place-items-center rounded-full bg-accent/15 text-accent">
                   <Check size={12} />
                 </span>
                 {f}
@@ -90,9 +90,9 @@ export function ClarityCompare() {
             ))}
           </ul>
         </div>
-        <div className="relative">
-          <div aria-hidden className="pointer-events-none absolute -inset-6 rounded-[2.5rem] bg-gradient-to-br from-accent/20 via-transparent to-white/[0.06] blur-2xl" />
-          <div className="card-premium relative rounded-[2rem] p-2">
+        <div className="relative min-w-0">
+          <div aria-hidden className="pointer-events-none absolute -inset-3 rounded-[2rem] bg-gradient-to-br from-accent/20 via-transparent to-white/[0.06] blur-2xl sm:-inset-6 sm:rounded-[2.5rem]" />
+          <div className="card-premium relative rounded-[1.25rem] p-1.5 sm:rounded-[2rem] sm:p-2">
             <CompareSlider before={<Scene damaged />} after={<Scene />} beforeLabel="Ordinary glass" afterLabel="HYDRA armor" />
           </div>
         </div>

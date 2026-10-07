@@ -12,7 +12,7 @@ import { Logo } from "./logo";
 /** Premium footer — original HYDRA wordmark (not CSS text). */
 export function SiteFooter() {
   return (
-    <footer className="relative mt-16 overflow-hidden border-t border-line bg-black sm:mt-24 md:mt-28">
+    <footer className="relative mt-16 overflow-hidden border-t border-line bg-black pb-[env(safe-area-inset-bottom)] sm:mt-24 md:mt-28">
       <div aria-hidden className="divider-glow absolute inset-x-0 top-0" />
       <div className="pointer-events-none absolute inset-x-0 top-0 h-48 bg-gradient-to-b from-[#1e3a8a]/20 to-transparent sm:h-72" />
 
@@ -76,7 +76,7 @@ export function SiteFooter() {
       <button
         type="button"
         onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-        className="fixed bottom-[max(1rem,env(safe-area-inset-bottom))] right-[max(1rem,env(safe-area-inset-right))] z-40 grid size-10 place-items-center rounded-lg border border-line-strong bg-fg text-bg shadow-[0_12px_40px_rgba(0,0,0,0.5)] transition hover:bg-accent hover:text-bg sm:bottom-5 sm:right-5 sm:size-11"
+        className="touch-target fixed bottom-[max(5.75rem,calc(env(safe-area-inset-bottom)+4.75rem))] right-[max(0.75rem,env(safe-area-inset-right))] z-40 grid place-items-center rounded-lg border border-line-strong bg-fg text-bg shadow-[0_12px_40px_rgba(0,0,0,0.5)] transition hover:bg-accent hover:text-bg sm:bottom-5 sm:right-5"
         aria-label="Scroll to top"
       >
         <ArrowUp size={18} strokeWidth={2.25} />

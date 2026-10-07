@@ -11,9 +11,9 @@ export function ProductGallery({ images, name }: { images: GalleryImage[]; name:
   const current = images[active];
 
   return (
-    <div className="flex flex-col-reverse gap-4 md:flex-row">
+    <div className="flex min-w-0 flex-col-reverse gap-3 sm:gap-4 md:flex-row">
       {images.length > 1 && (
-        <div className="no-scrollbar flex gap-3 overflow-x-auto md:flex-col" role="tablist" aria-label="Product images">
+        <div className="no-scrollbar -mx-1 flex gap-2.5 overflow-x-auto px-1 pb-0.5 md:mx-0 md:flex-col md:gap-3 md:overflow-visible md:px-0" role="tablist" aria-label="Product images">
           {images.map((img, i) => (
             <button
               key={img.id}
@@ -22,7 +22,7 @@ export function ProductGallery({ images, name }: { images: GalleryImage[]; name:
               aria-selected={i === active}
               onClick={() => setActive(i)}
               className={cn(
-                "relative size-20 shrink-0 overflow-hidden rounded-2xl border bg-surface-2 transition-all",
+                "relative size-[4.5rem] shrink-0 overflow-hidden rounded-xl border bg-surface-2 transition-all sm:size-20 sm:rounded-2xl",
                 i === active ? "border-accent/70 shadow-[0_0_24px_-6px_var(--color-accent)]" : "border-line opacity-60 hover:opacity-100",
               )}
             >
@@ -31,7 +31,7 @@ export function ProductGallery({ images, name }: { images: GalleryImage[]; name:
           ))}
         </div>
       )}
-      <div className="relative aspect-square flex-1 overflow-hidden rounded-3xl border border-line bg-[radial-gradient(circle_at_50%_35%,#18181e_0%,#050506_70%)]">
+      <div className="relative aspect-square min-w-0 flex-1 overflow-hidden rounded-2xl border border-line bg-[radial-gradient(circle_at_50%_35%,#18181e_0%,#050506_70%)] sm:rounded-3xl">
         <div className="bg-grid pointer-events-none absolute inset-0 opacity-60" />
         <div className="pointer-events-none absolute inset-x-1/4 bottom-10 h-16 rounded-full bg-accent/25 blur-3xl animate-pulse-glow" />
         {current && (
@@ -42,7 +42,7 @@ export function ProductGallery({ images, name }: { images: GalleryImage[]; name:
             fill
             priority
             sizes="(min-width: 1024px) 50vw, 100vw"
-            className="object-contain p-10 animate-fade-up"
+            className="object-contain p-6 animate-fade-up sm:p-10"
           />
         )}
       </div>

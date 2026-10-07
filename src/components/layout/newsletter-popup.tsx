@@ -59,13 +59,18 @@ export function NewsletterPopup() {
   return (
     <AnimatePresence>
       {open && !excluded && (
-        <motion.div className="fixed inset-0 z-[80] grid place-items-center p-4" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+        <motion.div
+          className="fixed inset-0 z-[90] grid place-items-end p-3 pb-[max(0.75rem,env(safe-area-inset-bottom,0px))] pt-[max(0.75rem,env(safe-area-inset-top,0px))] sm:place-items-center sm:p-4"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+        >
           <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={close} />
           <motion.div
             role="dialog"
             aria-modal="true"
             aria-labelledby="newsletter-popup-title"
-            className="card-premium relative grid w-full max-w-3xl overflow-hidden rounded-[2rem] md:grid-cols-2"
+            className="card-premium relative grid max-h-[min(92dvh,40rem)] w-full max-w-3xl overflow-y-auto overflow-x-hidden rounded-[1.5rem] sm:rounded-[2rem] md:grid-cols-2"
             initial={{ opacity: 0, y: 30, scale: 0.96 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.97 }}
@@ -77,8 +82,13 @@ export function NewsletterPopup() {
                 <ProductImage src="/products/glass-privacy.jpg" alt="" fill sizes="384px" className="object-contain drop-shadow-[0_30px_40px_rgba(0,0,0,0.6)]" />
               </motion.div>
             </div>
-            <div className="relative space-y-5 p-8 md:p-10">
-              <button type="button" onClick={close} aria-label="Close" className="absolute right-4 top-4 rounded-full p-2 text-muted transition-colors hover:bg-white/5 hover:text-fg">
+            <div className="relative space-y-5 p-6 sm:p-8 md:p-10">
+              <button
+                type="button"
+                onClick={close}
+                aria-label="Close"
+                className="touch-target absolute right-3 top-3 grid place-items-center rounded-full text-muted transition-colors hover:bg-white/5 hover:text-fg sm:right-4 sm:top-4"
+              >
                 <X size={18} />
               </button>
               <p className="font-mono text-[11px] uppercase tracking-[0.3em] text-accent">Members only</p>

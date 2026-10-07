@@ -59,15 +59,15 @@ export function SectionHeading({
 }) {
   const mounted = useHasMounted();
   const layout = cn(
-    "mb-10 flex flex-col gap-4 md:mb-14",
+    "mb-8 flex flex-col gap-4 sm:mb-10 md:mb-14",
     align === "center" ? "items-center text-center" : "md:flex-row md:items-end md:justify-between",
   );
   const body = (
     <>
-      <div className={cn("max-w-2xl space-y-4", align === "center" && "mx-auto")}>
+      <div className={cn("max-w-2xl space-y-3 sm:space-y-4", align === "center" && "mx-auto")}>
         {eyebrow && <Eyebrow>{eyebrow}</Eyebrow>}
-        <h2 className="text-3xl font-semibold tracking-tight text-balance md:text-5xl">{title}</h2>
-        {description && <div className="text-base text-pretty text-muted md:text-lg">{description}</div>}
+        <h2 className="text-[1.65rem] font-semibold tracking-tight text-balance sm:text-3xl md:text-5xl">{title}</h2>
+        {description && <div className="text-sm text-pretty text-muted sm:text-base md:text-lg">{description}</div>}
       </div>
       {action}
     </>
@@ -126,19 +126,19 @@ export function PageHeader({
   const content = (
     <>
       {eyebrow && <Eyebrow>{eyebrow}</Eyebrow>}
-      <h1 className="text-4xl font-semibold tracking-tight text-balance md:text-6xl">{title}</h1>
-      {description && <div className="max-w-2xl text-lg text-pretty text-muted">{description}</div>}
+      <h1 className="text-3xl font-semibold tracking-tight text-balance sm:text-4xl md:text-6xl">{title}</h1>
+      {description && <div className="max-w-2xl text-base text-pretty text-muted sm:text-lg">{description}</div>}
       {children}
     </>
   );
 
   return (
-    <section className="relative overflow-hidden">
+    <section className="relative overflow-x-clip">
       <div className="bg-grid pointer-events-none absolute inset-0" />
-      <div className="pointer-events-none absolute -top-40 left-1/2 h-80 w-[40rem] -translate-x-1/2 rounded-full bg-accent/15 blur-[120px]" />
+      <div className="pointer-events-none absolute -top-40 left-1/2 h-80 w-[min(100%,40rem)] -translate-x-1/2 rounded-full bg-accent/15 blur-[120px]" />
       <div className="pointer-events-none absolute -right-20 top-10 h-64 w-64 rounded-full bg-white/[0.05] blur-[100px]" />
       <div aria-hidden className="divider-glow absolute inset-x-0 bottom-0" />
-      <div className="container-page relative py-16 md:py-24">
+      <div className="container-page relative py-12 sm:py-16 md:py-24">
         {mounted ? (
           <motion.div
             className="max-w-3xl space-y-5"

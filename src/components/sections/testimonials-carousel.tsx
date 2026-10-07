@@ -90,22 +90,22 @@ export function Testimonials() {
 
   return (
     <section
-      className="container-page py-24"
+      className="container-page py-14 sm:py-20 md:py-24"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       aria-roledescription="carousel"
       aria-label="Customer reviews"
     >
-      <div className="mb-8 flex flex-col gap-5 sm:mb-10 sm:flex-row sm:items-end sm:justify-between">
-        <div className="max-w-2xl space-y-4">
+      <div className="mb-6 flex flex-col gap-4 sm:mb-10 sm:flex-row sm:items-end sm:justify-between sm:gap-5">
+        <div className="max-w-2xl space-y-3 sm:space-y-4">
           <p className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.25em] text-accent">
             <span className="size-1.5 rounded-full bg-accent shadow-[0_0_12px_var(--color-accent)]" />
             Reviews
           </p>
-          <h2 className="text-3xl font-semibold tracking-tight text-balance md:text-5xl">
+          <h2 className="text-[1.65rem] font-semibold tracking-tight text-balance sm:text-3xl md:text-5xl">
             Loved by <span className="text-muted">thousands.</span>
           </h2>
-          <div className="flex items-center gap-3 text-muted">
+          <div className="flex flex-wrap items-center gap-2 text-muted sm:gap-3">
             <Rating value={4.8} size={16} />
             <span className="text-sm sm:text-base">4.8 average from verified buyers</span>
           </div>
@@ -115,7 +115,7 @@ export function Testimonials() {
             type="button"
             onClick={() => go(-1)}
             aria-label="Previous reviews"
-            className="grid size-10 place-items-center rounded-full border border-white/10 text-muted transition-colors hover:border-accent/40 hover:text-fg"
+            className="touch-target grid place-items-center rounded-full border border-white/10 text-muted transition-colors hover:border-accent/40 hover:text-fg"
           >
             <ChevronLeft size={16} />
           </button>
@@ -123,7 +123,7 @@ export function Testimonials() {
             type="button"
             onClick={() => go(1)}
             aria-label="Next reviews"
-            className="grid size-10 place-items-center rounded-full border border-white/10 text-muted transition-colors hover:border-accent/40 hover:text-fg"
+            className="touch-target grid place-items-center rounded-full border border-white/10 text-muted transition-colors hover:border-accent/40 hover:text-fg"
           >
             <ChevronRight size={16} />
           </button>
@@ -143,7 +143,7 @@ export function Testimonials() {
             {visible.map((t) => (
               <figure
                 key={t.name}
-                className="card-premium flex h-full min-h-[17rem] flex-col justify-between gap-8 rounded-3xl p-6 sm:p-7"
+                className="card-premium flex h-full min-h-[15rem] flex-col justify-between gap-6 rounded-2xl p-5 sm:min-h-[17rem] sm:gap-8 sm:rounded-3xl sm:p-7"
               >
                 <div className="space-y-5">
                   <div className="flex items-center justify-between">

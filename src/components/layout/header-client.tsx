@@ -53,6 +53,12 @@ export function HeaderClient({ nav }: { nav: NavigationData }) {
     return () => window.removeEventListener("keydown", onKey);
   }, [searchOpen]);
 
+  useEffect(() => {
+    if (!mobileOpen) return;
+    document.body.classList.add("overflow-hidden");
+    return () => document.body.classList.remove("overflow-hidden");
+  }, [mobileOpen]);
+
   const openMenu = (key: "shop" | "support") => {
     clearTimeout(closeTimer.current);
     setMenu(key);
@@ -62,18 +68,25 @@ export function HeaderClient({ nav }: { nav: NavigationData }) {
   };
 
   return (
-    <header className="sticky top-0 z-40 px-2 pt-2 sm:px-3 sm:pt-3 md:px-5" onMouseLeave={scheduleClose}>
+    <header
+      className={cn(
+        /* Announcement bar owns safe-area-top; only bump z when drawer open so it covers the marquee */
+        "sticky top-0 z-40 px-2 pt-2 sm:px-3 sm:pt-3 md:px-5",
+        mobileOpen && "z-[70]",
+      )}
+      onMouseLeave={scheduleClose}
+    >
       <div
         className={cn(
-          "relative mx-auto flex h-14 max-w-[88rem] items-center justify-between gap-2 rounded-2xl border border-line bg-black px-2 transition-all duration-500 sm:h-[4.25rem] sm:gap-4 sm:px-3 md:h-[4.75rem] md:gap-6 md:px-6",
+          "relative mx-auto flex h-14 max-w-[88rem] items-center justify-between gap-2 overflow-visible rounded-2xl border border-line bg-black px-2 transition-all duration-500 sm:h-[4.25rem] sm:gap-4 sm:px-3 md:h-[4.75rem] md:gap-6 md:px-6",
           (scrolled || menu) && "border-line-strong shadow-[0_24px_60px_-24px_rgba(0,0,0,0.95)]",
         )}
       >
         <div aria-hidden className="divider-glow pointer-events-none absolute inset-x-6 -bottom-px opacity-60 sm:inset-x-10" />
-        <div className="flex min-w-0 items-center gap-2 sm:gap-4 md:gap-10">
+        <div className="flex min-w-0 items-center gap-2 overflow-visible sm:gap-4 md:gap-10">
           <button
             type="button"
-            className="-ml-1 rounded-full p-2 text-muted hover:text-fg lg:hidden"
+            className="touch-target -ml-1 grid place-items-center rounded-full text-muted hover:text-fg lg:hidden"
             onClick={() => setMobileOpen(true)}
             aria-label="Open menu"
           >
@@ -103,19 +116,24 @@ export function HeaderClient({ nav }: { nav: NavigationData }) {
           </nav>
         </div>
 
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-0.5 sm:gap-1">
           <button
             type="button"
             onClick={() => setSearchOpen((v) => !v)}
-            className="rounded-full p-2.5 text-muted hover:bg-white/5 hover:text-fg"
+            className="touch-target grid place-items-center rounded-full text-muted hover:bg-white/5 hover:text-fg"
             aria-label="Search"
           >
             <Search size={19} />
           </button>
-          <button type="button" onClick={open} className="relative rounded-full p-2.5 text-muted hover:bg-white/5 hover:text-fg" aria-label={`Cart, ${count} items`}>
+          <button
+            type="button"
+            onClick={open}
+            className="touch-target relative grid place-items-center rounded-full text-muted hover:bg-white/5 hover:text-fg"
+            aria-label={`Cart, ${count} items`}
+          >
             <ShoppingBag size={19} />
             {hydrated && count > 0 && (
-              <span className="absolute right-0.5 top-0.5 grid min-w-4.5 place-items-center rounded-full bg-accent px-1 font-mono text-[10px] font-semibold leading-4.5 text-black">
+              <span className="absolute right-1 top-1 grid min-w-4.5 place-items-center rounded-full bg-accent px-1 font-mono text-[10px] font-semibold leading-4.5 text-black">
                 {count}
               </span>
             )}
@@ -151,7 +169,7 @@ export function HeaderClient({ nav }: { nav: NavigationData }) {
           searchOpen ? "visible opacity-100" : "invisible opacity-0",
         )}
       >
-        <Form action="/search" className="container-page flex items-center gap-3 py-5 sm:gap-4 sm:py-6">
+        <Form action="/search" className="container-page flex items-center gap-2 py-3 sm:gap-4 sm:py-6">
           <Search className="shrink-0 text-accent" size={22} />
           <input
             ref={searchRef}
@@ -162,13 +180,18 @@ export function HeaderClient({ nav }: { nav: NavigationData }) {
             placeholder={typingPlaceholder}
             onFocus={() => setSearchFocused(true)}
             onBlur={() => setSearchFocused(false)}
-            className="h-12 min-w-0 flex-1 bg-transparent text-base placeholder:text-subtle focus:outline-none sm:text-lg"
+            className="h-11 min-w-0 flex-1 bg-transparent text-base placeholder:text-subtle focus:outline-none sm:h-12 sm:text-lg"
             aria-label="Search products"
           />
-          <button type="submit" className={buttonStyles({ size: "sm", className: "shrink-0" })}>
+          <button type="submit" className={buttonStyles({ size: "sm", className: "touch-target shrink-0 px-3 sm:px-4" })}>
             Search
           </button>
-          <button type="button" onClick={() => setSearchOpen(false)} className="shrink-0 rounded-full p-2 text-muted hover:text-fg" aria-label="Close search">
+          <button
+            type="button"
+            onClick={() => setSearchOpen(false)}
+            className="touch-target grid shrink-0 place-items-center rounded-full text-muted hover:text-fg"
+            aria-label="Close search"
+          >
             <X size={18} />
           </button>
         </Form>
@@ -181,18 +204,26 @@ export function HeaderClient({ nav }: { nav: NavigationData }) {
 
 function MobileNav({ open, onClose, nav }: { open: boolean; onClose: () => void; nav: NavigationData }) {
   return (
-    <div className={cn("fixed inset-0 z-[60] lg:hidden", !open && "pointer-events-none")} aria-hidden={!open}>
-      <div className={cn("absolute inset-0 bg-black/70 transition-opacity", open ? "opacity-100" : "opacity-0")} onClick={onClose} />
+    <div className={cn("fixed inset-0 z-[80] lg:hidden", !open && "pointer-events-none")} aria-hidden={!open}>
+      <div
+        className={cn("absolute inset-0 bg-black/80 backdrop-blur-sm transition-opacity duration-300", open ? "opacity-100" : "opacity-0")}
+        onClick={onClose}
+      />
       <nav
         className={cn(
-          "absolute inset-y-0 left-0 flex w-[86%] max-w-sm flex-col overflow-y-auto border-r border-line bg-surface p-6 transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
+          "absolute inset-y-0 left-0 flex w-full max-w-[22rem] flex-col overflow-y-auto overscroll-contain border-r border-line bg-black px-5 pb-[max(1.5rem,env(safe-area-inset-bottom,0px))] pt-[max(1.5rem,calc(env(safe-area-inset-top,0px)+0.75rem))] shadow-[20px_0_60px_-20px_rgba(0,0,0,0.85)] transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] sm:px-6",
           open ? "translate-x-0" : "-translate-x-full",
         )}
         aria-label="Mobile"
       >
-        <div className="mb-8 flex items-center justify-between">
+        <div className="mb-7 flex items-center justify-between gap-3 sm:mb-8">
           <Logo />
-          <button type="button" onClick={onClose} className="rounded-full p-2 text-muted hover:text-fg" aria-label="Close menu">
+          <button
+            type="button"
+            onClick={onClose}
+            className="touch-target grid shrink-0 place-items-center rounded-full text-muted hover:bg-white/5 hover:text-fg"
+            aria-label="Close menu"
+          >
             <X size={20} />
           </button>
         </div>
@@ -204,14 +235,32 @@ function MobileNav({ open, onClose, nav }: { open: boolean; onClose: () => void;
             { href: "/shop/samsung", label: "Samsung" },
             ...nav.categories.slice(0, 3).map((c) => ({ href: `/shop?category=${c.slug}`, label: c.name })),
           ].map((l) => (
-            <Link key={l.href} href={l.href} className="rounded-xl border border-line bg-surface-2 px-3 py-3 text-sm">
+            <Link
+              key={l.href}
+              href={l.href}
+              onClick={onClose}
+              className="flex min-h-11 items-center rounded-xl border border-line bg-surface-2 px-3 py-3 text-sm"
+            >
               {l.label}
             </Link>
           ))}
         </div>
         <div className="flex flex-col divide-y divide-line border-y border-line">
           {primaryNav.slice(1).map((item) => (
-            <Link key={item.href} href={item.href} className="py-4 text-lg">
+            <Link key={item.href} href={item.href} onClick={onClose} className="flex min-h-12 items-center py-3.5 text-lg">
+              {item.label}
+            </Link>
+          ))}
+        </div>
+        <div className="mt-auto space-y-1 border-t border-line pt-5">
+          <p className="mb-2 font-mono text-[10px] uppercase tracking-[0.25em] text-subtle">Support</p>
+          {supportNav.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              onClick={onClose}
+              className="flex min-h-11 items-center rounded-xl px-1 text-sm text-muted hover:text-fg"
+            >
               {item.label}
             </Link>
           ))}

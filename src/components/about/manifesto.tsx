@@ -38,7 +38,7 @@ export function Manifesto({ text, highlight }: { text: string; highlight: readon
 
       <div className="container-page relative">
         <p className="mb-8 font-mono text-[11px] uppercase tracking-[0.3em] text-accent">Manifesto</p>
-        <p className="max-w-3xl text-3xl font-semibold leading-[1.18] tracking-tight md:max-w-4xl md:text-5xl lg:text-6xl">
+        <p className="max-w-3xl text-[1.65rem] font-semibold leading-[1.18] tracking-tight sm:text-3xl md:max-w-4xl md:text-5xl lg:text-6xl">
           {words.map((word, i) => {
             const highlighted = highlight.includes(word.replace(/[^\w']/g, ""));
             if (!mounted) {

@@ -14,7 +14,7 @@ export function NewsletterForm({ className }: { className?: string }) {
   return (
     <form action={action} className={cn("space-y-3", className)}>
       {done && <TrackEvent event="sign_up" payload={{ label: "newsletter" }} />}
-      <div className="flex rounded-full border border-line bg-surface-2 p-1.5 focus-within:border-accent/50">
+      <div className="flex min-w-0 rounded-full border border-line bg-surface-2 p-1.5 focus-within:border-accent/50">
         <input
           type="email"
           name="email"
@@ -23,12 +23,12 @@ export function NewsletterForm({ className }: { className?: string }) {
           placeholder="you@example.com"
           aria-label="Email address"
           autoComplete="email"
-          className="h-10 flex-1 bg-transparent px-4 text-sm placeholder:text-subtle focus:outline-none disabled:opacity-70"
+          className="h-11 min-w-0 flex-1 bg-transparent px-3 text-base placeholder:text-subtle focus:outline-none disabled:opacity-70 sm:px-4 sm:text-sm"
         />
         <button
           type="submit"
           disabled={pending || done}
-          className="grid size-10 place-items-center rounded-full bg-fg text-black transition hover:bg-white disabled:opacity-70"
+          className="touch-target grid shrink-0 place-items-center rounded-full bg-fg text-black transition hover:bg-white disabled:opacity-70"
           aria-label="Subscribe"
         >
           {pending ? <Loader2 size={16} className="animate-spin" /> : done ? <Check size={16} /> : <ArrowRight size={16} />}

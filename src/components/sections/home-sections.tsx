@@ -47,29 +47,29 @@ export function ShopByDevice({ devices }: { devices: NavigationData["devices"] }
     { slug: "samsung" as const, glow: "bg-white/10", count: devices.filter((d) => d.brand === "SAMSUNG").length, models: devices.filter((d) => d.brand === "SAMSUNG").slice(0, 4) },
   ];
   return (
-    <section className="container-page py-24">
+    <section className="container-page py-14 sm:py-20 md:py-24">
       <SectionHeading eyebrow="Shop by device" title={<>Pick your <span className="text-muted">platform.</span></>} />
-      <RevealGroup className="grid gap-5 md:grid-cols-2" stagger={0.12}>
+      <RevealGroup className="grid gap-4 sm:gap-5 md:grid-cols-2" stagger={0.12}>
         {cards.map((card) => (
-          <RevealItem key={card.slug}>
+          <RevealItem key={card.slug} className="min-w-0">
             <SpotlightCard className="group h-full overflow-hidden">
-              <Link href={`/shop/${card.slug}`} className="relative grid min-h-96 grid-cols-[1fr_auto] gap-4 p-8 md:p-10">
+              <Link href={`/shop/${card.slug}`} className="relative grid min-h-[18rem] grid-cols-1 gap-4 p-5 sm:min-h-96 sm:grid-cols-[1fr_auto] sm:p-8 md:p-10">
                 <div className={`pointer-events-none absolute -right-20 -top-20 size-80 rounded-full ${card.glow} blur-[100px] opacity-50 transition-opacity duration-700 group-hover:opacity-90`} />
                 <div className="bg-dots pointer-events-none absolute inset-0 opacity-60 [mask-image:linear-gradient(to_bottom,#000,transparent)]" />
-                <div className="relative flex flex-col justify-between">
+                <div className="relative flex min-w-0 flex-col justify-between">
                   <div>
-                    <p className="font-mono text-[11px] uppercase tracking-[0.25em] text-accent">{card.count} models supported</p>
-                    <h3 className="mt-4 text-4xl font-semibold tracking-tight md:text-5xl">{brands[card.slug].label}</h3>
-                    <p className="mt-3 max-w-xs text-muted">{brands[card.slug].blurb}</p>
-                    <div className="mt-6 flex flex-wrap gap-2">
+                    <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-accent sm:text-[11px] sm:tracking-[0.25em]">{card.count} models supported</p>
+                    <h3 className="mt-3 text-3xl font-semibold tracking-tight sm:mt-4 sm:text-4xl md:text-5xl">{brands[card.slug].label}</h3>
+                    <p className="mt-2 max-w-xs text-sm text-muted sm:mt-3 sm:text-base">{brands[card.slug].blurb}</p>
+                    <div className="mt-4 flex flex-wrap gap-2 sm:mt-6">
                       {card.models.map((m) => (
-                        <span key={m.slug} className="rounded-full border border-line bg-white/[0.03] px-3 py-1 text-xs text-muted">
+                        <span key={m.slug} className="rounded-full border border-line bg-white/[0.03] px-2.5 py-1 text-[11px] text-muted sm:px-3 sm:text-xs">
                           {m.model}
                         </span>
                       ))}
                     </div>
                   </div>
-                  <span className="mt-8 inline-flex w-fit items-center gap-2 rounded-full border border-line-strong bg-white/5 px-5 py-2.5 text-sm font-medium transition-all group-hover:border-accent/40 group-hover:bg-accent/10">
+                  <span className="mt-6 inline-flex min-h-11 w-fit items-center gap-2 rounded-full border border-line-strong bg-white/5 px-5 py-2.5 text-sm font-medium transition-all group-hover:border-accent/40 group-hover:bg-accent/10 sm:mt-8">
                     Shop {brands[card.slug].label}
                     <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
                   </span>
@@ -97,14 +97,14 @@ const tech = [
 
 export function TechGrid() {
   return (
-    <section className="relative overflow-hidden py-24 md:py-28">
-      <div className="pointer-events-none absolute inset-x-0 top-1/2 h-72 -translate-y-1/2 bg-[radial-gradient(ellipse_at_center,rgba(30,64,175,0.12),transparent_65%)]" />
+    <section className="relative overflow-hidden py-14 sm:py-20 md:py-28">
+      <div className="pointer-events-none absolute inset-x-0 top-1/2 h-72 -translate-y-1/2 bg-[radial-gradient(ellipse_at_center,rgb(30,64,175,0.12),transparent_65%)]" />
       <div className="container-page relative">
         <SectionHeading align="center" eyebrow="Engineering" title={<>Protection, <span className="text-muted">re-engineered.</span></>} description="Every HYDRA protector is designed in-house and quality-checked batch by batch." />
-        <RevealGroup className="grid gap-4 md:grid-cols-2 lg:grid-cols-3" stagger={0.06}>
+        <RevealGroup className="grid gap-3 sm:gap-4 md:grid-cols-2 lg:grid-cols-3" stagger={0.06}>
           {tech.map(({ icon: Icon, title, text, stat }) => (
-            <RevealItem key={title} className="h-full">
-              <SpotlightCard className="group h-full overflow-hidden p-8">
+            <RevealItem key={title} className="h-full min-w-0">
+              <SpotlightCard className="group h-full overflow-hidden p-5 sm:p-8">
                 <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-accent/35 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
                 <div className="flex items-start justify-between">
                   <span className="relative grid size-12 place-items-center rounded-2xl border border-accent/25 bg-accent/10 text-accent">
@@ -128,9 +128,9 @@ const stepIcons = [ShoppingBag, Truck, Wrench, PackageCheck];
 
 export function HowItWorks({ content }: { content: HowItWorksContent }) {
   return (
-    <section className="relative overflow-hidden py-24 md:py-28">
+    <section className="relative overflow-hidden py-14 sm:py-20 md:py-28">
       <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-accent/35 to-transparent" />
-      <div className="pointer-events-none absolute left-1/2 top-16 h-56 w-[40rem] -translate-x-1/2 rounded-full bg-accent/[0.08] blur-[120px]" />
+      <div className="pointer-events-none absolute left-1/2 top-16 h-56 w-[min(100%,40rem)] -translate-x-1/2 rounded-full bg-accent/[0.08] blur-[120px]" />
       <div className="container-page relative">
         <SectionHeading
           eyebrow={content.eyebrow}
@@ -140,13 +140,13 @@ export function HowItWorks({ content }: { content: HowItWorksContent }) {
             </>
           }
         />
-        <RevealGroup className="relative grid gap-4 md:grid-cols-2 lg:grid-cols-4" stagger={0.1}>
+        <RevealGroup className="relative grid gap-3 sm:gap-4 md:grid-cols-2 lg:grid-cols-4" stagger={0.1}>
           <div aria-hidden className="divider-glow absolute left-8 right-8 top-[3.25rem] hidden lg:block" />
           {content.steps.map(({ title, text }, i) => {
             const Icon = stepIcons[i % stepIcons.length];
             return (
-              <RevealItem key={title} className="relative h-full">
-                <SpotlightCard className="group h-full overflow-hidden p-7">
+              <RevealItem key={title} className="relative h-full min-w-0">
+                <SpotlightCard className="group h-full overflow-hidden p-5 sm:p-7">
                   <div className="pointer-events-none absolute -right-6 -top-6 font-mono text-6xl font-semibold text-white/[0.03] transition-colors group-hover:text-accent/[0.1]">
                     0{i + 1}
                   </div>
@@ -170,27 +170,27 @@ export function HowItWorks({ content }: { content: HowItWorksContent }) {
 
 export function NewsletterBlock({ content }: { content: NewsletterContent }) {
   return (
-    <section className="container-page py-16">
-      <div className="card-premium relative overflow-hidden rounded-[2rem] px-6 py-16 text-center md:py-24">
+    <section className="container-page py-12 sm:py-16">
+      <div className="card-premium relative overflow-hidden rounded-[1.5rem] px-4 py-12 text-center sm:rounded-[2rem] sm:px-6 sm:py-16 md:py-24">
         <div className="bg-grid pointer-events-none absolute inset-0 opacity-70" />
         <motion.div
-          className="pointer-events-none absolute left-1/2 top-0 h-56 w-[36rem] -translate-x-1/2 rounded-full bg-accent/25 blur-[90px]"
+          className="pointer-events-none absolute left-1/2 top-0 h-56 w-[min(100%,36rem)] -translate-x-1/2 rounded-full bg-accent/25 blur-[90px]"
           animate={{ opacity: [0.45, 0.9, 0.45], scale: [1, 1.15, 1] }}
           transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
         />
         <div className="pointer-events-none absolute -bottom-24 -left-16 size-72 rounded-full bg-white/[0.05] blur-[90px]" />
         <motion.div
-          className="relative mx-auto max-w-xl space-y-6"
+          className="relative mx-auto max-w-xl space-y-5 sm:space-y-6"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
         >
           <p className="font-mono text-[11px] uppercase tracking-[0.3em] text-accent">{content.eyebrow}</p>
-          <h2 className="text-4xl font-semibold tracking-tight text-balance md:text-5xl">
+          <h2 className="text-3xl font-semibold tracking-tight text-balance sm:text-4xl md:text-5xl">
             {content.title} <span className="text-accent">{content.titleAccent}</span> list.
           </h2>
-          <p className="text-muted">{content.description}</p>
+          <p className="text-sm text-muted sm:text-base">{content.description}</p>
           <NewsletterForm className="mx-auto max-w-md text-left" />
         </motion.div>
       </div>
