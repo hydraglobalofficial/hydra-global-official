@@ -46,6 +46,18 @@ export type NewsletterContent = {
   description: string;
 };
 
+/** Floating WhatsApp chat button — staff photos rotate on the storefront. */
+export type WhatsappWidgetContent = {
+  enabled: boolean;
+  /** Digits only (country code + number), e.g. 8801XXXXXXXXX */
+  phone: string;
+  /** Prefill text when the chat opens. */
+  message: string;
+  /** Seconds between staff photo swaps (2–8). */
+  rotateSeconds: number;
+  staff: { name: string; image: string }[];
+};
+
 export type CollectionsContent = {
   eyebrow: string;
   title: string;
@@ -255,6 +267,15 @@ export const defaultNewsletterContent: NewsletterContent = {
   description: "Launch drops, member pricing and early access to new devices. No spam, ever.",
 };
 
+export const defaultWhatsappWidgetContent: WhatsappWidgetContent = {
+  enabled: true,
+  phone: "8801635992804",
+  message: "Hi HYDRA! I have a question.",
+  rotateSeconds: 3,
+  /** Empty until admin uploads real staff photos — float stays hidden without them. */
+  staff: [],
+};
+
 export const defaultCollectionsContent: CollectionsContent = {
   eyebrow: "Shop by collection",
   title: "Armor for every",
@@ -422,6 +443,11 @@ export const SITE_SECTION_META = [
   },
   { key: "home.howItWorks", title: "Home · How it works", description: "Checkout-to-armored steps on the homepage." },
   { key: "home.newsletter", title: "Home · Newsletter", description: "Members list signup block copy." },
+  {
+    key: "site.whatsapp",
+    title: "WhatsApp float",
+    description: "Right-side chat button: WhatsApp number, greeting, and rotating staff photos (admin uploads).",
+  },
   {
     key: "installation",
     title: "Installation guide",

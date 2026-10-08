@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowUp } from "lucide-react";
 import { NewsletterForm } from "@/components/forms/newsletter-form";
 import { SocialLinks } from "@/components/ui/social-links";
 import { footerNav } from "@/config/navigation";
@@ -56,6 +55,26 @@ export function SiteFooter() {
             Privacy Policy
           </Link>
         </div>
+
+        <div className="flex justify-center pb-8 md:pb-10">
+          <a
+            href="https://www.neoncode.co/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-4 py-2 text-[11px] tracking-[0.14em] uppercase text-zinc-500 transition-all duration-300 hover:border-accent/40 hover:bg-accent/10 hover:text-fg hover:shadow-[0_0_24px_rgba(56,189,248,0.18)] sm:text-[12px]"
+          >
+            <span className="text-zinc-600 transition-colors duration-300 group-hover:text-zinc-400">
+              Developed by
+            </span>
+            <span className="font-semibold tracking-[0.2em] text-fg transition-colors duration-300 group-hover:text-accent">
+              neoncode
+            </span>
+            <span
+              aria-hidden
+              className="size-1.5 rounded-full bg-accent/70 shadow-[0_0_10px_rgba(56,189,248,0.8)] transition-transform duration-300 group-hover:scale-125"
+            />
+          </a>
+        </div>
       </div>
 
       <div className="relative select-none overflow-hidden bg-black px-4 pb-2 pt-8 md:pt-12" aria-hidden>
@@ -73,14 +92,6 @@ export function SiteFooter() {
         </div>
       </div>
 
-      <button
-        type="button"
-        onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-        className="touch-target fixed bottom-[max(5.75rem,calc(env(safe-area-inset-bottom)+4.75rem))] right-[max(0.75rem,env(safe-area-inset-right))] z-40 grid place-items-center rounded-lg border border-line-strong bg-fg text-bg shadow-[0_12px_40px_rgba(0,0,0,0.5)] transition hover:bg-accent hover:text-bg sm:bottom-5 sm:right-5"
-        aria-label="Scroll to top"
-      >
-        <ArrowUp size={18} strokeWidth={2.25} />
-      </button>
     </footer>
   );
 }

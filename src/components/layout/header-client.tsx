@@ -153,7 +153,11 @@ export function HeaderClient({ nav }: { nav: NavigationData }) {
         {menu === "support" && (
           <div className="container-page grid grid-cols-3 gap-3 py-8">
             {supportNav.map((item) => (
-              <Link key={item.href} href={item.href} className="group rounded-2xl border border-transparent p-4 hover:border-line hover:bg-white/[0.03]">
+              <Link
+                key={`desk-${item.href}`}
+                href={item.href}
+                className="group rounded-2xl border border-transparent p-4 hover:border-line hover:bg-white/[0.03]"
+              >
                 <p className="font-medium group-hover:text-accent">{item.label}</p>
                 <p className="mt-1 text-sm text-muted">{item.description}</p>
               </Link>
@@ -203,6 +207,15 @@ export function HeaderClient({ nav }: { nav: NavigationData }) {
 }
 
 function MobileNav({ open, onClose, nav }: { open: boolean; onClose: () => void; nav: NavigationData }) {
+  // Mount-only: avoids SSR/client nav mismatches that regenerate the tree and
+  // can wipe fixed widgets (WhatsApp float). Drawer is closed on first paint anyway.
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) return null;
+
   return (
     <div className={cn("fixed inset-0 z-[80] lg:hidden", !open && "pointer-events-none")} aria-hidden={!open}>
       <div
@@ -256,7 +269,7 @@ function MobileNav({ open, onClose, nav }: { open: boolean; onClose: () => void;
           <p className="mb-2 font-mono text-[10px] uppercase tracking-[0.25em] text-subtle">Support</p>
           {supportNav.map((item) => (
             <Link
-              key={item.href}
+              key={`mobile-${item.href}`}
               href={item.href}
               onClick={onClose}
               className="flex min-h-11 items-center rounded-xl px-1 text-sm text-muted hover:text-fg"

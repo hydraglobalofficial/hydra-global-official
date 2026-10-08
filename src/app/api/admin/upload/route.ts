@@ -1,3 +1,6 @@
+import { randomUUID } from "node:crypto";
+import { mkdir, writeFile } from "node:fs/promises";
+import path from "node:path";
 import { NextResponse, type NextRequest } from "next/server";
 import { getSession } from "@/lib/auth/session";
 import { rateLimit } from "@/lib/rate-limit";
@@ -13,22 +16,39 @@ import {
 
 export const runtime = "nodejs";
 
-const FOLDERS = new Set(["products", "content", "hero", "collections", "uploads", "videos"]);
+const FOLDERS = new Set(["products", "content", "hero", "collections", "uploads", "videos", "whatsapp"]);
+
+const LOCAL_EXT = new Map([
+  ["image/jpeg", "jpg"],
+  ["image/jpg", "jpg"],
+  ["image/png", "png"],
+  ["image/webp", "webp"],
+  ["image/avif", "avif"],
+  ["image/gif", "gif"],
+]);
+
+/** Dev / no-R2 fallback: save under public/uploads so storefront can show the file. */
+async function saveImageLocally(file: File, folder: string) {
+  const ext = LOCAL_EXT.get(file.type) ?? "jpg";
+  const key = `${folder}/${randomUUID()}.${ext}`;
+  const dir = path.join(process.cwd(), "public", "uploads", folder);
+  await mkdir(dir, { recursive: true });
+  const absolute = path.join(process.cwd(), "public", "uploads", key);
+  await mkdir(path.dirname(absolute), { recursive: true });
+  const buffer = Buffer.from(await file.arrayBuffer());
+  await writeFile(absolute, buffer);
+  return {
+    url: `/uploads/${key}`,
+    key: `uploads/${key}`,
+    bytes: buffer.byteLength,
+    contentType: file.type,
+  };
+}
 
 export async function POST(request: NextRequest) {
   const session = await getSession();
   if (!session || (session.role !== "OWNER" && session.role !== "STAFF")) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
-  if (!r2Configured()) {
-    return NextResponse.json(
-      {
-        error:
-          "Cloudflare R2 is not configured. Set R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY, R2_BUCKET, and R2_PUBLIC_URL.",
-      },
-      { status: 503 },
-    );
   }
 
   const limited = await rateLimit(`admin-upload:${session.userId}`, 40, 60_000);
@@ -53,6 +73,15 @@ export async function POST(request: NextRequest) {
     kindRaw === "video" || isAllowedVideoType(file.type) || /\.(mp4|webm|mov)$/i.test(file.name);
 
   if (isVideo) {
+    if (!r2Configured()) {
+      return NextResponse.json(
+        {
+          error:
+            "Cloudflare R2 is not configured. Set R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY, R2_BUCKET, and R2_PUBLIC_URL.",
+        },
+        { status: 503 },
+      );
+    }
     if (file.size > R2_VIDEO_MAX_BYTES) {
       return NextResponse.json(
         { error: `Video must be ${R2_VIDEO_MAX_BYTES / (1024 * 1024)}MB or smaller.` },
@@ -81,6 +110,21 @@ export async function POST(request: NextRequest) {
   const folder = FOLDERS.has(rawFolder) ? rawFolder : isVideo ? "videos" : "uploads";
 
   try {
+    if (!isVideo && !r2Configured()) {
+      const uploaded = await saveImageLocally(file, folder);
+      return NextResponse.json(uploaded);
+    }
+
+    if (!r2Configured()) {
+      return NextResponse.json(
+        {
+          error:
+            "Cloudflare R2 is not configured. Set R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY, R2_BUCKET, and R2_PUBLIC_URL.",
+        },
+        { status: 503 },
+      );
+    }
+
     const buffer = Buffer.from(await file.arrayBuffer());
     const uploaded = isVideo
       ? await uploadVideoToR2({

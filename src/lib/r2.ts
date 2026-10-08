@@ -17,7 +17,8 @@ const ALLOWED_VIDEO_TYPES = new Map([
   ["video/quicktime", "mov"],
 ]);
 
-export const R2_MAX_BYTES = 5 * 1024 * 1024; // 5 MB images
+/** Accept small or large phone photos — generous ceiling for R2 admin uploads. */
+export const R2_MAX_BYTES = 50 * 1024 * 1024; // 50 MB images
 /** Showcase / install clips — keep lean for admin uploads. */
 export const R2_VIDEO_MAX_BYTES = 40 * 1024 * 1024; // 40 MB
 

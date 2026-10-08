@@ -9,7 +9,7 @@ const channels = [
   {
     icon: MessageCircle,
     label: "WhatsApp",
-    value: `+${siteConfig.whatsapp.replace(/^(\d{3})(\d{4})(\d+)$/, "$1 $2-$3")}`,
+    value: siteConfig.phone,
     reply: "~15 min",
     href: `https://wa.me/${siteConfig.whatsapp}?text=${encodeURIComponent("Hi HYDRA! I have a question.")}`,
     tone: "text-accent border-accent/25 bg-accent/10",

@@ -6,12 +6,13 @@ export const siteConfig = {
   description:
     "HYDRA is a global mobile accessories brand for iPhone and Samsung Galaxy — screen protection, cases, camera armor and everyday essentials, engineered for a perfect fit and shipped worldwide.",
   email: "support@hydraglobal.com",
-  phone: "+1 (415) 555-0147",
+  phone: "01635-992804",
   address: "Global HQ · Shipping from regional hubs worldwide",
   hours: "Mon–Fri, 09:00–18:00 (local hub time)",
   /** Used for the live open/closed indicator. Days follow Date#getDay (0 = Sunday). */
   businessHours: { timeZone: "UTC", days: [1, 2, 3, 4, 5], open: 9, close: 18 },
-  whatsapp: "14155550147",
+  /** Digits only with country code for wa.me (BD 01635-992804 → 8801635992804). */
+  whatsapp: "8801635992804",
   messenger: "https://m.me/hydraglobal",
   mapsUrl: "https://www.google.com/maps/search/?api=1&query=HYDRA+Global",
   currency: "USD",

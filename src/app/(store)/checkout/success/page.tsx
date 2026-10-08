@@ -105,6 +105,13 @@ export default async function CheckoutSuccessPage({ searchParams }: PageProps<"/
       </div>
 
       <div className="mt-8 flex flex-col gap-3 sm:mt-10 sm:flex-row sm:flex-wrap sm:justify-center">
+        <ButtonLink
+          href={`/track?order=${encodeURIComponent(order.number)}`}
+          variant="outline"
+          className="min-h-11 w-full sm:w-auto"
+        >
+          Track this order
+        </ButtonLink>
         <ButtonLink href="/installation" variant="outline" className="min-h-11 w-full sm:w-auto">
           View installation guide
         </ButtonLink>

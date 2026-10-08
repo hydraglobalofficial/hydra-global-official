@@ -10,6 +10,7 @@ import {
   saveInstallationSection,
   saveNewsletterSection,
   saveShowcaseSection,
+  saveWhatsappWidgetSection,
 } from "@/server/actions/admin";
 import type {
   AboutContent,
@@ -19,6 +20,7 @@ import type {
   HowItWorksContent,
   NewsletterContent,
   ShowcaseContent,
+  WhatsappWidgetContent,
 } from "@/content/site-sections";
 import type { InstallationContent } from "@/content/installation";
 import { initialFormState } from "@/lib/validations";
@@ -715,6 +717,94 @@ export function NewsletterSectionEditor({ content }: { content: NewsletterConten
         </div>
         <Label label="Description"><Textarea name="description" defaultValue={content.description} className="min-h-24" required /></Label>
       </Section>
+      <FormMessage status={state.status} message={state.message} toast />
+      <Button type="submit" disabled={pending}>
+        {pending && <Loader2 size={16} className="animate-spin" />} Publish
+      </Button>
+    </form>
+  );
+}
+
+const MAX_WHATSAPP_STAFF = 6;
+
+export function WhatsappWidgetSectionEditor({ content }: { content: WhatsappWidgetContent }) {
+  const [state, action, pending] = useActionState(saveWhatsappWidgetSection, initialFormState);
+  const [staff, setStaff] = useState(() =>
+    toKeyed(
+      content.staff.length > 0
+        ? content.staff
+        : [{ name: "", image: "" }],
+    ),
+  );
+
+  return (
+    <form action={action} className="max-w-2xl space-y-5">
+      <Section title="Chat button">
+        <label className="flex items-center gap-3 text-sm text-muted">
+          <input
+            type="checkbox"
+            name="enabled"
+            defaultChecked={content.enabled}
+            className="accent-[var(--color-accent)]"
+          />
+          Show on storefront
+        </label>
+        <div className="grid gap-3 sm:grid-cols-2">
+          <Label label="WhatsApp number" hint="Digits with country code — no + or spaces.">
+            <Input name="phone" defaultValue={content.phone} required className="font-mono" placeholder="8801635992804" />
+          </Label>
+          <Label label="Rotate every (seconds)" hint="Each staff photo shows for this long (2–8).">
+            <Input
+              name="rotateSeconds"
+              type="number"
+              min={2}
+              max={8}
+              defaultValue={content.rotateSeconds}
+              required
+            />
+          </Label>
+        </div>
+        <Label label="Greeting message" hint="Prefills the WhatsApp chat when someone taps the button.">
+          <Input name="message" defaultValue={content.message} maxLength={200} />
+        </Label>
+      </Section>
+
+      <Section title="Staff photos">
+        <ListHeader
+          hint={`Upload 1–${MAX_WHATSAPP_STAFF} real staff photos. Storefront shows only these images + names (rotates). No photo = button hidden.`}
+          addLabel="Add photo"
+          canAdd={staff.length < MAX_WHATSAPP_STAFF}
+          onAdd={() =>
+            setStaff((prev) =>
+              prev.length >= MAX_WHATSAPP_STAFF ? prev : [...prev, { key: rowKey(), name: "", image: "" }],
+            )
+          }
+        />
+        <div className="space-y-3">
+          {staff.map((person, i) => (
+            <div key={person.key} className="space-y-3 rounded-xl border border-white/[0.06] p-3 sm:p-4">
+              <div className="flex items-center justify-between gap-2">
+                <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-subtle">Photo {i + 1}</p>
+                <RemoveBtn
+                  label={`Remove staff photo ${i + 1}`}
+                  disabled={staff.length <= 1}
+                  onClick={() => setStaff((prev) => prev.filter((row) => row.key !== person.key))}
+                />
+              </div>
+              <Label label="Name" hint="Shown on the float under the photo.">
+                <Input name="staffName" defaultValue={person.name} placeholder="Ayesha Rahman" required />
+              </Label>
+              <Label
+                label="Staff photo"
+                hint="Upload a real face from your device (R2). Product images are blocked — square crop looks best."
+              >
+                <ImageUrlField name="staffImage" defaultValue={person.image} folder="whatsapp" />
+              </Label>
+            </div>
+          ))}
+        </div>
+      </Section>
+
       <FormMessage status={state.status} message={state.message} toast />
       <Button type="submit" disabled={pending}>
         {pending && <Loader2 size={16} className="animate-spin" />} Publish
