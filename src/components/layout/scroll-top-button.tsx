@@ -1,13 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ArrowUp } from "lucide-react";
 
-/**
- * Fixed scroll-up control — sits left of the WhatsApp float.
- * All geometry is inline: Tailwind arbitrary position/size can compile to 0
- * and leave the control stuck at the viewport origin.
- */
+/** Scroll-up — left of WhatsApp float. Inline geometry only (Tailwind arbitrary can compile to 0). */
 export function ScrollTopButton() {
   const [ready, setReady] = useState(false);
   useEffect(() => {
@@ -19,22 +14,43 @@ export function ScrollTopButton() {
     <button
       type="button"
       onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-      className="touch-target z-40 grid place-items-center rounded-full border border-white/35 bg-zinc-900 text-white shadow-[0_10px_28px_rgba(0,0,0,0.55)] transition hover:border-accent/60 hover:bg-accent hover:text-black"
+      aria-label="Scroll to top"
       style={{
         position: "fixed",
         top: "auto",
         left: "auto",
+        right: 148,
+        bottom: 28,
+        zIndex: 50,
         width: 48,
         height: 48,
-        bottom: 28,
-        // Clear the ~120px WhatsApp staff float + gap
-        right: 148,
-        zIndex: 40,
-        color: "#fff",
+        display: "grid",
+        placeItems: "center",
+        borderRadius: 9999,
+        border: "1.5px solid rgba(255,255,255,0.4)",
+        background: "#18181b",
+        color: "#ffffff",
+        boxShadow: "0 10px 28px rgba(0,0,0,0.55)",
+        cursor: "pointer",
+        padding: 0,
       }}
-      aria-label="Scroll to top"
     >
-      <ArrowUp size={22} strokeWidth={2.5} className="shrink-0" aria-hidden />
+      <svg
+        width="22"
+        height="22"
+        viewBox="0 0 24 24"
+        fill="none"
+        aria-hidden
+        style={{ display: "block", flexShrink: 0 }}
+      >
+        <path
+          d="M12 19V5M5 12l7-7 7 7"
+          stroke="#ffffff"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
     </button>
   );
 }
