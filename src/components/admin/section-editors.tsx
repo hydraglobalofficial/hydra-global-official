@@ -14,6 +14,7 @@ import {
 import type {
   AboutContent,
   CollectionsContent,
+  HeroVisualKey,
   HomeHeroContent,
   HowItWorksContent,
   NewsletterContent,
@@ -491,7 +492,19 @@ export function HowItWorksSectionEditor({ content }: { content: HowItWorksConten
   );
 }
 
-const emptyHeroSlide = {
+const emptyHeroSlide: {
+  key: string;
+  brand: string;
+  title: string;
+  titleAccent: string;
+  text: string;
+  primaryLabel: string;
+  primaryHref: string;
+  secondaryLabel: string;
+  secondaryHref: string;
+  visual: HeroVisualKey;
+  image: string;
+} = {
   key: "",
   brand: "",
   title: "",
@@ -501,7 +514,7 @@ const emptyHeroSlide = {
   primaryHref: "/shop",
   secondaryLabel: "",
   secondaryHref: "/about",
-  visual: "phone" as const,
+  visual: "phone",
   image: "",
 };
 
