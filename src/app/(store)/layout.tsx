@@ -7,6 +7,7 @@ import { SiteFooter } from "@/components/layout/site-footer";
 import { SplashScreen } from "@/components/layout/splash-screen-lazy";
 import { NewsletterPopup } from "@/components/layout/newsletter-popup";
 import { WhatsappFloat } from "@/components/layout/whatsapp-float";
+import { ScrollTopButton } from "@/components/layout/scroll-top-button";
 import { ConsentAnalytics } from "@/components/analytics/consent-analytics";
 import { getAnnouncements, getWhatsappWidgetContent } from "@/server/queries/content";
 
@@ -28,6 +29,9 @@ export default async function StoreLayout({ children }: LayoutProps<"/">) {
         {children}
       </main>
       <SiteFooter />
+      {/* Fixed overlays — siblings of footer so position:fixed is not trapped */}
+      {/* Fixed overlays — siblings so footer overflow cannot trap them */}
+      <ScrollTopButton />
       <WhatsappFloat content={whatsapp} />
       <CartDrawer />
       <NewsletterPopup />

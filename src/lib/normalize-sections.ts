@@ -239,7 +239,8 @@ export function normalizeWhatsappWidgetContent(raw: unknown): WhatsappWidgetCont
         .map((row) => {
           if (!isRecord(row)) return null;
           const image = safeMediaUrl(row.image, "");
-          if (!image) return null;
+          // Product catalog images must never appear on the WhatsApp staff float.
+          if (!image || image.startsWith("/products/")) return null;
           return {
             name: clampText(row.name, 60, ""),
             image,

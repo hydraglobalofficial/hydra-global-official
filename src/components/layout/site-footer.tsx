@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowUp } from "lucide-react";
 import { NewsletterForm } from "@/components/forms/newsletter-form";
 import { SocialLinks } from "@/components/ui/social-links";
 import { footerNav } from "@/config/navigation";
@@ -73,14 +72,6 @@ export function SiteFooter() {
         </div>
       </div>
 
-      <button
-        type="button"
-        onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-        className="touch-target fixed bottom-24 right-4 z-40 grid size-11 place-items-center rounded-xl border border-line-strong bg-fg text-bg shadow-[0_12px_40px_rgba(0,0,0,0.5)] transition hover:bg-accent hover:text-bg sm:bottom-28 sm:right-6"
-        aria-label="Scroll to top"
-      >
-        <ArrowUp size={18} strokeWidth={2.25} />
-      </button>
     </footer>
   );
 }

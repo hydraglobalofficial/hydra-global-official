@@ -272,6 +272,7 @@ export const defaultWhatsappWidgetContent: WhatsappWidgetContent = {
   phone: "8801635992804",
   message: "Hi HYDRA! I have a question.",
   rotateSeconds: 3,
+  /** Empty until admin uploads real staff photos — float stays hidden without them. */
   staff: [],
 };
 

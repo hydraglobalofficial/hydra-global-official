@@ -771,7 +771,7 @@ export function WhatsappWidgetSectionEditor({ content }: { content: WhatsappWidg
 
       <Section title="Staff photos">
         <ListHeader
-          hint={`Upload 1–${MAX_WHATSAPP_STAFF} staff faces from your device (R2). The float shows only the photo — no WhatsApp icon — and rotates one by one.`}
+          hint={`Upload 1–${MAX_WHATSAPP_STAFF} real staff photos. Storefront shows only these images + names (rotates). No photo = button hidden.`}
           addLabel="Add photo"
           canAdd={staff.length < MAX_WHATSAPP_STAFF}
           onAdd={() =>
@@ -791,10 +791,13 @@ export function WhatsappWidgetSectionEditor({ content }: { content: WhatsappWidg
                   onClick={() => setStaff((prev) => prev.filter((row) => row.key !== person.key))}
                 />
               </div>
-              <Label label="Name (optional)">
-                <Input name="staffName" defaultValue={person.name} placeholder="Support · Ayesha" />
+              <Label label="Name" hint="Shown on the float under the photo.">
+                <Input name="staffName" defaultValue={person.name} placeholder="Ayesha Rahman" required />
               </Label>
-              <Label label="Photo" hint="Square crop looks best. Upload or paste a URL.">
+              <Label
+                label="Staff photo"
+                hint="Upload a real face from your device (R2). Product images are blocked — square crop looks best."
+              >
                 <ImageUrlField name="staffImage" defaultValue={person.image} folder="whatsapp" />
               </Label>
             </div>

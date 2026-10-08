@@ -150,8 +150,8 @@ export const getWhatsappWidgetContent = unstable_cache(
       return defaultWhatsappWidgetContent;
     }
   },
-  ["site-section-whatsapp"],
-  { tags: [CONTENT_TAG], revalidate: 3600 },
+  ["site-section-whatsapp-v3"],
+  { tags: [CONTENT_TAG], revalidate: 60 },
 );
 
 export const listSiteSections = cache(async () =>

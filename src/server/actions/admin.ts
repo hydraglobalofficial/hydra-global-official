@@ -748,7 +748,8 @@ export async function saveWhatsappWidgetSection(_prev: FormState, formData: Form
         name: clampText(names[i], 60),
         image: safeMediaUrl(image, ""),
       }))
-      .filter((row) => !!row.image)
+      // Staff float: real face photos only — never product catalog paths.
+      .filter((row) => !!row.image && !row.image.startsWith("/products/"))
       .slice(0, 6);
 
     const data = normalizeWhatsappWidgetContent({
