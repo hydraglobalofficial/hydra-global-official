@@ -10,6 +10,7 @@ export const primaryNav: NavLink[] = [
 
 export const supportNav: NavLink[] = [
   { label: "Help Center", href: "/support", description: "Everything in one place" },
+  { label: "Track order", href: "/track", description: "Status by invoice ID" },
   { label: "FAQ", href: "/support/faq", description: "Quick answers to common questions" },
   { label: "Installation", href: "/installation", description: "Step-by-step fitting guides" },
   { label: "Warranty", href: "/support/warranty", description: "Coverage and claims" },
@@ -30,6 +31,7 @@ export const footerNav: { title: string; links: NavLink[] }[] = [
   {
     title: "Support",
     links: [
+      { label: "Track order", href: "/track" },
       { label: "FAQ", href: "/support/faq" },
       { label: "Installation", href: "/installation" },
       { label: "Warranty", href: "/support/warranty" },

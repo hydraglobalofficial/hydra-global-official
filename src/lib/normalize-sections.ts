@@ -5,6 +5,7 @@ import {
   defaultHowItWorksContent,
   defaultNewsletterContent,
   defaultShowcaseContent,
+  defaultWhatsappWidgetContent,
   type AboutContent,
   type CollectionsContent,
   type HeroSlide,
@@ -14,6 +15,7 @@ import {
   type NewsletterContent,
   type ShowcaseContent,
   type ShowcaseVideoItem,
+  type WhatsappWidgetContent,
 } from "@/content/site-sections";
 import {
   asStringArray,
@@ -216,6 +218,43 @@ export function normalizeNewsletterContent(raw: unknown): NewsletterContent {
     title: clampText(data.title, 80, defaultNewsletterContent.title),
     titleAccent: clampText(data.titleAccent, 40, defaultNewsletterContent.titleAccent),
     description: clampText(data.description, 400, defaultNewsletterContent.description),
+  };
+}
+
+function digitsOnly(value: unknown, fallback: string) {
+  const raw = typeof value === "string" ? value : String(value ?? "");
+  const digits = raw.replace(/\D+/g, "");
+  return digits.length >= 8 ? digits.slice(0, 18) : fallback;
+}
+
+export function normalizeWhatsappWidgetContent(raw: unknown): WhatsappWidgetContent {
+  const data = isRecord(raw) ? raw : {};
+  const rotateRaw = Number(data.rotateSeconds);
+  const rotateSeconds = Number.isFinite(rotateRaw)
+    ? Math.min(8, Math.max(2, Math.round(rotateRaw)))
+    : defaultWhatsappWidgetContent.rotateSeconds;
+
+  const staff = Array.isArray(data.staff)
+    ? data.staff
+        .map((row) => {
+          if (!isRecord(row)) return null;
+          const image = safeMediaUrl(row.image, "");
+          if (!image) return null;
+          return {
+            name: clampText(row.name, 60, ""),
+            image,
+          };
+        })
+        .filter((row): row is WhatsappWidgetContent["staff"][number] => !!row)
+        .slice(0, 6)
+    : [];
+
+  return {
+    enabled: data.enabled !== false && data.enabled !== "false" && data.enabled !== 0,
+    phone: digitsOnly(data.phone, defaultWhatsappWidgetContent.phone),
+    message: clampText(data.message, 200, defaultWhatsappWidgetContent.message),
+    rotateSeconds,
+    staff,
   };
 }
 

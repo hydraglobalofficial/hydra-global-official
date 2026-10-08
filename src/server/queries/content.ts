@@ -9,12 +9,14 @@ import {
   defaultHowItWorksContent,
   defaultNewsletterContent,
   defaultShowcaseContent,
+  defaultWhatsappWidgetContent,
   type AboutContent,
   type CollectionsContent,
   type HomeHeroContent,
   type HowItWorksContent,
   type NewsletterContent,
   type ShowcaseContent,
+  type WhatsappWidgetContent,
 } from "@/content/site-sections";
 import { defaultInstallationContent, type InstallationContent } from "@/content/installation";
 import { safeInternalHref } from "@/lib/content-safety";
@@ -26,6 +28,7 @@ import {
   normalizeInstallationContent,
   normalizeNewsletterContent,
   normalizeShowcaseContent,
+  normalizeWhatsappWidgetContent,
 } from "@/lib/normalize-sections";
 import { CONTENT_TAG } from "./catalog";
 
@@ -135,6 +138,19 @@ export const getInstallationContent = unstable_cache(
     }
   },
   ["site-section-installation-v3"],
+  { tags: [CONTENT_TAG], revalidate: 3600 },
+);
+
+export const getWhatsappWidgetContent = unstable_cache(
+  async (): Promise<WhatsappWidgetContent> => {
+    try {
+      const row = await db.siteSection.findUnique({ where: { key: "site.whatsapp" }, select: { data: true } });
+      return normalizeWhatsappWidgetContent(row?.data ?? defaultWhatsappWidgetContent);
+    } catch {
+      return defaultWhatsappWidgetContent;
+    }
+  },
+  ["site-section-whatsapp"],
   { tags: [CONTENT_TAG], revalidate: 3600 },
 );
 

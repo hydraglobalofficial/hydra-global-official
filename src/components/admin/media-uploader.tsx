@@ -185,7 +185,7 @@ export function ImageUrlsField({
           {pending ? <Loader2 size={14} className="animate-spin" /> : <Upload size={14} />}
           {pending ? "Uploading…" : "Upload from device"}
         </Button>
-        <span className="text-xs text-subtle">JPEG · PNG · WebP · AVIF · GIF · max 5MB</span>
+        <span className="text-xs text-subtle">JPEG · PNG · WebP · AVIF · GIF · max 50MB</span>
       </div>
 
       <details className="rounded-xl border border-line bg-surface-2/40 px-3 py-2">

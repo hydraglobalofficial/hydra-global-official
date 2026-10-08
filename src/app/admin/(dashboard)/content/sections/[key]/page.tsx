@@ -10,6 +10,7 @@ import {
   InstallationSectionEditor,
   NewsletterSectionEditor,
   ShowcaseSectionEditor,
+  WhatsappWidgetSectionEditor,
 } from "@/components/admin/section-editors";
 import { SITE_SECTION_META } from "@/content/site-sections";
 import { requireAdmin } from "@/lib/auth/session";
@@ -21,6 +22,7 @@ import {
   normalizeInstallationContent,
   normalizeNewsletterContent,
   normalizeShowcaseContent,
+  normalizeWhatsappWidgetContent,
 } from "@/lib/normalize-sections";
 import { getSiteSectionRow } from "@/server/queries/content";
 
@@ -57,6 +59,9 @@ export default async function EditSiteSectionPage({ params }: Props) {
       )}
       {key === "home.newsletter" && (
         <NewsletterSectionEditor content={normalizeNewsletterContent(row?.data)} />
+      )}
+      {key === "site.whatsapp" && (
+        <WhatsappWidgetSectionEditor content={normalizeWhatsappWidgetContent(row?.data)} />
       )}
       {key === "installation" && (
         <InstallationSectionEditor content={normalizeInstallationContent(row?.data)} />

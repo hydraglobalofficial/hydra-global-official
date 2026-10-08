@@ -6,11 +6,12 @@ import { SiteHeader } from "@/components/layout/site-header";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SplashScreen } from "@/components/layout/splash-screen-lazy";
 import { NewsletterPopup } from "@/components/layout/newsletter-popup";
+import { WhatsappFloat } from "@/components/layout/whatsapp-float";
 import { ConsentAnalytics } from "@/components/analytics/consent-analytics";
-import { getAnnouncements } from "@/server/queries/content";
+import { getAnnouncements, getWhatsappWidgetContent } from "@/server/queries/content";
 
 export default async function StoreLayout({ children }: LayoutProps<"/">) {
-  const announcements = await getAnnouncements();
+  const [announcements, whatsapp] = await Promise.all([getAnnouncements(), getWhatsappWidgetContent()]);
 
   return (
     <CartProvider>
@@ -27,6 +28,7 @@ export default async function StoreLayout({ children }: LayoutProps<"/">) {
         {children}
       </main>
       <SiteFooter />
+      <WhatsappFloat content={whatsapp} />
       <CartDrawer />
       <NewsletterPopup />
       <ConsentAnalytics />

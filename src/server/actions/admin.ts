@@ -19,6 +19,7 @@ import type {
   HowItWorksContent,
   NewsletterContent,
   ShowcaseContent,
+  WhatsappWidgetContent,
 } from "@/content/site-sections";
 import { clampText, safeInternalHref, safeMediaUrl, safeSlug, safeVideoUrl } from "@/lib/content-safety";
 import {
@@ -29,6 +30,7 @@ import {
   normalizeInstallationContent,
   normalizeNewsletterContent,
   normalizeShowcaseContent,
+  normalizeWhatsappWidgetContent,
 } from "@/lib/normalize-sections";
 import type { InstallationContent } from "@/content/installation";
 
@@ -250,6 +252,9 @@ export async function updateOrder(_prev: FormState, formData: FormData): Promise
   if (!parsed.success) return invalid(parsed.error);
   const { id, ...data } = parsed.data;
 
+  let justConfirmed = false;
+  let confirmedOrderId: string | null = null;
+
   await withTransaction(async (tx) => {
     const current = await tx.order.findUniqueOrThrow({ where: { id }, include: { items: true } });
     const restock = (s: string) => s === "CANCELLED" || s === "RETURNED";
@@ -260,12 +265,59 @@ export async function updateOrder(_prev: FormState, formData: FormData): Promise
         if (item.variantId) await tx.productVariant.update({ where: { id: item.variantId }, data: { stock: { increment: item.quantity } } });
       }
     }
+    justConfirmed = data.status === "CONFIRMED" && current.status !== "CONFIRMED";
     await tx.order.update({ where: { id }, data: { ...data, fulfillmentNote: data.fulfillmentNote || null } });
+    if (justConfirmed) confirmedOrderId = id;
   });
 
   updateTag(CATALOG_TAG);
   await invalidateAdminCache();
   revalidatePath("/admin", "layout");
+
+  // Invoice email + courier booking run after commit (never block admin on SMTP).
+  if (justConfirmed && confirmedOrderId) {
+    const order = await db.order.findUnique({
+      where: { id: confirmedOrderId },
+      include: { items: true },
+    });
+    if (order) {
+      const { toInvoiceOrder } = await import("@/lib/invoice/from-order");
+      const { sendOrderInvoiceEmail } = await import("@/lib/mail/send-order-invoice");
+      const { createCourierShipment, orderToCourierRequest } = await import("@/lib/courier");
+
+      const invoice = toInvoiceOrder(order);
+      const mail = await sendOrderInvoiceEmail(invoice);
+      if (!mail.ok) {
+        console.error("[orders] invoice email failed", order.number, mail.error);
+      } else if ("skipped" in mail && mail.skipped) {
+        console.info("[orders] invoice email skipped", order.number, mail.reason);
+      }
+
+      const courier = await createCourierShipment(
+        orderToCourierRequest({ ...order, currency: "USD" }),
+      );
+      if ("skipped" in courier && courier.skipped) {
+        console.info("[orders] courier skipped", order.number, courier.reason);
+      } else if (!courier.ok) {
+        console.error("[orders] courier booking failed", order.number, courier.error);
+      }
+
+      if (mail.ok && !("skipped" in mail && mail.skipped)) {
+        return { status: "success", message: "Order confirmed · invoice emailed to customer." };
+      }
+      if (mail.ok && "skipped" in mail && mail.skipped) {
+        return {
+          status: "success",
+          message: "Order confirmed. Invoice email skipped (add SMTP_* to env when ready).",
+        };
+      }
+      return {
+        status: "success",
+        message: "Order confirmed, but invoice email failed — check SMTP settings / logs.",
+      };
+    }
+  }
+
   return { status: "success", message: "Order updated." };
 }
 
@@ -683,6 +735,46 @@ export async function saveNewsletterSection(_prev: FormState, formData: FormData
   } catch (error) {
     console.error("[saveNewsletterSection]", error);
     return { status: "error", message: "Could not publish newsletter block." };
+  }
+}
+
+export async function saveWhatsappWidgetSection(_prev: FormState, formData: FormData): Promise<FormState> {
+  await requireAdmin();
+  try {
+    const names = formData.getAll("staffName").map(String);
+    const images = formData.getAll("staffImage").map(String);
+    const staff = images
+      .map((image, i) => ({
+        name: clampText(names[i], 60),
+        image: safeMediaUrl(image, ""),
+      }))
+      .filter((row) => !!row.image)
+      .slice(0, 6);
+
+    const data = normalizeWhatsappWidgetContent({
+      enabled: formData.get("enabled") === "on" || formData.get("enabled") === "true",
+      phone: String(formData.get("phone") ?? ""),
+      message: clampText(formData.get("message"), 200),
+      rotateSeconds: Number(formData.get("rotateSeconds") ?? 3),
+      staff,
+    } satisfies WhatsappWidgetContent);
+
+    if (data.enabled && staff.length === 0) {
+      return { status: "error", message: "Add at least one staff photo, or turn the widget off." };
+    }
+
+    await db.siteSection.upsert({
+      where: { key: "site.whatsapp" },
+      create: { key: "site.whatsapp", title: "WhatsApp float", data },
+      update: { data, title: "WhatsApp float" },
+    });
+    updateTag(CONTENT_TAG);
+    revalidatePath("/", "layout");
+    await bumpAdminContentHub();
+    return { status: "success", message: "WhatsApp float published." };
+  } catch (error) {
+    console.error("[saveWhatsappWidgetSection]", error);
+    return { status: "error", message: "Could not publish WhatsApp float." };
   }
 }
 
