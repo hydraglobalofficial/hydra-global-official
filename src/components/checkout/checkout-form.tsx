@@ -258,7 +258,7 @@ export function CheckoutForm() {
                 className={cn(
                   "flex cursor-pointer items-start gap-3 rounded-2xl border p-4 transition-all",
                   !m.enabled && "cursor-not-allowed opacity-40",
-                  payment === m.value ? "border-accent bg-accent/5 shadow-[0_0_0_1px_rgba(59,130,246,0.25)]" : "border-line hover:border-line-strong",
+                  payment === m.value ? "border-accent bg-accent/5" : "border-line hover:border-line-strong",
                 )}
               >
                 <input

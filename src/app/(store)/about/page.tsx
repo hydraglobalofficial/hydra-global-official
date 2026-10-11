@@ -39,19 +39,13 @@ export default async function AboutPage() {
   return (
     <>
       <section className="relative min-h-[min(92vh,52rem)] overflow-hidden">
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_70%_55%_at_15%_10%,rgba(30,64,175,0.28),transparent_55%),radial-gradient(ellipse_50%_40%_at_90%_20%,rgba(255,255,255,0.06),transparent_50%)]" />
-        <div className="bg-grid pointer-events-none absolute inset-0 opacity-60 [mask-image:radial-gradient(ellipse_at_top,#000,transparent_78%)]" />
-        <div className="bg-noise pointer-events-none absolute inset-0 opacity-[0.04]" />
-        <div className="pointer-events-none absolute -left-24 top-1/3 size-[28rem] rounded-full bg-accent/20 blur-[140px]" />
-        <div className="pointer-events-none absolute -right-16 bottom-0 size-80 rounded-full bg-white/[0.04] blur-[110px]" />
-
         <div className="container-page relative grid min-h-[min(72vh,40rem)] items-center gap-8 pb-8 pt-12 sm:gap-10 sm:pb-10 sm:pt-16 md:gap-14 md:pt-24 lg:grid-cols-[1.15fr_1fr] lg:pb-14">
           <Reveal className="min-w-0 space-y-6 sm:space-y-7 md:space-y-8">
             <Eyebrow>{content.hero.eyebrow}</Eyebrow>
             <h1 className="text-balance text-[2.35rem] font-semibold tracking-tight sm:text-5xl md:text-7xl lg:text-[5.25rem] lg:leading-[0.95]">
               {content.hero.title}
               <br />
-              <span className="text-accent">{content.hero.titleAccent}</span>
+              <span className="text-fg">{content.hero.titleAccent}</span>
             </h1>
             <p className="max-w-xl text-base text-pretty leading-relaxed text-muted sm:text-lg md:text-xl">{content.hero.description}</p>
             <div className="flex flex-wrap gap-3 pt-1">
@@ -82,9 +76,8 @@ export default async function AboutPage() {
                 key={s.label}
                 className="group relative min-w-0 border-b border-white/[0.06] px-3 py-5 text-center last:border-b-0 odd:border-r odd:border-white/[0.06] sm:px-5 sm:py-7 md:border-b-0 md:border-r-0 md:px-6 md:py-9 odd:md:border-r-0"
               >
-                <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-accent/[0.07] to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
-                <p className="relative text-2xl font-semibold tracking-tight sm:text-3xl md:text-4xl">{s.value}</p>
-                <p className="relative mt-1.5 text-[9px] uppercase leading-snug tracking-[0.16em] text-muted sm:mt-2 sm:text-[10px] sm:tracking-[0.2em] md:text-xs">{s.label}</p>
+                <p className="relative text-2xl font-semibold tracking-tight text-fg sm:text-3xl md:text-4xl">{s.value}</p>
+                <p className="relative mt-1.5 text-[9px] uppercase leading-snug tracking-[0.16em] text-fg/65 sm:mt-2 sm:text-[10px] sm:tracking-[0.2em] md:text-xs">{s.label}</p>
               </RevealItem>
             ))}
           </RevealGroup>
@@ -94,8 +87,7 @@ export default async function AboutPage() {
       <Manifesto text={content.manifesto.text} highlight={content.manifesto.highlight} />
 
       <section className="relative overflow-hidden py-24 md:py-28">
-        <div className="pointer-events-none absolute left-1/2 top-0 h-px w-[min(90%,48rem)] -translate-x-1/2 bg-gradient-to-r from-transparent via-accent/50 to-transparent" />
-        <div className="pointer-events-none absolute inset-x-0 top-24 h-64 bg-[radial-gradient(ellipse_at_center,rgba(30,64,175,0.12),transparent_70%)]" />
+        <div className="pointer-events-none absolute left-1/2 top-0 h-px w-[min(90%,48rem)] -translate-x-1/2 bg-gradient-to-r from-transparent via-line-strong to-transparent" />
         <div className="container-page relative">
           <SectionHeading
             align="center"
@@ -109,22 +101,21 @@ export default async function AboutPage() {
           <RevealGroup className="grid gap-5 lg:grid-cols-2" stagger={0.12}>
             <RevealItem className="h-full">
               <SpotlightCard className="relative h-full overflow-hidden p-8 md:p-12">
-                <div className="pointer-events-none absolute -left-24 -top-24 size-80 rounded-full bg-accent/20 blur-3xl" />
-                <div className="pointer-events-none absolute bottom-0 right-0 font-mono text-[7rem] font-semibold leading-none text-white/[0.03] md:text-[9rem]">
+                <div className="pointer-events-none absolute bottom-0 right-0 font-mono text-[7rem] font-semibold leading-none text-fg/[0.04] md:text-[9rem]">
                   01
                 </div>
                 <div className="relative">
-                  <div className="grid size-14 place-items-center rounded-2xl border border-accent/35 bg-accent/12 text-accent shadow-[0_0_40px_-10px_rgba(30,64,175,0.85)]">
+                  <div className="grid size-14 place-items-center rounded-2xl border border-line-strong bg-surface-3 text-fg">
                     <Target size={26} strokeWidth={1.6} />
                   </div>
-                  <p className="mt-8 font-mono text-[11px] uppercase tracking-[0.3em] text-accent">{content.mission.title}</p>
-                  <p className="mt-4 text-2xl font-semibold leading-snug tracking-tight text-balance md:text-3xl">
+                  <p className="mt-8 font-mono text-[11px] uppercase tracking-[0.3em] text-fg/70">{content.mission.title}</p>
+                  <p className="mt-4 text-2xl font-semibold leading-snug tracking-tight text-balance text-fg md:text-3xl">
                     {content.mission.body}
                   </p>
-                  <ul className="mt-8 space-y-3 text-muted">
+                  <ul className="mt-8 space-y-3 text-[0.95rem] leading-relaxed text-fg/75">
                     {content.mission.bullets.map((b) => (
                       <li key={b} className="flex gap-3">
-                        <span className="mt-2 size-1.5 shrink-0 rounded-full bg-accent" />
+                        <span className="mt-2 size-1.5 shrink-0 rounded-full bg-fg/55" />
                         {b}
                       </li>
                     ))}
@@ -134,22 +125,21 @@ export default async function AboutPage() {
             </RevealItem>
             <RevealItem className="h-full">
               <SpotlightCard className="relative h-full overflow-hidden p-8 md:p-12">
-                <div className="pointer-events-none absolute -right-24 -top-24 size-80 rounded-full bg-white/[0.06] blur-3xl" />
-                <div className="pointer-events-none absolute bottom-0 right-0 font-mono text-[7rem] font-semibold leading-none text-white/[0.03] md:text-[9rem]">
+                <div className="pointer-events-none absolute bottom-0 right-0 font-mono text-[7rem] font-semibold leading-none text-fg/[0.04] md:text-[9rem]">
                   02
                 </div>
                 <div className="relative">
-                  <div className="grid size-14 place-items-center rounded-2xl border border-white/15 bg-white/5 text-fg">
+                  <div className="grid size-14 place-items-center rounded-2xl border border-line-strong bg-surface-3 text-fg">
                     <Eye size={26} strokeWidth={1.6} />
                   </div>
                   <p className="mt-8 font-mono text-[11px] uppercase tracking-[0.3em] text-fg/70">{content.vision.title}</p>
-                  <p className="mt-4 text-2xl font-semibold leading-snug tracking-tight text-balance md:text-3xl">
+                  <p className="mt-4 text-2xl font-semibold leading-snug tracking-tight text-balance text-fg md:text-3xl">
                     {content.vision.body}
                   </p>
-                  <ul className="mt-8 space-y-3 text-muted">
+                  <ul className="mt-8 space-y-3 text-[0.95rem] leading-relaxed text-fg/75">
                     {content.vision.bullets.map((b) => (
                       <li key={b} className="flex gap-3">
-                        <span className="mt-2 size-1.5 shrink-0 rounded-full bg-fg/60" />
+                        <span className="mt-2 size-1.5 shrink-0 rounded-full bg-fg/55" />
                         {b}
                       </li>
                     ))}
@@ -176,7 +166,6 @@ export default async function AboutPage() {
       </section>
 
       <section className="relative overflow-hidden py-24">
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_0%,rgba(30,64,175,0.1),transparent_65%)]" />
         <div className="container-page relative">
           <SectionHeading
             eyebrow="What we do"
@@ -195,11 +184,11 @@ export default async function AboutPage() {
                 <RevealItem key={d.title} className="h-full">
                   <SpotlightCard className="group h-full">
                     <Link href={d.href} className="relative flex h-full flex-col overflow-hidden p-7 md:p-8">
-                      <div className="pointer-events-none absolute -right-8 -top-8 font-mono text-7xl font-semibold text-white/[0.03] transition-colors group-hover:text-accent/[0.08]">
+                      <div className="pointer-events-none absolute -right-8 -top-8 font-mono text-7xl font-semibold text-fg/[0.04] transition-colors group-hover:text-fg/[0.08]">
                         {index}
                       </div>
                       <div className="relative flex items-start justify-between">
-                        <div className="grid size-12 place-items-center rounded-2xl border border-accent/25 bg-accent/10 text-accent transition-transform duration-500 group-hover:scale-105">
+                        <div className="grid size-12 place-items-center rounded-2xl border border-line-strong bg-surface-3 text-fg transition-transform duration-500 group-hover:scale-105">
                           <Icon size={22} strokeWidth={1.6} />
                         </div>
                         <ArrowUpRight
@@ -207,9 +196,9 @@ export default async function AboutPage() {
                           className="text-subtle transition-all group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-fg"
                         />
                       </div>
-                      <h3 className="relative mt-10 text-lg font-medium md:text-xl">{d.title}</h3>
+                      <h3 className="relative mt-10 text-lg font-medium text-fg md:text-xl">{d.title}</h3>
                       <p className="relative mt-2 flex-1 text-sm leading-relaxed text-pretty text-muted">{d.text}</p>
-                      <span className="relative mt-6 inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.18em] text-accent opacity-0 transition-opacity group-hover:opacity-100">
+                      <span className="relative mt-6 inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.18em] text-muted opacity-0 transition-opacity group-hover:opacity-100 group-hover:text-fg">
                         Explore <ArrowRight size={12} />
                       </span>
                     </Link>
@@ -222,7 +211,6 @@ export default async function AboutPage() {
       </section>
 
       <section className="relative overflow-hidden py-24 md:py-28">
-        <div className="pointer-events-none absolute left-1/2 top-1/3 h-96 w-[48rem] -translate-x-1/2 rounded-full bg-accent/[0.07] blur-[140px]" />
         <div className="container-page relative">
           <SectionHeading
             align="center"
@@ -274,28 +262,25 @@ export default async function AboutPage() {
       <section className="container-page pb-28 pt-4">
         <Reveal>
           <div className="card-premium relative overflow-hidden rounded-[2rem] p-1">
-            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,rgba(30,64,175,0.22),transparent_45%),radial-gradient(ellipse_at_bottom_right,rgba(255,255,255,0.05),transparent_40%)]" />
-            <div className="relative grid gap-px overflow-hidden rounded-[1.35rem] bg-white/[0.04] sm:rounded-[1.85rem] lg:grid-cols-2">
-              <div className="relative overflow-hidden bg-black/40 p-6 sm:p-8 md:p-10">
-                <div className="pointer-events-none absolute -bottom-24 -right-16 size-72 rounded-full bg-accent/20 blur-3xl" />
-                <Briefcase className="relative text-accent" size={26} strokeWidth={1.6} />
-                <h3 className="relative mt-6 text-xl font-semibold tracking-tight sm:text-2xl md:text-3xl">{content.careers.title}</h3>
+            <div className="relative grid gap-px overflow-hidden rounded-[1.35rem] bg-line sm:rounded-[1.85rem] lg:grid-cols-2">
+              <div className="relative overflow-hidden bg-surface-2 p-6 sm:p-8 md:p-10">
+                <Briefcase className="relative text-fg" size={26} strokeWidth={1.6} />
+                <h3 className="relative mt-6 text-xl font-semibold tracking-tight text-fg sm:text-2xl md:text-3xl">{content.careers.title}</h3>
                 <p className="relative mt-3 max-w-md text-sm text-muted sm:text-base">{content.careers.text}</p>
                 <a
                   href={`mailto:careers@hydraglobal.com?subject=${encodeURIComponent("Careers at HYDRA")}`}
-                  className="relative mt-8 inline-flex min-h-11 items-center gap-2 rounded-full bg-fg px-6 py-3 text-sm font-medium text-black transition-transform hover:scale-[1.03]"
+                  className="relative mt-8 inline-flex min-h-11 items-center gap-2 rounded-full bg-fg px-6 py-3 text-sm font-medium text-bg transition-transform hover:scale-[1.03]"
                 >
                   {content.careers.cta} <ArrowRight size={16} />
                 </a>
               </div>
-              <div className="relative overflow-hidden bg-black/40 p-6 sm:p-8 md:p-10">
-                <div className="pointer-events-none absolute -bottom-24 -right-16 size-72 rounded-full bg-white/[0.06] blur-3xl" />
-                <Handshake className="relative text-accent" size={26} strokeWidth={1.6} />
-                <h3 className="relative mt-6 text-xl font-semibold tracking-tight sm:text-2xl md:text-3xl">{content.partner.title}</h3>
+              <div className="relative overflow-hidden bg-surface-2 p-6 sm:p-8 md:p-10">
+                <Handshake className="relative text-fg" size={26} strokeWidth={1.6} />
+                <h3 className="relative mt-6 text-xl font-semibold tracking-tight text-fg sm:text-2xl md:text-3xl">{content.partner.title}</h3>
                 <p className="relative mt-3 max-w-md text-sm text-muted sm:text-base">{content.partner.text}</p>
                 <Link
                   href="/contact?topic=partnership#write"
-                  className="relative mt-8 inline-flex min-h-11 items-center gap-2 rounded-full border border-line-strong px-6 py-3 text-sm text-fg transition-colors hover:border-accent/40 hover:bg-accent/10"
+                  className="relative mt-8 inline-flex min-h-11 items-center gap-2 rounded-full border border-line-strong px-6 py-3 text-sm text-fg transition-colors hover:border-fg/40 hover:bg-surface-3"
                 >
                   {content.partner.cta} <ArrowRight size={16} />
                 </Link>

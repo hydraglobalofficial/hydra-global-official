@@ -56,7 +56,7 @@ function OfficeMap() {
         <span className="absolute left-1/2 top-full size-10 -translate-x-1/2 -translate-y-1/2 animate-ping rounded-full bg-accent/30" />
         <div className="relative flex flex-col items-center">
           <span className="whitespace-nowrap rounded-full border border-accent/40 bg-black/80 px-2.5 py-1 font-mono text-[10px] tracking-wider text-accent backdrop-blur">HYDRA HQ</span>
-          <span className="mt-1 grid size-7 place-items-center rounded-full bg-accent text-black shadow-[0_0_24px_rgba(30,64,175,0.8)]">
+          <span className="mt-1 grid size-7 place-items-center rounded-full bg-accent text-black">
             <MapPin size={14} />
           </span>
         </div>

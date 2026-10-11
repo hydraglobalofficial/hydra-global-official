@@ -85,9 +85,6 @@ function ValueCard({
   const dim = useTransform(progress, (v) =>
     interpolate(v, [index * slot, (index + 1) * slot, 1], [0, 0, Math.min(0.55, depth * 0.12)]),
   );
-  const glow = useTransform(progress, (v) =>
-    interpolate(v, [(index - 0.15) * slot, index * slot, (index + 0.85) * slot], [0.15, 1, 0.35]),
-  );
 
   const Icon = valueIcon(value, index);
 
@@ -99,39 +96,35 @@ function ValueCard({
       <motion.article
         className="card-premium group relative w-full overflow-hidden rounded-[1.75rem] p-6 shadow-[0_30px_80px_-40px_rgba(0,0,0,0.9)] sm:rounded-[2rem] sm:p-8 md:p-10"
         style={{ scale, y, transformOrigin: "50% 0%" }}
-        whileHover={{ borderColor: "rgba(30,64,175,0.35)" }}
+        whileHover={{ borderColor: "rgba(255,255,255,0.2)" }}
         transition={{ type: "spring", stiffness: 260, damping: 28 }}
       >
-        <motion.div
-          className="pointer-events-none absolute -right-20 -top-24 size-72 rounded-full bg-accent/30 blur-3xl"
-          style={{ opacity: glow }}
-        />
-        <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-accent/40 to-transparent" />
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-line-strong to-transparent" />
 
         <div className="relative grid gap-8 md:grid-cols-[1fr_auto] md:items-center">
           <div>
-            <p className="font-mono text-[11px] tracking-[0.22em] text-subtle">
+            <p className="font-mono text-[11px] tracking-[0.22em] text-muted">
               {String(index + 1).padStart(2, "0")}
-              <span className="mx-2 text-white/15">/</span>
+              <span className="mx-2 text-subtle">/</span>
               {String(total).padStart(2, "0")}
             </p>
-            <h3 className="mt-4 text-2xl font-semibold tracking-tight text-balance sm:text-3xl md:text-4xl">{value.title}</h3>
+            <h3 className="mt-4 text-2xl font-semibold tracking-tight text-balance text-fg sm:text-3xl md:text-4xl">{value.title}</h3>
             <p className="mt-4 max-w-xl text-pretty text-sm leading-relaxed text-muted sm:text-base md:text-lg">{value.text}</p>
           </div>
 
           <div className="flex items-center gap-4 md:flex-col md:items-end md:gap-3">
             <motion.div
-              className="grid size-14 place-items-center rounded-2xl border border-accent/30 bg-accent/10 text-accent shadow-[0_0_40px_-12px_rgba(30,64,175,0.8)] sm:size-16 md:size-20"
+              className="grid size-14 place-items-center rounded-2xl border border-line-strong bg-surface-3 text-fg sm:size-16 md:size-20"
               whileHover={{ scale: 1.06, rotate: -3 }}
               transition={{ type: "spring", stiffness: 320, damping: 18 }}
             >
               <Icon size={28} strokeWidth={1.55} />
             </motion.div>
-            <span className="font-mono text-[10px] uppercase tracking-[0.32em] text-subtle sm:text-[11px]">{value.keyword}</span>
+            <span className="font-mono text-[10px] uppercase tracking-[0.32em] text-muted sm:text-[11px]">{value.keyword}</span>
           </div>
         </div>
 
-        <motion.div className="pointer-events-none absolute inset-0 rounded-[inherit] bg-black" style={{ opacity: dim }} />
+        <motion.div className="pointer-events-none absolute inset-0 rounded-[inherit] bg-bg" style={{ opacity: dim }} />
       </motion.article>
     </div>
   );
@@ -149,20 +142,19 @@ function StaticValueCard({
   const Icon = valueIcon(value, index);
   return (
     <article className="card-premium relative overflow-hidden rounded-[1.75rem] p-6 sm:rounded-[2rem] sm:p-8 md:p-10">
-      <div className="pointer-events-none absolute -right-16 -top-16 size-56 rounded-full bg-accent/20 blur-3xl" />
       <div className="relative grid gap-6 md:grid-cols-[1fr_auto] md:items-center">
         <div>
-          <p className="font-mono text-[11px] tracking-[0.22em] text-subtle">
+          <p className="font-mono text-[11px] tracking-[0.22em] text-muted">
             {String(index + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}
           </p>
-          <h3 className="mt-3 text-2xl font-semibold tracking-tight md:text-3xl">{value.title}</h3>
+          <h3 className="mt-3 text-2xl font-semibold tracking-tight text-fg md:text-3xl">{value.title}</h3>
           <p className="mt-3 max-w-xl text-pretty text-muted">{value.text}</p>
         </div>
         <div className={cn("flex items-center gap-3 md:flex-col md:items-end")}>
-          <div className="grid size-14 place-items-center rounded-2xl border border-accent/30 bg-accent/10 text-accent">
+          <div className="grid size-14 place-items-center rounded-2xl border border-line-strong bg-surface-3 text-fg">
             <Icon size={26} strokeWidth={1.55} />
           </div>
-          <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-subtle">{value.keyword}</span>
+          <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-muted">{value.keyword}</span>
         </div>
       </div>
     </article>

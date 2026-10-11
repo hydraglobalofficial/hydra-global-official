@@ -25,27 +25,24 @@ export function Manifesto({ text, highlight }: { text: string; highlight: readon
 
   return (
     <section ref={ref} className="relative overflow-hidden py-28 md:py-36" aria-label="Our manifesto">
-      <div className="bg-grid pointer-events-none absolute inset-0 opacity-30 [mask-image:radial-gradient(ellipse_at_center,#000,transparent_72%)]" />
-      <div className="bg-noise pointer-events-none absolute inset-0 opacity-[0.035]" />
       <div
-        className="pointer-events-none absolute -right-[8%] top-1/2 w-[min(92vw,42rem)] -translate-y-1/2 opacity-40 md:-right-[4%] md:w-[min(58vw,40rem)]"
+        className="pointer-events-none absolute -right-[8%] top-1/2 w-[min(92vw,42rem)] -translate-y-1/2 opacity-35 md:-right-[4%] md:w-[min(58vw,40rem)]"
         aria-hidden
       >
         <video src={VIDEO_SRC} className="w-full object-contain" autoPlay muted loop playsInline preload="metadata" />
       </div>
-      <div className="pointer-events-none absolute left-1/3 top-1/2 size-[32rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#1e3a8a]/25 blur-[130px]" />
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-accent/40 to-transparent" />
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-line-strong to-transparent" />
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-line to-transparent" />
 
       <div className="container-page relative">
-        <p className="mb-8 font-mono text-[11px] uppercase tracking-[0.3em] text-accent">Manifesto</p>
-        <p className="max-w-3xl text-[1.65rem] font-semibold leading-[1.18] tracking-tight sm:text-3xl md:max-w-4xl md:text-5xl lg:text-6xl">
+        <p className="mb-8 font-mono text-[11px] uppercase tracking-[0.3em] text-muted">Manifesto</p>
+        <p className="max-w-3xl text-[1.65rem] font-semibold leading-[1.18] tracking-tight text-fg sm:text-3xl md:max-w-4xl md:text-5xl lg:text-6xl">
           {words.map((word, i) => {
             const highlighted = highlight.includes(word.replace(/[^\w']/g, ""));
             if (!mounted) {
               return (
                 <span key={i}>
-                  <span className={cn("inline-block translate-y-2 opacity-[0.12]", highlighted && "text-accent")}>{word}</span>{" "}
+                  <span className={cn("inline-block translate-y-2 opacity-40", highlighted && "text-fg")}>{word}</span>{" "}
                 </span>
               );
             }
@@ -66,12 +63,12 @@ export function Manifesto({ text, highlight }: { text: string; highlight: readon
 }
 
 function Word({ word, progress, range, highlight }: { word: string; progress: MotionValue<number>; range: [number, number]; highlight: boolean }) {
-  const opacity = useTransform(progress, (v) => interpolate(v, range, [0.12, 1]));
+  const opacity = useTransform(progress, (v) => interpolate(v, range, [0.4, 1]));
   const y = useTransform(progress, (v) => interpolate(v, range, [8, 0]));
 
   return (
     <>
-      <motion.span className={cn("inline-block", highlight && "text-accent")} style={{ opacity, y }}>
+      <motion.span className={cn("inline-block text-fg", highlight && "text-fg")} style={{ opacity, y }}>
         {word}
       </motion.span>{" "}
     </>

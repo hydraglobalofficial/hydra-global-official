@@ -52,7 +52,7 @@ const nextConfig: NextConfig = {
     ],
   },
   async headers() {
-    return [
+    const headers = [
       { source: "/:path*", headers: securityHeaders },
       {
         source: "/products/:path*",
@@ -66,13 +66,20 @@ const nextConfig: NextConfig = {
           { key: "Cache-Control", value: "public, max-age=31536000, immutable" },
         ],
       },
-      {
+    ];
+
+    // Never pin /_next/static in development — immutable year-long cache keeps stale
+    // Turbopack chunks (hero, CSS) after HMR and breaks theme work.
+    if (process.env.NODE_ENV === "production") {
+      headers.push({
         source: "/_next/static/:path*",
         headers: [
           { key: "Cache-Control", value: "public, max-age=31536000, immutable" },
         ],
-      },
-    ];
+      });
+    }
+
+    return headers;
   },
 };
 

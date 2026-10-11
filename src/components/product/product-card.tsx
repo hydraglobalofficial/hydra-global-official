@@ -28,9 +28,9 @@ export function ProductCard({ product, priority }: { product: ProductCardData; p
     >
       <Link
         href={`/product/${product.slug}`}
-        className="card-premium group flex h-full min-w-0 flex-col overflow-hidden rounded-2xl hover:shadow-[0_30px_70px_-25px_rgba(30,64,175,0.4)] sm:rounded-3xl"
+        className="card-premium group flex h-full min-w-0 flex-col overflow-hidden rounded-2xl sm:rounded-3xl"
       >
-        <div className="relative aspect-square overflow-hidden bg-[radial-gradient(circle_at_50%_40%,#1a1a22_0%,#08080b_72%)]">
+        <div className="product-media-stage relative aspect-square overflow-hidden bg-[radial-gradient(circle_at_50%_40%,#1a1a22_0%,#08080b_72%)] light:bg-[#f4f4f5] light:bg-none">
           <div className="bg-dots pointer-events-none absolute inset-0 opacity-40 [mask-image:radial-gradient(circle_at_50%_50%,#000,transparent_70%)]" />
           <div className="pointer-events-none absolute inset-x-8 bottom-6 h-10 rounded-full bg-accent/20 blur-2xl opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
           <ProductImage

@@ -17,7 +17,7 @@ const items = [
 export function BrandMarquee() {
   const row = [...items, ...items];
   return (
-    <section aria-label="Supported devices" className="relative overflow-x-clip border-y border-line bg-black/40 py-4 backdrop-blur-sm sm:py-5">
+    <section aria-label="Supported devices" className="relative overflow-x-clip border-y border-line bg-bg py-4 backdrop-blur-sm sm:py-5">
       <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-12 bg-gradient-to-r from-bg to-transparent sm:w-32" />
       <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-12 bg-gradient-to-l from-bg to-transparent sm:w-32" />
       <div className="flex w-max animate-marquee items-center gap-8 hover:[animation-play-state:paused] sm:gap-10">

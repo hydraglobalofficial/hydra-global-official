@@ -17,7 +17,7 @@ export function SpotlightCard({ className, onPointerMove, ...props }: ComponentP
       {...props}
       onPointerMove={track}
       className={cn(
-        "card-premium spotlight rounded-3xl transition-[transform,box-shadow] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-1.5 hover:shadow-[0_36px_90px_-34px_rgba(30,64,175,0.42)]",
+        "card-premium spotlight rounded-3xl transition-[transform,box-shadow] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-1.5 hover:shadow-[0_28px_60px_-36px_rgba(0,0,0,0.55)] light:hover:shadow-[0_20px_40px_-28px_rgba(0,0,0,0.18)]",
         className,
       )}
     />

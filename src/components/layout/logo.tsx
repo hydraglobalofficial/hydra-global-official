@@ -27,7 +27,7 @@ function TmMark() {
       }}
     >
       <span
-        className="block whitespace-nowrap text-white"
+        className="block whitespace-nowrap text-fg"
         style={{
           fontSize: 16,
           fontWeight: 800,
@@ -54,7 +54,7 @@ export function LogoMark({
   sizes?: string;
 }) {
   return (
-    <span className={cn("relative inline-block size-10 shrink-0 overflow-hidden rounded-md bg-black sm:size-11 md:size-12", className)}>
+    <span className={cn("relative inline-block size-10 shrink-0 overflow-hidden rounded-md bg-bg sm:size-11 md:size-12", className)}>
       <Image
         src={MARK_SRC}
         alt=""
@@ -62,7 +62,7 @@ export function LogoMark({
         sizes={sizes}
         priority={priority}
         quality={92}
-        className="object-contain object-center p-0.5"
+        className="theme-mark-invert object-contain object-center p-0.5"
       />
     </span>
   );
@@ -87,7 +87,7 @@ export function WordmarkImage({
         sizes={sizes}
         priority={priority}
         quality={95}
-        className="object-contain object-center brightness-0 invert"
+        className="theme-mark-invert object-contain object-center"
       />
     </span>
   );
@@ -96,7 +96,6 @@ export function WordmarkImage({
 /**
  * Header / footer lockup: crest + Hydra.png wordmark + TM above the A.
  * Word box width tracks image aspect (≈3:1) so 84% stays on the A on phone + desktop.
- * Mobile heights are slightly smaller; placement math is identical.
  */
 export function Logo({ className }: { className?: string }) {
   return (
@@ -108,7 +107,7 @@ export function Logo({ className }: { className?: string }) {
       <span
         data-logo-crest
         className="relative block shrink-0"
-        style={{ width: 32, height: 32, marginRight: -4 }}
+        style={{ width: 40, height: 40, marginRight: -2 }}
       >
         <Image
           src={MARK_SRC}
@@ -117,24 +116,24 @@ export function Logo({ className }: { className?: string }) {
           sizes="48px"
           priority
           quality={95}
-          className="object-contain object-center scale-[1.08]"
+          className="theme-mark-invert object-contain object-center scale-[1.08]"
         />
       </span>
 
-      {/* Aspect ≈ 3:1 — box matches mark so TM @ 84% lands on the A (mobile slightly smaller). */}
+      {/* Aspect ≈ 3:1 — box matches mark so TM @ 84% lands on the A. */}
       <span
         data-logo-word
         className="relative block shrink-0 overflow-visible"
-        style={{ width: 84, height: 28 }}
+        style={{ width: 120, height: 40 }}
       >
         <Image
           src={WORDMARK_SRC}
           alt="HYDRA — Smart Accessories"
           fill
-          sizes="120px"
+          sizes="160px"
           priority
           quality={95}
-          className="object-contain object-left brightness-0 invert transition-opacity duration-300 group-hover:opacity-90"
+          className="theme-mark-invert object-contain object-left transition-opacity duration-300 group-hover:opacity-90"
         />
         <TmMark />
       </span>

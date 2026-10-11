@@ -99,7 +99,7 @@ export function Testimonials() {
       <div className="mb-6 flex flex-col gap-4 sm:mb-10 sm:flex-row sm:items-end sm:justify-between sm:gap-5">
         <div className="max-w-2xl space-y-3 sm:space-y-4">
           <p className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.25em] text-accent">
-            <span className="size-1.5 rounded-full bg-accent shadow-[0_0_12px_var(--color-accent)]" />
+            <span className="size-1.5 rounded-full bg-accent" />
             Reviews
           </p>
           <h2 className="text-[1.65rem] font-semibold tracking-tight text-balance sm:text-3xl md:text-5xl">

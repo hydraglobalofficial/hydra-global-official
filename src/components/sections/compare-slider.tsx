@@ -43,7 +43,7 @@ export function CompareSlider({ before, after, beforeLabel = "Before", afterLabe
         {afterLabel}
       </span>
 
-      <div className="absolute inset-y-0 w-px bg-white shadow-[0_0_20px_var(--color-accent)]" style={{ left: `${pos}%` }}>
+      <div className="absolute inset-y-0 w-px bg-white" style={{ left: `${pos}%` }}>
         <div
           role="slider"
           tabIndex={0}

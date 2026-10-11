@@ -98,7 +98,7 @@ const tech = [
 export function TechGrid() {
   return (
     <section className="relative overflow-hidden py-14 sm:py-20 md:py-28">
-      <div className="pointer-events-none absolute inset-x-0 top-1/2 h-72 -translate-y-1/2 bg-[radial-gradient(ellipse_at_center,rgb(30,64,175,0.12),transparent_65%)]" />
+      <div className="light-wash pointer-events-none absolute inset-x-0 top-1/2 h-72 -translate-y-1/2 bg-[radial-gradient(ellipse_at_center,rgb(30,64,175,0.12),transparent_65%)]" />
       <div className="container-page relative">
         <SectionHeading align="center" eyebrow="Engineering" title={<>Protection, <span className="text-muted">re-engineered.</span></>} description="Every HYDRA protector is designed in-house and quality-checked batch by batch." />
         <RevealGroup className="grid gap-3 sm:gap-4 md:grid-cols-2 lg:grid-cols-3" stagger={0.06}>
@@ -130,7 +130,7 @@ export function HowItWorks({ content }: { content: HowItWorksContent }) {
   return (
     <section className="relative overflow-hidden py-14 sm:py-20 md:py-28">
       <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-accent/35 to-transparent" />
-      <div className="pointer-events-none absolute left-1/2 top-16 h-56 w-[min(100%,40rem)] -translate-x-1/2 rounded-full bg-accent/[0.08] blur-[120px]" />
+      <div className="light-wash pointer-events-none absolute left-1/2 top-16 h-56 w-[min(100%,40rem)] -translate-x-1/2 rounded-full bg-accent/[0.08] blur-[120px]" />
       <div className="container-page relative">
         <SectionHeading
           eyebrow={content.eyebrow}
@@ -151,7 +151,7 @@ export function HowItWorks({ content }: { content: HowItWorksContent }) {
                     0{i + 1}
                   </div>
                   <div className="relative flex items-center gap-4">
-                    <span className="relative grid size-12 place-items-center rounded-full border border-accent/30 bg-accent/10 text-accent shadow-[0_0_0_6px_rgba(0,0,0,0.85),0_0_28px_-6px_rgba(30,64,175,0.7)] transition-transform duration-500 group-hover:scale-105">
+                    <span className="relative grid size-12 place-items-center rounded-full border border-accent/30 bg-accent/10 text-accent transition-transform duration-500 group-hover:scale-105">
                       <Icon size={20} />
                     </span>
                     <span className="font-mono text-xs tracking-[0.2em] text-subtle">STEP 0{i + 1}</span>

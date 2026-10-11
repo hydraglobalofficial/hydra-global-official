@@ -65,7 +65,7 @@ export function NewsletterPopup() {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
         >
-          <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={close} />
+          <div className="absolute inset-0 bg-black/70 backdrop-blur-sm light:bg-black/40" onClick={close} />
           <motion.div
             role="dialog"
             aria-modal="true"

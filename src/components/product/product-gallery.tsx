@@ -23,7 +23,7 @@ export function ProductGallery({ images, name }: { images: GalleryImage[]; name:
               onClick={() => setActive(i)}
               className={cn(
                 "relative size-[4.5rem] shrink-0 overflow-hidden rounded-xl border bg-surface-2 transition-all sm:size-20 sm:rounded-2xl",
-                i === active ? "border-accent/70 shadow-[0_0_24px_-6px_var(--color-accent)]" : "border-line opacity-60 hover:opacity-100",
+                i === active ? "border-accent/70" : "border-line opacity-60 hover:opacity-100",
               )}
             >
               <ProductImage src={img.url} alt={img.alt} fill sizes="80px" className="object-contain p-2" />

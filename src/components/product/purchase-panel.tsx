@@ -89,7 +89,7 @@ export function PurchasePanel({ product, variants }: Props) {
                 className={cn(
                   "min-h-11 rounded-full border px-5 py-2.5 text-sm transition-all disabled:cursor-not-allowed disabled:line-through disabled:opacity-40",
                   v.id === variantId
-                    ? "border-accent bg-accent/10 text-fg shadow-[0_0_20px_-6px_var(--color-accent)]"
+                    ? "border-accent bg-accent/10 text-fg"
                     : "border-line text-muted hover:border-line-strong hover:text-fg",
                 )}
               >

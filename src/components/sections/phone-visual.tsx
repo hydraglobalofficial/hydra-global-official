@@ -2,7 +2,7 @@
 export function PhoneVisual() {
   return (
     <div className="relative mx-auto aspect-[4/5] w-full max-w-[30rem]">
-      <div className="absolute inset-x-10 bottom-4 h-12 rounded-[50%] bg-accent/30 blur-3xl" />
+      <div className="phone-visual-glow absolute inset-x-10 bottom-4 h-12 rounded-[50%] bg-accent/30 blur-3xl light:hidden" />
 
       <svg viewBox="0 0 400 500" className="absolute inset-0 h-full w-full" aria-hidden>
         <defs>

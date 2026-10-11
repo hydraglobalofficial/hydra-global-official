@@ -21,13 +21,13 @@ export function Journey({ milestones }: { milestones: Milestone[] }) {
       <div className="absolute bottom-0 left-4 top-0 w-px bg-line md:left-1/2" aria-hidden />
       {mounted ? (
         <motion.div
-          className="absolute bottom-0 left-4 top-0 w-px origin-top bg-gradient-to-b from-accent via-accent/50 to-white/10 shadow-[0_0_14px_rgb(30_64_175/0.55)] md:left-1/2"
+          className="absolute bottom-0 left-4 top-0 w-px origin-top bg-gradient-to-b from-accent via-accent/50 to-white/10 md:left-1/2"
           style={{ scaleY: fill }}
           aria-hidden
         />
       ) : (
         <div
-          className="absolute bottom-0 left-4 top-0 w-px origin-top scale-y-0 bg-gradient-to-b from-accent via-accent/50 to-white/10 shadow-[0_0_14px_rgb(30_64_175/0.55)] md:left-1/2"
+          className="absolute bottom-0 left-4 top-0 w-px origin-top scale-y-0 bg-gradient-to-b from-accent via-accent/50 to-white/10 md:left-1/2"
           aria-hidden
         />
       )}
@@ -59,8 +59,8 @@ export function Journey({ milestones }: { milestones: Milestone[] }) {
                 <>
                   <motion.span
                     className={dotClass}
-                    initial={{ scale: 0, boxShadow: "0 0 0 0 rgba(30,64,175,0)" }}
-                    whileInView={{ scale: 1, boxShadow: "0 0 0 8px rgba(30,64,175,0.18)" }}
+                    initial={{ scale: 0 }}
+                    whileInView={{ scale: 1 }}
                     viewport={{ once: true, margin: "0px 0px -35% 0px" }}
                     transition={{ type: "spring", stiffness: 300, damping: 18 }}
                   />
