@@ -6,7 +6,6 @@ const VIDEO_SRC = "/brand/hydra-animation.mp4";
 export function HeroEmblem() {
   return (
     <div className="relative mx-auto aspect-square w-full max-w-lg">
-      <div className="pointer-events-none absolute inset-[12%] rounded-full bg-accent/12 blur-[70px]" />
       <video
         src={VIDEO_SRC}
         className="relative h-full w-full object-contain"

@@ -11,9 +11,9 @@ import { Logo } from "./logo";
 /** Premium footer — original HYDRA wordmark (not CSS text). */
 export function SiteFooter() {
   return (
-    <footer className="relative mt-16 overflow-hidden border-t border-line bg-black pb-[env(safe-area-inset-bottom)] sm:mt-24 md:mt-28">
-      <div aria-hidden className="divider-glow absolute inset-x-0 top-0" />
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-48 bg-gradient-to-b from-[#1e3a8a]/20 to-transparent sm:h-72" />
+    <footer className="relative mt-16 overflow-hidden border-t border-line bg-bg pb-[env(safe-area-inset-bottom)] sm:mt-24 md:mt-28">
+      <div aria-hidden className="divider-glow absolute inset-x-0 top-0 light:hidden" />
+      <div className="footer-wash pointer-events-none absolute inset-x-0 top-0 h-48 bg-gradient-to-b from-[#1e3a8a]/20 to-transparent light:hidden sm:h-72" />
 
       <div className="container-page relative pt-12 md:pt-20">
         <div className="grid gap-10 border-b border-line pb-10 sm:gap-12 sm:pb-14 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1.35fr)] lg:gap-24">
@@ -61,7 +61,7 @@ export function SiteFooter() {
             href="https://www.neoncode.co/"
             target="_blank"
             rel="noopener noreferrer"
-            className="group inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-4 py-2 text-[11px] tracking-[0.14em] uppercase text-zinc-500 transition-all duration-300 hover:border-accent/40 hover:bg-accent/10 hover:text-fg hover:shadow-[0_0_24px_rgba(56,189,248,0.18)] sm:text-[12px]"
+            className="group inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-4 py-2 text-[11px] tracking-[0.14em] uppercase text-zinc-500 transition-all duration-300 hover:border-accent/40 hover:bg-accent/10 hover:text-fg sm:text-[12px]"
           >
             <span className="text-zinc-600 transition-colors duration-300 group-hover:text-zinc-400">
               Developed by
@@ -71,22 +71,22 @@ export function SiteFooter() {
             </span>
             <span
               aria-hidden
-              className="size-1.5 rounded-full bg-accent/70 shadow-[0_0_10px_rgba(56,189,248,0.8)] transition-transform duration-300 group-hover:scale-125"
+              className="size-1.5 rounded-full bg-accent/70 transition-transform duration-300 group-hover:scale-125"
             />
           </a>
         </div>
       </div>
 
-      <div className="relative select-none overflow-hidden bg-black px-4 pb-2 pt-8 md:pt-12" aria-hidden>
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-full bg-[radial-gradient(ellipse_120%_55%_at_50%_100%,rgba(30,58,138,0.35),transparent_55%)]" />
-        <div className="relative mx-auto flex h-[clamp(4.5rem,18vw,14rem)] w-full max-w-5xl items-end justify-center">
+      <div className="relative select-none overflow-hidden bg-bg px-4 pb-2 pt-8 md:pt-12" aria-hidden>
+        <div className="footer-wash pointer-events-none absolute inset-x-0 bottom-0 h-full bg-[radial-gradient(ellipse_120%_55%_at_50%_100%,rgba(30,58,138,0.35),transparent_55%)] light:hidden" />
+        <div className="relative mx-auto h-[clamp(4.5rem,18vw,14rem)] w-full max-w-5xl">
           <Image
             src="/products/Hydra.png"
-            alt="HYDRA"
+            alt=""
             fill
             sizes="(min-width: 1024px) 1100px, 100vw"
             quality={95}
-            className="object-contain object-bottom opacity-95 brightness-0 invert"
+            className="theme-mark-invert object-contain object-bottom opacity-95"
             priority={false}
           />
         </div>

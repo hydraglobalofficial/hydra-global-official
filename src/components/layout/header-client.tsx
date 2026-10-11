@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from "react";
 import { ChevronDown, Menu, Search, ShoppingBag, X } from "lucide-react";
 import { useCart } from "@/components/cart/cart-provider";
 import { useTypingPlaceholder } from "@/components/search/typing-placeholder";
+import { ThemeToggle } from "@/components/theme/theme-toggle";
 import { buttonStyles } from "@/components/ui/button";
 import { primaryNav, supportNav } from "@/config/navigation";
 import { cn } from "@/lib/utils";
@@ -78,11 +79,11 @@ export function HeaderClient({ nav }: { nav: NavigationData }) {
     >
       <div
         className={cn(
-          "relative mx-auto flex h-14 max-w-[88rem] items-center justify-between gap-2 overflow-visible rounded-2xl border border-line bg-black px-2 transition-all duration-500 sm:h-[4.25rem] sm:gap-4 sm:px-3 md:h-[4.75rem] md:gap-6 md:px-6",
-          (scrolled || menu) && "border-line-strong shadow-[0_24px_60px_-24px_rgba(0,0,0,0.95)]",
+          "relative mx-auto flex h-14 max-w-[88rem] items-center justify-between gap-2 overflow-visible rounded-2xl border border-line bg-bg/95 px-2 backdrop-blur-xl transition-all duration-500 sm:h-[4.25rem] sm:gap-4 sm:px-3 md:h-[4.75rem] md:gap-6 md:px-6",
+          (scrolled || menu) && "border-line-strong shadow-[0_24px_60px_-24px_rgba(0,0,0,0.95)] light:shadow-[0_16px_40px_-20px_rgba(0,0,0,0.18)]",
         )}
       >
-        <div aria-hidden className="divider-glow pointer-events-none absolute inset-x-6 -bottom-px opacity-60 sm:inset-x-10" />
+        <div aria-hidden className="divider-glow pointer-events-none absolute inset-x-6 -bottom-px opacity-60 light:hidden sm:inset-x-10" />
         <div className="flex min-w-0 items-center gap-2 overflow-visible sm:gap-4 md:gap-10">
           <button
             type="button"
@@ -117,10 +118,11 @@ export function HeaderClient({ nav }: { nav: NavigationData }) {
         </div>
 
         <div className="flex items-center gap-0.5 sm:gap-1">
+          <ThemeToggle />
           <button
             type="button"
             onClick={() => setSearchOpen((v) => !v)}
-            className="touch-target grid place-items-center rounded-full text-muted hover:bg-white/5 hover:text-fg"
+            className="touch-target grid place-items-center rounded-full text-muted hover:bg-white/5 hover:text-fg light:hover:bg-black/5"
             aria-label="Search"
           >
             <Search size={19} />
@@ -128,12 +130,12 @@ export function HeaderClient({ nav }: { nav: NavigationData }) {
           <button
             type="button"
             onClick={open}
-            className="touch-target relative grid place-items-center rounded-full text-muted hover:bg-white/5 hover:text-fg"
+            className="touch-target relative grid place-items-center rounded-full text-muted hover:bg-white/5 hover:text-fg light:hover:bg-black/5"
             aria-label={`Cart, ${count} items`}
           >
             <ShoppingBag size={19} />
             {hydrated && count > 0 && (
-              <span className="absolute right-1 top-1 grid min-w-4.5 place-items-center rounded-full bg-accent px-1 font-mono text-[10px] font-semibold leading-4.5 text-black">
+              <span className="absolute right-1 top-1 grid min-w-4.5 place-items-center rounded-full bg-accent px-1 font-mono text-[10px] font-semibold leading-4.5 text-white">
                 {count}
               </span>
             )}
@@ -144,7 +146,7 @@ export function HeaderClient({ nav }: { nav: NavigationData }) {
       {/* Desktop dropdowns */}
       <div
         className={cn(
-          "absolute inset-x-3 top-full mx-auto mt-2 hidden max-w-[88rem] overflow-hidden rounded-2xl border border-line-strong bg-black/90 shadow-[0_30px_80px_-30px_rgba(0,0,0,0.95)] backdrop-blur-2xl transition-all duration-300 md:inset-x-5 lg:block",
+          "absolute inset-x-3 top-full mx-auto mt-2 hidden max-w-[88rem] overflow-hidden rounded-2xl border border-line-strong bg-bg/95 shadow-[0_30px_80px_-30px_rgba(0,0,0,0.95)] backdrop-blur-2xl transition-all duration-300 light:shadow-[0_20px_50px_-24px_rgba(0,0,0,0.2)] md:inset-x-5 lg:block",
           menu ? "visible translate-y-0 opacity-100" : "invisible -translate-y-2 opacity-0",
         )}
         onMouseEnter={() => clearTimeout(closeTimer.current)}
@@ -156,7 +158,7 @@ export function HeaderClient({ nav }: { nav: NavigationData }) {
               <Link
                 key={`desk-${item.href}`}
                 href={item.href}
-                className="group rounded-2xl border border-transparent p-4 hover:border-line hover:bg-white/[0.03]"
+                className="group rounded-2xl border border-transparent p-4 hover:border-line hover:bg-white/[0.03] light:hover:bg-black/[0.03]"
               >
                 <p className="font-medium group-hover:text-accent">{item.label}</p>
                 <p className="mt-1 text-sm text-muted">{item.description}</p>
@@ -169,7 +171,7 @@ export function HeaderClient({ nav }: { nav: NavigationData }) {
       {/* Search overlay */}
       <div
         className={cn(
-          "absolute inset-x-3 top-full mx-auto mt-2 max-w-[88rem] overflow-hidden rounded-2xl border border-line-strong bg-black/90 shadow-[0_30px_80px_-30px_rgba(0,0,0,0.95)] backdrop-blur-2xl transition-all duration-300 md:inset-x-5",
+          "absolute inset-x-3 top-full mx-auto mt-2 max-w-[88rem] overflow-hidden rounded-2xl border border-line-strong bg-bg/95 shadow-[0_30px_80px_-30px_rgba(0,0,0,0.95)] backdrop-blur-2xl transition-all duration-300 light:shadow-[0_20px_50px_-24px_rgba(0,0,0,0.2)] md:inset-x-5",
           searchOpen ? "visible opacity-100" : "invisible opacity-0",
         )}
       >
@@ -219,12 +221,12 @@ function MobileNav({ open, onClose, nav }: { open: boolean; onClose: () => void;
   return (
     <div className={cn("fixed inset-0 z-[80] lg:hidden", !open && "pointer-events-none")} aria-hidden={!open}>
       <div
-        className={cn("absolute inset-0 bg-black/80 backdrop-blur-sm transition-opacity duration-300", open ? "opacity-100" : "opacity-0")}
+        className={cn("absolute inset-0 bg-black/80 backdrop-blur-sm transition-opacity duration-300 light:bg-black/40", open ? "opacity-100" : "opacity-0")}
         onClick={onClose}
       />
       <nav
         className={cn(
-          "absolute inset-y-0 left-0 flex w-full max-w-[22rem] flex-col overflow-y-auto overscroll-contain border-r border-line bg-black px-5 pb-[max(1.5rem,env(safe-area-inset-bottom,0px))] pt-[max(1.5rem,calc(env(safe-area-inset-top,0px)+0.75rem))] shadow-[20px_0_60px_-20px_rgba(0,0,0,0.85)] transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] sm:px-6",
+          "absolute inset-y-0 left-0 flex w-full max-w-[22rem] flex-col overflow-y-auto overscroll-contain border-r border-line bg-bg px-5 pb-[max(1.5rem,env(safe-area-inset-bottom,0px))] pt-[max(1.5rem,calc(env(safe-area-inset-top,0px)+0.75rem))] shadow-[20px_0_60px_-20px_rgba(0,0,0,0.85)] transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] light:shadow-[12px_0_40px_-16px_rgba(0,0,0,0.2)] sm:px-6",
           open ? "translate-x-0" : "-translate-x-full",
         )}
         aria-label="Mobile"
@@ -234,7 +236,7 @@ function MobileNav({ open, onClose, nav }: { open: boolean; onClose: () => void;
           <button
             type="button"
             onClick={onClose}
-            className="touch-target grid shrink-0 place-items-center rounded-full text-muted hover:bg-white/5 hover:text-fg"
+            className="touch-target grid shrink-0 place-items-center rounded-full text-muted hover:bg-white/5 hover:text-fg light:hover:bg-black/5"
             aria-label="Close menu"
           >
             <X size={20} />

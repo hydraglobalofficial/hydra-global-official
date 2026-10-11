@@ -24,7 +24,7 @@ export function FreeShippingMeter({ subtotal }: { subtotal: number }) {
           <span className="text-success">You&apos;ve unlocked free delivery</span>
         )}
       </p>
-      <div className="h-1 overflow-hidden rounded-full bg-white/10">
+      <div className="h-1 overflow-hidden rounded-full bg-white/10 light:bg-black/10">
         <div
           className="h-full rounded-full bg-accent transition-[width] duration-500"
           style={{ width: `${progress}%` }}
@@ -51,7 +51,7 @@ export function CartDrawer() {
   return (
     <div className={cn("fixed inset-0 z-[70]", !isOpen && "pointer-events-none")} aria-hidden={!isOpen}>
       <div
-        className={cn("absolute inset-0 bg-black/70 backdrop-blur-sm transition-opacity duration-300", isOpen ? "opacity-100" : "opacity-0")}
+        className={cn("absolute inset-0 bg-black/70 backdrop-blur-sm transition-opacity duration-300 light:bg-black/40", isOpen ? "opacity-100" : "opacity-0")}
         onClick={close}
       />
       <aside
@@ -59,7 +59,7 @@ export function CartDrawer() {
         aria-modal="true"
         aria-label="Shopping cart"
         className={cn(
-          "absolute inset-y-0 right-0 flex w-full max-w-md flex-col border-l border-line bg-black pt-[max(0.75rem,env(safe-area-inset-top,0px))] shadow-2xl transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
+          "absolute inset-y-0 right-0 flex w-full max-w-md flex-col border-l border-line bg-bg pt-[max(0.75rem,env(safe-area-inset-top,0px))] shadow-2xl transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
           isOpen ? "translate-x-0" : "translate-x-full",
         )}
       >
@@ -70,7 +70,7 @@ export function CartDrawer() {
           <button
             type="button"
             onClick={close}
-            className="touch-target grid place-items-center rounded-full text-muted hover:bg-white/5 hover:text-fg"
+            className="touch-target grid place-items-center rounded-full text-muted hover:bg-white/5 hover:text-fg light:hover:bg-black/5"
             aria-label="Close cart"
           >
             <X size={18} />

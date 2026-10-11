@@ -6,6 +6,7 @@ import { AdminCacheBadge } from "@/components/admin/cache-status";
 import { AdminMobileChrome } from "@/components/admin/admin-mobile-chrome";
 import { AdminNav } from "@/components/admin/admin-nav";
 import { AdminRoutePrefetch } from "@/components/admin/admin-prefetch";
+import { ThemeToggle } from "@/components/theme/theme-toggle";
 import { getAdminCacheStatus } from "@/lib/admin-cache";
 import { requireAdmin } from "@/lib/auth/session";
 import { getAdminNavBadges } from "@/server/queries/admin";
@@ -108,15 +109,15 @@ export default async function AdminLayout({ children }: LayoutProps<"/admin">) {
   );
 
   return (
-    <div className="relative min-h-dvh bg-[#05070e] text-fg">
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_45%_at_0%_0%,rgba(30,64,175,0.22),transparent_55%)]" />
+    <div className="relative min-h-dvh bg-bg text-fg">
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_45%_at_0%_0%,rgba(30,64,175,0.22),transparent_55%)] light:bg-[radial-gradient(ellipse_80%_45%_at_0%_0%,rgba(30,64,175,0.1),transparent_55%)]" />
 
       <div className="relative mx-auto flex min-h-dvh max-w-[1600px] flex-col lg:grid lg:grid-cols-[16.5rem_minmax(0,1fr)] xl:grid-cols-[17rem_minmax(0,1fr)]">
         <Suspense
           fallback={
-            <div className="sticky top-0 z-30 flex items-center justify-between gap-3 border-b border-white/[0.06] bg-[#05070e]/95 px-3 py-2.5 lg:hidden">
+            <div className="sticky top-0 z-30 flex items-center justify-between gap-3 border-b border-line bg-bg/95 px-3 py-2.5 lg:hidden">
               <AdminBrand />
-              <span className="size-9 rounded-lg border border-white/[0.08] bg-white/[0.03]" />
+              <span className="size-9 rounded-lg border border-line bg-surface" />
             </div>
           }
         >
@@ -134,13 +135,16 @@ export default async function AdminLayout({ children }: LayoutProps<"/admin">) {
           </AdminNavData>
         </Suspense>
 
-        <aside className="sticky top-0 z-30 hidden h-dvh flex-col border-r border-white/[0.05] bg-[#05070e] max-lg:hidden lg:flex">
+        <aside className="sticky top-0 z-30 hidden h-dvh flex-col border-r border-line bg-bg max-lg:hidden lg:flex">
           <div className="px-4 pb-2 pt-5">
             <div className="flex items-center justify-between gap-3">
               <AdminBrand />
-              <span className="rounded-full bg-accent/15 px-2.5 py-1 font-mono text-[9px] uppercase tracking-[0.14em] text-blue-200 ring-1 ring-accent/25">
-                {session.role}
-              </span>
+              <div className="flex shrink-0 items-center gap-1.5">
+                <ThemeToggle />
+                <span className="rounded-full bg-accent/15 px-2.5 py-1 font-mono text-[9px] uppercase tracking-[0.14em] text-blue-200 ring-1 ring-accent/25 light:text-accent">
+                  {session.role}
+                </span>
+              </div>
             </div>
           </div>
 
@@ -174,12 +178,12 @@ export default async function AdminLayout({ children }: LayoutProps<"/admin">) {
             </AdminNavData>
           </Suspense>
 
-          <div className="mt-auto border-t border-white/[0.05] p-3">
+          <div className="mt-auto border-t border-line p-3">
             <Link
               href="/"
               target="_blank"
               prefetch={false}
-              className="mb-2 flex items-center gap-2.5 rounded-xl px-3 py-2 text-[13px] text-zinc-500 transition-colors hover:bg-white/[0.03] hover:text-zinc-200"
+              className="mb-2 flex items-center gap-2.5 rounded-xl px-3 py-2 text-[13px] text-muted transition-colors hover:bg-white/[0.03] hover:text-fg light:hover:bg-black/[0.04]"
             >
               <ExternalLink size={14} />
               View store

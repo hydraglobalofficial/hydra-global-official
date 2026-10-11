@@ -13,8 +13,8 @@ const base: SweetAlertOptions = {
     icon: "swal-hydra-icon",
   },
   buttonsStyling: false,
-  background: "#0c0e14",
-  color: "#f4f4f6",
+  background: "var(--color-surface)",
+  color: "var(--color-fg)",
   confirmButtonText: "Got it",
   reverseButtons: true,
 };

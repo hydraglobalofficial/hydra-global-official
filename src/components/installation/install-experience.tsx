@@ -163,11 +163,8 @@ function StepStage({
       initial={reduce ? false : { opacity: 0, scale: 1.04 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.55, ease }}
-      className="relative aspect-[4/5] overflow-hidden rounded-[1.6rem] border border-white/[0.09] bg-[#07070a] shadow-[0_40px_100px_-48px_rgba(59,130,246,0.55)] md:aspect-[5/6] lg:min-h-[26rem] lg:aspect-auto"
+      className="install-media-card relative aspect-[4/5] overflow-hidden rounded-[1.6rem] border border-line bg-[#07070a] shadow-none md:aspect-[5/6] lg:min-h-[26rem] lg:aspect-auto"
     >
-      <div className="pointer-events-none absolute -left-10 top-1/4 size-48 rounded-full bg-accent/25 blur-3xl" />
-      <div className="pointer-events-none absolute -right-8 bottom-0 size-56 rounded-full bg-blue-400/10 blur-3xl" />
-      <div className="bg-grid pointer-events-none absolute inset-0 opacity-30" />
 
       {image ? (
         <Image
@@ -230,11 +227,8 @@ function StepVideoSection({
         initial={reduce ? false : { opacity: 0, y: 22 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.55, ease }}
-        className="relative overflow-hidden rounded-[1.75rem] border border-white/[0.09] bg-[#05070e] shadow-[0_36px_90px_-42px_rgba(59,130,246,0.5)]"
+        className="install-media-card relative overflow-hidden rounded-[1.75rem] border border-line bg-[#05070e] shadow-none"
       >
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_20%_40%,rgba(59,130,246,0.18),transparent_55%)]" />
-        <div className="pointer-events-none absolute -right-24 bottom-0 size-72 rounded-full bg-blue-500/10 blur-3xl" />
-        <div className="bg-grid pointer-events-none absolute inset-0 opacity-20" />
 
         <div className="relative grid items-stretch gap-0 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)]">
           {hasVideo ? (
@@ -255,8 +249,7 @@ function StepVideoSection({
               )}
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/25 to-black/20" />
               <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
-                <span className="relative grid size-[4.5rem] place-items-center rounded-full border border-white/30 bg-black/55 text-white shadow-[0_0_70px_-8px_rgba(59,130,246,1)] backdrop-blur-md transition group-hover:scale-105">
-                  <span className="absolute inset-0 animate-ping rounded-full bg-accent/30 opacity-40" />
+                <span className="relative grid size-[4.5rem] place-items-center rounded-full border border-white/30 bg-black/55 text-white backdrop-blur-md transition group-hover:scale-105">
                   <Play size={28} className="relative ml-1 fill-current" />
                 </span>
                 <span className="font-mono text-[10px] uppercase tracking-[0.28em] text-blue-100/90">
@@ -293,7 +286,7 @@ function StepVideoSection({
               <button
                 type="button"
                 onClick={() => setPlaying(true)}
-                className="mt-1 inline-flex w-fit items-center gap-2 rounded-full bg-fg px-5 py-2.5 text-sm font-medium text-black transition hover:bg-white"
+                className="mt-1 inline-flex w-fit items-center gap-2 rounded-full bg-fg px-5 py-2.5 text-sm font-medium text-bg transition hover:opacity-90"
               >
                 <Play size={14} className="fill-current" /> Play step video
               </button>
@@ -325,7 +318,7 @@ function HeroVideoPlaceholder({ url, reduce }: { url: string; reduce: boolean | 
         initial={reduce ? false : { opacity: 0, y: 24 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, ease, delay: 0.08 }}
-        className="group relative mx-auto mt-12 block w-full max-w-4xl overflow-hidden rounded-[1.75rem] border border-white/10 bg-black text-left shadow-[0_40px_120px_-40px_rgba(59,130,246,0.45)]"
+        className="install-media-card group relative mx-auto mt-12 block w-full max-w-4xl overflow-hidden rounded-[1.75rem] border border-line bg-black text-left shadow-none"
       >
         <div className="relative aspect-video">
           {poster ? (
@@ -378,11 +371,6 @@ export function InstallExperience({ content }: { content: InstallationContent })
 
   return (
     <div className="relative overflow-hidden">
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-0 h-[42rem] bg-[radial-gradient(ellipse_at_50%_0%,rgba(59,130,246,0.18),transparent_55%),radial-gradient(ellipse_at_80%_20%,rgba(255,255,255,0.04),transparent_40%)]"
-      />
-
       <section className="container-page relative pt-10 pb-12 md:pt-16 md:pb-16">
         <motion.div
           className="mx-auto max-w-3xl text-center"
@@ -390,23 +378,21 @@ export function InstallExperience({ content }: { content: InstallationContent })
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.65, ease }}
         >
-          <p className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.28em] text-accent">
-            <span className="size-1.5 rounded-full bg-accent shadow-[0_0_14px_var(--color-accent)]" />
+          <p className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.28em] text-fg">
+            <span className="size-1.5 rounded-full bg-fg" />
             {content.eyebrow}
           </p>
-          <h1 className="mt-5 text-3xl font-semibold tracking-tight text-balance sm:text-4xl md:text-6xl">
+          <h1 className="mt-5 text-3xl font-semibold tracking-tight text-balance text-fg sm:text-4xl md:text-6xl">
             {content.title}{" "}
-            <span className="bg-gradient-to-r from-blue-200 via-white to-zinc-400 bg-clip-text text-transparent">
-              {content.titleAccent}
-            </span>
+            <span className="text-fg">{content.titleAccent}</span>
           </h1>
           <p className="mx-auto mt-4 max-w-2xl text-sm text-pretty text-muted sm:mt-5 sm:text-base md:text-lg">{content.intro}</p>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-            <span className="inline-flex items-center gap-2 rounded-full border border-accent/25 bg-accent/10 px-4 py-2 font-mono text-[11px] uppercase tracking-[0.16em] text-blue-100">
-              <Smartphone size={13} /> {content.brandsNote}
+            <span className="inline-flex items-center gap-2 rounded-full border border-line-strong bg-surface-3 px-4 py-2 font-mono text-[11px] uppercase tracking-[0.16em] text-fg">
+              <Smartphone size={13} className="shrink-0 text-fg" /> {content.brandsNote}
             </span>
-            <span className="inline-flex items-center gap-2 rounded-full border border-line bg-white/[0.03] px-4 py-2 font-mono text-[11px] uppercase tracking-[0.16em] text-muted">
-              <Clock size={13} className="text-accent" /> {content.duration} · {content.steps.length} steps
+            <span className="inline-flex items-center gap-2 rounded-full border border-line bg-surface-3 px-4 py-2 font-mono text-[11px] uppercase tracking-[0.16em] text-fg">
+              <Clock size={13} className="shrink-0 text-fg" /> {content.duration} · {content.steps.length} steps
             </span>
           </div>
         </motion.div>
@@ -415,9 +401,9 @@ export function InstallExperience({ content }: { content: InstallationContent })
       </section>
 
       <section className="container-page relative pb-20">
-        <div className="mb-8 h-1 w-full overflow-hidden rounded-full bg-white/[0.05]">
+        <div className="mb-8 h-1 w-full overflow-hidden rounded-full bg-line">
           <motion.div
-            className="h-full rounded-full bg-gradient-to-r from-accent via-blue-300 to-white/85"
+            className="h-full rounded-full bg-fg light:bg-fg"
             animate={{ width: `${progress}%` }}
             transition={{ type: "spring", stiffness: 110, damping: 20 }}
           />
@@ -434,7 +420,7 @@ export function InstallExperience({ content }: { content: InstallationContent })
                     {on ? (
                       <motion.span
                         layoutId={reduce ? undefined : "install-step-glow"}
-                        className="absolute inset-0 rounded-2xl border border-accent/40 bg-accent/[0.11] shadow-[0_0_36px_-12px_var(--color-accent)]"
+                        className="install-step-active absolute inset-0 rounded-2xl border border-line-strong bg-surface-3 shadow-none"
                         transition={{ type: "spring", stiffness: 380, damping: 32 }}
                       />
                     ) : null}
@@ -447,7 +433,7 @@ export function InstallExperience({ content }: { content: InstallationContent })
                         className={cn(
                           "grid size-8 shrink-0 place-items-center rounded-full font-mono text-[11px] transition",
                           on
-                            ? "bg-fg text-black"
+                            ? "bg-fg text-bg"
                             : done
                               ? "bg-success/15 text-success"
                               : "border border-line text-muted",
@@ -455,7 +441,7 @@ export function InstallExperience({ content }: { content: InstallationContent })
                       >
                         {done && !on ? <CheckCircle2 size={14} /> : String(i + 1).padStart(2, "0")}
                       </span>
-                      <span className={cn("hidden text-sm leading-snug lg:line-clamp-2", on ? "text-fg" : "text-muted")}>
+                      <span className={cn("hidden text-sm leading-snug lg:line-clamp-2", on ? "text-fg font-medium" : "text-muted")}>
                         {s.title}
                       </span>
                     </button>
@@ -469,23 +455,23 @@ export function InstallExperience({ content }: { content: InstallationContent })
             <AnimatePresence mode="wait">
               <motion.article
                 key={active}
-                initial={reduce ? false : { opacity: 0, y: 20, filter: "blur(6px)" }}
-                animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                exit={reduce ? undefined : { opacity: 0, y: -12, filter: "blur(4px)" }}
-                transition={{ duration: 0.45, ease }}
-                className="grid items-start gap-8 rounded-[1.75rem] border border-white/[0.08] bg-gradient-to-br from-white/[0.05] via-transparent to-accent/[0.04] p-5 md:p-7 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] lg:gap-10 lg:p-8"
+                initial={reduce ? false : { opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={reduce ? undefined : { opacity: 0, y: -10 }}
+                transition={{ duration: 0.35, ease }}
+                className="grid items-start gap-8 rounded-[1.75rem] border border-line bg-bg p-5 shadow-none md:p-7 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] lg:gap-10 lg:p-8"
               >
                 <div className="flex min-h-0 flex-col justify-center lg:py-2">
-                  <p className="font-mono text-[11px] uppercase tracking-[0.28em] text-accent">
+                  <p className="font-mono text-[11px] uppercase tracking-[0.28em] text-muted">
                     Step {String(active + 1).padStart(2, "0")}
-                    <span className="mx-2 text-zinc-600">/</span>
-                    <span className="text-zinc-500">{String(content.steps.length).padStart(2, "0")}</span>
+                    <span className="mx-2 text-subtle">/</span>
+                    <span className="text-subtle">{String(content.steps.length).padStart(2, "0")}</span>
                   </p>
                   <h2 className="mt-3 text-3xl font-semibold tracking-tight text-balance md:text-4xl">{step.title}</h2>
                   <p className="mt-4 text-base leading-relaxed text-pretty text-muted md:text-[1.05rem]">{step.body}</p>
                   {step.tip ? (
-                    <p className="mt-6 flex items-start gap-3 rounded-2xl border border-accent/20 bg-accent/[0.08] p-4 text-sm text-blue-100">
-                      <Lightbulb size={18} className="mt-0.5 shrink-0 text-accent" />
+                    <p className="mt-6 flex items-start gap-3 rounded-2xl border border-line bg-surface-3 p-4 text-sm text-fg">
+                      <Lightbulb size={18} className="mt-0.5 shrink-0 text-fg" />
                       <span>{step.tip}</span>
                     </p>
                   ) : null}
@@ -503,7 +489,7 @@ export function InstallExperience({ content }: { content: InstallationContent })
                       <button
                         type="button"
                         onClick={() => setActive((i) => Math.min(content.steps.length - 1, i + 1))}
-                        className="rounded-full bg-fg px-5 py-2 text-sm font-medium text-black transition hover:bg-white"
+                        className="rounded-full bg-fg px-5 py-2 text-sm font-medium text-bg transition hover:opacity-90"
                       >
                         Next step
                       </button>
@@ -531,7 +517,7 @@ export function InstallExperience({ content }: { content: InstallationContent })
       </section>
 
       <section className="container-page grid gap-6 pb-24 lg:grid-cols-2">
-        <div className="rounded-[1.5rem] border border-white/[0.08] bg-white/[0.02] p-6 md:p-8">
+        <div className="rounded-[1.5rem] border border-line bg-bg p-6 md:p-8">
           <p className="mb-5 flex items-center gap-2 text-sm font-medium">
             <Package size={16} className="text-accent" /> In every HYDRA box
           </p>
@@ -539,28 +525,28 @@ export function InstallExperience({ content }: { content: InstallationContent })
             {content.kit.map((item) => (
               <li
                 key={item}
-                className="flex items-center gap-2.5 rounded-xl border border-white/[0.05] bg-black/20 px-3 py-2.5 text-sm text-muted"
+                className="flex items-center gap-2.5 rounded-xl border border-line bg-surface-3/60 px-3 py-2.5 text-sm text-muted"
               >
-                <span className="size-1.5 rounded-full bg-accent shadow-[0_0_10px_var(--color-accent)]" />
+                <span className="size-1.5 rounded-full bg-accent" />
                 {item}
               </li>
             ))}
           </ul>
         </div>
 
-        <div className="rounded-[1.5rem] border border-white/[0.08] bg-white/[0.02] p-6 md:p-8">
+        <div className="rounded-[1.5rem] border border-line bg-bg p-6 md:p-8">
           <p className="mb-5 text-sm font-medium">If something looks off</p>
           <div className="space-y-2">
             {content.troubleshooting.map((t) => (
               <details
                 key={t.problem}
-                className="group rounded-xl border border-white/[0.06] bg-black/25 open:border-accent/25 open:bg-accent/[0.05]"
+                className="group rounded-xl border border-line bg-surface-3/40 open:border-accent/25 open:bg-accent/[0.05]"
               >
                 <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 text-sm text-fg marker:hidden">
                   {t.problem}
                   <ChevronDown size={16} className="shrink-0 text-muted transition group-open:rotate-180" />
                 </summary>
-                <p className="border-t border-white/[0.05] px-4 py-3 text-sm leading-relaxed text-muted">{t.fix}</p>
+                <p className="border-t border-line px-4 py-3 text-sm leading-relaxed text-muted">{t.fix}</p>
               </details>
             ))}
           </div>

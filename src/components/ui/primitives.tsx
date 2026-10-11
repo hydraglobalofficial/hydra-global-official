@@ -37,8 +37,8 @@ export function Badge({
 
 export function Eyebrow({ children, className }: { children: ReactNode; className?: string }) {
   return (
-    <p className={cn("inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.25em] text-accent", className)}>
-      <span className="size-1.5 rounded-full bg-accent shadow-[0_0_12px_var(--color-accent)]" />
+    <p className={cn("inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.25em] text-muted", className)}>
+      <span className="size-1.5 rounded-full bg-fg" />
       {children}
     </p>
   );

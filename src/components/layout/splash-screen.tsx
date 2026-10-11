@@ -51,7 +51,7 @@ export function SplashScreen() {
 
   return (
     <div
-      className="fixed inset-0 z-[100] grid place-items-center bg-black"
+      className="fixed inset-0 z-[100] grid place-items-center bg-bg"
       onClick={close}
       role="presentation"
       aria-hidden

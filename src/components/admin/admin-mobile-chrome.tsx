@@ -22,6 +22,7 @@ import {
   X,
   type LucideIcon,
 } from "lucide-react";
+import { ThemeToggle } from "@/components/theme/theme-toggle";
 import { cn } from "@/lib/utils";
 
 type NavItem = {
@@ -236,16 +237,17 @@ export function AdminMobileChrome({
 
   return (
     <div className="lg:hidden">
-      <header className="sticky top-0 z-30 flex items-center justify-between gap-3 border-b border-white/[0.06] bg-[#05070e] px-3 py-2.5 sm:px-4">
+      <header className="sticky top-0 z-30 flex items-center justify-between gap-3 border-b border-line bg-bg px-3 py-2.5 sm:px-4">
         {brand}
         <div className="flex shrink-0 items-center gap-1.5">
-          <span className="hidden rounded-full bg-accent/15 px-2 py-1 font-mono text-[9px] uppercase tracking-[0.14em] text-blue-200 ring-1 ring-accent/25 sm:inline-flex">
+          <ThemeToggle />
+          <span className="hidden rounded-full bg-accent/15 px-2 py-1 font-mono text-[9px] uppercase tracking-[0.14em] text-blue-200 ring-1 ring-accent/25 light:text-accent sm:inline-flex">
             {role}
           </span>
           <button
             type="button"
             onClick={() => setOpen(true)}
-            className="grid size-9 place-items-center rounded-lg border border-white/[0.08] bg-white/[0.03] text-zinc-300 transition-colors hover:border-white/15 hover:text-fg"
+            className="grid size-9 place-items-center rounded-lg border border-line bg-surface text-muted transition-colors hover:border-line-strong hover:text-fg"
             aria-label="Open admin menu"
             aria-expanded={open}
             aria-haspopup="dialog"
@@ -255,7 +257,7 @@ export function AdminMobileChrome({
           <form action={logoutAction}>
             <button
               type="submit"
-              className="grid size-9 place-items-center rounded-lg border border-white/[0.08] bg-white/[0.03] text-zinc-400 transition-colors hover:border-white/15 hover:text-fg"
+              className="grid size-9 place-items-center rounded-lg border border-line bg-surface text-muted transition-colors hover:border-line-strong hover:text-fg"
               aria-label="Sign out"
             >
               <LogOut size={15} />

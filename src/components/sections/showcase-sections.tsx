@@ -31,12 +31,16 @@ function youtubeIdFromUrl(url: string): string | null {
 
 function CountUp({ to, className }: { to: number; className?: string }) {
   const ref = useRef<HTMLSpanElement>(null);
-  const inView = useInView(ref, { once: true, margin: "-80px" });
+  const inView = useInView(ref, { once: true, amount: 0.4 });
   const [value, setValue] = useState(0);
 
   useEffect(() => {
     if (!inView) return;
-    const controls = animate(0, to, { duration: 2.2, ease: [0.16, 1, 0.3, 1], onUpdate: (v) => setValue(Math.round(v)) });
+    const controls = animate(0, to, {
+      duration: 2.6,
+      ease: [0.16, 1, 0.3, 1],
+      onUpdate: (v) => setValue(Math.round(v)),
+    });
     return () => controls.stop();
   }, [inView, to]);
 
@@ -49,34 +53,40 @@ function CountUp({ to, className }: { to: number; className?: string }) {
 
 export function ImpactStat() {
   return (
-    <section className="relative overflow-x-clip py-16 sm:py-24 md:py-36">
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_70%_60%_at_50%_40%,rgba(30,64,175,0.18),transparent_65%)]" />
-      <div className="bg-grid pointer-events-none absolute inset-0 opacity-40 [mask-image:radial-gradient(ellipse_at_center,#000,transparent_70%)]" />
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-accent/40 to-transparent" />
+    <section className="relative overflow-x-clip py-20 sm:py-28 md:py-40">
       <div className="container-page relative text-center">
         <motion.p
-          className="font-mono text-[11px] uppercase tracking-[0.3em] text-accent"
+          className="font-mono text-[11px] uppercase tracking-[0.28em] text-muted sm:text-xs"
           initial={{ opacity: 0, y: 10 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
         >
           Protected worldwide
         </motion.p>
-        <p className="mt-4 text-[clamp(3.25rem,18vw,12rem)] font-semibold leading-none tracking-[-0.06em]">
-          <CountUp to={50000} className="bg-gradient-to-b from-white via-fg to-white/55 bg-clip-text text-transparent tabular-nums" />
-          <span className="text-muted">+</span>
-        </p>
+        <motion.p
+          className="mt-5 font-semibold leading-[0.9] tracking-[-0.07em] text-fg sm:mt-7"
+          style={{ fontSize: "clamp(4.75rem, 20vw, 13rem)" }}
+          initial={{ opacity: 0, scale: 0.88, y: 24 }}
+          whileInView={{ opacity: 1, scale: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.35 }}
+          transition={{ duration: 0.85, ease: [0.16, 1, 0.3, 1] }}
+        >
+          <CountUp to={50000} className="tabular-nums" />
+          <span>+</span>
+        </motion.p>
         <motion.div
-          className="mx-auto mt-6 max-w-2xl space-y-3 sm:mt-8 sm:space-y-4"
-          initial={{ opacity: 0, y: 16 }}
+          className="mx-auto mt-7 max-w-xl space-y-3 sm:mt-10 sm:space-y-4"
+          initial={{ opacity: 0, y: 18 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.2 }}
+          transition={{ duration: 0.65, delay: 0.2 }}
         >
-          <h2 className="text-xl font-semibold tracking-tight sm:text-2xl md:text-3xl">Devices equipped by HYDRA.</h2>
-          <p className="text-sm text-pretty text-muted sm:text-base">
-            Engineered for the flagship phones people actually carry. Screen armor, cases, camera kits and more — cut per model,
-            quality-checked and shipped worldwide — with real humans on support when you need them.
+          <h2 className="text-2xl font-semibold tracking-tight text-fg sm:text-3xl md:text-4xl">
+            Devices equipped by HYDRA.
+          </h2>
+          <p className="text-sm text-pretty text-muted sm:text-base md:text-lg">
+            Engineered for the flagship phones people actually carry. Screen armor, cases, camera kits and more — cut per
+            model, quality-checked and shipped worldwide.
           </p>
         </motion.div>
       </div>

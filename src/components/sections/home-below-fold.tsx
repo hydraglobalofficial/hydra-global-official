@@ -6,14 +6,7 @@ import { SectionDivider } from "@/components/ui/section-divider";
 import { Reveal } from "@/components/motion/reveal";
 import type { HowItWorksContent, NewsletterContent, ShowcaseContent } from "@/content/site-sections";
 
-const ImpactStat = dynamic(
-  () => import("@/components/sections/showcase-sections").then((m) => m.ImpactStat),
-  { loading: () => <div className="h-72 animate-pulse bg-white/[0.02]" aria-hidden /> },
-);
-const DropTest = dynamic(
-  () => import("@/components/sections/showcase-sections").then((m) => m.DropTest),
-  { loading: () => <div className="h-80 animate-pulse bg-white/[0.02]" aria-hidden /> },
-);
+import { DropTest, ImpactStat } from "@/components/sections/showcase-sections";
 const ClarityCompare = dynamic(
   () => import("@/components/sections/clarity-compare").then((m) => m.ClarityCompare),
 );

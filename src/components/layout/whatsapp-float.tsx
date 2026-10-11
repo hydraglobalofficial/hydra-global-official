@@ -83,12 +83,12 @@ export function WhatsappFloat({ content }: { content: WhatsappWidgetContent }) {
         className={cn(
           "pointer-events-none relative z-10",
           "max-w-[min(12.5rem,calc(100vw-5rem))] sm:max-w-[13.5rem]",
-          "rounded-2xl border border-white/15 bg-zinc-950 px-3 py-2 sm:px-3.5 sm:py-2.5",
-          "shadow-[0_12px_32px_rgba(0,0,0,0.55)]",
+          "rounded-2xl border border-line-strong bg-bg px-3 py-2 sm:px-3.5 sm:py-2.5",
+          "shadow-[0_12px_32px_rgba(0,0,0,0.55)] light:shadow-[0_12px_28px_rgba(0,0,0,0.12)]",
           "transition-colors duration-300 group-hover:border-emerald-400/45",
         )}
       >
-        <span className="block text-[10px] font-medium uppercase tracking-[0.18em] text-emerald-400/95">
+        <span className="block text-[10px] font-medium uppercase tracking-[0.18em] text-emerald-600 light:text-emerald-700">
           Contact with
         </span>
         <span className="relative mt-0.5 block min-h-[1.25rem] overflow-hidden">
@@ -100,20 +100,20 @@ export function WhatsappFloat({ content }: { content: WhatsappWidgetContent }) {
                 animate={{ opacity: 1, y: 0 }}
                 exit={reduceMotion ? undefined : { opacity: 0, y: -8 }}
                 transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
-                className="block truncate text-[13px] font-semibold leading-tight tracking-tight text-white sm:text-[14px]"
+                className="block truncate text-[13px] font-semibold leading-tight tracking-tight text-fg sm:text-[14px]"
               >
                 {agentName}
               </motion.span>
             </AnimatePresence>
           ) : (
-            <span className="block truncate text-[13px] font-semibold leading-tight tracking-tight text-white sm:text-[14px]">
+            <span className="block truncate text-[13px] font-semibold leading-tight tracking-tight text-fg sm:text-[14px]">
               {agentName}
             </span>
           )}
         </span>
         <span
           aria-hidden
-          className="absolute -bottom-1.5 right-6 size-3 rotate-45 border-b border-r border-white/15 bg-zinc-950"
+          className="absolute -bottom-1.5 right-6 size-3 rotate-45 border-b border-r border-line-strong bg-bg"
         />
       </motion.span>
 
@@ -125,22 +125,12 @@ export function WhatsappFloat({ content }: { content: WhatsappWidgetContent }) {
         transition={{ type: "spring", stiffness: 420, damping: 24 }}
       >
         <span
-          aria-hidden
-          className="pointer-events-none absolute rounded-full bg-emerald-400/40 blur-xl group-hover:bg-emerald-300/55"
-          style={{ inset: -12 }}
-        />
-        <span
-          aria-hidden
-          className="pointer-events-none absolute inset-0 animate-pulse rounded-full bg-emerald-400/25 blur-md"
-        />
-
-        <span
           className={cn(
-            "relative block size-full overflow-hidden rounded-full bg-zinc-900",
-            "ring-2 ring-white/30",
-            "shadow-[0_14px_36px_rgba(0,0,0,0.55),0_0_28px_rgba(52,211,153,0.4)]",
+            "relative block size-full overflow-hidden rounded-full bg-surface-3",
+            "ring-2 ring-white/30 light:ring-black/15",
+            "shadow-[0_10px_24px_rgba(0,0,0,0.35)] light:shadow-[0_8px_20px_rgba(0,0,0,0.12)]",
             "transition-[box-shadow,ring-color] duration-300",
-            "group-hover:ring-emerald-300/60 group-hover:shadow-[0_16px_40px_rgba(0,0,0,0.6),0_0_36px_rgba(52,211,153,0.55)]",
+            "group-hover:ring-emerald-300/50",
           )}
         >
           {active?.image ? (
@@ -169,7 +159,7 @@ export function WhatsappFloat({ content }: { content: WhatsappWidgetContent }) {
               />
             )
           ) : (
-            <span className="grid size-full place-items-center bg-gradient-to-br from-emerald-500/30 to-zinc-900 text-lg font-semibold text-white">
+            <span className="grid size-full place-items-center bg-gradient-to-br from-emerald-500/30 to-surface-3 text-lg font-semibold text-fg">
               {initial}
             </span>
           )}
@@ -177,7 +167,7 @@ export function WhatsappFloat({ content }: { content: WhatsappWidgetContent }) {
 
         <span
           aria-hidden
-          className="absolute bottom-0.5 right-0.5 size-3.5 rounded-full border-2 border-zinc-950 bg-emerald-400 shadow-[0_0_12px_rgba(52,211,153,0.9)]"
+          className="absolute bottom-0.5 right-0.5 size-3.5 rounded-full border-2 border-bg bg-emerald-400 shadow-[0_0_12px_rgba(52,211,153,0.9)]"
         />
       </motion.span>
     </motion.a>

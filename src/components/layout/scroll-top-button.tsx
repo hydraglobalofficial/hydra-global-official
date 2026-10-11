@@ -15,6 +15,7 @@ export function ScrollTopButton() {
       type="button"
       onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
       aria-label="Scroll to top"
+      className="scroll-top-btn"
       style={{
         position: "fixed",
         top: "auto",
@@ -27,10 +28,10 @@ export function ScrollTopButton() {
         display: "grid",
         placeItems: "center",
         borderRadius: 9999,
-        border: "1.5px solid rgba(255,255,255,0.4)",
-        background: "#18181b",
-        color: "#ffffff",
-        boxShadow: "0 10px 28px rgba(0,0,0,0.55)",
+        border: "1.5px solid var(--color-line-strong)",
+        background: "var(--color-surface-3)",
+        color: "var(--color-fg)",
+        boxShadow: "0 10px 28px rgba(0,0,0,0.25)",
         cursor: "pointer",
         padding: 0,
       }}
@@ -45,7 +46,7 @@ export function ScrollTopButton() {
       >
         <path
           d="M12 19V5M5 12l7-7 7 7"
-          stroke="#ffffff"
+          stroke="currentColor"
           strokeWidth="2.5"
           strokeLinecap="round"
           strokeLinejoin="round"
