@@ -137,7 +137,7 @@ export const getInstallationContent = unstable_cache(
       return defaultInstallationContent;
     }
   },
-  ["site-section-installation-v3"],
+  ["site-section-installation-v4"],
   { tags: [CONTENT_TAG], revalidate: 3600 },
 );
 

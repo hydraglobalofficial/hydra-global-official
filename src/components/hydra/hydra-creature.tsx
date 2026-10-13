@@ -20,14 +20,14 @@ export type HydraHead = {
 
 /**
  * Protection · Precision · Progression — driven by Hydra_Animation.png
- * Center stays; side heads are fully hidden, then arrive as complete pieces.
+ * Power core (center) first; side heads arrive as complete pieces.
  */
 export const hydraHeads: HydraHead[] = [
   {
     label: "Protection",
     caption: "Armor that takes the hit",
     tip: { left: 50, top: 5 },
-    start: 0.05,
+    start: 0.04,
     // Center head + full shared base — side necks stay out
     clip: "polygon(31% 0%, 69% 0%, 65% 48%, 56% 100%, 44% 100%, 35% 48%)",
   },
@@ -35,18 +35,16 @@ export const hydraHeads: HydraHead[] = [
     label: "Precision",
     caption: "Cut to your exact device",
     tip: { left: 27, top: 17 },
-    start: 0.34,
+    start: 0.32,
     fromX: -150,
-    // Full left head + full curved neck into the base
     clip: "polygon(0% 0%, 42% 0%, 49% 45%, 51% 100%, 0% 100%)",
   },
   {
     label: "Progression",
     caption: "Built for what comes next",
     tip: { left: 73, top: 17 },
-    start: 0.48,
+    start: 0.46,
     fromX: 150,
-    // Full right head + full curved neck into the base
     clip: "polygon(58% 0%, 100% 0%, 100% 100%, 49% 100%, 51% 45%)",
   },
 ];
@@ -69,26 +67,29 @@ type CreatureProps = {
 const IMAGE_SIZES = "(min-width: 1024px) 760px, (min-width: 768px) 580px, 400px";
 
 /**
- * Hydra_Animation.png assemble:
+ * Hydra_Animation.png assemble from the power spine:
  * 1) Center alone
- * 2) Left side full body slides in (was totally gone)
- * 3) Right side full body slides in
+ * 2) Left side slides in
+ * 3) Right side slides in
  * 4) Merge to full crest
+ *
+ * Sit the crest on a themed stage (dark absorbs the PNG black plate; light uses a designed charcoal well).
  */
 export function HydraCreature({ progress, className, ghost = false, still = false }: CreatureProps) {
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
 
-  const glowOpacity = useTransform(progress, (v) => interpolate(v, [0, 0.12, 1], [0, ghost ? 0.28 : 0.65, ghost ? 0.32 : 0.75]));
-  const glowScale = useTransform(progress, (v) => interpolate(v, [0, 0.22, 1], [0.5, 1, 1.03]));
+  const glowOpacity = useTransform(progress, (v) =>
+    interpolate(v, [0, 0.12, 1], [0, ghost ? 0.18 : 0.4, ghost ? 0.2 : 0.5]),
+  );
+  const glowScale = useTransform(progress, (v) => interpolate(v, [0, 0.22, 1], [0.55, 1, 1.02]));
   const layersOpacity = useTransform(progress, (v) => interpolate(v, [0.74, 0.86], [1, 0]));
   const fullOpacity = useTransform(progress, (v) => interpolate(v, [0.74, 0.86], [0, ghost ? 0.28 : 1]));
 
   if (!mounted) {
     return (
-      <div className={cn("relative mx-auto aspect-[3930/3454] w-full", className)} aria-hidden>
-        <div className="pointer-events-none absolute left-1/2 top-[44%] size-[85%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#1e3a8a]/22 blur-[80px]" />
-        <div className="absolute inset-0 opacity-15">
+      <div className={cn("hydra-crest-art relative mx-auto aspect-[3930/3454] w-full", className)} aria-hidden>
+        <div className="absolute inset-0 opacity-20">
           <Image src={HYDRA_SRC} alt="" fill sizes={IMAGE_SIZES} className="object-contain" priority={!ghost} quality={95} />
         </div>
       </div>
@@ -97,13 +98,13 @@ export function HydraCreature({ progress, className, ghost = false, still = fals
 
   return (
     <motion.div
-      className={cn("relative mx-auto aspect-[3930/3454] w-full overflow-visible", className)}
+      className={cn("hydra-crest-art relative mx-auto aspect-[3930/3454] w-full overflow-visible", className)}
       aria-hidden
       animate={still || ghost ? undefined : { y: [0, -5, 0] }}
       transition={still || ghost ? undefined : { duration: 5.5, repeat: Infinity, ease: "easeInOut" }}
     >
       <motion.div
-        className="pointer-events-none absolute left-1/2 top-[44%] size-[85%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#1e3a8a]/25 blur-[80px]"
+        className="pointer-events-none absolute left-1/2 top-[44%] size-[78%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(255,255,255,0.14)_0%,transparent_68%)] blur-[70px] light:opacity-0"
         style={{ opacity: glowOpacity, scale: glowScale }}
       />
 
@@ -135,7 +136,6 @@ function HeadLayer({ head, progress, ghost }: { head: HydraHead; progress: Motio
   const opacity = useTransform(progress, (v) => {
     if (v < head.start) return 0;
     if (isSide) {
-      // Instant solid piece — no half-faded cut body
       return interpolate(v, [head.start, head.start + 0.02], [0, ghost ? 0.34 : 1]);
     }
     return interpolate(v, [head.start, arriveEnd], [0, ghost ? 0.34 : 1]);
@@ -149,11 +149,15 @@ function HeadLayer({ head, progress, ghost }: { head: HydraHead; progress: Motio
 
   const y = useTransform(progress, (v) => {
     if (isSide) return interpolate(v, [head.start, arriveEnd], [6, 0]);
-    return interpolate(v, [head.start, arriveEnd], [16, 0]);
+    // Center rises from the power base
+    return interpolate(v, [head.start, arriveEnd], [22, 0]);
   });
 
   const scale = useTransform(progress, (v) => {
-    if (!isSide) return 1;
+    if (!isSide) {
+      // Power core scales up from the spine
+      return interpolate(v, [head.start, arriveEnd], [0.88, 1]);
+    }
     if (v < head.start) return 0.96;
     return interpolate(v, [head.start, arriveEnd], [0.96, 1]);
   });
@@ -171,7 +175,7 @@ function HeadLayer({ head, progress, ghost }: { head: HydraHead; progress: Motio
         visibility,
         clipPath: head.clip,
         WebkitClipPath: head.clip,
-        transformOrigin: `${head.tip.left}% ${head.tip.top}%`,
+        transformOrigin: isSide ? `${head.tip.left}% ${head.tip.top}%` : "50% 72%",
       }}
     >
       <Image src={HYDRA_SRC} alt="" fill sizes={IMAGE_SIZES} quality={95} className="object-contain" />

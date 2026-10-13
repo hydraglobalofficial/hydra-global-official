@@ -60,11 +60,17 @@ export function safeMediaUrl(raw: unknown, fallback = ""): string {
   }
 }
 
-/** YouTube watch/share/embed links or allowlisted https media (R2 mp4/webm). */
+/** YouTube, Google Drive, allowlisted https media (R2 mp4/webm), or same-origin /public video paths. */
 export function safeVideoUrl(raw: unknown, fallback = ""): string {
   if (typeof raw !== "string") return fallback;
   const url = raw.trim();
   if (!url || url.length > MAX_VIDEO) return fallback;
+
+  // Local public asset — e.g. /brand/hydra-animation.mp4
+  if (url.startsWith("/") && !url.startsWith("//") && /\.(mp4|webm|ogg)(\?|$)/i.test(url)) {
+    return url.split("?")[0] ?? url;
+  }
+
   try {
     const parsed = new URL(url);
     if (parsed.protocol !== "https:") return fallback;
@@ -76,6 +82,9 @@ export function safeVideoUrl(raw: unknown, fallback = ""): string {
       host === "m.youtube.com" ||
       host === "www.youtube-nocookie.com"
     ) {
+      return parsed.toString();
+    }
+    if (host === "drive.google.com" || host === "docs.google.com") {
       return parsed.toString();
     }
     const configuredR2 = r2PublicHost();

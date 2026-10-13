@@ -273,13 +273,11 @@ export function normalizeInstallationContent(raw: unknown): InstallationContent 
           const tip = clampText(row.tip, 240, "");
           const fallback = defaults.steps[index];
           const image = safeMediaUrl(row.image, "") || fallback?.image || "";
-          const video = safeVideoUrl(row.video, "") || fallback?.video || "";
           return {
             title,
             body,
             ...(tip ? { tip } : {}),
             ...(image ? { image } : {}),
-            ...(video ? { video } : {}),
           };
         })
         .filter((row): row is InstallationContent["steps"][number] => !!row)
@@ -306,7 +304,7 @@ export function normalizeInstallationContent(raw: unknown): InstallationContent 
     titleAccent: clampText(data.titleAccent, 80, defaults.titleAccent),
     intro: clampText(data.intro, 500, defaults.intro),
     duration: clampText(data.duration, 40, defaults.duration),
-    videoUrl: safeVideoUrl(data.videoUrl, ""),
+    videoUrl: safeVideoUrl(data.videoUrl, "") || defaults.videoUrl,
     brandsNote: clampText(data.brandsNote, 80, defaults.brandsNote),
     kit: kit.length > 0 ? kit : defaults.kit,
     steps: steps.length > 0 ? steps : defaults.steps,

@@ -641,14 +641,12 @@ export async function saveInstallationSection(_prev: FormState, formData: FormDa
     const bodies = formData.getAll("stepBody").map(String);
     const tips = formData.getAll("stepTip").map(String);
     const images = formData.getAll("stepImage").map(String);
-    const videos = formData.getAll("stepVideo").map(String);
     const steps = titles
       .map((title, i) => ({
         title: clampText(title, 100),
         body: clampText(bodies[i], 600),
         tip: clampText(tips[i], 240, ""),
         image: safeMediaUrl(images[i], ""),
-        video: safeVideoUrl(videos[i], ""),
       }))
       .filter((s) => s.title && s.body)
       .slice(0, 16)
@@ -657,7 +655,6 @@ export async function saveInstallationSection(_prev: FormState, formData: FormDa
         body: s.body,
         ...(s.tip ? { tip: s.tip } : {}),
         ...(s.image ? { image: s.image } : {}),
-        ...(s.video ? { video: s.video } : {}),
       }));
 
     const problems = formData.getAll("troubleProblem").map(String);

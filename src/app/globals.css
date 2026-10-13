@@ -684,3 +684,43 @@ html.light .wa-glow,
 html[data-theme="light"] .wa-glow {
   opacity: 0.35 !important;
 }
+
+/*
+  Hydra crest stage — dark plate absorbs Hydra_Animation.png’s black square.
+  Light mode: charcoal well so the crest never floats as a hard black box on white.
+*/
+.hydra-crest-stage {
+  position: relative;
+  width: 100%;
+  margin-inline: auto;
+  overflow: visible;
+  border-radius: 1.75rem;
+  padding: 0.75rem;
+  background: transparent;
+}
+@media (width >= 40rem) {
+  .hydra-crest-stage {
+    border-radius: 2rem;
+    padding: 1rem;
+  }
+}
+@media (width >= 48rem) {
+  .hydra-crest-stage {
+    padding: 1.25rem;
+  }
+}
+.hydra-crest-stage {
+  isolation: isolate;
+}
+html.light .hydra-crest-stage,
+html[data-theme="light"] .hydra-crest-stage {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+/* Soft-crop the PNG’s baked-in black plate so light mode doesn’t show a hard square */
+html.light .hydra-crest-art,
+html[data-theme="light"] .hydra-crest-art {
+  -webkit-mask-image: radial-gradient(ellipse 72% 68% at 50% 46%, #000 42%, transparent 78%);
+  mask-image: radial-gradient(ellipse 72% 68% at 50% 46%, #000 42%, transparent 78%);
+}

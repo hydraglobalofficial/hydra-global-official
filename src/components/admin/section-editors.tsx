@@ -1016,7 +1016,6 @@ type InstallStepDraft = {
   body: string;
   tip: string;
   image: string;
-  video: string;
 };
 
 type TroubleDraft = { key: string; problem: string; fix: string };
@@ -1027,7 +1026,6 @@ const emptyStep = (): InstallStepDraft => ({
   body: "",
   tip: "",
   image: "",
-  video: "",
 });
 
 const emptyTrouble = (): TroubleDraft => ({
@@ -1049,7 +1047,6 @@ export function InstallationSectionEditor({ content }: { content: InstallationCo
           body: s.body,
           tip: s.tip ?? "",
           image: s.image ?? "",
-          video: s.video ?? "",
         }))
       : [emptyStep(), emptyStep()],
   );
@@ -1081,14 +1078,17 @@ export function InstallationSectionEditor({ content }: { content: InstallationCo
         <Label label="Brands note" hint={'Shown as a badge, e.g. "Same process for Apple & Samsung"'}>
           <Input name="brandsNote" defaultValue={content.brandsNote} required />
         </Label>
-        <Label
-          label="Video URL"
-          hint="YouTube link or direct mp4/webm on Cloudflare R2. Leave blank to hide the player."
-        >
+      </Section>
+
+      <Section title="Walkthrough video (bottom of page)">
+        <p className="text-xs text-subtle">
+          One link only — shows as an in-page player under the steps. Paste a YouTube or Google Drive share link (Drive file must be set to “Anyone with the link”). R2 mp4/webm also works.
+        </p>
+        <Label label="Video link" hint="YouTube watch/share, Google Drive file link, or https://….r2.dev/….mp4">
           <Input
             name="videoUrl"
             defaultValue={content.videoUrl}
-            placeholder="https://www.youtube.com/watch?v=… or https://….r2.dev/…/install.mp4"
+            placeholder="https://www.youtube.com/watch?v=… or https://drive.google.com/file/d/…/view"
             className="font-mono text-xs"
           />
         </Label>
@@ -1103,7 +1103,7 @@ export function InstallationSectionEditor({ content }: { content: InstallationCo
       <Section title="Steps">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <p className="text-xs text-subtle">
-            Add or remove steps anytime. Each can have an image and/or YouTube / R2 video. Empty rows are skipped on publish.
+            Add or remove steps anytime. Each step can have a still image. The walkthrough video is set once above. Empty rows are skipped on publish.
           </p>
           <Button
             type="button"
@@ -1160,28 +1160,14 @@ export function InstallationSectionEditor({ content }: { content: InstallationCo
                   setSteps((prev) => prev.map((s) => (s.key === step.key ? { ...s, tip: v } : s)));
                 }}
               />
-              <div className="grid gap-3 sm:grid-cols-2">
-                <Label label="Step image" hint="Optional — R2 upload or paste URL">
-                  <ImageUrlField
-                    name="stepImage"
-                    defaultValue={step.image}
-                    folder="content"
-                    placeholder="/products/glass-clear.jpg"
-                  />
-                </Label>
-                <Label label="Step video" hint="Optional — YouTube link or R2 mp4/webm">
-                  <Input
-                    name="stepVideo"
-                    defaultValue={step.video}
-                    placeholder="https://www.youtube.com/watch?v=…"
-                    className="font-mono text-xs"
-                    onChange={(e) => {
-                      const v = e.target.value;
-                      setSteps((prev) => prev.map((s) => (s.key === step.key ? { ...s, video: v } : s)));
-                    }}
-                  />
-                </Label>
-              </div>
+              <Label label="Step image" hint="Optional — R2 upload or paste URL">
+                <ImageUrlField
+                  name="stepImage"
+                  defaultValue={step.image}
+                  folder="content"
+                  placeholder="/products/glass-clear.jpg"
+                />
+              </Label>
             </div>
           ))}
         </div>

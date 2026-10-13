@@ -78,6 +78,9 @@ html[data-theme="light"] [class*="rounded-full"][class*="bg-accent/"][class*="bl
 html.light [class*="bg-blue-"][class*="blur"],
 html[data-theme="light"] [class*="bg-blue-"][class*="blur"]{opacity:0!important;display:none!important}
 .install-media-card{box-shadow:none!important}
+.hydra-crest-stage{position:relative;isolation:isolate}
+html.light .hydra-crest-stage,html[data-theme="light"] .hydra-crest-stage{background:transparent!important;border:0!important;box-shadow:none!important}
+html.light .hydra-crest-art,html[data-theme="light"] .hydra-crest-art{-webkit-mask-image:radial-gradient(ellipse 72% 68% at 50% 46%,#000 42%,transparent 78%);mask-image:radial-gradient(ellipse 72% 68% at 50% 46%,#000 42%,transparent 78%)}
 `.replace(/\s+/g, " ").trim();
 
 const LIGHT_STYLE_ID = "hydra-light-pure-white";

@@ -2,13 +2,13 @@
 
 import { useEffect, useRef } from "react";
 import { animate, motion, useInView, useMotionValue, useReducedMotion, useTransform, type MotionValue } from "motion/react";
+import Image from "next/image";
+import { HYDRA_SRC } from "@/components/hydra/hydra-creature";
 import { useHasMounted } from "@/hooks/use-has-mounted";
 import { interpolate } from "@/lib/interpolate";
 import { cn } from "@/lib/utils";
 
-const VIDEO_SRC = "/brand/hydra-animation.mp4";
-
-/** Manifesto: words light up — brand video as soft background (no SVG draw). */
+/** Manifesto: words light up — Hydra_Animation.png as soft background. */
 export function Manifesto({ text, highlight }: { text: string; highlight: readonly string[] }) {
   const mounted = useHasMounted();
   const ref = useRef<HTMLElement>(null);
@@ -26,10 +26,10 @@ export function Manifesto({ text, highlight }: { text: string; highlight: readon
   return (
     <section ref={ref} className="relative overflow-hidden py-28 md:py-36" aria-label="Our manifesto">
       <div
-        className="pointer-events-none absolute -right-[8%] top-1/2 w-[min(92vw,42rem)] -translate-y-1/2 opacity-35 md:-right-[4%] md:w-[min(58vw,40rem)]"
+        className="hydra-crest-art pointer-events-none absolute -right-[8%] top-1/2 aspect-[3930/3454] w-[min(92vw,42rem)] -translate-y-1/2 opacity-30 md:-right-[4%] md:w-[min(58vw,40rem)] light:opacity-20"
         aria-hidden
       >
-        <video src={VIDEO_SRC} className="w-full object-contain" autoPlay muted loop playsInline preload="metadata" />
+        <Image src={HYDRA_SRC} alt="" fill sizes="640px" className="object-contain" quality={90} />
       </div>
       <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-line-strong to-transparent" />
       <div className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-line to-transparent" />
