@@ -246,8 +246,7 @@ function MobileNav({ open, onClose, nav }: { open: boolean; onClose: () => void;
         <div className="mb-6 grid grid-cols-2 gap-2">
           {[
             { href: "/shop", label: "All Products" },
-            { href: "/shop/iphone", label: "iPhone" },
-            { href: "/shop/samsung", label: "Samsung" },
+            ...nav.brands.map((b) => ({ href: `/shop/${b.slug}`, label: b.shortLabel || b.label })),
             ...nav.categories.slice(0, 3).map((c) => ({ href: `/shop?category=${c.slug}`, label: c.name })),
           ].map((l) => (
             <Link

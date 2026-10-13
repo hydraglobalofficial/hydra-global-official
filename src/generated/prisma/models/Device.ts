@@ -36,7 +36,7 @@ export type DeviceSumAggregateOutputType = {
 
 export type DeviceMinAggregateOutputType = {
   id: string | null
-  brand: $Enums.DeviceBrand | null
+  brandId: string | null
   series: string | null
   model: string | null
   slug: string | null
@@ -45,7 +45,7 @@ export type DeviceMinAggregateOutputType = {
 
 export type DeviceMaxAggregateOutputType = {
   id: string | null
-  brand: $Enums.DeviceBrand | null
+  brandId: string | null
   series: string | null
   model: string | null
   slug: string | null
@@ -54,7 +54,7 @@ export type DeviceMaxAggregateOutputType = {
 
 export type DeviceCountAggregateOutputType = {
   id: number
-  brand: number
+  brandId: number
   series: number
   model: number
   slug: number
@@ -73,7 +73,7 @@ export type DeviceSumAggregateInputType = {
 
 export type DeviceMinAggregateInputType = {
   id?: true
-  brand?: true
+  brandId?: true
   series?: true
   model?: true
   slug?: true
@@ -82,7 +82,7 @@ export type DeviceMinAggregateInputType = {
 
 export type DeviceMaxAggregateInputType = {
   id?: true
-  brand?: true
+  brandId?: true
   series?: true
   model?: true
   slug?: true
@@ -91,7 +91,7 @@ export type DeviceMaxAggregateInputType = {
 
 export type DeviceCountAggregateInputType = {
   id?: true
-  brand?: true
+  brandId?: true
   series?: true
   model?: true
   slug?: true
@@ -187,7 +187,7 @@ export type DeviceGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalA
 
 export type DeviceGroupByOutputType = {
   id: string
-  brand: $Enums.DeviceBrand
+  brandId: string
   series: string
   model: string
   slug: string
@@ -219,21 +219,23 @@ export type DeviceWhereInput = {
   OR?: Prisma.DeviceWhereInput[]
   NOT?: Prisma.DeviceWhereInput | Prisma.DeviceWhereInput[]
   id?: Prisma.StringFilter<"Device"> | string
-  brand?: Prisma.EnumDeviceBrandFilter<"Device"> | $Enums.DeviceBrand
+  brandId?: Prisma.StringFilter<"Device"> | string
   series?: Prisma.StringFilter<"Device"> | string
   model?: Prisma.StringFilter<"Device"> | string
   slug?: Prisma.StringFilter<"Device"> | string
   position?: Prisma.IntFilter<"Device"> | number
+  brand?: Prisma.XOR<Prisma.BrandScalarRelationFilter, Prisma.BrandWhereInput>
   products?: Prisma.ProductDeviceListRelationFilter
 }
 
 export type DeviceOrderByWithRelationInput = {
   id?: Prisma.SortOrder
-  brand?: Prisma.SortOrder
+  brandId?: Prisma.SortOrder
   series?: Prisma.SortOrder
   model?: Prisma.SortOrder
   slug?: Prisma.SortOrder
   position?: Prisma.SortOrder
+  brand?: Prisma.BrandOrderByWithRelationInput
   products?: Prisma.ProductDeviceOrderByRelationAggregateInput
 }
 
@@ -243,16 +245,17 @@ export type DeviceWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.DeviceWhereInput | Prisma.DeviceWhereInput[]
   OR?: Prisma.DeviceWhereInput[]
   NOT?: Prisma.DeviceWhereInput | Prisma.DeviceWhereInput[]
-  brand?: Prisma.EnumDeviceBrandFilter<"Device"> | $Enums.DeviceBrand
+  brandId?: Prisma.StringFilter<"Device"> | string
   series?: Prisma.StringFilter<"Device"> | string
   model?: Prisma.StringFilter<"Device"> | string
   position?: Prisma.IntFilter<"Device"> | number
+  brand?: Prisma.XOR<Prisma.BrandScalarRelationFilter, Prisma.BrandWhereInput>
   products?: Prisma.ProductDeviceListRelationFilter
 }, "id" | "slug">
 
 export type DeviceOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
-  brand?: Prisma.SortOrder
+  brandId?: Prisma.SortOrder
   series?: Prisma.SortOrder
   model?: Prisma.SortOrder
   slug?: Prisma.SortOrder
@@ -269,7 +272,7 @@ export type DeviceScalarWhereWithAggregatesInput = {
   OR?: Prisma.DeviceScalarWhereWithAggregatesInput[]
   NOT?: Prisma.DeviceScalarWhereWithAggregatesInput | Prisma.DeviceScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"Device"> | string
-  brand?: Prisma.EnumDeviceBrandWithAggregatesFilter<"Device"> | $Enums.DeviceBrand
+  brandId?: Prisma.StringWithAggregatesFilter<"Device"> | string
   series?: Prisma.StringWithAggregatesFilter<"Device"> | string
   model?: Prisma.StringWithAggregatesFilter<"Device"> | string
   slug?: Prisma.StringWithAggregatesFilter<"Device"> | string
@@ -278,17 +281,17 @@ export type DeviceScalarWhereWithAggregatesInput = {
 
 export type DeviceCreateInput = {
   id?: string
-  brand: $Enums.DeviceBrand
   series: string
   model: string
   slug: string
   position?: number
+  brand: Prisma.BrandCreateNestedOneWithoutDevicesInput
   products?: Prisma.ProductDeviceCreateNestedManyWithoutDeviceInput
 }
 
 export type DeviceUncheckedCreateInput = {
   id?: string
-  brand: $Enums.DeviceBrand
+  brandId: string
   series: string
   model: string
   slug: string
@@ -298,17 +301,17 @@ export type DeviceUncheckedCreateInput = {
 
 export type DeviceUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  brand?: Prisma.EnumDeviceBrandFieldUpdateOperationsInput | $Enums.DeviceBrand
   series?: Prisma.StringFieldUpdateOperationsInput | string
   model?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   position?: Prisma.IntFieldUpdateOperationsInput | number
+  brand?: Prisma.BrandUpdateOneRequiredWithoutDevicesNestedInput
   products?: Prisma.ProductDeviceUpdateManyWithoutDeviceNestedInput
 }
 
 export type DeviceUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  brand?: Prisma.EnumDeviceBrandFieldUpdateOperationsInput | $Enums.DeviceBrand
+  brandId?: Prisma.StringFieldUpdateOperationsInput | string
   series?: Prisma.StringFieldUpdateOperationsInput | string
   model?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
@@ -318,7 +321,7 @@ export type DeviceUncheckedUpdateInput = {
 
 export type DeviceCreateManyInput = {
   id?: string
-  brand: $Enums.DeviceBrand
+  brandId: string
   series: string
   model: string
   slug: string
@@ -327,7 +330,6 @@ export type DeviceCreateManyInput = {
 
 export type DeviceUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  brand?: Prisma.EnumDeviceBrandFieldUpdateOperationsInput | $Enums.DeviceBrand
   series?: Prisma.StringFieldUpdateOperationsInput | string
   model?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
@@ -336,16 +338,26 @@ export type DeviceUpdateManyMutationInput = {
 
 export type DeviceUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  brand?: Prisma.EnumDeviceBrandFieldUpdateOperationsInput | $Enums.DeviceBrand
+  brandId?: Prisma.StringFieldUpdateOperationsInput | string
   series?: Prisma.StringFieldUpdateOperationsInput | string
   model?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   position?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
+export type DeviceListRelationFilter = {
+  every?: Prisma.DeviceWhereInput
+  some?: Prisma.DeviceWhereInput
+  none?: Prisma.DeviceWhereInput
+}
+
+export type DeviceOrderByRelationAggregateInput = {
+  _count?: Prisma.SortOrder
+}
+
 export type DeviceCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  brand?: Prisma.SortOrder
+  brandId?: Prisma.SortOrder
   series?: Prisma.SortOrder
   model?: Prisma.SortOrder
   slug?: Prisma.SortOrder
@@ -358,7 +370,7 @@ export type DeviceAvgOrderByAggregateInput = {
 
 export type DeviceMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  brand?: Prisma.SortOrder
+  brandId?: Prisma.SortOrder
   series?: Prisma.SortOrder
   model?: Prisma.SortOrder
   slug?: Prisma.SortOrder
@@ -367,7 +379,7 @@ export type DeviceMaxOrderByAggregateInput = {
 
 export type DeviceMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  brand?: Prisma.SortOrder
+  brandId?: Prisma.SortOrder
   series?: Prisma.SortOrder
   model?: Prisma.SortOrder
   slug?: Prisma.SortOrder
@@ -383,16 +395,46 @@ export type DeviceScalarRelationFilter = {
   isNot?: Prisma.DeviceWhereInput
 }
 
-export type EnumDeviceBrandFieldUpdateOperationsInput = {
-  set?: $Enums.DeviceBrand
+export type DeviceCreateNestedManyWithoutBrandInput = {
+  create?: Prisma.XOR<Prisma.DeviceCreateWithoutBrandInput, Prisma.DeviceUncheckedCreateWithoutBrandInput> | Prisma.DeviceCreateWithoutBrandInput[] | Prisma.DeviceUncheckedCreateWithoutBrandInput[]
+  connectOrCreate?: Prisma.DeviceCreateOrConnectWithoutBrandInput | Prisma.DeviceCreateOrConnectWithoutBrandInput[]
+  createMany?: Prisma.DeviceCreateManyBrandInputEnvelope
+  connect?: Prisma.DeviceWhereUniqueInput | Prisma.DeviceWhereUniqueInput[]
 }
 
-export type IntFieldUpdateOperationsInput = {
-  set?: number
-  increment?: number
-  decrement?: number
-  multiply?: number
-  divide?: number
+export type DeviceUncheckedCreateNestedManyWithoutBrandInput = {
+  create?: Prisma.XOR<Prisma.DeviceCreateWithoutBrandInput, Prisma.DeviceUncheckedCreateWithoutBrandInput> | Prisma.DeviceCreateWithoutBrandInput[] | Prisma.DeviceUncheckedCreateWithoutBrandInput[]
+  connectOrCreate?: Prisma.DeviceCreateOrConnectWithoutBrandInput | Prisma.DeviceCreateOrConnectWithoutBrandInput[]
+  createMany?: Prisma.DeviceCreateManyBrandInputEnvelope
+  connect?: Prisma.DeviceWhereUniqueInput | Prisma.DeviceWhereUniqueInput[]
+}
+
+export type DeviceUpdateManyWithoutBrandNestedInput = {
+  create?: Prisma.XOR<Prisma.DeviceCreateWithoutBrandInput, Prisma.DeviceUncheckedCreateWithoutBrandInput> | Prisma.DeviceCreateWithoutBrandInput[] | Prisma.DeviceUncheckedCreateWithoutBrandInput[]
+  connectOrCreate?: Prisma.DeviceCreateOrConnectWithoutBrandInput | Prisma.DeviceCreateOrConnectWithoutBrandInput[]
+  upsert?: Prisma.DeviceUpsertWithWhereUniqueWithoutBrandInput | Prisma.DeviceUpsertWithWhereUniqueWithoutBrandInput[]
+  createMany?: Prisma.DeviceCreateManyBrandInputEnvelope
+  set?: Prisma.DeviceWhereUniqueInput | Prisma.DeviceWhereUniqueInput[]
+  disconnect?: Prisma.DeviceWhereUniqueInput | Prisma.DeviceWhereUniqueInput[]
+  delete?: Prisma.DeviceWhereUniqueInput | Prisma.DeviceWhereUniqueInput[]
+  connect?: Prisma.DeviceWhereUniqueInput | Prisma.DeviceWhereUniqueInput[]
+  update?: Prisma.DeviceUpdateWithWhereUniqueWithoutBrandInput | Prisma.DeviceUpdateWithWhereUniqueWithoutBrandInput[]
+  updateMany?: Prisma.DeviceUpdateManyWithWhereWithoutBrandInput | Prisma.DeviceUpdateManyWithWhereWithoutBrandInput[]
+  deleteMany?: Prisma.DeviceScalarWhereInput | Prisma.DeviceScalarWhereInput[]
+}
+
+export type DeviceUncheckedUpdateManyWithoutBrandNestedInput = {
+  create?: Prisma.XOR<Prisma.DeviceCreateWithoutBrandInput, Prisma.DeviceUncheckedCreateWithoutBrandInput> | Prisma.DeviceCreateWithoutBrandInput[] | Prisma.DeviceUncheckedCreateWithoutBrandInput[]
+  connectOrCreate?: Prisma.DeviceCreateOrConnectWithoutBrandInput | Prisma.DeviceCreateOrConnectWithoutBrandInput[]
+  upsert?: Prisma.DeviceUpsertWithWhereUniqueWithoutBrandInput | Prisma.DeviceUpsertWithWhereUniqueWithoutBrandInput[]
+  createMany?: Prisma.DeviceCreateManyBrandInputEnvelope
+  set?: Prisma.DeviceWhereUniqueInput | Prisma.DeviceWhereUniqueInput[]
+  disconnect?: Prisma.DeviceWhereUniqueInput | Prisma.DeviceWhereUniqueInput[]
+  delete?: Prisma.DeviceWhereUniqueInput | Prisma.DeviceWhereUniqueInput[]
+  connect?: Prisma.DeviceWhereUniqueInput | Prisma.DeviceWhereUniqueInput[]
+  update?: Prisma.DeviceUpdateWithWhereUniqueWithoutBrandInput | Prisma.DeviceUpdateWithWhereUniqueWithoutBrandInput[]
+  updateMany?: Prisma.DeviceUpdateManyWithWhereWithoutBrandInput | Prisma.DeviceUpdateManyWithWhereWithoutBrandInput[]
+  deleteMany?: Prisma.DeviceScalarWhereInput | Prisma.DeviceScalarWhereInput[]
 }
 
 export type DeviceCreateNestedOneWithoutProductsInput = {
@@ -409,18 +451,74 @@ export type DeviceUpdateOneRequiredWithoutProductsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.DeviceUpdateToOneWithWhereWithoutProductsInput, Prisma.DeviceUpdateWithoutProductsInput>, Prisma.DeviceUncheckedUpdateWithoutProductsInput>
 }
 
-export type DeviceCreateWithoutProductsInput = {
+export type DeviceCreateWithoutBrandInput = {
   id?: string
-  brand: $Enums.DeviceBrand
   series: string
   model: string
   slug: string
   position?: number
+  products?: Prisma.ProductDeviceCreateNestedManyWithoutDeviceInput
+}
+
+export type DeviceUncheckedCreateWithoutBrandInput = {
+  id?: string
+  series: string
+  model: string
+  slug: string
+  position?: number
+  products?: Prisma.ProductDeviceUncheckedCreateNestedManyWithoutDeviceInput
+}
+
+export type DeviceCreateOrConnectWithoutBrandInput = {
+  where: Prisma.DeviceWhereUniqueInput
+  create: Prisma.XOR<Prisma.DeviceCreateWithoutBrandInput, Prisma.DeviceUncheckedCreateWithoutBrandInput>
+}
+
+export type DeviceCreateManyBrandInputEnvelope = {
+  data: Prisma.DeviceCreateManyBrandInput | Prisma.DeviceCreateManyBrandInput[]
+  skipDuplicates?: boolean
+}
+
+export type DeviceUpsertWithWhereUniqueWithoutBrandInput = {
+  where: Prisma.DeviceWhereUniqueInput
+  update: Prisma.XOR<Prisma.DeviceUpdateWithoutBrandInput, Prisma.DeviceUncheckedUpdateWithoutBrandInput>
+  create: Prisma.XOR<Prisma.DeviceCreateWithoutBrandInput, Prisma.DeviceUncheckedCreateWithoutBrandInput>
+}
+
+export type DeviceUpdateWithWhereUniqueWithoutBrandInput = {
+  where: Prisma.DeviceWhereUniqueInput
+  data: Prisma.XOR<Prisma.DeviceUpdateWithoutBrandInput, Prisma.DeviceUncheckedUpdateWithoutBrandInput>
+}
+
+export type DeviceUpdateManyWithWhereWithoutBrandInput = {
+  where: Prisma.DeviceScalarWhereInput
+  data: Prisma.XOR<Prisma.DeviceUpdateManyMutationInput, Prisma.DeviceUncheckedUpdateManyWithoutBrandInput>
+}
+
+export type DeviceScalarWhereInput = {
+  AND?: Prisma.DeviceScalarWhereInput | Prisma.DeviceScalarWhereInput[]
+  OR?: Prisma.DeviceScalarWhereInput[]
+  NOT?: Prisma.DeviceScalarWhereInput | Prisma.DeviceScalarWhereInput[]
+  id?: Prisma.StringFilter<"Device"> | string
+  brandId?: Prisma.StringFilter<"Device"> | string
+  series?: Prisma.StringFilter<"Device"> | string
+  model?: Prisma.StringFilter<"Device"> | string
+  slug?: Prisma.StringFilter<"Device"> | string
+  position?: Prisma.IntFilter<"Device"> | number
+}
+
+export type DeviceCreateWithoutProductsInput = {
+  id?: string
+  series: string
+  model: string
+  slug: string
+  position?: number
+  brand: Prisma.BrandCreateNestedOneWithoutDevicesInput
 }
 
 export type DeviceUncheckedCreateWithoutProductsInput = {
   id?: string
-  brand: $Enums.DeviceBrand
+  brandId: string
   series: string
   model: string
   slug: string
@@ -445,16 +543,50 @@ export type DeviceUpdateToOneWithWhereWithoutProductsInput = {
 
 export type DeviceUpdateWithoutProductsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  brand?: Prisma.EnumDeviceBrandFieldUpdateOperationsInput | $Enums.DeviceBrand
+  series?: Prisma.StringFieldUpdateOperationsInput | string
+  model?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  position?: Prisma.IntFieldUpdateOperationsInput | number
+  brand?: Prisma.BrandUpdateOneRequiredWithoutDevicesNestedInput
+}
+
+export type DeviceUncheckedUpdateWithoutProductsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  brandId?: Prisma.StringFieldUpdateOperationsInput | string
   series?: Prisma.StringFieldUpdateOperationsInput | string
   model?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   position?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
-export type DeviceUncheckedUpdateWithoutProductsInput = {
+export type DeviceCreateManyBrandInput = {
+  id?: string
+  series: string
+  model: string
+  slug: string
+  position?: number
+}
+
+export type DeviceUpdateWithoutBrandInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  brand?: Prisma.EnumDeviceBrandFieldUpdateOperationsInput | $Enums.DeviceBrand
+  series?: Prisma.StringFieldUpdateOperationsInput | string
+  model?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  position?: Prisma.IntFieldUpdateOperationsInput | number
+  products?: Prisma.ProductDeviceUpdateManyWithoutDeviceNestedInput
+}
+
+export type DeviceUncheckedUpdateWithoutBrandInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  series?: Prisma.StringFieldUpdateOperationsInput | string
+  model?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  position?: Prisma.IntFieldUpdateOperationsInput | number
+  products?: Prisma.ProductDeviceUncheckedUpdateManyWithoutDeviceNestedInput
+}
+
+export type DeviceUncheckedUpdateManyWithoutBrandInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   series?: Prisma.StringFieldUpdateOperationsInput | string
   model?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
@@ -494,58 +626,67 @@ export type DeviceCountOutputTypeCountProductsArgs<ExtArgs extends runtime.Types
 
 export type DeviceSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  brand?: boolean
+  brandId?: boolean
   series?: boolean
   model?: boolean
   slug?: boolean
   position?: boolean
+  brand?: boolean | Prisma.BrandDefaultArgs<ExtArgs>
   products?: boolean | Prisma.Device$productsArgs<ExtArgs>
   _count?: boolean | Prisma.DeviceCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["device"]>
 
 export type DeviceSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  brand?: boolean
+  brandId?: boolean
   series?: boolean
   model?: boolean
   slug?: boolean
   position?: boolean
+  brand?: boolean | Prisma.BrandDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["device"]>
 
 export type DeviceSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  brand?: boolean
+  brandId?: boolean
   series?: boolean
   model?: boolean
   slug?: boolean
   position?: boolean
+  brand?: boolean | Prisma.BrandDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["device"]>
 
 export type DeviceSelectScalar = {
   id?: boolean
-  brand?: boolean
+  brandId?: boolean
   series?: boolean
   model?: boolean
   slug?: boolean
   position?: boolean
 }
 
-export type DeviceOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "brand" | "series" | "model" | "slug" | "position", ExtArgs["result"]["device"]>
+export type DeviceOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "brandId" | "series" | "model" | "slug" | "position", ExtArgs["result"]["device"]>
 export type DeviceInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  brand?: boolean | Prisma.BrandDefaultArgs<ExtArgs>
   products?: boolean | Prisma.Device$productsArgs<ExtArgs>
   _count?: boolean | Prisma.DeviceCountOutputTypeDefaultArgs<ExtArgs>
 }
-export type DeviceIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
-export type DeviceIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
+export type DeviceIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  brand?: boolean | Prisma.BrandDefaultArgs<ExtArgs>
+}
+export type DeviceIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  brand?: boolean | Prisma.BrandDefaultArgs<ExtArgs>
+}
 
 export type $DevicePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Device"
   objects: {
+    brand: Prisma.$BrandPayload<ExtArgs>
     products: Prisma.$ProductDevicePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
-    brand: $Enums.DeviceBrand
+    brandId: string
     series: string
     model: string
     slug: string
@@ -944,6 +1085,7 @@ readonly fields: DeviceFieldRefs;
  */
 export interface Prisma__DeviceClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  brand<T extends Prisma.BrandDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.BrandDefaultArgs<ExtArgs>>): Prisma.Prisma__BrandClient<runtime.Types.Result.GetResult<Prisma.$BrandPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   products<T extends Prisma.Device$productsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Device$productsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProductDevicePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -975,7 +1117,7 @@ export interface Prisma__DeviceClient<T, Null = never, ExtArgs extends runtime.T
  */
 export interface DeviceFieldRefs {
   readonly id: Prisma.FieldRef<"Device", 'String'>
-  readonly brand: Prisma.FieldRef<"Device", 'DeviceBrand'>
+  readonly brandId: Prisma.FieldRef<"Device", 'String'>
   readonly series: Prisma.FieldRef<"Device", 'String'>
   readonly model: Prisma.FieldRef<"Device", 'String'>
   readonly slug: Prisma.FieldRef<"Device", 'String'>
@@ -1234,6 +1376,10 @@ export type DeviceCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Extensio
    */
   data: Prisma.DeviceCreateManyInput | Prisma.DeviceCreateManyInput[]
   skipDuplicates?: boolean
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.DeviceIncludeCreateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1304,6 +1450,10 @@ export type DeviceUpdateManyAndReturnArgs<ExtArgs extends runtime.Types.Extensio
    * Limit how many Devices to update.
    */
   limit?: number
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.DeviceIncludeUpdateManyAndReturn<ExtArgs> | null
 }
 
 /**

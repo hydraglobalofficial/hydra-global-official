@@ -65,7 +65,7 @@ export function CollectionBento({ content }: { content?: CollectionsContent | nu
                       />
                     </div>
                   )}
-                  <div className="bento-scrim pointer-events-none absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black via-black/75 to-transparent light:from-white light:via-white/90 light:to-transparent" />
+                  <div className="bento-scrim pointer-events-none absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black via-black/75 to-transparent" />
                   <div className="relative flex items-end justify-between gap-3 sm:gap-4">
                     <div className="min-w-0">
                       <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-subtle">{index}</p>

@@ -3,7 +3,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { ProductGrid } from "@/components/product/product-card";
 import { EmptyState } from "@/components/ui/primitives";
 import { buttonStyles } from "@/components/ui/button";
-import { brands, type BrandSlug } from "@/config/site";
+import type { BrandSlug } from "@/config/site";
 import { cn } from "@/lib/utils";
 import {
   getNavigationData,
@@ -51,7 +51,7 @@ export async function ShopView({ params, brand }: { params: RawParams; brand?: B
   const filters = parseShopParams(params, brand);
   const base = brand ? `/shop/${brand}` : "/shop";
   const [result, nav] = await Promise.all([listProducts(filters), getNavigationData()]);
-  const devices = brand ? nav.devices.filter((d) => d.brand === brands[brand].enum) : nav.devices;
+  const devices = brand ? nav.devices.filter((d) => d.brandSlug === brand) : nav.devices;
 
   return (
     <div className="container-page grid gap-8 py-8 sm:gap-10 sm:py-12 lg:grid-cols-[16rem_minmax(0,1fr)]">

@@ -6,6 +6,8 @@ import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import {
   CheckCircle2,
   ChevronDown,
+  ChevronLeft,
+  ChevronRight,
   Clock,
   Lightbulb,
   Package,
@@ -106,13 +108,22 @@ const ease = [0.22, 1, 0.36, 1] as const;
 
 function StepStage({
   stepIndex,
+  total,
   image,
   reduce,
+  onPrev,
+  onNext,
 }: {
   stepIndex: number;
+  total: number;
   image?: string;
   reduce: boolean | null;
+  onPrev: () => void;
+  onNext: () => void;
 }) {
+  const atStart = stepIndex <= 0;
+  const atEnd = stepIndex >= total - 1;
+
   return (
     <motion.div
       initial={reduce ? false : { opacity: 0, scale: 1.04 }}
@@ -137,14 +148,48 @@ function StepStage({
         </div>
       )}
 
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-black/70 to-transparent" />
-      <div className="absolute bottom-4 left-4 right-4 flex items-end justify-between gap-3">
-        <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-zinc-300">
-          Step {String(stepIndex + 1).padStart(2, "0")}
-        </span>
-        <span className="rounded-full border border-white/10 bg-black/40 px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.16em] text-zinc-400 backdrop-blur">
-          Visual
-        </span>
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-black/55 to-transparent" />
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-black/50 to-transparent" />
+
+      {/* Top bar on the image: back · counter · forward */}
+      <div
+        className="absolute inset-x-3 top-3 z-10 flex items-center justify-between gap-2 sm:inset-x-4 sm:top-4"
+        role="group"
+        aria-label="Step navigation"
+      >
+        <button
+          type="button"
+          onClick={onPrev}
+          disabled={atStart}
+          aria-label="Previous step"
+          className={cn(
+            "grid size-11 shrink-0 place-items-center rounded-full border border-white/20 bg-black/55 text-white backdrop-blur-md transition",
+            "hover:bg-black/75 hover:border-white/35",
+            "disabled:cursor-not-allowed disabled:opacity-35",
+          )}
+        >
+          <ChevronLeft size={20} strokeWidth={2.25} />
+        </button>
+
+        <p className="rounded-full border border-white/15 bg-black/55 px-3.5 py-2 font-mono text-[11px] tabular-nums tracking-[0.16em] text-white backdrop-blur-md sm:px-4 sm:text-[12px]">
+          {String(stepIndex + 1).padStart(2, "0")}
+          <span className="mx-1.5 text-white/45">/</span>
+          {String(total).padStart(2, "0")}
+        </p>
+
+        <button
+          type="button"
+          onClick={onNext}
+          disabled={atEnd}
+          aria-label="Next step"
+          className={cn(
+            "grid size-11 shrink-0 place-items-center rounded-full border border-white/20 bg-black/55 text-white backdrop-blur-md transition",
+            "hover:bg-black/75 hover:border-white/35",
+            "disabled:cursor-not-allowed disabled:opacity-35",
+          )}
+        >
+          <ChevronRight size={20} strokeWidth={2.25} />
+        </button>
       </div>
     </motion.div>
   );
@@ -314,32 +359,21 @@ export function InstallExperience({ content }: { content: InstallationContent })
                     </p>
                   ) : null}
 
-                  <div className="mt-8 flex flex-wrap gap-2">
-                    <button
-                      type="button"
-                      disabled={active === 0}
-                      onClick={() => setActive((i) => Math.max(0, i - 1))}
-                      className="rounded-full border border-line px-4 py-2 text-sm text-muted transition hover:text-fg disabled:opacity-30"
-                    >
-                      Previous
-                    </button>
-                    {active < content.steps.length - 1 ? (
-                      <button
-                        type="button"
-                        onClick={() => setActive((i) => Math.min(content.steps.length - 1, i + 1))}
-                        className="rounded-full bg-fg px-5 py-2 text-sm font-medium text-bg transition hover:opacity-90"
-                      >
-                        Next step
-                      </button>
-                    ) : (
-                      <span className="inline-flex items-center gap-2 rounded-full bg-success/15 px-4 py-2 text-sm text-success">
-                        <CheckCircle2 size={16} /> Done — enjoy your armor
-                      </span>
-                    )}
-                  </div>
+                  {active >= content.steps.length - 1 ? (
+                    <p className="mt-8 inline-flex items-center gap-2 text-sm text-success">
+                      <CheckCircle2 size={16} /> Done — enjoy your armor
+                    </p>
+                  ) : null}
                 </div>
 
-                <StepStage stepIndex={active} image={step.image} reduce={reduce} />
+                <StepStage
+                  stepIndex={active}
+                  total={content.steps.length}
+                  image={step.image}
+                  reduce={reduce}
+                  onPrev={() => setActive((i) => Math.max(0, i - 1))}
+                  onNext={() => setActive((i) => Math.min(content.steps.length - 1, i + 1))}
+                />
               </motion.article>
             </AnimatePresence>
           </div>

@@ -16,13 +16,12 @@ export const supportNav: NavLink[] = [
   { label: "Contact Support", href: "/support/contact", description: "Talk to a real person" },
 ];
 
+/** Brand shop links are injected at render from DB (see SiteFooter). */
 export const footerNav: { title: string; links: NavLink[] }[] = [
   {
     title: "Shop",
     links: [
       { label: "All Products", href: "/shop" },
-      { label: "iPhone", href: "/shop/iphone" },
-      { label: "Samsung Galaxy", href: "/shop/samsung" },
       { label: "Search", href: "/search" },
     ],
   },

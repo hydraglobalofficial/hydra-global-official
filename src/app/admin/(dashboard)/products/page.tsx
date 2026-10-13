@@ -87,16 +87,16 @@ export default async function AdminProductsPage({ searchParams }: PageProps<"/ad
           name="q"
           defaultValue={query}
           placeholder="Search name or SKU…"
-          className="h-11 w-full rounded-xl border border-white/10 bg-black/30 py-2 pl-9 pr-4 text-sm focus:border-accent/50 focus:outline-none"
+          className="admin-field h-11 w-full rounded-xl py-2 pl-9 pr-4 text-sm focus:border-accent/50 focus:outline-none"
         />
       </form>
 
       <Panel title="Catalog register">
-        <ul className="divide-y divide-white/[0.05] sm:hidden">
+        <ul className="divide-y divide-line sm:hidden">
           {products.map((p) => (
             <li key={p.id} className="px-4 py-3.5">
               <Link href={`/admin/products/${p.id}`} className="flex items-start gap-3">
-                <span className="relative size-12 shrink-0 overflow-hidden rounded-xl border border-white/10 bg-black/40">
+                <span className="relative size-12 shrink-0 overflow-hidden rounded-xl border border-line bg-surface-2">
                   {p.images[0] && <ProductImage src={p.images[0].url} alt="" fill sizes="48px" className="object-contain p-1" />}
                 </span>
                 <span className="min-w-0 flex-1">
@@ -130,7 +130,7 @@ export default async function AdminProductsPage({ searchParams }: PageProps<"/ad
                 <tr key={p.id}>
                   <td>
                     <Link href={`/admin/products/${p.id}`} className="flex items-center gap-3 transition-colors hover:text-accent">
-                      <span className="relative size-11 shrink-0 overflow-hidden rounded-xl border border-white/10 bg-black/40">
+                      <span className="relative size-11 shrink-0 overflow-hidden rounded-xl border border-line bg-surface-2">
                         {p.images[0] && (
                           <ProductImage src={p.images[0].url} alt="" fill sizes="44px" className="object-contain p-1" />
                         )}

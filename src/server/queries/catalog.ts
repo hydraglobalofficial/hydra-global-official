@@ -3,11 +3,52 @@ import { cache } from "react";
 import { unstable_cache } from "next/cache";
 import { db } from "@/lib/db";
 import type { Prisma } from "@/generated/prisma/client";
-import { brands, type BrandSlug } from "@/config/site";
+import type { BrandRecord, BrandSlug } from "@/config/site";
 import { publicProductCard, publicStock } from "@/lib/public-data";
 
 export const CATALOG_TAG = "catalog";
 export const CONTENT_TAG = "content";
+
+function toBrandRecord(row: {
+  id: string;
+  slug: string;
+  code: string;
+  label: string;
+  shortLabel: string | null;
+  blurb: string;
+  image: string | null;
+  position: number;
+}): BrandRecord {
+  return {
+    id: row.id,
+    slug: row.slug,
+    code: row.code,
+    label: row.label,
+    shortLabel: row.shortLabel || row.label,
+    blurb: row.blurb,
+    image: row.image?.trim() || null,
+    position: row.position,
+  };
+}
+
+export const getBrands = unstable_cache(
+  async (): Promise<BrandRecord[]> => {
+    const rows = await db.brand.findMany({ orderBy: [{ position: "asc" }, { label: "asc" }] });
+    return rows.map(toBrandRecord);
+  },
+  ["brands", "with-image-v2"],
+  { tags: [CATALOG_TAG], revalidate: 3600 },
+);
+
+export async function getBrandBySlug(slug: string): Promise<BrandRecord | null> {
+  const brands = await getBrands();
+  return brands.find((b) => b.slug === slug) ?? null;
+}
+
+export async function getBrandByCode(code: string): Promise<BrandRecord | null> {
+  const brands = await getBrands();
+  return brands.find((b) => b.code === code) ?? null;
+}
 
 export const productCardSelect = {
   id: true,
@@ -72,7 +113,7 @@ export const listProducts = unstable_cache(
         devices: {
           some: {
             device: {
-              ...(filters.brand && { brand: brands[filters.brand].enum }),
+              ...(filters.brand && { brand: { slug: filters.brand } }),
               ...(filters.device && { slug: filters.device }),
             },
           },
@@ -139,20 +180,39 @@ export const getBestSellers = unstable_cache(
 
 export const getNavigationData = unstable_cache(
   async () => {
-    const [categories, devices] = await Promise.all([
+    const [categories, brands, devices] = await Promise.all([
       db.category.findMany({
         where: { parentId: null },
         select: { name: true, slug: true, description: true, icon: true },
         orderBy: { position: "asc" },
       }),
+      db.brand.findMany({
+        orderBy: [{ position: "asc" }, { label: "asc" }],
+      }),
       db.device.findMany({
-        select: { brand: true, series: true, model: true, slug: true },
-        orderBy: [{ brand: "asc" }, { position: "asc" }],
+        select: {
+          series: true,
+          model: true,
+          slug: true,
+          brand: { select: { code: true, slug: true, label: true, shortLabel: true } },
+        },
+        orderBy: [{ brand: { position: "asc" } }, { position: "asc" }],
       }),
     ]);
-    return { categories, devices };
+    return {
+      categories,
+      brands: brands.map(toBrandRecord),
+      devices: devices.map((d) => ({
+        brand: d.brand.code,
+        brandSlug: d.brand.slug,
+        brandLabel: d.brand.shortLabel || d.brand.label,
+        series: d.series,
+        model: d.model,
+        slug: d.slug,
+      })),
+    };
   },
-  ["navigation"],
+  ["navigation", "with-brand-image-v2"],
   { tags: [CATALOG_TAG], revalidate: 3600 },
 );
 
@@ -190,7 +250,14 @@ export const getProductBySlug = cache(async (slug: string) => {
       devices: {
         select: {
           deviceId: true,
-          device: { select: { brand: true, series: true, model: true, slug: true } },
+          device: {
+            select: {
+              series: true,
+              model: true,
+              slug: true,
+              brand: { select: { code: true, slug: true, label: true, shortLabel: true } },
+            },
+          },
         },
       },
       reviews: {
@@ -214,6 +281,16 @@ export const getProductBySlug = cache(async (slug: string) => {
     ...product,
     stock: publicStock(product.stock),
     variants: product.variants.map((v) => ({ ...v, stock: publicStock(v.stock) })),
+    devices: product.devices.map(({ deviceId, device }) => ({
+      deviceId,
+      device: {
+        brand: device.brand.code,
+        brandSlug: device.brand.slug,
+        series: device.series,
+        model: device.model,
+        slug: device.slug,
+      },
+    })),
   };
 });
 

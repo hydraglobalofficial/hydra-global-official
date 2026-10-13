@@ -152,14 +152,20 @@ export async function deleteCategory(formData: FormData) {
 }
 
 export type DeviceMutationResult =
-  | { ok: true; device: { id: string; brand: "APPLE" | "SAMSUNG"; series: string; model: string } }
+  | { ok: true; device: { id: string; brand: string; series: string; model: string } }
   | { ok: false; message: string };
 
 const deviceFields = z.object({
-  brand: z.enum(["APPLE", "SAMSUNG"]),
+  brand: z.string().trim().min(1).max(40),
   series: z.string().trim().min(2).max(60),
   model: z.string().trim().min(2).max(80),
 });
+
+async function resolveBrandId(codeOrId: string) {
+  const byCode = await db.brand.findUnique({ where: { code: codeOrId.toUpperCase() }, select: { id: true, code: true } });
+  if (byCode) return byCode;
+  return db.brand.findUnique({ where: { id: codeOrId }, select: { id: true, code: true } });
+}
 
 /** Used from product form (client). Catalog forms call the void wrappers below. */
 export async function createDeviceMutation(formData: FormData): Promise<DeviceMutationResult> {
@@ -167,6 +173,8 @@ export async function createDeviceMutation(formData: FormData): Promise<DeviceMu
   const parsed = deviceFields.safeParse(Object.fromEntries(formData));
   if (!parsed.success) return { ok: false, message: "Brand, series, and model are required." };
   const data = parsed.data;
+  const brand = await resolveBrandId(data.brand);
+  if (!brand) return { ok: false, message: "Unknown brand." };
   const slug = slugify(data.model);
   if (await db.device.findUnique({ where: { slug }, select: { id: true } })) {
     return { ok: false, message: "A device with that name already exists." };
@@ -174,16 +182,21 @@ export async function createDeviceMutation(formData: FormData): Promise<DeviceMu
   try {
     const device = await db.device.create({
       data: {
-        ...data,
+        brandId: brand.id,
+        series: data.series,
+        model: data.model,
         slug,
-        position: await db.device.count({ where: { brand: data.brand } }),
+        position: await db.device.count({ where: { brandId: brand.id } }),
       },
-      select: { id: true, brand: true, series: true, model: true },
+      select: { id: true, series: true, model: true, brand: { select: { code: true } } },
     });
     refreshCatalog();
     revalidatePath("/admin/catalog");
     revalidatePath("/admin/products", "layout");
-    return { ok: true, device };
+    return {
+      ok: true,
+      device: { id: device.id, brand: device.brand.code, series: device.series, model: device.model },
+    };
   } catch {
     return { ok: false, message: "Could not create device." };
   }
@@ -196,6 +209,8 @@ export async function updateDeviceMutation(formData: FormData): Promise<DeviceMu
     .safeParse(Object.fromEntries(formData));
   if (!parsed.success) return { ok: false, message: "Brand, series, and model are required." };
   const data = parsed.data;
+  const brand = await resolveBrandId(data.brand);
+  if (!brand) return { ok: false, message: "Unknown brand." };
   const current = await db.device.findUnique({ where: { id: data.id } });
   if (!current) return { ok: false, message: "Device not found." };
   const nextSlug = slugify(data.model);
@@ -207,17 +222,20 @@ export async function updateDeviceMutation(formData: FormData): Promise<DeviceMu
     const device = await db.device.update({
       where: { id: data.id },
       data: {
-        brand: data.brand,
+        brandId: brand.id,
         series: data.series,
         model: data.model,
         slug: clash ? current.slug : nextSlug,
       },
-      select: { id: true, brand: true, series: true, model: true },
+      select: { id: true, series: true, model: true, brand: { select: { code: true } } },
     });
     refreshCatalog();
     revalidatePath("/admin/catalog");
     revalidatePath("/admin/products", "layout");
-    return { ok: true, device };
+    return {
+      ok: true,
+      device: { id: device.id, brand: device.brand.code, series: device.series, model: device.model },
+    };
   } catch {
     return { ok: false, message: "Could not update device." };
   }
@@ -235,6 +253,123 @@ export async function deleteDevice(formData: FormData) {
   await requireAdmin(["OWNER"]);
   await db.device.delete({ where: { id: String(formData.get("id")) } });
   refreshCatalog();
+}
+
+// ─── Brands ──────────────────────────────────────────────────────────────────
+
+const brandFields = z.object({
+  label: z.string().trim().min(2).max(60),
+  shortLabel: z.string().trim().max(40).optional(),
+  slug: z.string().trim().max(40).optional(),
+  code: z.string().trim().max(40).optional(),
+  blurb: z.string().trim().max(280).optional(),
+  image: z.string().trim().max(500).optional(),
+});
+
+function brandCodeFromLabel(label: string) {
+  return label
+    .trim()
+    .toUpperCase()
+    .replace(/[^A-Z0-9]+/g, "_")
+    .replace(/^_|_$/g, "")
+    .slice(0, 40);
+}
+
+export async function createBrand(formData: FormData) {
+  await requireAdmin();
+  const parsed = brandFields.safeParse({
+    label: formData.get("label"),
+    shortLabel: formData.get("shortLabel") || undefined,
+    slug: formData.get("slug") || undefined,
+    code: formData.get("code") || undefined,
+    blurb: formData.get("blurb") || undefined,
+    image: formData.get("image") || undefined,
+  });
+  if (!parsed.success) return;
+  const label = parsed.data.label;
+  const shortLabel = parsed.data.shortLabel?.trim() || label;
+  const slug = slugify(parsed.data.slug?.trim() || label);
+  const code = (parsed.data.code?.trim() || brandCodeFromLabel(label)).toUpperCase();
+  const blurb = parsed.data.blurb?.trim() || "";
+  const imageRaw = parsed.data.image?.trim() || "";
+  const image = imageRaw ? safeMediaUrl(imageRaw, "") || null : null;
+  if (!slug || !code) return;
+  if (await db.brand.findFirst({ where: { OR: [{ slug }, { code }] }, select: { id: true } })) return;
+  await db.brand.create({
+    data: {
+      label,
+      shortLabel,
+      slug,
+      code,
+      blurb,
+      image,
+      position: await db.brand.count(),
+    },
+  });
+  refreshCatalog();
+  revalidatePath("/");
+  revalidatePath("/admin/catalog");
+  revalidatePath("/shop", "layout");
+}
+
+export async function updateBrand(formData: FormData) {
+  await requireAdmin();
+  const id = z.string().min(1).parse(formData.get("id"));
+  const parsed = brandFields.safeParse({
+    label: formData.get("label"),
+    shortLabel: formData.get("shortLabel") || undefined,
+    slug: formData.get("slug") || undefined,
+    code: formData.get("code") || undefined,
+    blurb: formData.get("blurb") || undefined,
+    image: formData.get("image") || undefined,
+  });
+  if (!parsed.success) return;
+  const current = await db.brand.findUnique({ where: { id } });
+  if (!current) return;
+  const label = parsed.data.label;
+  const shortLabel = parsed.data.shortLabel?.trim() || label;
+  const nextSlug = slugify(parsed.data.slug?.trim() || label);
+  const nextCode = (parsed.data.code?.trim() || current.code).toUpperCase();
+  const blurb = parsed.data.blurb?.trim() ?? current.blurb;
+  const image =
+    parsed.data.image !== undefined
+      ? parsed.data.image.trim()
+        ? safeMediaUrl(parsed.data.image.trim(), "") || null
+        : null
+      : current.image;
+  const clash = await db.brand.findFirst({
+    where: {
+      id: { not: id },
+      OR: [{ slug: nextSlug }, { code: nextCode }],
+    },
+    select: { id: true },
+  });
+  if (clash) return;
+  await db.brand.update({
+    where: { id },
+    data: {
+      label,
+      shortLabel,
+      slug: nextSlug || current.slug,
+      code: nextCode || current.code,
+      blurb,
+      image,
+    },
+  });
+  refreshCatalog();
+  revalidatePath("/");
+  revalidatePath("/admin/catalog");
+  revalidatePath("/shop", "layout");
+}
+
+export async function deleteBrand(formData: FormData) {
+  await requireAdmin(["OWNER"]);
+  const id = String(formData.get("id"));
+  if (await db.device.count({ where: { brandId: id } })) return;
+  await db.brand.delete({ where: { id } });
+  refreshCatalog();
+  revalidatePath("/admin/catalog");
+  revalidatePath("/shop", "layout");
 }
 
 // ─── Orders ──────────────────────────────────────────────────────────────────
@@ -680,7 +815,7 @@ export async function saveInstallationSection(_prev: FormState, formData: FormDa
       duration: clampText(formData.get("duration"), 40),
       videoUrl: safeVideoUrl(formData.get("videoUrl"), ""),
       brandsNote: clampText(formData.get("brandsNote"), 80),
-      kit: lines(String(formData.get("kit") ?? "")),
+      kit: linesFrom(formData, "kitItem").slice(0, 20),
       steps,
       troubleshooting,
     } satisfies InstallationContent);

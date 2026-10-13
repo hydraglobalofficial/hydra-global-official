@@ -93,7 +93,7 @@ export default async function AdminOrdersPage({ searchParams }: PageProps<"/admi
       </Card>
 
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <div className="no-scrollbar flex gap-1 overflow-x-auto rounded-2xl border border-white/[0.06] bg-white/[0.02] p-1">
+        <div className="no-scrollbar flex gap-1 overflow-x-auto rounded-2xl border border-line bg-surface-2/60 p-1">
           {statuses.map((s) => (
             <Link
               key={s}
@@ -114,13 +114,13 @@ export default async function AdminOrdersPage({ searchParams }: PageProps<"/admi
             name="q"
             defaultValue={query}
             placeholder="Order #, phone, email…"
-            className="h-10 w-full rounded-xl border border-white/10 bg-black/30 py-2 pl-9 pr-4 text-sm focus:border-accent/50 focus:outline-none md:w-72"
+            className="admin-field h-10 w-full rounded-xl py-2 pl-9 pr-4 text-sm focus:border-accent/50 focus:outline-none md:w-72"
           />
         </form>
       </div>
 
       <Panel title="Order register" icon={<span className="font-mono text-[10px] text-accent">USD</span>}>
-        <ul className="divide-y divide-white/[0.05] sm:hidden">
+        <ul className="divide-y divide-line sm:hidden">
           {orders.map((o) => (
             <li key={o.id} className="px-4 py-3.5">
               <div className="flex items-start justify-between gap-3">
@@ -128,7 +128,7 @@ export default async function AdminOrdersPage({ searchParams }: PageProps<"/admi
                   <Link href={`/admin/orders/${o.id}`} className="font-mono text-sm text-accent">
                     {o.number}
                   </Link>
-                  <p className="mt-0.5 truncate text-sm">{o.customerName}</p>
+                  <p className="mt-0.5 truncate text-sm text-fg">{o.customerName}</p>
                   <p className="mt-0.5 text-xs text-subtle">
                     {formatDate(o.createdAt)} · {o.city}
                   </p>
@@ -166,7 +166,7 @@ export default async function AdminOrdersPage({ searchParams }: PageProps<"/admi
                     </p>
                   </td>
                   <td>
-                    <p className="text-fg/90">{o.customerName}</p>
+                    <p className="text-fg">{o.customerName}</p>
                     <p className="text-xs text-subtle">
                       {o.phone} · {o.city}
                     </p>

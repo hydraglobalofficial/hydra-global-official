@@ -10,9 +10,14 @@ import { WhatsappFloat } from "@/components/layout/whatsapp-float";
 import { ScrollTopButton } from "@/components/layout/scroll-top-button";
 import { ConsentAnalytics } from "@/components/analytics/consent-analytics";
 import { getAnnouncements, getWhatsappWidgetContent } from "@/server/queries/content";
+import { getBrands } from "@/server/queries/catalog";
 
 export default async function StoreLayout({ children }: LayoutProps<"/">) {
-  const [announcements, whatsapp] = await Promise.all([getAnnouncements(), getWhatsappWidgetContent()]);
+  const [announcements, whatsapp, brands] = await Promise.all([
+    getAnnouncements(),
+    getWhatsappWidgetContent(),
+    getBrands(),
+  ]);
 
   return (
     <CartProvider>
@@ -28,7 +33,7 @@ export default async function StoreLayout({ children }: LayoutProps<"/">) {
       <main id="main" className="min-w-0 flex-1 overflow-x-clip">
         {children}
       </main>
-      <SiteFooter />
+      <SiteFooter brands={brands} />
       {/* Fixed overlays — siblings of footer so position:fixed is not trapped */}
       {/* Fixed overlays — siblings so footer overflow cannot trap them */}
       <ScrollTopButton />

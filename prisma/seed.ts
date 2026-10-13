@@ -1,7 +1,7 @@
 import "dotenv/config";
 import bcrypt from "bcryptjs";
 import { PrismaPg } from "@prisma/adapter-pg";
-import { PrismaClient, type DeviceBrand } from "../src/generated/prisma/client";
+import { PrismaClient } from "../src/generated/prisma/client";
 import {
   defaultAboutContent,
   defaultCollectionsContent,
@@ -10,6 +10,7 @@ import {
   defaultNewsletterContent,
 } from "../src/content/site-sections";
 import { defaultInstallationContent } from "../src/content/installation";
+import { defaultBrandSeeds } from "../src/config/site";
 
 if (process.env.NODE_ENV === "production" && process.env.SEED_FORCE !== "1") {
   console.error("Refusing to reset a production database. Set SEED_FORCE=1 if you really mean it.");
@@ -31,13 +32,13 @@ const categories = [
   { name: "Cases", slug: "cases", icon: "layers", description: "Slim, drop-tested, MagSafe-ready protection." },
 ];
 
-const devices: { brand: DeviceBrand; series: string; models: string[] }[] = [
-  { brand: "APPLE", series: "iPhone 17", models: ["iPhone 17 Pro Max", "iPhone 17 Pro", "iPhone 17 Air", "iPhone 17"] },
-  { brand: "APPLE", series: "iPhone 16", models: ["iPhone 16 Pro Max", "iPhone 16 Pro", "iPhone 16 Plus", "iPhone 16"] },
-  { brand: "APPLE", series: "iPhone 15", models: ["iPhone 15 Pro Max", "iPhone 15 Pro", "iPhone 15"] },
-  { brand: "SAMSUNG", series: "Galaxy S25", models: ["Galaxy S25 Ultra", "Galaxy S25+", "Galaxy S25"] },
-  { brand: "SAMSUNG", series: "Galaxy S24", models: ["Galaxy S24 Ultra", "Galaxy S24"] },
-  { brand: "SAMSUNG", series: "Galaxy Z", models: ["Galaxy Z Fold7", "Galaxy Z Flip7"] },
+const devices: { brandCode: string; series: string; models: string[] }[] = [
+  { brandCode: "APPLE", series: "iPhone 17", models: ["iPhone 17 Pro Max", "iPhone 17 Pro", "iPhone 17 Air", "iPhone 17"] },
+  { brandCode: "APPLE", series: "iPhone 16", models: ["iPhone 16 Pro Max", "iPhone 16 Pro", "iPhone 16 Plus", "iPhone 16"] },
+  { brandCode: "APPLE", series: "iPhone 15", models: ["iPhone 15 Pro Max", "iPhone 15 Pro", "iPhone 15"] },
+  { brandCode: "SAMSUNG", series: "Galaxy S25", models: ["Galaxy S25 Ultra", "Galaxy S25+", "Galaxy S25"] },
+  { brandCode: "SAMSUNG", series: "Galaxy S24", models: ["Galaxy S24 Ultra", "Galaxy S24"] },
+  { brandCode: "SAMSUNG", series: "Galaxy Z", models: ["Galaxy Z Fold7", "Galaxy Z Flip7"] },
 ];
 
 // ─── Products ────────────────────────────────────────────────────────────────
@@ -507,6 +508,7 @@ async function main() {
     db.productDevice.deleteMany(),
     db.product.deleteMany(),
     db.device.deleteMany(),
+    db.brand.deleteMany(),
     db.category.deleteMany(),
     db.inquiry.deleteMany(),
     db.subscriber.deleteMany(),
@@ -522,11 +524,35 @@ async function main() {
     categoryIds.set(c.slug, row.id);
   }
 
+  const brandIds = new Map<string, string>();
+  for (const b of defaultBrandSeeds) {
+    const row = await db.brand.create({
+      data: {
+        slug: b.slug,
+        code: b.code,
+        label: b.label,
+        shortLabel: b.shortLabel,
+        blurb: b.blurb,
+        image: b.image,
+        position: b.position,
+      },
+    });
+    brandIds.set(b.code, row.id);
+  }
+
   const deviceIds = new Map<string, string>();
   for (const group of devices) {
+    const brandId = brandIds.get(group.brandCode);
+    if (!brandId) throw new Error(`Missing brand ${group.brandCode}`);
     for (const [i, model] of group.models.entries()) {
       const row = await db.device.create({
-        data: { brand: group.brand, series: group.series, model, slug: slug(model), position: deviceIds.size + i },
+        data: {
+          brandId,
+          series: group.series,
+          model,
+          slug: slug(model),
+          position: deviceIds.size + i,
+        },
       });
       deviceIds.set(model, row.id);
     }

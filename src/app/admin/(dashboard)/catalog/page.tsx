@@ -1,21 +1,22 @@
 import { FolderTree, Plus, Smartphone, Tags } from "lucide-react";
 import { AdminHeader, Card, Panel } from "@/components/admin/admin-ui";
-import { CategoryEditor, DeviceEditor } from "@/components/admin/catalog-editor";
+import { BrandEditor, CategoryEditor, DeviceEditor } from "@/components/admin/catalog-editor";
+import { ImageUrlField } from "@/components/admin/media-uploader";
 import { Button } from "@/components/ui/button";
 import { Input, Select } from "@/components/ui/form";
 import { requireAdmin } from "@/lib/auth/session";
 import { db } from "@/lib/db";
-import { createCategory, createDevice } from "@/server/actions/admin";
+import { createBrand, createCategory, createDevice } from "@/server/actions/admin";
 
-export const metadata = { title: "Categories & Devices" };
+export const metadata = { title: "Categories, Brands & Devices" };
 
 const addControl =
-  "h-11 border-white/[0.08] bg-black/30 text-[13.5px] text-zinc-100 placeholder:text-zinc-600 focus:border-accent/50 focus:bg-black/40";
+  "admin-field h-11 text-[13.5px] placeholder:text-subtle focus:border-accent/50";
 
 export default async function AdminCatalogPage() {
   const session = await requireAdmin();
   const isOwner = session.role === "OWNER";
-  const [categories, devices] = await Promise.all([
+  const [categories, brands, devices] = await Promise.all([
     db.category.findMany({
       orderBy: { position: "asc" },
       select: {
@@ -28,36 +29,58 @@ export default async function AdminCatalogPage() {
         _count: { select: { products: true } },
       },
     }),
-    db.device.findMany({
-      orderBy: [{ brand: "asc" }, { position: "asc" }],
+    db.brand.findMany({
+      orderBy: [{ position: "asc" }, { label: "asc" }],
       select: {
         id: true,
-        brand: true,
+        slug: true,
+        code: true,
+        label: true,
+        shortLabel: true,
+        blurb: true,
+        image: true,
+        position: true,
+        _count: { select: { devices: true } },
+      },
+    }),
+    db.device.findMany({
+      orderBy: [{ brand: { position: "asc" } }, { position: "asc" }],
+      select: {
+        id: true,
         series: true,
         model: true,
         slug: true,
         position: true,
+        brand: { select: { code: true, label: true, shortLabel: true } },
         _count: { select: { products: true } },
       },
     }),
   ]);
 
   const categoryProducts = categories.reduce((sum, c) => sum + c._count.products, 0);
-  const appleCount = devices.filter((d) => d.brand === "APPLE").length;
-  const samsungCount = devices.filter((d) => d.brand === "SAMSUNG").length;
+  const brandOpts = brands.map((b) => ({
+    code: b.code,
+    label: b.label,
+    shortLabel: b.shortLabel,
+  }));
+  const defaultBrand = brands[0]?.code ?? "APPLE";
 
   return (
     <div className="space-y-7">
       <AdminHeader
         eyebrow="Catalog"
-        title="Categories & Devices"
-        description="Power the mega menu, device finder, and shop filters. Edit a row, then Save."
+        title="Categories, Brands & Devices"
+        description="Add brands once — they power the device finder, shop filters, mega menu, and footer everywhere."
       />
 
       <Card className="grid grid-cols-2 gap-4 p-4 sm:grid-cols-4 sm:gap-5 sm:p-5" glow>
         <div>
           <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-zinc-500">Categories</p>
           <p className="mt-1.5 font-mono text-2xl font-semibold tabular-nums text-fg">{categories.length}</p>
+        </div>
+        <div>
+          <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-zinc-500">Brands</p>
+          <p className="mt-1.5 font-mono text-2xl font-semibold tabular-nums text-fg">{brands.length}</p>
         </div>
         <div>
           <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-zinc-500">Devices</p>
@@ -67,17 +90,72 @@ export default async function AdminCatalogPage() {
           <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-zinc-500">Linked SKUs</p>
           <p className="mt-1.5 font-mono text-2xl font-semibold tabular-nums text-blue-200">{categoryProducts}</p>
         </div>
-        <div>
-          <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-zinc-500">Brands</p>
-          <p className="mt-1.5 text-sm font-medium text-zinc-200">
-            <span className="font-mono tabular-nums text-fg">{appleCount}</span>
-            <span className="mx-1.5 text-zinc-600">Apple</span>
-            <span className="text-zinc-700">·</span>
-            <span className="ml-1.5 font-mono tabular-nums text-fg">{samsungCount}</span>
-            <span className="ml-1.5 text-zinc-600">Samsung</span>
-          </p>
-        </div>
       </Card>
+
+      <Panel
+        title="Brands"
+        icon={<Tags size={14} className="text-accent" />}
+        action={
+          <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-zinc-500">
+            {brands.length} total
+          </span>
+        }
+      >
+        <div className="border-b border-white/[0.05] bg-accent/[0.06] px-4 py-4 sm:px-5">
+          <div className="mb-3 flex items-center gap-2">
+            <Tags size={14} className="text-blue-300" />
+            <p className="text-xs font-medium text-zinc-300">Add brand</p>
+          </div>
+          <form action={createBrand} className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.7fr)_minmax(0,0.7fr)_minmax(0,1fr)_minmax(0,1.1fr)_auto] lg:items-end">
+            <label className="min-w-0">
+              <span className="mb-1.5 block font-mono text-[10px] uppercase tracking-[0.18em] text-zinc-400">
+                Label
+              </span>
+              <Input name="label" placeholder="Google Pixel" required className={addControl} />
+            </label>
+            <label className="min-w-0">
+              <span className="mb-1.5 block font-mono text-[10px] uppercase tracking-[0.18em] text-zinc-400">
+                Short
+              </span>
+              <Input name="shortLabel" placeholder="Pixel" className={addControl} />
+            </label>
+            <label className="min-w-0">
+              <span className="mb-1.5 block font-mono text-[10px] uppercase tracking-[0.18em] text-zinc-400">
+                Slug
+              </span>
+              <Input name="slug" placeholder="pixel" className={addControl} />
+            </label>
+            <label className="min-w-0">
+              <span className="mb-1.5 block font-mono text-[10px] uppercase tracking-[0.18em] text-zinc-400">
+                Blurb
+              </span>
+              <Input name="blurb" placeholder="Shop page description" className={addControl} />
+            </label>
+            <div className="min-w-0">
+              <span className="mb-1.5 block font-mono text-[10px] uppercase tracking-[0.18em] text-zinc-400">
+                Image (R2)
+              </span>
+              <ImageUrlField name="image" folder="brands" placeholder="Upload phone-back photo" />
+            </div>
+            <Button type="submit" size="sm" className="h-11">
+              <Plus size={14} /> Add
+            </Button>
+          </form>
+        </div>
+        <BrandEditor
+          canDelete={isOwner}
+          brands={brands.map((b) => ({
+            id: b.id,
+            slug: b.slug,
+            code: b.code,
+            label: b.label,
+            shortLabel: b.shortLabel,
+            blurb: b.blurb,
+            image: b.image,
+            deviceCount: b._count.devices,
+          }))}
+        />
+      </Panel>
 
       <div className="grid gap-6 xl:grid-cols-2 xl:gap-7">
         <Panel
@@ -144,9 +222,12 @@ export default async function AdminCatalogPage() {
                 <span className="mb-1.5 block font-mono text-[10px] uppercase tracking-[0.18em] text-zinc-400">
                   Brand
                 </span>
-                <Select name="brand" defaultValue="APPLE" className={addControl}>
-                  <option value="APPLE">Apple</option>
-                  <option value="SAMSUNG">Samsung</option>
+                <Select name="brand" defaultValue={defaultBrand} className={addControl}>
+                  {brandOpts.map((b) => (
+                    <option key={b.code} value={b.code}>
+                      {b.shortLabel || b.label}
+                    </option>
+                  ))}
                 </Select>
               </label>
               <label className="min-w-0">
@@ -169,9 +250,10 @@ export default async function AdminCatalogPage() {
           <div className="min-h-0 overflow-y-auto xl:max-h-[calc(100dvh-22rem)]">
             <DeviceEditor
               canDelete={isOwner}
+              brands={brandOpts}
               devices={devices.map((d) => ({
                 id: d.id,
-                brand: d.brand,
+                brand: d.brand.code,
                 series: d.series,
                 model: d.model,
                 slug: d.slug,

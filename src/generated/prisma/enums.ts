@@ -18,14 +18,6 @@ export const Role = {
 export type Role = (typeof Role)[keyof typeof Role]
 
 
-export const DeviceBrand = {
-  APPLE: 'APPLE',
-  SAMSUNG: 'SAMSUNG'
-} as const
-
-export type DeviceBrand = (typeof DeviceBrand)[keyof typeof DeviceBrand]
-
-
 export const ProductStatus = {
   DRAFT: 'DRAFT',
   ACTIVE: 'ACTIVE',

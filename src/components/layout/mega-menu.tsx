@@ -17,8 +17,11 @@ function groupBySeries(devices: NavigationData["devices"]) {
 }
 
 export function MegaMenu({ nav }: { nav: NavigationData }) {
-  const apple = groupBySeries(nav.devices.filter((d) => d.brand === "APPLE"));
-  const samsung = groupBySeries(nav.devices.filter((d) => d.brand === "SAMSUNG"));
+  const brandColumns = nav.brands.map((brand) => ({
+    title: brand.label,
+    href: `/shop/${brand.slug}`,
+    groups: groupBySeries(nav.devices.filter((d) => d.brand === brand.code)),
+  }));
 
   return (
     <div className="container-page grid grid-cols-12 gap-8 py-10">
@@ -42,11 +45,8 @@ export function MegaMenu({ nav }: { nav: NavigationData }) {
         </div>
       </div>
 
-      {[
-        { title: "iPhone", href: "/shop/iphone", groups: apple },
-        { title: "Samsung Galaxy", href: "/shop/samsung", groups: samsung },
-      ].map((brand) => (
-        <div key={brand.title} className="col-span-3">
+      {brandColumns.map((brand) => (
+        <div key={brand.href} className={brandColumns.length > 2 ? "col-span-2" : "col-span-3"}>
           <Link href={brand.href} className="mb-4 flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.25em] text-subtle hover:text-accent">
             <Smartphone size={12} /> {brand.title}
           </Link>
@@ -78,7 +78,7 @@ export function MegaMenu({ nav }: { nav: NavigationData }) {
           <p className="mt-3 text-lg font-semibold leading-tight">Privacy Armor for iPhone 17 series</p>
         </div>
         <span className="flex items-center gap-2 text-sm text-muted group-hover:text-fg">
-          Explore <ArrowRight size={14} className="transition-transform group-hover:translate-x-1" />
+          Shop all <ArrowRight size={14} className="transition-transform group-hover:translate-x-1" />
         </span>
       </Link>
     </div>

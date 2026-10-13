@@ -61,24 +61,24 @@ export function AdminCachePanel({
   }, [cachedAt]);
 
   return (
-    <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-white/[0.07] bg-white/[0.03] px-3 py-3 sm:px-4">
+    <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-line bg-surface-2 px-3 py-3 sm:px-4">
       <div className="min-w-0 space-y-1">
         <div className="flex flex-wrap items-center gap-2">
-          <p className="text-xs font-medium text-zinc-200">Admin cache</p>
+          <p className="text-xs font-medium text-fg">Admin cache</p>
           <AdminCacheBadge status={status} hit={hit} />
         </div>
-        <p className="text-[11px] text-zinc-500">
+        <p className="text-[11px] text-subtle">
           Version v{status.version}
-          <span className="mx-1.5 text-zinc-700">·</span>
+          <span className="mx-1.5 text-muted">·</span>
           Snapshot {ageLabel}
-          <span className="mx-1.5 text-zinc-700">·</span>
+          <span className="mx-1.5 text-muted">·</span>
           Tags: nav · dashboard
         </p>
       </div>
       <form action={purgeAdminCache}>
         <button
           type="submit"
-          className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-black/30 px-3 py-1.5 text-xs text-zinc-300 transition-colors hover:border-accent/40 hover:text-fg"
+          className="inline-flex items-center gap-1.5 rounded-full border border-line bg-surface px-3 py-1.5 text-xs text-muted transition-colors hover:border-accent/40 hover:text-fg"
         >
           <RefreshCw size={12} /> Purge cache
         </button>

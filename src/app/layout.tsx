@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { ThemeProvider, themeInitScript } from "@/components/theme/theme-provider";
+import { ThemeProvider } from "@/components/theme/theme-provider";
+import { themeInitScript } from "@/lib/theme";
 import { siteConfig } from "@/config/site";
 import { siteUrl } from "@/lib/utils";
 import "./globals.css";
@@ -63,16 +64,16 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} dark antialiased`}
-      data-theme="dark"
-      suppressHydrationWarning
-    >
+    // No className on <html> — ThemeProvider owns dark/light classes.
+    // Fonts live on <body> so React reconcile cannot wipe the theme class.
+    <html lang="en" suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
       </head>
-      <body className="flex min-h-dvh flex-col bg-bg font-sans text-fg antialiased">
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} flex min-h-dvh flex-col bg-bg font-sans text-fg antialiased`}
+        suppressHydrationWarning
+      >
         <ThemeProvider>{children}</ThemeProvider>
       </body>
     </html>

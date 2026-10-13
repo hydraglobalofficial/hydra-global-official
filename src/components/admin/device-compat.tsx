@@ -10,13 +10,14 @@ import { cn } from "@/lib/utils";
 export type DeviceOpt = {
   id: string;
   model: string;
-  brand: "APPLE" | "SAMSUNG" | string;
+  brand: string;
   series?: string;
 };
 
-const brandLabel: Record<string, string> = {
-  APPLE: "Apple",
-  SAMSUNG: "Samsung",
+export type BrandOpt = {
+  code: string;
+  label: string;
+  shortLabel?: string | null;
 };
 
 function seriesGuess(model: string, brand: string) {
@@ -27,23 +28,32 @@ function seriesGuess(model: string, brand: string) {
   if (/Z\s*Fold/i.test(model)) return "Galaxy Z Fold";
   if (/Z\s*Flip/i.test(model)) return "Galaxy Z Flip";
   const m = model.match(/^(Galaxy\s+S\d+)/i);
-  return m?.[1] ?? "Galaxy";
+  return m?.[1] ?? "Phone";
 }
 
 export function DeviceCompatField({
   devices: initialDevices,
+  brands,
   selectedIds: initialSelected,
 }: {
   devices: DeviceOpt[];
+  brands: BrandOpt[];
   selectedIds: string[];
 }) {
+  const defaultCode = brands[0]?.code ?? "APPLE";
+  const brandLabel = useMemo(() => {
+    const map: Record<string, string> = {};
+    for (const b of brands) map[b.code] = b.shortLabel || b.label;
+    return map;
+  }, [brands]);
+
   const [devices, setDevices] = useState(initialDevices);
   const [selected, setSelected] = useState(() => new Set(initialSelected));
   const [query, setQuery] = useState("");
-  const [brandFilter, setBrandFilter] = useState<"ALL" | "APPLE" | "SAMSUNG">("ALL");
+  const [brandFilter, setBrandFilter] = useState<string>("ALL");
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [draft, setDraft] = useState({ brand: "APPLE" as "APPLE" | "SAMSUNG", series: "", model: "" });
-  const [add, setAdd] = useState({ brand: "APPLE" as "APPLE" | "SAMSUNG", series: "", model: "" });
+  const [draft, setDraft] = useState({ brand: defaultCode, series: "", model: "" });
+  const [add, setAdd] = useState({ brand: defaultCode, series: "", model: "" });
   const [message, setMessage] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
 
@@ -83,7 +93,7 @@ export function DeviceCompatField({
   function startEdit(d: DeviceOpt) {
     setEditingId(d.id);
     setDraft({
-      brand: d.brand === "SAMSUNG" ? "SAMSUNG" : "APPLE",
+      brand: d.brand || defaultCode,
       series: d.series || seriesGuess(d.model, d.brand),
       model: d.model,
     });
@@ -129,6 +139,16 @@ export function DeviceCompatField({
     });
   }
 
+  const brandOptions = (
+    <>
+      {brands.map((b) => (
+        <option key={b.code} value={b.code}>
+          {b.shortLabel || b.label}
+        </option>
+      ))}
+    </>
+  );
+
   return (
     <div className="space-y-3">
       {[...selected].map((id) => (
@@ -142,21 +162,31 @@ export function DeviceCompatField({
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search phones…"
-            className="h-10 border-white/[0.08] bg-black/30 pl-9 text-sm"
+            className="admin-field h-10 pl-9 text-sm"
           />
         </div>
-        <div className="flex rounded-full border border-line bg-surface-2 p-0.5">
-          {(["ALL", "APPLE", "SAMSUNG"] as const).map((b) => (
+        <div className="flex flex-wrap rounded-full border border-line bg-surface-2 p-0.5">
+          <button
+            type="button"
+            onClick={() => setBrandFilter("ALL")}
+            className={cn(
+              "rounded-full px-3 py-1.5 text-xs font-medium transition",
+              brandFilter === "ALL" ? "bg-fg text-black" : "text-muted hover:text-fg",
+            )}
+          >
+            All
+          </button>
+          {brands.map((b) => (
             <button
-              key={b}
+              key={b.code}
               type="button"
-              onClick={() => setBrandFilter(b)}
+              onClick={() => setBrandFilter(b.code)}
               className={cn(
                 "rounded-full px-3 py-1.5 text-xs font-medium transition",
-                brandFilter === b ? "bg-fg text-black" : "text-muted hover:text-fg",
+                brandFilter === b.code ? "bg-fg text-black" : "text-muted hover:text-fg",
               )}
             >
-              {b === "ALL" ? "All" : brandLabel[b]}
+              {b.shortLabel || b.label}
             </button>
           ))}
         </div>
@@ -200,29 +230,28 @@ export function DeviceCompatField({
                           "rounded-xl border px-3 py-2.5 transition",
                           on
                             ? "border-accent/40 bg-accent/[0.1] shadow-[inset_0_0_0_1px_rgba(59,130,246,0.12)]"
-                            : "border-white/[0.06] bg-black/20 hover:border-white/[0.12]",
+                            : "border-line bg-surface-2 hover:border-line-strong",
                         )}
                       >
                         {editing ? (
                           <div className="space-y-2">
                             <Select
                               value={draft.brand}
-                              onChange={(e) => setDraft((x) => ({ ...x, brand: e.target.value as "APPLE" | "SAMSUNG" }))}
-                              className="h-9 border-white/[0.08] bg-black/40 text-xs"
+                              onChange={(e) => setDraft((x) => ({ ...x, brand: e.target.value }))}
+                              className="admin-field h-9 text-xs"
                             >
-                              <option value="APPLE">Apple</option>
-                              <option value="SAMSUNG">Samsung</option>
+                              {brandOptions}
                             </Select>
                             <Input
                               value={draft.series}
                               onChange={(e) => setDraft((x) => ({ ...x, series: e.target.value }))}
-                              className="h-9 border-white/[0.08] bg-black/40 text-xs"
+                              className="admin-field h-9 text-xs"
                               placeholder="Series"
                             />
                             <Input
                               value={draft.model}
                               onChange={(e) => setDraft((x) => ({ ...x, model: e.target.value }))}
-                              className="h-9 border-white/[0.08] bg-black/40 text-xs"
+                              className="admin-field h-9 text-xs"
                               placeholder="Model"
                             />
                             <div className="flex gap-1.5">
@@ -276,7 +305,6 @@ export function DeviceCompatField({
         )}
       </div>
 
-      {/* Always-visible add row — bottom of the device list */}
       <div className="rounded-xl border border-dashed border-accent/40 bg-accent/[0.07] p-4">
         <div className="mb-3 flex items-center gap-2">
           <span className="grid size-8 place-items-center rounded-lg bg-accent/20 text-blue-100">
@@ -292,11 +320,10 @@ export function DeviceCompatField({
             <span className="mb-1.5 block font-mono text-[10px] uppercase tracking-[0.16em] text-zinc-500">Brand</span>
             <Select
               value={add.brand}
-              onChange={(e) => setAdd((a) => ({ ...a, brand: e.target.value as "APPLE" | "SAMSUNG" }))}
-              className="h-11 border-white/[0.1] bg-black/35 text-sm"
+              onChange={(e) => setAdd((a) => ({ ...a, brand: e.target.value }))}
+              className="admin-field h-11 text-sm"
             >
-              <option value="APPLE">Apple</option>
-              <option value="SAMSUNG">Samsung</option>
+              {brandOptions}
             </Select>
           </label>
           <label className="min-w-0">
@@ -305,7 +332,7 @@ export function DeviceCompatField({
               value={add.series}
               onChange={(e) => setAdd((a) => ({ ...a, series: e.target.value }))}
               placeholder="iPhone 17"
-              className="h-11 border-white/[0.1] bg-black/35 text-sm"
+              className="admin-field h-11 text-sm"
             />
           </label>
           <label className="min-w-0">
@@ -314,23 +341,17 @@ export function DeviceCompatField({
               value={add.model}
               onChange={(e) => setAdd((a) => ({ ...a, model: e.target.value }))}
               placeholder="iPhone 17 Pro Max"
-              className="h-11 border-white/[0.1] bg-black/35 text-sm"
+              className="admin-field h-11 text-sm"
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
                   e.preventDefault();
-                  if (add.series && add.model && !pending) saveAdd();
+                  saveAdd();
                 }
               }}
             />
           </label>
-          <Button
-            type="button"
-            size="md"
-            className="h-11 w-full sm:w-auto"
-            disabled={pending || add.series.trim().length < 2 || add.model.trim().length < 2}
-            onClick={saveAdd}
-          >
-            {pending ? <Loader2 size={16} className="animate-spin" /> : <Plus size={16} />}
+          <Button type="button" size="sm" className="h-11" disabled={pending || !add.model.trim() || !add.series.trim()} onClick={saveAdd}>
+            {pending ? <Loader2 size={14} className="animate-spin" /> : <Plus size={14} />}
             Add
           </Button>
         </div>

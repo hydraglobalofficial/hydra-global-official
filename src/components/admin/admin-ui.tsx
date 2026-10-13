@@ -63,8 +63,8 @@ export function StatCard({
 }) {
   const tones = {
     default: {
-      icon: "text-muted border-white/8 bg-white/[0.03]",
-      bar: "from-white/20 to-transparent",
+      icon: "text-muted border-line bg-surface-2",
+      bar: "from-line-strong to-transparent",
       glow: false as boolean,
     },
     accent: {
@@ -85,7 +85,7 @@ export function StatCard({
   };
   const t = tones[tone];
   return (
-    <Card className="group p-4 transition-[border-color,transform,box-shadow] duration-300 hover:-translate-y-0.5 hover:border-white/16 sm:p-5" glow={t.glow}>
+    <Card className="group p-4 transition-[border-color,transform,box-shadow] duration-300 hover:-translate-y-0.5 hover:border-line-strong sm:p-5" glow={t.glow}>
       <div className={cn("pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r", t.bar)} />
       <div className="flex items-start justify-between gap-3">
         <p className="text-[10px] font-medium uppercase tracking-[0.16em] text-subtle sm:text-xs sm:tracking-[0.14em]">{label}</p>
@@ -114,10 +114,10 @@ export function Panel({
 }) {
   return (
     <Card className={cn("flex flex-col", className)}>
-      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-white/[0.06] bg-gradient-to-r from-white/[0.03] to-transparent px-3.5 py-3 sm:gap-3 sm:px-5 sm:py-4">
-        <h2 className="flex min-w-0 items-center gap-2.5 text-sm font-medium tracking-tight sm:text-[15px]">
+      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-line bg-surface-2/50 px-3.5 py-3 sm:gap-3 sm:px-5 sm:py-4">
+        <h2 className="flex min-w-0 items-center gap-2.5 text-sm font-medium tracking-tight text-fg sm:text-[15px]">
           {icon ? (
-            <span className="grid size-7 shrink-0 place-items-center rounded-lg border border-white/8 bg-white/[0.03]">{icon}</span>
+            <span className="grid size-7 shrink-0 place-items-center rounded-lg border border-line bg-surface-2 text-muted">{icon}</span>
           ) : null}
           <span className="truncate">{title}</span>
         </h2>
@@ -131,7 +131,7 @@ export function Panel({
 export function Table({ children }: { children: ReactNode }) {
   return (
     <div className="-mx-px overflow-x-auto">
-      <table className="w-full min-w-[36rem] text-left text-sm [&_td]:px-4 [&_td]:py-3.5 sm:[&_td]:px-5 [&_th]:bg-white/[0.02] [&_th]:px-4 [&_th]:py-3 sm:[&_th]:px-5 [&_th]:text-[10px] [&_th]:font-medium [&_th]:uppercase [&_th]:tracking-[0.14em] [&_th]:text-subtle [&_thead]:border-b [&_thead]:border-white/[0.06] [&_tbody_tr]:border-b [&_tbody_tr]:border-white/[0.05] last:[&_tbody_tr]:border-0 [&_tbody_tr]:transition-colors [&_tbody_tr:hover]:bg-white/[0.03]">
+      <table className="w-full min-w-[36rem] text-left text-sm text-fg [&_td]:px-4 [&_td]:py-3.5 sm:[&_td]:px-5 [&_th]:bg-surface-2/60 [&_th]:px-4 [&_th]:py-3 sm:[&_th]:px-5 [&_th]:text-[10px] [&_th]:font-medium [&_th]:uppercase [&_th]:tracking-[0.14em] [&_th]:text-subtle [&_thead]:border-b [&_thead]:border-line [&_tbody_tr]:border-b [&_tbody_tr]:border-line last:[&_tbody_tr]:border-0 [&_tbody_tr]:transition-colors [&_tbody_tr:hover]:bg-surface-2/70">
         {children}
       </table>
     </div>

@@ -4,7 +4,7 @@
  */
 
 const MAX_HREF = 200;
-const MAX_IMAGE = 400;
+const MAX_IMAGE = 500;
 const MAX_VIDEO = 500;
 const MAX_SLUG = 80;
 

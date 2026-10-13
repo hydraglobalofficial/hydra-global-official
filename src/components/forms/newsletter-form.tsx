@@ -28,7 +28,7 @@ export function NewsletterForm({ className }: { className?: string }) {
         <button
           type="submit"
           disabled={pending || done}
-          className="touch-target grid shrink-0 place-items-center rounded-full bg-fg text-black transition hover:bg-white disabled:opacity-70"
+          className="touch-target grid shrink-0 place-items-center rounded-full bg-fg text-bg transition hover:opacity-85 disabled:opacity-70"
           aria-label="Subscribe"
         >
           {pending ? <Loader2 size={16} className="animate-spin" /> : done ? <Check size={16} /> : <ArrowRight size={16} />}

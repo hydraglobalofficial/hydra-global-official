@@ -2,7 +2,7 @@
 
 import { useActionState } from "react";
 import { Loader2, Save } from "lucide-react";
-import { DeviceCompatField, type DeviceOpt } from "@/components/admin/device-compat";
+import { DeviceCompatField, type BrandOpt, type DeviceOpt } from "@/components/admin/device-compat";
 import { ImageUrlsField } from "@/components/admin/media-uploader";
 import { saveProduct } from "@/server/actions/admin";
 import { initialFormState } from "@/lib/validations";
@@ -34,10 +34,12 @@ export function ProductForm({
   initial,
   categories,
   devices,
+  brands,
 }: {
   initial: ProductFormValues;
   categories: Option[];
   devices: DeviceOpt[];
+  brands: BrandOpt[];
 }) {
   const [state, action, pending] = useActionState(saveProduct.bind(null, initial.id ?? null), initialFormState);
   const e = state.fieldErrors ?? {};
@@ -81,14 +83,14 @@ export function ProductForm({
             name="imageUrls"
             defaultValue={initial.imageUrls}
             folder="products"
-            placeholder={"/products/glass-clear.jpg\nhttps://…r2.dev/products/…"}
+            placeholder={"Upload from device → Cloudflare R2"}
           />
         </Field>
         <fieldset>
           <legend className="mb-3 text-xs font-medium uppercase tracking-[0.14em] text-muted">
             Compatible devices
           </legend>
-          <DeviceCompatField devices={devices} selectedIds={initial.deviceIds} />
+          <DeviceCompatField devices={devices} brands={brands} selectedIds={initial.deviceIds} />
         </fieldset>
       </div>
 

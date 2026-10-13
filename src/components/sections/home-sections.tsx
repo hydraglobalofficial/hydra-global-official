@@ -4,79 +4,89 @@ import Link from "next/link";
 import { ArrowRight, Droplets, Fingerprint, Layers, PackageCheck, ScanLine, ShoppingBag, Sparkles, Truck, Wrench, Zap } from "lucide-react";
 import { motion } from "motion/react";
 import { RevealGroup, RevealItem } from "@/components/motion/reveal";
+import { BrandPlatformMedia } from "@/components/sections/brand-platform-media";
 import { SectionHeading } from "@/components/ui/primitives";
 import { SpotlightCard } from "@/components/ui/spotlight-card";
 import { NewsletterForm } from "@/components/forms/newsletter-form";
-import { brands } from "@/config/site";
+import type { BrandRecord } from "@/config/site";
 import type { HowItWorksContent, NewsletterContent } from "@/content/site-sections";
 import type { NavigationData } from "@/server/queries/catalog";
 
-function DeviceArt({ slug }: { slug: "iphone" | "samsung" }) {
-  const iphone = slug === "iphone";
-  return (
-    <svg viewBox="0 0 220 300" className="h-full w-full" aria-hidden>
-      <defs>
-        <linearGradient id={`da-screen-${slug}`} x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stopColor={iphone ? "#0b3a4f" : "#16202c"} />
-          <stop offset="0.6" stopColor="#07070c" />
-          <stop offset="1" stopColor={iphone ? "#10233a" : "#0c1f33"} />
-        </linearGradient>
-        <linearGradient id={`da-edge-${slug}`} x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stopColor="#1e40af" stopOpacity="0.9" />
-          <stop offset="1" stopColor="#e4e4e7" stopOpacity="0.4" />
-        </linearGradient>
-      </defs>
-      <g transform="translate(60 20) rotate(8 50 130)">
-        <rect width="100" height="220" rx={iphone ? 22 : 14} fill="#101016" stroke="rgba(255,255,255,0.14)" />
-      </g>
-      <g transform="translate(40 30)">
-        <rect width="120" height="250" rx={iphone ? 26 : 16} fill="#0c0c12" stroke="rgba(255,255,255,0.2)" />
-        <rect x="5" y="5" width="110" height="240" rx={iphone ? 22 : 13} fill={`url(#da-screen-${slug})`} />
-        {iphone ? <rect x="42" y="14" width="36" height="10" rx="5" fill="#000" /> : <circle cx="60" cy="18" r="4" fill="#000" />}
-        <rect x="-3" y="-3" width="126" height="256" rx={iphone ? 28 : 18} fill="none" stroke={`url(#da-edge-${slug})`} strokeWidth="1.2" opacity="0.8" />
-        <path d="M14 20 L52 20 L14 110 Z" fill="#fff" opacity="0.06" />
-        <text x="60" y="140" textAnchor="middle" fill="#fff" fontSize="11" fontWeight="600" letterSpacing="4">HYDRA</text>
-      </g>
-    </svg>
-  );
-}
+/** Local originals — latest flagship camera / back plates per brand. */
+const DEFAULT_BRAND_TILES: Record<string, string> = {
+  iphone: "/brands/iphone.jpg",
+  samsung: "/brands/samsung.jpg",
+};
 
-export function ShopByDevice({ devices }: { devices: NavigationData["devices"] }) {
-  const cards = [
-    { slug: "iphone" as const, glow: "bg-accent/25", count: devices.filter((d) => d.brand === "APPLE").length, models: devices.filter((d) => d.brand === "APPLE").slice(0, 4) },
-    { slug: "samsung" as const, glow: "bg-white/10", count: devices.filter((d) => d.brand === "SAMSUNG").length, models: devices.filter((d) => d.brand === "SAMSUNG").slice(0, 4) },
-  ];
+export function ShopByDevice({
+  devices,
+  brands,
+}: {
+  devices: NavigationData["devices"];
+  brands: BrandRecord[];
+}) {
+  const cards = brands.map((brand, i) => {
+    const models = devices.filter((d) => d.brand === brand.code);
+    return {
+      brand,
+      glow: i % 2 === 0 ? "bg-accent/30" : "bg-sky-500/15",
+      count: models.length,
+      models: models.slice(0, 4),
+      latest: models[0]?.model ?? brand.label,
+      image: brand.image?.trim() || DEFAULT_BRAND_TILES[brand.slug] || null,
+    };
+  });
+
   return (
     <section className="container-page py-14 sm:py-20 md:py-24">
       <SectionHeading eyebrow="Shop by device" title={<>Pick your <span className="text-muted">platform.</span></>} />
-      <RevealGroup className="grid gap-4 sm:gap-5 md:grid-cols-2" stagger={0.12}>
+      <RevealGroup
+        className={`grid gap-4 sm:gap-5 ${cards.length > 2 ? "md:grid-cols-2 xl:grid-cols-3" : "md:grid-cols-2"}`}
+        stagger={0.12}
+      >
         {cards.map((card) => (
-          <RevealItem key={card.slug} className="min-w-0">
+          <RevealItem key={card.brand.slug} className="min-w-0">
             <SpotlightCard className="group h-full overflow-hidden">
-              <Link href={`/shop/${card.slug}`} className="relative grid min-h-[18rem] grid-cols-1 gap-4 p-5 sm:min-h-96 sm:grid-cols-[1fr_auto] sm:p-8 md:p-10">
-                <div className={`pointer-events-none absolute -right-20 -top-20 size-80 rounded-full ${card.glow} blur-[100px] opacity-50 transition-opacity duration-700 group-hover:opacity-90`} />
-                <div className="bg-dots pointer-events-none absolute inset-0 opacity-60 [mask-image:linear-gradient(to_bottom,#000,transparent)]" />
-                <div className="relative flex min-w-0 flex-col justify-between">
-                  <div>
-                    <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-accent sm:text-[11px] sm:tracking-[0.25em]">{card.count} models supported</p>
-                    <h3 className="mt-3 text-3xl font-semibold tracking-tight sm:mt-4 sm:text-4xl md:text-5xl">{brands[card.slug].label}</h3>
-                    <p className="mt-2 max-w-xs text-sm text-muted sm:mt-3 sm:text-base">{brands[card.slug].blurb}</p>
-                    <div className="mt-4 flex flex-wrap gap-2 sm:mt-6">
-                      {card.models.map((m) => (
-                        <span key={m.slug} className="rounded-full border border-line bg-white/[0.03] px-2.5 py-1 text-[11px] text-muted sm:px-3 sm:text-xs">
-                          {m.model}
-                        </span>
-                      ))}
-                    </div>
+              <Link
+                href={`/shop/${card.brand.slug}`}
+                className="relative flex min-h-[20rem] flex-col gap-6 overflow-hidden p-5 sm:min-h-[24rem] sm:flex-row sm:items-center sm:gap-3 sm:p-8 md:min-h-[25rem] md:p-9"
+              >
+                <div
+                  className={`pointer-events-none absolute -right-10 top-1/3 size-[20rem] rounded-full ${card.glow} blur-[100px] opacity-45 transition-opacity duration-700 group-hover:opacity-85`}
+                />
+                <div className="bg-dots pointer-events-none absolute inset-0 opacity-50 [mask-image:linear-gradient(to_bottom,#000_15%,transparent_80%)]" />
+
+                <div className="relative z-[1] flex min-w-0 flex-1 flex-col justify-center">
+                  <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-accent sm:text-[11px] sm:tracking-[0.25em]">
+                    {card.count} models supported
+                  </p>
+                  <h3 className="mt-3 text-3xl font-semibold tracking-tight sm:mt-3.5 sm:text-4xl md:text-[2.75rem]">
+                    {card.brand.label}
+                  </h3>
+                  <p className="mt-2 max-w-sm text-sm text-muted sm:mt-2.5 sm:text-[0.95rem]">{card.brand.blurb}</p>
+                  <div className="mt-4 flex max-w-md flex-wrap gap-2">
+                    {card.models.map((m) => (
+                      <span
+                        key={m.slug}
+                        className="rounded-full border border-line bg-bg/40 px-2.5 py-1 text-[11px] text-muted backdrop-blur-sm sm:px-3 sm:text-xs light:bg-white/70"
+                      >
+                        {m.model}
+                      </span>
+                    ))}
                   </div>
-                  <span className="mt-6 inline-flex min-h-11 w-fit items-center gap-2 rounded-full border border-line-strong bg-white/5 px-5 py-2.5 text-sm font-medium transition-all group-hover:border-accent/40 group-hover:bg-accent/10 sm:mt-8">
-                    Shop {brands[card.slug].label}
+                  <span className="mt-6 inline-flex min-h-11 w-fit items-center gap-2 rounded-full border border-line-strong bg-bg/55 px-5 py-2.5 text-sm font-medium backdrop-blur-md transition-all group-hover:border-accent/45 group-hover:bg-accent/10 light:bg-white/85">
+                    Shop {card.brand.label}
                     <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
                   </span>
                 </div>
-                <div className="relative hidden w-44 transition-transform duration-700 group-hover:-translate-y-2 group-hover:rotate-[-2deg] sm:block md:w-52">
-                  <DeviceArt slug={card.slug} />
-                </div>
+
+                <BrandPlatformMedia
+                  slug={card.brand.slug}
+                  code={card.brand.code}
+                  image={card.image}
+                  label={card.latest}
+                  className="relative z-[1]"
+                />
               </Link>
             </SpotlightCard>
           </RevealItem>
