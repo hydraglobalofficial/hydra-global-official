@@ -6,7 +6,7 @@ import { JsonLd } from "@/lib/seo";
 export const metadata: Metadata = {
   title: "Installation Guide",
   description:
-    "One HYDRA install for iPhone and Samsung Galaxy — alignment frame, clean kit, step-by-step with optional video.",
+    "One HYDRA install for iPhone and Samsung Galaxy — alignment frame, clean kit, step-by-step with an optional in-page walkthrough.",
   alternates: { canonical: "/installation" },
 };
 

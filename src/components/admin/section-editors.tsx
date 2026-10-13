@@ -93,6 +93,14 @@ function RemoveBtn({ onClick, disabled, label }: { onClick: () => void; disabled
   );
 }
 
+function EmptyHint({ children }: { children: ReactNode }) {
+  return (
+    <p className="rounded-xl border border-dashed border-white/10 px-3 py-5 text-center text-xs text-subtle">
+      {children}
+    </p>
+  );
+}
+
 export function AboutSectionEditor({ content }: { content: AboutContent }) {
   const [state, action, pending] = useActionState(saveAboutSection, initialFormState);
   const [stats, setStats] = useState(() =>
@@ -140,21 +148,24 @@ export function AboutSectionEditor({ content }: { content: AboutContent }) {
           canAdd={stats.length < 8}
           onAdd={() => setStats((prev) => (prev.length >= 8 ? prev : [...prev, { key: rowKey(), value: "", label: "" }]))}
         />
-        <div className="space-y-3">
-          {stats.map((s, i) => (
-            <div key={s.key} className="flex flex-col gap-2 rounded-xl border border-white/[0.06] p-3 sm:flex-row sm:items-start">
-              <div className="grid flex-1 gap-3 sm:grid-cols-2">
-                <Input name="statValue" defaultValue={s.value} placeholder="Value" />
-                <Input name="statLabel" defaultValue={s.label} placeholder="Label" />
+        {stats.length === 0 ? (
+          <EmptyHint>No stats — click Add stat.</EmptyHint>
+        ) : (
+          <div className="space-y-3">
+            {stats.map((s, i) => (
+              <div key={s.key} className="flex flex-col gap-2 rounded-xl border border-white/[0.06] p-3 sm:flex-row sm:items-start">
+                <div className="grid flex-1 gap-3 sm:grid-cols-2">
+                  <Input name="statValue" defaultValue={s.value} placeholder="Value" />
+                  <Input name="statLabel" defaultValue={s.label} placeholder="Label" />
+                </div>
+                <RemoveBtn
+                  label={`Remove stat ${i + 1}`}
+                  onClick={() => setStats((prev) => prev.filter((row) => row.key !== s.key))}
+                />
               </div>
-              <RemoveBtn
-                label={`Remove stat ${i + 1}`}
-                disabled={stats.length <= 1}
-                onClick={() => setStats((prev) => (prev.length <= 1 ? prev : prev.filter((row) => row.key !== s.key)))}
-              />
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </Section>
 
       <Section title="Manifesto">
@@ -179,20 +190,23 @@ export function AboutSectionEditor({ content }: { content: AboutContent }) {
             setMissionBullets((prev) => (prev.length >= 8 ? prev : [...prev, { key: rowKey(), value: "" }]))
           }
         />
-        <div className="space-y-2">
-          {missionBullets.map((b, i) => (
-            <div key={b.key} className="flex gap-2">
-              <Input name="missionBullet" defaultValue={b.value} placeholder={`Bullet ${i + 1}`} className="flex-1" />
-              <RemoveBtn
-                label={`Remove mission bullet ${i + 1}`}
-                disabled={missionBullets.length <= 1}
-                onClick={() =>
-                  setMissionBullets((prev) => (prev.length <= 1 ? prev : prev.filter((row) => row.key !== b.key)))
-                }
-              />
-            </div>
-          ))}
-        </div>
+        {missionBullets.length === 0 ? (
+          <EmptyHint>No bullets — click Add bullet.</EmptyHint>
+        ) : (
+          <div className="space-y-2">
+            {missionBullets.map((b, i) => (
+              <div key={b.key} className="flex gap-2">
+                <Input name="missionBullet" defaultValue={b.value} placeholder={`Bullet ${i + 1}`} className="flex-1" />
+                <RemoveBtn
+                  label={`Remove mission bullet ${i + 1}`}
+                  onClick={() =>
+                    setMissionBullets((prev) => prev.filter((row) => row.key !== b.key))
+                  }
+                />
+              </div>
+            ))}
+          </div>
+        )}
       </Section>
 
       <Section title="Vision">
@@ -206,20 +220,23 @@ export function AboutSectionEditor({ content }: { content: AboutContent }) {
             setVisionBullets((prev) => (prev.length >= 8 ? prev : [...prev, { key: rowKey(), value: "" }]))
           }
         />
-        <div className="space-y-2">
-          {visionBullets.map((b, i) => (
-            <div key={b.key} className="flex gap-2">
-              <Input name="visionBullet" defaultValue={b.value} placeholder={`Bullet ${i + 1}`} className="flex-1" />
-              <RemoveBtn
-                label={`Remove vision bullet ${i + 1}`}
-                disabled={visionBullets.length <= 1}
-                onClick={() =>
-                  setVisionBullets((prev) => (prev.length <= 1 ? prev : prev.filter((row) => row.key !== b.key)))
-                }
-              />
-            </div>
-          ))}
-        </div>
+        {visionBullets.length === 0 ? (
+          <EmptyHint>No bullets — click Add bullet.</EmptyHint>
+        ) : (
+          <div className="space-y-2">
+            {visionBullets.map((b, i) => (
+              <div key={b.key} className="flex gap-2">
+                <Input name="visionBullet" defaultValue={b.value} placeholder={`Bullet ${i + 1}`} className="flex-1" />
+                <RemoveBtn
+                  label={`Remove vision bullet ${i + 1}`}
+                  onClick={() =>
+                    setVisionBullets((prev) => prev.filter((row) => row.key !== b.key))
+                  }
+                />
+              </div>
+            ))}
+          </div>
+        )}
       </Section>
 
       <Section title="Values intro">
@@ -247,8 +264,7 @@ export function AboutSectionEditor({ content }: { content: AboutContent }) {
               <div className="flex justify-end">
                 <RemoveBtn
                   label={`Remove value ${i + 1}`}
-                  disabled={values.length <= 1}
-                  onClick={() => setValues((prev) => (prev.length <= 1 ? prev : prev.filter((row) => row.key !== v.key)))}
+                  onClick={() => setValues((prev) => prev.filter((row) => row.key !== v.key))}
                 />
               </div>
               <div className="grid gap-3 sm:grid-cols-[1fr_8rem]">
@@ -278,9 +294,8 @@ export function AboutSectionEditor({ content }: { content: AboutContent }) {
               <div className="flex justify-end">
                 <RemoveBtn
                   label={`Remove division ${i + 1}`}
-                  disabled={divisions.length <= 1}
                   onClick={() =>
-                    setDivisions((prev) => (prev.length <= 1 ? prev : prev.filter((row) => row.key !== d.key)))
+                    setDivisions((prev) => prev.filter((row) => row.key !== d.key))
                   }
                 />
               </div>
@@ -311,9 +326,8 @@ export function AboutSectionEditor({ content }: { content: AboutContent }) {
               <div className="flex justify-end">
                 <RemoveBtn
                   label={`Remove milestone ${i + 1}`}
-                  disabled={journey.length <= 1}
                   onClick={() =>
-                    setJourney((prev) => (prev.length <= 1 ? prev : prev.filter((row) => row.key !== j.key)))
+                    setJourney((prev) => prev.filter((row) => row.key !== j.key))
                   }
                 />
               </div>
@@ -387,9 +401,8 @@ export function AboutSectionEditor({ content }: { content: AboutContent }) {
               </div>
               <RemoveBtn
                 label={`Remove commitment ${i + 1}`}
-                disabled={commitments.length <= 1}
                 onClick={() =>
-                  setCommitments((prev) => (prev.length <= 1 ? prev : prev.filter((row) => row.key !== c.key)))
+                  setCommitments((prev) => prev.filter((row) => row.key !== c.key))
                 }
               />
             </div>
@@ -412,8 +425,7 @@ export function AboutSectionEditor({ content }: { content: AboutContent }) {
               </div>
               <RemoveBtn
                 label={`Remove fact ${i + 1}`}
-                disabled={facts.length <= 1}
-                onClick={() => setFacts((prev) => (prev.length <= 1 ? prev : prev.filter((row) => row.key !== f.key)))}
+                onClick={() => setFacts((prev) => prev.filter((row) => row.key !== f.key))}
               />
             </div>
           ))}
@@ -467,6 +479,7 @@ export function HowItWorksSectionEditor({ content }: { content: HowItWorksConten
             setSteps((prev) => (prev.length >= 8 ? prev : [...prev, { key: rowKey(), title: "", text: "" }]))
           }
         />
+        {steps.length === 0 ? <EmptyHint>No steps — click Add step.</EmptyHint> : null}
         <div className="space-y-3">
           {steps.map((s, i) => (
             <div key={s.key} className="space-y-3 rounded-xl border border-white/[0.06] p-3">
@@ -476,8 +489,7 @@ export function HowItWorksSectionEditor({ content }: { content: HowItWorksConten
                 </p>
                 <RemoveBtn
                   label={`Remove step ${i + 1}`}
-                  disabled={steps.length <= 1}
-                  onClick={() => setSteps((prev) => (prev.length <= 1 ? prev : prev.filter((row) => row.key !== s.key)))}
+                  onClick={() => setSteps((prev) => prev.filter((row) => row.key !== s.key))}
                 />
               </div>
               <Input name="stepTitle" defaultValue={s.title} placeholder="Step title" />
@@ -573,9 +585,8 @@ export function HomeHeroSectionEditor({ content }: { content: HomeHeroContent })
               </div>
               <RemoveBtn
                 label={`Remove link ${i + 1}`}
-                disabled={quickLinks.length <= 1}
                 onClick={() =>
-                  setQuickLinks((prev) => (prev.length <= 1 ? prev : prev.filter((row) => row.key !== link.key)))
+                  setQuickLinks((prev) => prev.filter((row) => row.key !== link.key))
                 }
               />
             </div>
@@ -605,8 +616,7 @@ export function HomeHeroSectionEditor({ content }: { content: HomeHeroContent })
               </div>
               <RemoveBtn
                 label={`Remove stat ${i + 1}`}
-                disabled={stats.length <= 1}
-                onClick={() => setStats((prev) => (prev.length <= 1 ? prev : prev.filter((row) => row.key !== stat.key)))}
+                onClick={() => setStats((prev) => prev.filter((row) => row.key !== stat.key))}
               />
             </div>
           ))}
@@ -633,9 +643,8 @@ export function HomeHeroSectionEditor({ content }: { content: HomeHeroContent })
                 </p>
                 <RemoveBtn
                   label={`Remove slide ${i + 1}`}
-                  disabled={slides.length <= 1}
                   onClick={() =>
-                    setSlides((prev) => (prev.length <= 1 ? prev : prev.filter((row) => row.uid !== slide.uid)))
+                    setSlides((prev) => prev.filter((row) => row.uid !== slide.uid))
                   }
                 />
               </div>
@@ -780,29 +789,32 @@ export function WhatsappWidgetSectionEditor({ content }: { content: WhatsappWidg
             )
           }
         />
-        <div className="space-y-3">
-          {staff.map((person, i) => (
-            <div key={person.key} className="space-y-3 rounded-xl border border-white/[0.06] p-3 sm:p-4">
-              <div className="flex items-center justify-between gap-2">
-                <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-subtle">Photo {i + 1}</p>
-                <RemoveBtn
-                  label={`Remove staff photo ${i + 1}`}
-                  disabled={staff.length <= 1}
-                  onClick={() => setStaff((prev) => prev.filter((row) => row.key !== person.key))}
-                />
+        {staff.length === 0 ? (
+          <EmptyHint>No staff photos — click Add photo to create a slot.</EmptyHint>
+        ) : (
+          <div className="space-y-3">
+            {staff.map((person, i) => (
+              <div key={person.key} className="space-y-3 rounded-xl border border-white/[0.06] p-3 sm:p-4">
+                <div className="flex items-center justify-between gap-2">
+                  <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-subtle">Photo {i + 1}</p>
+                  <RemoveBtn
+                    label={`Remove staff photo ${i + 1}`}
+                    onClick={() => setStaff((prev) => prev.filter((row) => row.key !== person.key))}
+                  />
+                </div>
+                <Label label="Name" hint="Shown on the float under the photo.">
+                  <Input name="staffName" defaultValue={person.name} placeholder="Ayesha Rahman" />
+                </Label>
+                <Label
+                  label="Staff photo"
+                  hint="Upload a real face from your device (R2). Product images are blocked — square crop looks best."
+                >
+                  <ImageUrlField name="staffImage" defaultValue={person.image} folder="whatsapp" />
+                </Label>
               </div>
-              <Label label="Name" hint="Shown on the float under the photo.">
-                <Input name="staffName" defaultValue={person.name} placeholder="Ayesha Rahman" required />
-              </Label>
-              <Label
-                label="Staff photo"
-                hint="Upload a real face from your device (R2). Product images are blocked — square crop looks best."
-              >
-                <ImageUrlField name="staffImage" defaultValue={person.image} folder="whatsapp" />
-              </Label>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </Section>
 
       <FormMessage status={state.status} message={state.message} toast />
@@ -879,20 +891,16 @@ export function ShowcaseSectionEditor({ content }: { content: ShowcaseContent })
             <Plus size={14} /> Add card
           </Button>
         </div>
+        {videos.length === 0 ? <EmptyHint>No video cards — click Add card.</EmptyHint> : null}
         <div className="space-y-6">
           {videos.map((v, i) => (
             <div key={v.key} className="space-y-3 rounded-2xl border border-line p-4">
               <div className="flex items-center justify-between gap-2">
                 <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-subtle">Card {i + 1}</p>
-                <button
-                  type="button"
-                  disabled={videos.length <= 1}
-                  onClick={() => setVideos((prev) => (prev.length <= 1 ? prev : prev.filter((row) => row.key !== v.key)))}
-                  className="inline-flex items-center gap-1.5 rounded-full border border-white/10 px-2.5 py-1 text-[11px] text-muted transition hover:border-danger/40 hover:text-danger disabled:cursor-not-allowed disabled:opacity-30"
-                  aria-label={`Remove card ${i + 1}`}
-                >
-                  <Trash2 size={12} /> Remove
-                </button>
+                <RemoveBtn
+                  label={`Remove card ${i + 1}`}
+                  onClick={() => setVideos((prev) => prev.filter((row) => row.key !== v.key))}
+                />
               </div>
               <div className="grid gap-3 sm:grid-cols-2">
                 <Label label="Title">
@@ -968,6 +976,7 @@ export function CollectionsSectionEditor({ content }: { content: CollectionsCont
             )
           }
         />
+        {items.length === 0 ? <EmptyHint>No collection cards — click Add card.</EmptyHint> : null}
         <div className="space-y-4">
           {items.map((item, i) => (
             <div key={item.key} className="space-y-3 rounded-xl border border-white/[0.06] p-3">
@@ -977,9 +986,8 @@ export function CollectionsSectionEditor({ content }: { content: CollectionsCont
                 </p>
                 <RemoveBtn
                   label={`Remove collection ${i + 1}`}
-                  disabled={items.length <= 1}
                   onClick={() =>
-                    setItems((prev) => (prev.length <= 1 ? prev : prev.filter((row) => row.key !== item.key)))
+                    setItems((prev) => prev.filter((row) => row.key !== item.key))
                   }
                 />
               </div>
@@ -1016,7 +1024,6 @@ type InstallStepDraft = {
   body: string;
   tip: string;
   image: string;
-  video: string;
 };
 
 type TroubleDraft = { key: string; problem: string; fix: string };
@@ -1027,7 +1034,6 @@ const emptyStep = (): InstallStepDraft => ({
   body: "",
   tip: "",
   image: "",
-  video: "",
 });
 
 const emptyTrouble = (): TroubleDraft => ({
@@ -1039,8 +1045,13 @@ const emptyTrouble = (): TroubleDraft => ({
 const MAX_INSTALL_STEPS = 16;
 const MAX_TROUBLES = 12;
 
+const MAX_KIT_ITEMS = 20;
+
 export function InstallationSectionEditor({ content }: { content: InstallationContent }) {
   const [state, action, pending] = useActionState(saveInstallationSection, initialFormState);
+  const [kit, setKit] = useState(() =>
+    toKeyed((content.kit.length > 0 ? content.kit : [""]).map((value) => ({ value }))),
+  );
   const [steps, setSteps] = useState<InstallStepDraft[]>(() =>
     content.steps.length > 0
       ? content.steps.map((s) => ({
@@ -1049,7 +1060,6 @@ export function InstallationSectionEditor({ content }: { content: InstallationCo
           body: s.body,
           tip: s.tip ?? "",
           image: s.image ?? "",
-          video: s.video ?? "",
         }))
       : [emptyStep(), emptyStep()],
   );
@@ -1081,29 +1091,59 @@ export function InstallationSectionEditor({ content }: { content: InstallationCo
         <Label label="Brands note" hint={'Shown as a badge, e.g. "Same process for Apple & Samsung"'}>
           <Input name="brandsNote" defaultValue={content.brandsNote} required />
         </Label>
-        <Label
-          label="Video URL"
-          hint="YouTube link or direct mp4/webm on Cloudflare R2. Leave blank to hide the player."
-        >
+      </Section>
+
+      <Section title="Walkthrough video (bottom of page)">
+        <p className="text-xs text-subtle">
+          One link only — shows as an in-page player under the steps. Paste a YouTube or Google Drive share link (Drive file must be set to “Anyone with the link”). R2 mp4/webm also works.
+        </p>
+        <Label label="Video link" hint="YouTube watch/share, Google Drive file link, or https://….r2.dev/….mp4">
           <Input
             name="videoUrl"
             defaultValue={content.videoUrl}
-            placeholder="https://www.youtube.com/watch?v=… or https://….r2.dev/…/install.mp4"
+            placeholder="https://www.youtube.com/watch?v=… or https://drive.google.com/file/d/…/view"
             className="font-mono text-xs"
           />
         </Label>
       </Section>
 
       <Section title="Kit (in the box)">
-        <Label label="Items" hint="One per line">
-          <Textarea name="kit" defaultValue={content.kit.join("\n")} className="min-h-28 font-mono text-xs" required />
-        </Label>
+        <ListHeader
+          hint="Add or remove box items anytime. Empty rows are skipped on publish."
+          addLabel="Add item"
+          canAdd={kit.length < MAX_KIT_ITEMS}
+          onAdd={() =>
+            setKit((prev) =>
+              prev.length >= MAX_KIT_ITEMS ? prev : [...prev, { key: rowKey(), value: "" }],
+            )
+          }
+        />
+        {kit.length === 0 ? (
+          <EmptyHint>No kit items — click Add item.</EmptyHint>
+        ) : (
+          <div className="space-y-2">
+            {kit.map((item, i) => (
+              <div key={item.key} className="flex gap-2">
+                <Input
+                  name="kitItem"
+                  defaultValue={item.value}
+                  placeholder={`Item ${i + 1}`}
+                  className="flex-1"
+                />
+                <RemoveBtn
+                  label={`Remove kit item ${i + 1}`}
+                  onClick={() => setKit((prev) => prev.filter((row) => row.key !== item.key))}
+                />
+              </div>
+            ))}
+          </div>
+        )}
       </Section>
 
       <Section title="Steps">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <p className="text-xs text-subtle">
-            Add or remove steps anytime. Each can have an image and/or YouTube / R2 video. Empty rows are skipped on publish.
+            Add or remove steps anytime. Each step can have a still image. The walkthrough video is set once above. Empty rows are skipped on publish.
           </p>
           <Button
             type="button"
@@ -1115,6 +1155,7 @@ export function InstallationSectionEditor({ content }: { content: InstallationCo
             <Plus size={14} /> Add step
           </Button>
         </div>
+        {steps.length === 0 ? <EmptyHint>No steps — click Add step.</EmptyHint> : null}
         <div className="space-y-4">
           {steps.map((step, i) => (
             <div key={step.key} className="space-y-3 rounded-xl border border-white/[0.06] p-3">
@@ -1124,8 +1165,7 @@ export function InstallationSectionEditor({ content }: { content: InstallationCo
                 </p>
                 <button
                   type="button"
-                  disabled={steps.length <= 1}
-                  onClick={() => setSteps((prev) => (prev.length <= 1 ? prev : prev.filter((s) => s.key !== step.key)))}
+                  onClick={() => setSteps((prev) => prev.filter((s) => s.key !== step.key))}
                   className="inline-flex items-center gap-1.5 rounded-full border border-white/10 px-2.5 py-1 text-[11px] text-muted transition hover:border-danger/40 hover:text-danger disabled:cursor-not-allowed disabled:opacity-30"
                   aria-label={`Remove step ${i + 1}`}
                 >
@@ -1160,28 +1200,14 @@ export function InstallationSectionEditor({ content }: { content: InstallationCo
                   setSteps((prev) => prev.map((s) => (s.key === step.key ? { ...s, tip: v } : s)));
                 }}
               />
-              <div className="grid gap-3 sm:grid-cols-2">
-                <Label label="Step image" hint="Optional — R2 upload or paste URL">
-                  <ImageUrlField
-                    name="stepImage"
-                    defaultValue={step.image}
-                    folder="content"
-                    placeholder="/products/glass-clear.jpg"
-                  />
-                </Label>
-                <Label label="Step video" hint="Optional — YouTube link or R2 mp4/webm">
-                  <Input
-                    name="stepVideo"
-                    defaultValue={step.video}
-                    placeholder="https://www.youtube.com/watch?v=…"
-                    className="font-mono text-xs"
-                    onChange={(e) => {
-                      const v = e.target.value;
-                      setSteps((prev) => prev.map((s) => (s.key === step.key ? { ...s, video: v } : s)));
-                    }}
-                  />
-                </Label>
-              </div>
+              <Label label="Step image" hint="Optional — R2 upload or paste URL">
+                <ImageUrlField
+                  name="stepImage"
+                  defaultValue={step.image}
+                  folder="content"
+                  placeholder="/products/glass-clear.jpg"
+                />
+              </Label>
             </div>
           ))}
         </div>
@@ -1202,6 +1228,7 @@ export function InstallationSectionEditor({ content }: { content: InstallationCo
             <Plus size={14} /> Add issue
           </Button>
         </div>
+        {troubles.length === 0 ? <EmptyHint>No issues — click Add issue.</EmptyHint> : null}
         <div className="space-y-3">
           {troubles.map((t, i) => (
             <div key={t.key} className="grid gap-2 rounded-xl border border-white/[0.06] p-3">
@@ -1211,9 +1238,8 @@ export function InstallationSectionEditor({ content }: { content: InstallationCo
                 </p>
                 <button
                   type="button"
-                  disabled={troubles.length <= 1}
                   onClick={() =>
-                    setTroubles((prev) => (prev.length <= 1 ? prev : prev.filter((x) => x.key !== t.key)))
+                    setTroubles((prev) => prev.filter((x) => x.key !== t.key))
                   }
                   className="inline-flex items-center gap-1.5 rounded-full border border-white/10 px-2.5 py-1 text-[11px] text-muted transition hover:border-danger/40 hover:text-danger disabled:cursor-not-allowed disabled:opacity-30"
                   aria-label={`Remove issue ${i + 1}`}

@@ -35,22 +35,39 @@ model User {
 
 // ─── Catalog ─────────────────────────────────────────────────────────────────
 
-enum DeviceBrand {
-  APPLE
-  SAMSUNG
+model Brand {
+  id         String   @id @default(cuid())
+  /** URL segment — /shop/iphone */
+  slug       String   @unique
+  /** Stable device key — APPLE, SAMSUNG, GOOGLE */
+  code       String   @unique
+  label      String
+  /** Compact pill label — "Samsung" vs "Samsung Galaxy" */
+  shortLabel String?
+  blurb      String   @default("")
+  /** Shop-by-Device tile — camera crop / hero device photo URL */
+  image      String?
+  position   Int      @default(0)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  devices Device[]
+
+  @@index([position])
 }
 
 model Device {
-  id       String      @id @default(cuid())
-  brand    DeviceBrand
+  id       String @id @default(cuid())
+  brandId  String
+  brand    Brand  @relation(fields: [brandId], references: [id], onDelete: Restrict)
   series   String // "iPhone 17", "Galaxy S25"
   model    String // "iPhone 17 Pro Max", "Galaxy S25 Ultra"
-  slug     String      @unique
-  position Int         @default(0)
+  slug     String @unique
+  position Int    @default(0)
 
   products ProductDevice[]
 
-  @@index([brand, position])
+  @@index([brandId, position])
 }
 
 model Category {

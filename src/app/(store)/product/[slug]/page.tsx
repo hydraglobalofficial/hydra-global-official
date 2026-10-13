@@ -43,7 +43,7 @@ export default async function ProductPage({ params }: PageProps<"/product/[slug]
 
   const related = await getRelatedProducts(product);
   const specs = Object.entries((product.specs ?? {}) as Record<string, string>);
-  const brand = product.devices[0]?.device.brand === "SAMSUNG" ? "samsung" : "iphone";
+  const brand = product.devices[0]?.device.brandSlug ?? "iphone";
   const distribution = [5, 4, 3, 2, 1].map((star) => ({
     star,
     count: product.reviews.filter((r) => r.rating === star).length,

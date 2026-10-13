@@ -251,6 +251,35 @@
   border: 1px solid var(--color-line);
   background: var(--color-surface);
   box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.04);
+  color: var(--color-fg);
+}
+
+@utility admin-field {
+  border: 1px solid var(--color-line);
+  background: var(--color-surface-2);
+  color: var(--color-fg);
+}
+
+html.light .admin-card,
+html[data-theme="light"] .admin-card {
+  background: #ffffff !important;
+  border-color: rgb(0 0 0 / 0.1) !important;
+  box-shadow: 0 1px 0 rgb(0 0 0 / 0.04), 0 12px 28px -22px rgb(0 0 0 / 0.14) !important;
+  color: #0a0a0c !important;
+}
+
+html.light .admin-field,
+html[data-theme="light"] .admin-field {
+  background: #f4f4f5 !important;
+  border-color: rgb(0 0 0 / 0.12) !important;
+  color: #0a0a0c !important;
+}
+
+html.dark .admin-card,
+html[data-theme="dark"] .admin-card {
+  background: var(--color-surface) !important;
+  border-color: var(--color-line) !important;
+  color: var(--color-fg) !important;
 }
 
 /* Solid admin drawer — Tailwind arbitrary hex can fail to emit; keep opaque. */
@@ -298,12 +327,15 @@ html.light .admin-drawer-scrim {
   transition: box-shadow 0.4s ease, transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), background 0.4s ease;
 }
 
-html.light .card-premium {
+html.light .card-premium,
+html[data-theme="light"] .card-premium {
   background: #ffffff !important;
+  background-image: none !important;
   border: 1px solid rgb(0 0 0 / 0.1) !important;
   box-shadow:
     0 1px 0 rgb(0 0 0 / 0.04),
     0 14px 36px -24px rgb(0 0 0 / 0.2) !important;
+  color: #0a0a0c !important;
 }
 
 html.light .spotlight::before,
@@ -605,9 +637,14 @@ html[data-theme="light"] .install-step-active {
 }
 
 html.light .card-premium,
-html[data-theme="light"] .card-premium {
+html[data-theme="light"] .card-premium,
+html.light .spotlight.card-premium,
+html[data-theme="light"] .spotlight.card-premium {
   background: #ffffff !important;
+  background-image: none !important;
+  border: 1px solid rgb(0 0 0 / 0.1) !important;
   box-shadow: 0 1px 0 rgb(0 0 0 / 0.04), 0 12px 32px -24px rgb(0 0 0 / 0.18) !important;
+  color: #0a0a0c !important;
 }
 
 /* Legacy hard-coded hero fill (stale bundles / hard refresh) */
@@ -654,8 +691,8 @@ html[data-theme="light"] {
   --hydra-overlay: rgb(0 0 0 / 0.4);
   --hydra-glass-top: #ffffff;
   --hydra-glass-bottom: #ffffff;
-  --hydra-card-top: #ffffff;
-  --hydra-card-bottom: #ffffff;
+  --hydra-card-top: #ffffff !important;
+  --hydra-card-bottom: #ffffff !important;
   --hydra-grid: transparent;
   --hydra-dot: transparent;
   --hydra-vignette: transparent;
@@ -674,13 +711,70 @@ html[data-theme="light"] .spotlight::after {
   display: none !important;
 }
 
+/*
+  Light mode: soft cool stage + transparent `-light.png` plates (see ProductImage).
+  Glass floats on white without a hard black square.
+*/
 html.light .product-media-stage,
 html[data-theme="light"] .product-media-stage {
-  background: #f4f4f5 !important;
-  background-image: none !important;
+  isolation: isolate;
+  background:
+    radial-gradient(ellipse 80% 70% at 50% 38%, #ffffff 0%, #f7f8fa 62%, #f1f2f5 100%) !important;
+  box-shadow: inset 0 -1px 0 rgb(0 0 0 / 0.04);
+}
+html.light .product-media-stage .bg-dots,
+html.light .product-media-stage .bg-grid,
+html[data-theme="light"] .product-media-stage .bg-dots,
+html[data-theme="light"] .product-media-stage .bg-grid {
+  opacity: 0 !important;
+}
+html.light .product-media-art,
+html[data-theme="light"] .product-media-art {
+  mix-blend-mode: normal;
+  filter: drop-shadow(0 14px 22px rgb(30 58 138 / 0.1));
 }
 
 html.light .wa-glow,
 html[data-theme="light"] .wa-glow {
   opacity: 0.35 !important;
+}
+
+/*
+  Hydra crest stage — dark plate absorbs Hydra_Animation.png’s black square.
+  Light mode: charcoal well so the crest never floats as a hard black box on white.
+*/
+.hydra-crest-stage {
+  position: relative;
+  width: 100%;
+  margin-inline: auto;
+  overflow: visible;
+  border-radius: 1.75rem;
+  padding: 0.75rem;
+  background: transparent;
+}
+@media (width >= 40rem) {
+  .hydra-crest-stage {
+    border-radius: 2rem;
+    padding: 1rem;
+  }
+}
+@media (width >= 48rem) {
+  .hydra-crest-stage {
+    padding: 1.25rem;
+  }
+}
+.hydra-crest-stage {
+  isolation: isolate;
+}
+html.light .hydra-crest-stage,
+html[data-theme="light"] .hydra-crest-stage {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+/* Soft-crop the PNG’s baked-in black plate so light mode doesn’t show a hard square */
+html.light .hydra-crest-art,
+html[data-theme="light"] .hydra-crest-art {
+  -webkit-mask-image: radial-gradient(ellipse 72% 68% at 50% 46%, #000 42%, transparent 78%);
+  mask-image: radial-gradient(ellipse 72% 68% at 50% 46%, #000 42%, transparent 78%);
 }

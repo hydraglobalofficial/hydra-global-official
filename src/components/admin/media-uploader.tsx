@@ -218,7 +218,7 @@ export function ImageUrlField({
   name,
   defaultValue = "",
   folder = "content",
-  placeholder,
+  placeholder = "Upload from device → Cloudflare R2",
   required,
 }: SingleProps) {
   const autoId = useId();

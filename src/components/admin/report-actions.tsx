@@ -27,7 +27,7 @@ export function ReportActions({
       {csvHref ? (
         <a
           href={csvHref}
-          className="inline-flex items-center gap-1.5 rounded-full border border-white/12 bg-white/[0.03] px-3.5 py-2 text-sm text-muted transition-colors hover:border-white/20 hover:text-fg"
+          className="inline-flex items-center gap-1.5 rounded-full border border-line bg-surface-2 px-3.5 py-2 text-sm text-muted transition-colors hover:border-line-strong hover:text-fg"
         >
           <FileSpreadsheet size={14} />
           CSV

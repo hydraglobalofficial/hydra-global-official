@@ -42,21 +42,45 @@ export const companyInfo = {
   registeredOffice: "Level 7, Gulshan Avenue, Dhaka 1212, Bangladesh",
 } as const;
 
-export type BrandSlug = "iphone" | "samsung";
-
-export const brands: Record<BrandSlug, { label: string; enum: "APPLE" | "SAMSUNG"; blurb: string }> = {
-  iphone: {
-    label: "iPhone",
-    enum: "APPLE",
-    blurb: "Accessories cut to Apple's exact tolerances — from screen armor and cases to camera kits for iPhone 15 through the latest Pro Max.",
-  },
-  samsung: {
-    label: "Samsung Galaxy",
-    enum: "SAMSUNG",
-    blurb: "Ultrasonic-fingerprint friendly glass, cases and camera armor for Galaxy S and Z series flagships.",
-  },
+/** Public brand row — sourced from DB via getBrands(). */
+export type BrandRecord = {
+  id: string;
+  slug: string;
+  code: string;
+  label: string;
+  shortLabel: string;
+  blurb: string;
+  /** Shop-by-Device tile image (local path or CDN URL). */
+  image: string | null;
+  position: number;
 };
 
-export function isBrandSlug(value: string): value is BrandSlug {
-  return value in brands;
+/** Seed / fallback when DB is empty (migrate + seed restores these). */
+export const defaultBrandSeeds: Omit<BrandRecord, "id">[] = [
+  {
+    slug: "iphone",
+    code: "APPLE",
+    label: "iPhone",
+    shortLabel: "iPhone",
+    blurb:
+      "Accessories cut to Apple's exact tolerances — from screen armor and cases to camera kits for iPhone 15 through the latest Pro Max.",
+    image: "/brands/iphone.jpg",
+    position: 0,
+  },
+  {
+    slug: "samsung",
+    code: "SAMSUNG",
+    label: "Samsung Galaxy",
+    shortLabel: "Samsung",
+    blurb:
+      "Ultrasonic-fingerprint friendly glass, cases and camera armor for Galaxy S and Z series flagships.",
+    image: "/brands/samsung.jpg",
+    position: 1,
+  },
+];
+
+export type BrandSlug = string;
+
+export function brandDisplayName(brand: Pick<BrandRecord, "label" | "shortLabel">) {
+  return brand.shortLabel || brand.label;
 }

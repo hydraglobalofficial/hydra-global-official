@@ -4,12 +4,23 @@ import Image from "next/image";
 import Link from "next/link";
 import { NewsletterForm } from "@/components/forms/newsletter-form";
 import { SocialLinks } from "@/components/ui/social-links";
-import { footerNav } from "@/config/navigation";
-import { siteConfig } from "@/config/site";
+import { footerNav, type NavLink } from "@/config/navigation";
+import { siteConfig, type BrandRecord } from "@/config/site";
 import { Logo } from "./logo";
 
+function shopFooterLinks(brands: BrandRecord[]): NavLink[] {
+  return [
+    { label: "All Products", href: "/shop" },
+    ...brands.map((b) => ({ label: b.shortLabel || b.label, href: `/shop/${b.slug}` })),
+    { label: "Search", href: "/search" },
+  ];
+}
+
 /** Premium footer — original HYDRA wordmark (not CSS text). */
-export function SiteFooter() {
+export function SiteFooter({ brands = [] }: { brands?: BrandRecord[] }) {
+  const groups = footerNav.map((group) =>
+    group.title === "Shop" ? { ...group, links: shopFooterLinks(brands) } : group,
+  );
   return (
     <footer className="relative mt-16 overflow-hidden border-t border-line bg-bg pb-[env(safe-area-inset-bottom)] sm:mt-24 md:mt-28">
       <div aria-hidden className="divider-glow absolute inset-x-0 top-0 light:hidden" />
@@ -29,7 +40,7 @@ export function SiteFooter() {
           </div>
 
           <div className="grid grid-cols-2 gap-x-6 gap-y-8 sm:grid-cols-4 sm:gap-x-8 sm:gap-y-10">
-            {footerNav.map((group) => (
+            {groups.map((group) => (
               <div key={group.title} className="min-w-0">
                 <p className="mb-4 text-[10px] font-medium uppercase tracking-[0.2em] text-subtle sm:mb-5 sm:text-[11px] sm:tracking-[0.22em]">
                   {group.title}

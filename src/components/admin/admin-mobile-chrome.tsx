@@ -45,7 +45,7 @@ const groups: { label: string; items: NavItem[] }[] = [
     label: "Catalog",
     items: [
       { href: "/admin/products", label: "Products", icon: Package },
-      { href: "/admin/catalog", label: "Categories", icon: FolderTree },
+      { href: "/admin/catalog", label: "Brands & Devices", icon: FolderTree },
     ],
   },
   {
@@ -79,21 +79,21 @@ function MobileNavLink({
       className={cn(
         "group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium tracking-tight transition-colors",
         active
-          ? "bg-accent/[0.14] text-white shadow-[inset_0_0_0_1px_rgba(30,64,175,0.32)]"
-          : "text-zinc-400 hover:bg-white/[0.045] hover:text-zinc-100",
+          ? "bg-accent/[0.14] text-fg shadow-[inset_0_0_0_1px_rgba(30,64,175,0.32)]"
+          : "text-muted hover:bg-surface-2 hover:text-fg",
       )}
     >
       <Icon
         size={17}
         strokeWidth={active ? 2.1 : 1.7}
-        className={cn("shrink-0", active ? "text-blue-300" : "text-zinc-500")}
+        className={cn("shrink-0", active ? "text-accent" : "text-subtle")}
       />
       <span className="min-w-0 flex-1 truncate">{label}</span>
       {!!badge && (
         <span
           className={cn(
             "ml-auto grid min-w-[1.35rem] place-items-center rounded-full px-1.5 py-0.5 font-mono text-[10px] font-semibold tabular-nums",
-            active ? "bg-accent/40 text-blue-50" : "bg-white/[0.08] text-zinc-300",
+            active ? "bg-accent/40 text-fg" : "bg-surface-3 text-muted",
           )}
         >
           {badge}

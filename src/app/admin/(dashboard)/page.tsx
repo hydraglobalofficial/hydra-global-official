@@ -34,7 +34,7 @@ const launchpad: {
   { href: "/admin/orders", label: "Orders", hint: "Confirm & fulfill", icon: ShoppingCart, badgeKey: "orders" },
   { href: "/admin/products", label: "Products", hint: "Catalog & stock", icon: Package },
   { href: "/admin/products/new", label: "Add product", hint: "One-click new SKU", icon: PackagePlus },
-  { href: "/admin/catalog", label: "Categories", hint: "Devices & taxonomy", icon: FolderTree },
+  { href: "/admin/catalog", label: "Brands & Devices", hint: "Brands, devices & taxonomy", icon: FolderTree },
   { href: "/admin/inquiries", label: "Inquiries", hint: "Customer inbox", icon: Inbox, badgeKey: "inquiries" },
   { href: "/admin/reviews", label: "Reviews", hint: "Moderate feedback", icon: Star, badgeKey: "reviews" },
   { href: "/admin/collections", label: "Collections", hint: "Home bento · 5 cards", icon: LayoutGrid },

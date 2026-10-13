@@ -1,18 +1,17 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { createPortal } from "react-dom";
 import Image from "next/image";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import {
   CheckCircle2,
   ChevronDown,
+  ChevronLeft,
+  ChevronRight,
   Clock,
   Lightbulb,
   Package,
-  Play,
   Smartphone,
-  X,
 } from "lucide-react";
 import type { InstallationContent } from "@/content/installation";
 import { ButtonLink } from "@/components/ui/button";
@@ -30,32 +29,37 @@ function youtubeId(url: string): string | null {
   }
 }
 
+/** Google Drive share / open / preview → file id */
+function googleDriveId(url: string): string | null {
+  try {
+    const u = new URL(url);
+    const host = u.hostname.toLowerCase();
+    if (host !== "drive.google.com" && host !== "docs.google.com") return null;
+    const fromPath = u.pathname.match(/\/file\/d\/([^/]+)/);
+    if (fromPath?.[1]) return fromPath[1];
+    const id = u.searchParams.get("id");
+    return id || null;
+  } catch {
+    return null;
+  }
+}
+
 function isDirectVideo(url: string) {
   return /\.(mp4|webm|ogg)(\?|$)/i.test(url);
 }
 
-function youtubePoster(url: string) {
-  const id = youtubeId(url);
-  return id ? `https://i.ytimg.com/vi/${id}/hqdefault.jpg` : "";
-}
-
-function InstallVideo({
-  url,
-  title = "HYDRA installation",
-}: {
-  url: string;
-  title?: string;
-}) {
+/** Inline player — YouTube, Google Drive, or direct mp4/webm. */
+function InlineInstallVideo({ url, title = "HYDRA installation" }: { url: string; title?: string }) {
   const yt = youtubeId(url);
+  const drive = googleDriveId(url);
+
   if (yt) {
     const params = new URLSearchParams({
-      autoplay: "1",
       rel: "0",
       modestbranding: "1",
       playsinline: "1",
       iv_load_policy: "3",
       controls: "1",
-      disablekb: "0",
       fs: "1",
     });
     return (
@@ -63,101 +67,63 @@ function InstallVideo({
         title={title}
         src={`https://www.youtube-nocookie.com/embed/${yt}?${params.toString()}`}
         className="absolute inset-0 size-full"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
         allowFullScreen
+        loading="lazy"
       />
     );
   }
+
+  if (drive) {
+    return (
+      <iframe
+        title={title}
+        src={`https://drive.google.com/file/d/${drive}/preview`}
+        className="absolute inset-0 size-full"
+        allow="autoplay; encrypted-media; picture-in-picture"
+        allowFullScreen
+        loading="lazy"
+      />
+    );
+  }
+
   if (isDirectVideo(url)) {
     return (
-      <video controls playsInline autoPlay preload="metadata" className="absolute inset-0 size-full object-cover" src={url}>
+      <video
+        controls
+        playsInline
+        preload="metadata"
+        className="absolute inset-0 size-full object-contain bg-black"
+        src={url}
+      >
         <track kind="captions" />
       </video>
     );
   }
+
   return null;
 }
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
-/** Clean fullscreen-ish player — YouTube never sits bare on the page. */
-function VideoLightbox({
-  url,
-  title,
-  onClose,
-}: {
-  url: string;
-  title: string;
-  onClose: () => void;
-}) {
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    window.addEventListener("keydown", onKey);
-    return () => {
-      document.body.style.overflow = prev;
-      window.removeEventListener("keydown", onKey);
-    };
-  }, [onClose]);
-
-  if (!mounted) return null;
-
-  return createPortal(
-    <motion.div
-      role="dialog"
-      aria-modal
-      aria-label={title}
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="fixed inset-0 z-[80] flex items-center justify-center bg-black/85 p-4 backdrop-blur-md sm:p-8"
-      onClick={onClose}
-    >
-      <motion.div
-        initial={{ opacity: 0, y: 18, scale: 0.98 }}
-        animate={{ opacity: 1, y: 0, scale: 1 }}
-        exit={{ opacity: 0, y: 12, scale: 0.98 }}
-        transition={{ duration: 0.35, ease }}
-        className="relative w-full max-w-4xl overflow-hidden rounded-2xl border border-white/12 bg-black shadow-[0_40px_120px_-20px_rgba(0,0,0,0.9)]"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="flex items-center justify-between gap-3 border-b border-white/10 px-4 py-3">
-          <p className="truncate font-mono text-[10px] uppercase tracking-[0.2em] text-zinc-400">{title}</p>
-          <button
-            type="button"
-            onClick={onClose}
-            className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-xs text-zinc-200 transition hover:bg-white/10 hover:text-white"
-          >
-            <X size={14} /> Close
-          </button>
-        </div>
-        <div className="relative aspect-video bg-black">
-          <InstallVideo url={url} title={title} />
-        </div>
-      </motion.div>
-    </motion.div>,
-    document.body,
-  );
-}
-
-/**
- * Step visual = product still only. Video lives in the section below.
- */
 function StepStage({
   stepIndex,
+  total,
   image,
   reduce,
+  onPrev,
+  onNext,
 }: {
   stepIndex: number;
+  total: number;
   image?: string;
   reduce: boolean | null;
+  onPrev: () => void;
+  onNext: () => void;
 }) {
+  const atStart = stepIndex <= 0;
+  const atEnd = stepIndex >= total - 1;
+
   return (
     <motion.div
       initial={reduce ? false : { opacity: 0, scale: 1.04 }}
@@ -165,7 +131,6 @@ function StepStage({
       transition={{ duration: 0.55, ease }}
       className="install-media-card relative aspect-[4/5] overflow-hidden rounded-[1.6rem] border border-line bg-[#07070a] shadow-none md:aspect-[5/6] lg:min-h-[26rem] lg:aspect-auto"
     >
-
       {image ? (
         <Image
           src={image}
@@ -183,162 +148,82 @@ function StepStage({
         </div>
       )}
 
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-black/70 to-transparent" />
-      <div className="absolute bottom-4 left-4 right-4 flex items-end justify-between gap-3">
-        <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-zinc-300">
-          Step {String(stepIndex + 1).padStart(2, "0")}
-        </span>
-        <span className="rounded-full border border-white/10 bg-black/40 px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.16em] text-zinc-400 backdrop-blur">
-          Visual
-        </span>
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-black/55 to-transparent" />
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-black/50 to-transparent" />
+
+      {/* Top bar on the image: back · counter · forward */}
+      <div
+        className="absolute inset-x-3 top-3 z-10 flex items-center justify-between gap-2 sm:inset-x-4 sm:top-4"
+        role="group"
+        aria-label="Step navigation"
+      >
+        <button
+          type="button"
+          onClick={onPrev}
+          disabled={atStart}
+          aria-label="Previous step"
+          className={cn(
+            "grid size-11 shrink-0 place-items-center rounded-full border border-white/20 bg-black/55 text-white backdrop-blur-md transition",
+            "hover:bg-black/75 hover:border-white/35",
+            "disabled:cursor-not-allowed disabled:opacity-35",
+          )}
+        >
+          <ChevronLeft size={20} strokeWidth={2.25} />
+        </button>
+
+        <p className="rounded-full border border-white/15 bg-black/55 px-3.5 py-2 font-mono text-[11px] tabular-nums tracking-[0.16em] text-white backdrop-blur-md sm:px-4 sm:text-[12px]">
+          {String(stepIndex + 1).padStart(2, "0")}
+          <span className="mx-1.5 text-white/45">/</span>
+          {String(total).padStart(2, "0")}
+        </p>
+
+        <button
+          type="button"
+          onClick={onNext}
+          disabled={atEnd}
+          aria-label="Next step"
+          className={cn(
+            "grid size-11 shrink-0 place-items-center rounded-full border border-white/20 bg-black/55 text-white backdrop-blur-md transition",
+            "hover:bg-black/75 hover:border-white/35",
+            "disabled:cursor-not-allowed disabled:opacity-35",
+          )}
+        >
+          <ChevronRight size={20} strokeWidth={2.25} />
+        </button>
       </div>
     </motion.div>
   );
 }
 
-/** Wide cinematic video strip — sits under the step card, never on the image. */
-function StepVideoSection({
-  stepIndex,
-  stepTitle,
-  video,
-  fallbackVideo,
-  reduce,
-}: {
-  stepIndex: number;
-  stepTitle: string;
-  video?: string;
-  fallbackVideo?: string;
-  reduce: boolean | null;
-}) {
-  const [playing, setPlaying] = useState(false);
-  const url = (video?.trim() || fallbackVideo?.trim() || "");
-  const hasVideo = Boolean(url);
-  const isStepVideo = Boolean(video?.trim());
-  const poster = hasVideo ? youtubePoster(url) : "";
-
-  useEffect(() => {
-    setPlaying(false);
-  }, [stepIndex, url]);
-
+/** Single walkthrough at the bottom — YouTube / Drive / mp4, plays inline. */
+function WalkthroughPlayer({ url, reduce }: { url: string; reduce: boolean | null }) {
   return (
-    <>
-      <motion.div
-        key={`video-${stepIndex}-${url || "empty"}`}
-        initial={reduce ? false : { opacity: 0, y: 22 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.55, ease }}
-        className="install-media-card relative overflow-hidden rounded-[1.75rem] border border-line bg-[#05070e] shadow-none"
-      >
+    <motion.section
+      initial={reduce ? false : { opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.25 }}
+      transition={{ duration: 0.55, ease }}
+      className="container-page pb-14 md:pb-16"
+      aria-label="Installation walkthrough video"
+    >
+      <div className="mx-auto w-full max-w-xl sm:max-w-2xl">
+        <div className="mb-3 flex flex-wrap items-end justify-between gap-2 px-0.5">
+          <div>
+            <p className="font-mono text-[10px] uppercase tracking-[0.28em] text-muted">Watch once</p>
+            <h2 className="mt-1 text-base font-semibold tracking-tight sm:text-lg">Full installation walkthrough</h2>
+          </div>
+          <p className="max-w-[14rem] text-right text-xs leading-relaxed text-muted sm:max-w-xs sm:text-sm">
+            Same kit. Same ritual. Play it right here.
+          </p>
+        </div>
 
-        <div className="relative grid items-stretch gap-0 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)]">
-          {hasVideo ? (
-            <button
-              type="button"
-              onClick={() => setPlaying(true)}
-              className="group relative aspect-video w-full overflow-hidden"
-              aria-label={`Watch video for ${stepTitle}`}
-            >
-              {poster ? (
-                <img
-                  src={poster}
-                  alt=""
-                  className="absolute inset-0 size-full object-cover opacity-75 transition duration-700 group-hover:scale-[1.04] group-hover:opacity-90"
-                />
-              ) : (
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_40%_40%,#1a2744_0%,#050506_70%)]" />
-              )}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/25 to-black/20" />
-              <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
-                <span className="relative grid size-[4.5rem] place-items-center rounded-full border border-white/30 bg-black/55 text-white backdrop-blur-md transition group-hover:scale-105">
-                  <Play size={28} className="relative ml-1 fill-current" />
-                </span>
-                <span className="font-mono text-[10px] uppercase tracking-[0.28em] text-blue-100/90">
-                  Watch video
-                </span>
-              </div>
-            </button>
-          ) : (
-            <div className="relative aspect-video w-full overflow-hidden">
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_40%_40%,#152038_0%,#050506_72%)]" />
-              <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
-                <span className="grid size-[4.5rem] place-items-center rounded-full border border-white/15 bg-white/5 text-zinc-400 backdrop-blur-md">
-                  <Play size={28} className="ml-1 fill-current opacity-60" />
-                </span>
-                <span className="font-mono text-[10px] uppercase tracking-[0.28em] text-zinc-500">
-                  Video soon
-                </span>
-              </div>
-            </div>
-          )}
-
-          <div className="relative flex flex-col justify-center gap-4 border-t border-white/[0.06] p-6 sm:p-8 lg:border-l lg:border-t-0 lg:p-10">
-            <p className="font-mono text-[10px] uppercase tracking-[0.28em] text-accent">
-              Step {String(stepIndex + 1).padStart(2, "0")} ·{" "}
-              {isStepVideo ? "Video guide" : hasVideo ? "Full walkthrough" : "Video"}
-            </p>
-            <h3 className="text-xl font-semibold tracking-tight text-balance md:text-2xl">{stepTitle}</h3>
-            <p className="text-sm leading-relaxed text-muted">
-              {hasVideo
-                ? "See this moment in motion — opens cleanly over the page, then you\u2019re back on HYDRA."
-                : "A short clip for this step will live here — same clean player, no clutter on the visual above."}
-            </p>
-            {hasVideo ? (
-              <button
-                type="button"
-                onClick={() => setPlaying(true)}
-                className="mt-1 inline-flex w-fit items-center gap-2 rounded-full bg-fg px-5 py-2.5 text-sm font-medium text-bg transition hover:opacity-90"
-              >
-                <Play size={14} className="fill-current" /> Play step video
-              </button>
-            ) : null}
+        <div className="install-media-card overflow-hidden rounded-2xl border border-line bg-black shadow-none sm:rounded-[1.25rem]">
+          <div className="relative aspect-video w-full bg-black">
+            <InlineInstallVideo url={url} title="HYDRA installation walkthrough" />
           </div>
         </div>
-      </motion.div>
-
-      {playing && hasVideo ? (
-        <VideoLightbox
-          url={url}
-          title={`Step ${String(stepIndex + 1).padStart(2, "0")} · ${stepTitle}`}
-          onClose={() => setPlaying(false)}
-        />
-      ) : null}
-    </>
-  );
-}
-
-function HeroVideoPlaceholder({ url, reduce }: { url: string; reduce: boolean | null }) {
-  const [playing, setPlaying] = useState(false);
-  const poster = youtubePoster(url);
-
-  return (
-    <>
-      <motion.button
-        type="button"
-        onClick={() => setPlaying(true)}
-        initial={reduce ? false : { opacity: 0, y: 24 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, ease, delay: 0.08 }}
-        className="install-media-card group relative mx-auto mt-12 block w-full max-w-4xl overflow-hidden rounded-[1.75rem] border border-line bg-black text-left shadow-none"
-      >
-        <div className="relative aspect-video">
-          {poster ? (
-            <img src={poster} alt="" className="absolute inset-0 size-full object-cover opacity-60" />
-          ) : (
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_40%,#152038_0%,#050506_70%)]" />
-          )}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/40" />
-          <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
-            <span className="grid size-16 place-items-center rounded-full border border-white/20 bg-white/10 text-white backdrop-blur-md transition group-hover:scale-105">
-              <Play size={24} className="ml-0.5 fill-current" />
-            </span>
-            <span className="font-mono text-[10px] uppercase tracking-[0.24em] text-blue-100">Full walkthrough</span>
-          </div>
-        </div>
-      </motion.button>
-      {playing ? (
-        <VideoLightbox url={url} title="Installation walkthrough" onClose={() => setPlaying(false)} />
-      ) : null}
-    </>
+      </div>
+    </motion.section>
   );
 }
 
@@ -346,7 +231,7 @@ export function InstallExperience({ content }: { content: InstallationContent })
   const reduce = useReducedMotion();
   const [active, setActive] = useState(0);
   const step = content.steps[active] ?? content.steps[0];
-  const hasHeroVideo = Boolean(content.videoUrl);
+  const walkthroughUrl = content.videoUrl?.trim() || "";
 
   const progress = useMemo(
     () => ((active + 1) / Math.max(content.steps.length, 1)) * 100,
@@ -396,11 +281,9 @@ export function InstallExperience({ content }: { content: InstallationContent })
             </span>
           </div>
         </motion.div>
-
-        {hasHeroVideo ? <HeroVideoPlaceholder url={content.videoUrl} reduce={reduce} /> : null}
       </section>
 
-      <section className="container-page relative pb-20">
+      <section className="container-page relative pb-16 md:pb-20">
         <div className="mb-8 h-1 w-full overflow-hidden rounded-full bg-line">
           <motion.div
             className="h-full rounded-full bg-fg light:bg-fg"
@@ -451,7 +334,7 @@ export function InstallExperience({ content }: { content: InstallationContent })
             </ol>
           </nav>
 
-          <div className="space-y-6">
+          <div>
             <AnimatePresence mode="wait">
               <motion.article
                 key={active}
@@ -476,45 +359,28 @@ export function InstallExperience({ content }: { content: InstallationContent })
                     </p>
                   ) : null}
 
-                  <div className="mt-8 flex flex-wrap gap-2">
-                    <button
-                      type="button"
-                      disabled={active === 0}
-                      onClick={() => setActive((i) => Math.max(0, i - 1))}
-                      className="rounded-full border border-line px-4 py-2 text-sm text-muted transition hover:text-fg disabled:opacity-30"
-                    >
-                      Previous
-                    </button>
-                    {active < content.steps.length - 1 ? (
-                      <button
-                        type="button"
-                        onClick={() => setActive((i) => Math.min(content.steps.length - 1, i + 1))}
-                        className="rounded-full bg-fg px-5 py-2 text-sm font-medium text-bg transition hover:opacity-90"
-                      >
-                        Next step
-                      </button>
-                    ) : (
-                      <span className="inline-flex items-center gap-2 rounded-full bg-success/15 px-4 py-2 text-sm text-success">
-                        <CheckCircle2 size={16} /> Done — enjoy your armor
-                      </span>
-                    )}
-                  </div>
+                  {active >= content.steps.length - 1 ? (
+                    <p className="mt-8 inline-flex items-center gap-2 text-sm text-success">
+                      <CheckCircle2 size={16} /> Done — enjoy your armor
+                    </p>
+                  ) : null}
                 </div>
 
-                <StepStage stepIndex={active} image={step.image} reduce={reduce} />
+                <StepStage
+                  stepIndex={active}
+                  total={content.steps.length}
+                  image={step.image}
+                  reduce={reduce}
+                  onPrev={() => setActive((i) => Math.max(0, i - 1))}
+                  onNext={() => setActive((i) => Math.min(content.steps.length - 1, i + 1))}
+                />
               </motion.article>
             </AnimatePresence>
-
-            <StepVideoSection
-              stepIndex={active}
-              stepTitle={step.title}
-              video={step.video}
-              fallbackVideo={content.videoUrl}
-              reduce={reduce}
-            />
           </div>
         </div>
       </section>
+
+      {walkthroughUrl ? <WalkthroughPlayer url={walkthroughUrl} reduce={reduce} /> : null}
 
       <section className="container-page grid gap-6 pb-24 lg:grid-cols-2">
         <div className="rounded-[1.5rem] border border-line bg-bg p-6 md:p-8">

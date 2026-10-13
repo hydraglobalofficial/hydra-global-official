@@ -182,12 +182,15 @@ export default async function AboutPage() {
               const index = String(i + 1).padStart(2, "0");
               return (
                 <RevealItem key={d.title} className="h-full">
-                  <SpotlightCard className="group h-full">
+                  <SpotlightCard className="group h-full overflow-hidden">
                     <Link href={d.href} className="relative flex h-full flex-col overflow-hidden p-7 md:p-8">
-                      <div className="pointer-events-none absolute -right-8 -top-8 font-mono text-7xl font-semibold text-fg/[0.04] transition-colors group-hover:text-fg/[0.08]">
+                      <div
+                        aria-hidden
+                        className="pointer-events-none absolute bottom-5 right-5 select-none font-mono text-5xl font-semibold leading-none text-fg/[0.05] transition-colors group-hover:text-fg/[0.08] sm:bottom-6 sm:right-6 sm:text-6xl"
+                      >
                         {index}
                       </div>
-                      <div className="relative flex items-start justify-between">
+                      <div className="relative z-[1] flex items-start justify-between">
                         <div className="grid size-12 place-items-center rounded-2xl border border-line-strong bg-surface-3 text-fg transition-transform duration-500 group-hover:scale-105">
                           <Icon size={22} strokeWidth={1.6} />
                         </div>

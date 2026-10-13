@@ -6,6 +6,7 @@ import { AdminCacheBadge } from "@/components/admin/cache-status";
 import { AdminMobileChrome } from "@/components/admin/admin-mobile-chrome";
 import { AdminNav } from "@/components/admin/admin-nav";
 import { AdminRoutePrefetch } from "@/components/admin/admin-prefetch";
+import { LogoMark } from "@/components/layout/logo";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
 import { getAdminCacheStatus } from "@/lib/admin-cache";
 import { requireAdmin } from "@/lib/auth/session";
@@ -20,12 +21,10 @@ export const metadata: Metadata = {
 function AdminBrand() {
   return (
     <Link href="/admin" prefetch className="inline-flex min-w-0 items-center gap-2.5" aria-label="HYDRA Admin">
-      <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-accent/20 font-mono text-[11px] font-bold tracking-wider text-blue-100 ring-1 ring-accent/30">
-        H
-      </span>
+      <LogoMark className="size-9 rounded-lg ring-1 ring-line sm:size-9 md:size-9" sizes="36px" priority />
       <span className="min-w-0">
         <span className="block text-[15px] font-semibold tracking-tight text-fg">HYDRA</span>
-        <span className="block text-[10px] uppercase tracking-[0.18em] text-zinc-500">Admin</span>
+        <span className="block text-[10px] uppercase tracking-[0.18em] text-subtle">Admin</span>
       </span>
     </Link>
   );
@@ -41,18 +40,18 @@ function UserChip({
   role: string;
 }) {
   return (
-    <div className="flex items-center gap-3 rounded-xl border border-white/[0.06] bg-white/[0.03] p-2 pl-2.5">
-      <div className="grid size-8 shrink-0 place-items-center rounded-lg bg-accent/20 font-mono text-[11px] font-semibold tracking-wide text-blue-100">
+    <div className="flex items-center gap-3 rounded-xl border border-line bg-surface-2 p-2 pl-2.5">
+      <div className="grid size-8 shrink-0 place-items-center rounded-lg bg-accent/20 font-mono text-[11px] font-semibold tracking-wide text-accent">
         {initials || "AD"}
       </div>
       <div className="min-w-0 flex-1">
-        <p className="truncate text-[13px] font-medium text-zinc-100">{name}</p>
-        <p className="truncate text-[11px] capitalize text-zinc-500">{role.toLowerCase()}</p>
+        <p className="truncate text-[13px] font-medium text-fg">{name}</p>
+        <p className="truncate text-[11px] capitalize text-subtle">{role.toLowerCase()}</p>
       </div>
       <form action={logout}>
         <button
           type="submit"
-          className="grid size-8 shrink-0 place-items-center rounded-lg text-zinc-500 transition-colors hover:bg-white/[0.06] hover:text-zinc-200"
+          className="grid size-8 shrink-0 place-items-center rounded-lg text-subtle transition-colors hover:bg-surface-3 hover:text-fg"
           aria-label="Sign out"
         >
           <LogOut size={15} />
@@ -89,9 +88,9 @@ async function AdminNavData({
 
 function AttentionLabel({ attention }: { attention: number }) {
   return attention > 0 ? (
-    <span className="text-amber-300/90">{attention} need attention</span>
+    <span className="text-warning">{attention} need attention</span>
   ) : (
-    <span className="text-emerald-300/85">All clear</span>
+    <span className="text-success">All clear</span>
   );
 }
 
@@ -165,7 +164,7 @@ export default async function AdminLayout({ children }: LayoutProps<"/admin">) {
               {({ badges, attention, cacheStatus }) => (
                 <>
                   <div className="mt-3 flex items-center justify-between gap-2 px-4">
-                    <p className="min-w-0 truncate text-[11px] text-zinc-500">
+                    <p className="min-w-0 truncate text-[11px] text-subtle">
                       <AttentionLabel attention={attention} />
                     </p>
                     <AdminCacheBadge status={cacheStatus} />

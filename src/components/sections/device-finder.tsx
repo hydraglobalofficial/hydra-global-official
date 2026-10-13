@@ -6,28 +6,37 @@ import { useRouter } from "next/navigation";
 import { ArrowRight, ArrowUpRight, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import type { BrandRecord } from "@/config/site";
 import type { DeviceOption } from "@/server/queries/catalog";
 
-const brandOptions = [
-  { value: "APPLE", label: "iPhone", slug: "iphone" },
-  { value: "SAMSUNG", label: "Samsung", slug: "samsung" },
-] as const;
-
-export function DeviceFinder({ devices }: { devices: DeviceOption[] }) {
+export function DeviceFinder({
+  devices,
+  brands,
+}: {
+  devices: DeviceOption[];
+  brands: BrandRecord[];
+}) {
   const router = useRouter();
-  const [brand, setBrand] = useState<(typeof brandOptions)[number]["value"] | null>(null);
+  const [brandCode, setBrandCode] = useState<string | null>(null);
   const [device, setDevice] = useState<string>("");
 
-  const models = useMemo(() => devices.filter((d) => d.brand === brand), [devices, brand]);
-  const brandSlug = brandOptions.find((b) => b.value === brand)?.slug;
-  const popular = useMemo(
-    () => [...devices.filter((d) => d.brand === "APPLE").slice(0, 2), ...devices.filter((d) => d.brand === "SAMSUNG").slice(0, 2)],
-    [devices],
+  const activeBrand = brands.find((b) => b.code === brandCode) ?? null;
+  const models = useMemo(
+    () => devices.filter((d) => d.brand === brandCode),
+    [devices, brandCode],
   );
+  const popular = useMemo(() => {
+    const picked: DeviceOption[] = [];
+    for (const brand of brands) {
+      picked.push(...devices.filter((d) => d.brand === brand.code).slice(0, 2));
+      if (picked.length >= 4) break;
+    }
+    return picked.slice(0, 4);
+  }, [devices, brands]);
 
   function find() {
-    if (!brandSlug) return;
-    router.push(device ? `/shop/${brandSlug}?device=${device}` : `/shop/${brandSlug}`);
+    if (!activeBrand) return;
+    router.push(device ? `/shop/${activeBrand.slug}?device=${device}` : `/shop/${activeBrand.slug}`);
   }
 
   return (
@@ -42,22 +51,22 @@ export function DeviceFinder({ devices }: { devices: DeviceOption[] }) {
         <div className="grid gap-4 md:grid-cols-[auto_1fr_auto] md:items-end">
           <div className="space-y-2">
             <span className="block font-mono text-[10px] uppercase tracking-[0.2em] text-subtle">01 · Brand</span>
-            <div className="flex gap-2">
-              {brandOptions.map((b) => (
+            <div className="flex flex-wrap gap-2">
+              {brands.map((b) => (
                 <button
-                  key={b.value}
+                  key={b.id}
                   type="button"
                   onClick={() => {
-                    setBrand(b.value);
+                    setBrandCode(b.code);
                     setDevice("");
                   }}
-                  aria-pressed={brand === b.value}
+                  aria-pressed={brandCode === b.code}
                   className={cn(
-                    "min-h-12 flex-1 rounded-xl border px-4 text-sm transition-all sm:flex-none sm:px-5",
-                    brand === b.value ? "border-accent bg-accent/10 text-fg" : "border-line bg-surface-2 text-muted hover:text-fg",
+                    "min-h-12 rounded-xl border px-4 text-sm transition-all sm:px-5",
+                    brandCode === b.code ? "border-accent bg-accent/10 text-fg" : "border-line bg-surface-2 text-muted hover:text-fg",
                   )}
                 >
-                  {b.label}
+                  {b.shortLabel || b.label}
                 </button>
               ))}
             </div>
@@ -67,10 +76,10 @@ export function DeviceFinder({ devices }: { devices: DeviceOption[] }) {
             <select
               value={device}
               onChange={(e) => setDevice(e.target.value)}
-              disabled={!brand}
+              disabled={!brandCode}
               className="h-12 w-full rounded-xl border border-line bg-surface-2 px-4 text-sm text-fg disabled:opacity-40 focus:border-accent/60 focus:outline-none"
             >
-              <option value="">{brand ? "All models" : "Select a brand first"}</option>
+              <option value="">{brandCode ? "All models" : "Select a brand first"}</option>
               {models.map((m) => (
                 <option key={m.slug} value={m.slug}>
                   {m.model}
@@ -78,7 +87,7 @@ export function DeviceFinder({ devices }: { devices: DeviceOption[] }) {
               ))}
             </select>
           </label>
-          <Button size="lg" onClick={find} disabled={!brand} className="h-12 w-full md:w-auto">
+          <Button size="lg" onClick={find} disabled={!brandCode} className="h-12 w-full md:w-auto">
             <Search size={16} /> Find <ArrowRight size={16} className="hidden md:block" />
           </Button>
           {popular.length > 0 && (
@@ -87,7 +96,7 @@ export function DeviceFinder({ devices }: { devices: DeviceOption[] }) {
               {popular.map((d) => (
                 <Link
                   key={d.slug}
-                  href={`/shop/${d.brand === "APPLE" ? "iphone" : "samsung"}?device=${d.slug}`}
+                  href={`/shop/${d.brandSlug}?device=${d.slug}`}
                   className="group inline-flex items-center gap-1 rounded-full border border-line bg-white/[0.03] px-3 py-1.5 text-xs text-muted transition-all hover:border-accent/40 hover:bg-accent/10 hover:text-fg"
                 >
                   {d.model}

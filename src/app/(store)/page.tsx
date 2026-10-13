@@ -47,10 +47,10 @@ export default async function HomePage() {
       <HydraRise />
 
       <Reveal className="container-page pt-16">
-        <DeviceFinder devices={nav.devices} />
+        <DeviceFinder devices={nav.devices} brands={nav.brands} />
       </Reveal>
 
-      <ShopByDevice devices={nav.devices} />
+      <ShopByDevice devices={nav.devices} brands={nav.brands} />
       <SectionDivider />
       <CollectionBento content={collectionsContent} />
 

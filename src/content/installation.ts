@@ -4,7 +4,7 @@ export type InstallStep = {
   tip?: string;
   /** Optional still — /public path or Cloudflare R2 URL */
   image?: string;
-  /** Optional YouTube or direct mp4/webm for this step */
+  /** @deprecated Per-step videos removed — use InstallationContent.videoUrl only */
   video?: string;
 };
 
@@ -17,7 +17,7 @@ export type InstallationContent = {
   titleAccent: string;
   intro: string;
   duration: string;
-  /** YouTube URL / watch ID, or direct mp4/webm (e.g. R2 public URL) */
+  /** Single walkthrough at page bottom — YouTube, Google Drive, or mp4/webm (plays inline) */
   videoUrl: string;
   kit: string[];
   steps: InstallStep[];
@@ -32,7 +32,7 @@ export const defaultInstallationContent: InstallationContent = {
   intro:
     "One alignment-frame kit. One clean-room ritual. The same bubble-free install whether you wear iPhone or Galaxy — watch the guide, then follow each step.",
   duration: "2–3 minutes",
-  videoUrl: "",
+  videoUrl: "/brand/hydra-animation.mp4",
   brandsNote: "Same process for Apple & Samsung",
   kit: [
     "HYDRA glass",

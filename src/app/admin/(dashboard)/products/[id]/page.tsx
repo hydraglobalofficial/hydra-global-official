@@ -13,12 +13,21 @@ export const metadata = { title: "Edit product" };
 export default async function EditProductPage({ params }: PageProps<"/admin/products/[id]">) {
   const session = await requireAdmin();
   const { id } = await params;
-  const [product, categories, devices] = await Promise.all([
+  const [product, categories, brands, devices] = await Promise.all([
     db.product.findUnique({ where: { id }, include: { devices: true, images: { orderBy: { position: "asc" } } } }),
     db.category.findMany({ select: { id: true, name: true }, orderBy: { position: "asc" } }),
+    db.brand.findMany({
+      select: { code: true, label: true, shortLabel: true },
+      orderBy: [{ position: "asc" }, { label: "asc" }],
+    }),
     db.device.findMany({
-      select: { id: true, model: true, brand: true, series: true },
-      orderBy: [{ brand: "asc" }, { position: "asc" }],
+      select: {
+        id: true,
+        model: true,
+        series: true,
+        brand: { select: { code: true } },
+      },
+      orderBy: [{ brand: { position: "asc" } }, { position: "asc" }],
     }),
   ]);
   if (!product) notFound();
@@ -44,7 +53,13 @@ export default async function EditProductPage({ params }: PageProps<"/admin/prod
       />
       <ProductForm
         categories={categories}
-        devices={devices}
+        brands={brands}
+        devices={devices.map((d) => ({
+          id: d.id,
+          model: d.model,
+          series: d.series,
+          brand: d.brand.code,
+        }))}
         initial={{
           id: product.id,
           name: product.name,

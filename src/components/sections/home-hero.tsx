@@ -12,7 +12,7 @@ import { cn } from "@/lib/utils";
 import { PhoneVisual } from "./phone-visual";
 import { GlassLiftVisual, PrivacyVisual } from "./hero-visuals";
 
-const SLIDE_MS = 7000;
+const SLIDE_MS = 5500;
 const ease = [0.22, 1, 0.36, 1] as const;
 
 const container: Variants = {
@@ -73,92 +73,98 @@ function Stage({ children }: { children: React.ReactNode }) {
   );
 }
 
-/** Classic carousel strip — sits tight under the phone stage. */
+/** Compact progress dots under the phone — arrows live on the sides. */
 function HeroStagePager({
   index,
   total,
   paused,
   labels,
-  onPrev,
-  onNext,
   onSelect,
 }: {
   index: number;
   total: number;
   paused: boolean;
   labels: string[];
-  onPrev: () => void;
-  onNext: () => void;
   onSelect: (i: number) => void;
 }) {
   return (
-    <div className="pointer-events-auto w-[min(100%,20rem)]">
-      <div className="flex items-center gap-2">
-        <button
-          type="button"
-          onClick={onPrev}
-          aria-label="Previous slide"
-          className="grid size-11 shrink-0 place-items-center rounded-full border border-line-strong bg-bg/70 text-fg shadow-[0_10px_30px_-12px_rgba(0,0,0,0.8)] backdrop-blur-md transition-colors hover:border-accent/50 hover:bg-surface"
-        >
-          <ChevronLeft size={18} />
-        </button>
-
-        <div className="min-w-0 flex-1 rounded-full border border-line bg-bg/70 px-3 py-2.5 shadow-[0_14px_40px_-18px_rgba(0,0,0,0.85)] backdrop-blur-md">
-          <div className="flex items-center justify-center gap-2">
-            {Array.from({ length: total }, (_, i) => {
-              const active = i === index;
-              return (
-                <button
-                  key={i}
-                  type="button"
-                  onClick={() => onSelect(i)}
-                  aria-label={labels[i] ? `Go to ${labels[i]}` : `Go to slide ${i + 1}`}
-                  aria-current={active ? "true" : undefined}
-                  className={cn(
-                    "relative overflow-hidden rounded-full transition-all duration-300",
-                    active
-                      ? "h-2.5 w-10 bg-fg/15"
-                      : "size-2.5 bg-fg/30 hover:bg-fg/55",
-                  )}
-                >
-                  {active && (
-                    <span
-                      key={`${index}-${paused ? "p" : "r"}`}
-                      className={cn(
-                        "absolute inset-y-0 left-0 origin-left rounded-full bg-accent",
-                        paused ? "w-full" : "animate-hero-rail w-full",
-                      )}
-                      style={paused ? undefined : { animationDuration: `${SLIDE_MS}ms` }}
-                    />
-                  )}
-                </button>
-              );
-            })}
-          </div>
-          <p className="mt-1.5 text-center font-mono text-[10px] tabular-nums tracking-[0.2em] text-muted">
-            <span className="text-fg">{String(index + 1).padStart(2, "0")}</span>
-            <span className="mx-1 text-fg/25">/</span>
-            {String(total).padStart(2, "0")}
-          </p>
+    <div className="pointer-events-auto w-[min(100%,14rem)]">
+      <div className="rounded-full border border-line bg-bg/75 px-3 py-2 shadow-[0_14px_40px_-18px_rgba(0,0,0,0.55)] backdrop-blur-md light:bg-white/90 light:shadow-[0_10px_28px_-16px_rgba(0,0,0,0.16)]">
+        <div className="flex items-center justify-center gap-2">
+          {Array.from({ length: total }, (_, i) => {
+            const active = i === index;
+            return (
+              <button
+                key={i}
+                type="button"
+                onClick={() => onSelect(i)}
+                aria-label={labels[i] ? `Go to ${labels[i]}` : `Go to slide ${i + 1}`}
+                aria-current={active ? "true" : undefined}
+                className={cn(
+                  "relative overflow-hidden rounded-full transition-all duration-300",
+                  active ? "h-2 w-9 bg-fg/15" : "size-2 bg-fg/30 hover:bg-fg/55",
+                )}
+              >
+                {active && (
+                  <span
+                    key={`${index}-${paused ? "p" : "r"}`}
+                    className={cn(
+                      "absolute inset-y-0 left-0 origin-left rounded-full bg-accent",
+                      paused ? "w-full" : "animate-hero-rail w-full",
+                    )}
+                    style={paused ? undefined : { animationDuration: `${SLIDE_MS}ms` }}
+                  />
+                )}
+              </button>
+            );
+          })}
         </div>
-
-        <button
-          type="button"
-          onClick={onNext}
-          aria-label="Next slide"
-          className="grid size-11 shrink-0 place-items-center rounded-full border border-accent/40 bg-accent/20 text-fg backdrop-blur-md transition-colors hover:bg-accent/30"
-        >
-          <ChevronRight size={18} />
-        </button>
+        <p className="mt-1 text-center font-mono text-[10px] tabular-nums tracking-[0.2em] text-muted">
+          <span className="text-fg">{String(index + 1).padStart(2, "0")}</span>
+          <span className="mx-1 text-fg/25">/</span>
+          {String(total).padStart(2, "0")}
+        </p>
       </div>
     </div>
+  );
+}
+
+function HeroSideArrow({
+  dir,
+  onClick,
+}: {
+  dir: "prev" | "next";
+  onClick: () => void;
+}) {
+  const Icon = dir === "prev" ? ChevronLeft : ChevronRight;
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label={dir === "prev" ? "Previous slide" : "Next slide"}
+      className={cn(
+        "pointer-events-auto absolute top-1/2 z-30 grid size-11 place-items-center rounded-full",
+        "border border-line-strong bg-bg/90 text-fg backdrop-blur-md transition",
+        "hover:border-fg/35 hover:bg-surface hover:scale-105 active:scale-95",
+        "shadow-[0_12px_28px_-14px_rgba(0,0,0,0.55)] light:bg-white light:shadow-[0_10px_24px_-14px_rgba(0,0,0,0.14)]",
+        "sm:size-12",
+      )}
+      style={{
+        transform: "translateY(-50%)",
+        ...(dir === "prev" ? { left: 8 } : { right: 8 }),
+      }}
+    >
+      <Icon size={20} strokeWidth={2.4} />
+    </button>
   );
 }
 
 export function Hero({ content }: { content: HomeHeroContent }) {
   const slides = content.slides;
   const [index, setIndex] = useState(0);
+  /** Pause only while hovering the phone stage / controls — not the whole hero. */
   const [paused, setPaused] = useState(false);
+  const [reduceMotion, setReduceMotion] = useState(false);
   const slide = slides[Math.min(index, slides.length - 1)] ?? slides[0];
   const stats = content.stats;
 
@@ -168,10 +174,18 @@ export function Hero({ content }: { content: HomeHeroContent }) {
   );
 
   useEffect(() => {
-    if (paused || slides.length < 2) return;
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const sync = () => setReduceMotion(mq.matches);
+    sync();
+    mq.addEventListener("change", sync);
+    return () => mq.removeEventListener("change", sync);
+  }, []);
+
+  useEffect(() => {
+    if (paused || reduceMotion || slides.length < 2) return;
     const id = window.setTimeout(() => go(1), SLIDE_MS);
     return () => window.clearTimeout(id);
-  }, [index, paused, go, slides.length]);
+  }, [index, paused, reduceMotion, go, slides.length]);
 
   // Keep index valid if CMS slide count shrinks after publish.
   useEffect(() => {
@@ -190,13 +204,9 @@ export function Hero({ content }: { content: HomeHeroContent }) {
 
   return (
     <section
-      className="relative isolate min-h-[100svh] overflow-hidden"
+      className="relative isolate min-h-[calc(100svh-7.5rem)] overflow-hidden"
       aria-roledescription="carousel"
       aria-label="Featured collections"
-      onMouseEnter={() => setPaused(true)}
-      onMouseLeave={() => setPaused(false)}
-      onFocusCapture={() => setPaused(true)}
-      onBlurCapture={() => setPaused(false)}
     >
       <div suppressHydrationWarning className="hero-stage-bg pointer-events-none absolute inset-0 bg-bg" data-hero-stage="v3" />
       <div suppressHydrationWarning className="hero-stage-glow pointer-events-none absolute -right-[10%] top-[-5%] h-[90%] w-[70%] animate-hero-glow rounded-full bg-accent/25 blur-[120px] light:hidden" />
@@ -204,25 +214,42 @@ export function Hero({ content }: { content: HomeHeroContent }) {
       <div suppressHydrationWarning className="hero-stage-grid bg-grid pointer-events-none absolute inset-0 opacity-30 light:hidden" />
       <div suppressHydrationWarning className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-bg via-bg/80 to-transparent" />
 
-      <div className="container-page relative grid min-h-[100svh] items-center gap-6 pb-28 pt-6 sm:pb-24 sm:pt-8 lg:grid-cols-[0.92fr_1.08fr] lg:gap-4 lg:pb-20 lg:pt-6">
-        <div className="relative z-10 max-w-xl space-y-6 sm:space-y-8 lg:space-y-9">
-          <div className="grid min-h-[14.5rem] sm:min-h-[18rem]">
+      {/*
+        DOM: writing first, image second.
+        Mobile: flex-col-reverse → image on top.
+        Large: flex-row → writing left, image right.
+      */}
+      <div className="container-page relative flex flex-col-reverse items-stretch gap-5 pb-24 pt-2 sm:gap-6 sm:pb-20 sm:pt-3 lg:flex-row lg:items-center lg:gap-6 lg:pb-16 lg:pt-0 xl:gap-8">
+        <div className="relative z-10 w-full max-w-xl shrink-0 space-y-5 sm:space-y-6 lg:space-y-7">
+          <div className="grid min-h-[10.5rem] sm:min-h-[12rem]">
             <AnimatePresence initial={false} mode="popLayout">
               <motion.div
                 key={slide.key}
-                className="col-start-1 row-start-1 space-y-5 sm:space-y-7"
+                className="col-start-1 row-start-1 space-y-4 sm:space-y-7"
                 initial="hidden"
                 animate="show"
                 exit="exit"
                 variants={container}
                 aria-roledescription="slide"
-                aria-label={`${index + 1} of ${slides.length}`}
+                aria-label={`${index + 1} of ${slides.length}: ${slide.brand}`}
               >
                 <motion.p
                   variants={item}
-                  className="font-mono text-[10px] uppercase tracking-[0.3em] text-accent sm:text-[11px] sm:tracking-[0.35em]"
+                  className="flex flex-wrap items-center gap-x-2.5 gap-y-1 font-mono text-[10px] uppercase tracking-[0.22em] text-accent sm:text-[11px] sm:tracking-[0.25em]"
                 >
-                  {slide.brand}
+                  <span>{slide.brand}</span>
+                  {slides.length > 1 ? (
+                    <>
+                      <span className="text-fg/25" aria-hidden>
+                        ·
+                      </span>
+                      <span className="tabular-nums tracking-[0.18em] text-muted">
+                        {String(index + 1).padStart(2, "0")}
+                        <span className="mx-1 text-fg/25">/</span>
+                        {String(slides.length).padStart(2, "0")}
+                      </span>
+                    </>
+                  ) : null}
                 </motion.p>
 
                 <motion.h1
@@ -265,12 +292,24 @@ export function Hero({ content }: { content: HomeHeroContent }) {
           </div>
         </div>
 
-        <div className="relative mx-auto w-full min-w-0 max-w-[34rem] lg:max-w-none lg:translate-x-2">
+        <div
+          className="relative mx-auto w-full min-w-0 max-w-[34rem] lg:mx-0 lg:max-w-none lg:flex-1"
+          onMouseEnter={() => setPaused(true)}
+          onMouseLeave={() => setPaused(false)}
+          onFocusCapture={() => setPaused(true)}
+          onBlurCapture={() => setPaused(false)}
+        >
+          {slides.length > 1 && (
+            <>
+              <HeroSideArrow dir="prev" onClick={() => go(-1)} />
+              <HeroSideArrow dir="next" onClick={() => go(1)} />
+            </>
+          )}
           <Stage>
-            <div className="relative mx-auto flex aspect-[4/5] w-full max-w-full items-center justify-center overflow-hidden sm:overflow-visible">
+            <div className="relative mx-auto flex aspect-[4/5] w-full max-w-full items-center justify-center overflow-visible">
               <div aria-hidden className="hero-visual-shadow pointer-events-none absolute inset-x-[18%] bottom-[4%] h-20 rounded-[100%] bg-black/70 blur-3xl light:bg-black/8" />
 
-              <div className="relative z-[1] w-full max-w-full scale-100 sm:scale-105 lg:scale-110">
+              <div className="relative z-[1] w-full max-w-full scale-100 sm:scale-[1.03] lg:scale-105">
                 <div className="grid">
                   <AnimatePresence initial={false} mode="popLayout">
                     <motion.div
@@ -286,22 +325,20 @@ export function Hero({ content }: { content: HomeHeroContent }) {
                   </AnimatePresence>
                 </div>
               </div>
-
-              {slides.length > 1 && (
-                <div className="absolute inset-x-0 bottom-[7%] z-30 flex justify-center px-3 sm:bottom-[8%] lg:bottom-[9%]">
-                  <HeroStagePager
-                    index={index}
-                    total={slides.length}
-                    paused={paused}
-                    labels={slides.map((s) => s.brand)}
-                    onPrev={() => go(-1)}
-                    onNext={() => go(1)}
-                    onSelect={setIndex}
-                  />
-                </div>
-              )}
             </div>
           </Stage>
+
+          {slides.length > 1 && (
+            <div className="relative z-30 mt-3 flex justify-center px-3 sm:mt-4 lg:absolute lg:inset-x-0 lg:bottom-[6%] lg:mt-0 lg:px-3">
+              <HeroStagePager
+                index={index}
+                total={slides.length}
+                paused={paused || reduceMotion}
+                labels={slides.map((s) => s.brand)}
+                onSelect={setIndex}
+              />
+            </div>
+          )}
         </div>
       </div>
 
