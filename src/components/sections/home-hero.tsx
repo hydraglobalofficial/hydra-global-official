@@ -214,58 +214,13 @@ export function Hero({ content }: { content: HomeHeroContent }) {
       <div suppressHydrationWarning className="hero-stage-grid bg-grid pointer-events-none absolute inset-0 opacity-30 light:hidden" />
       <div suppressHydrationWarning className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-bg via-bg/80 to-transparent" />
 
-      <div className="container-page relative grid items-start gap-5 pb-24 pt-2 sm:gap-6 sm:pb-20 sm:pt-3 lg:grid-cols-2 lg:items-center lg:gap-6 lg:pb-16 lg:pt-0 xl:gap-8">
-        {/* Mobile: image top / text bottom. Large: writing left / image right. */}
-        <div
-          className="relative order-1 mx-auto w-full min-w-0 max-w-[34rem] lg:order-2 lg:max-w-none lg:justify-self-stretch"
-          onMouseEnter={() => setPaused(true)}
-          onMouseLeave={() => setPaused(false)}
-          onFocusCapture={() => setPaused(true)}
-          onBlurCapture={() => setPaused(false)}
-        >
-          {slides.length > 1 && (
-            <>
-              <HeroSideArrow dir="prev" onClick={() => go(-1)} />
-              <HeroSideArrow dir="next" onClick={() => go(1)} />
-            </>
-          )}
-          <Stage>
-            <div className="relative mx-auto flex aspect-[4/5] w-full max-w-full items-center justify-center overflow-visible sm:aspect-[4/5]">
-              <div aria-hidden className="hero-visual-shadow pointer-events-none absolute inset-x-[18%] bottom-[4%] h-20 rounded-[100%] bg-black/70 blur-3xl light:bg-black/8" />
-
-              <div className="relative z-[1] w-full max-w-full scale-100 sm:scale-[1.03] lg:scale-105">
-                <div className="grid">
-                  <AnimatePresence initial={false} mode="popLayout">
-                    <motion.div
-                      key={slide.key}
-                      className="col-start-1 row-start-1"
-                      initial={{ opacity: 0, scale: 0.96, y: 20 }}
-                      animate={{ opacity: 1, scale: 1, y: 0 }}
-                      exit={{ opacity: 0, scale: 1.02, y: -12 }}
-                      transition={{ duration: 0.45, ease }}
-                    >
-                      <SlideVisual slide={slide} priority={index === 0} />
-                    </motion.div>
-                  </AnimatePresence>
-                </div>
-              </div>
-            </div>
-          </Stage>
-
-          {slides.length > 1 && (
-            <div className="relative z-30 mt-3 flex justify-center px-3 sm:mt-4 lg:absolute lg:inset-x-0 lg:bottom-[6%] lg:mt-0 lg:px-3">
-              <HeroStagePager
-                index={index}
-                total={slides.length}
-                paused={paused || reduceMotion}
-                labels={slides.map((s) => s.brand)}
-                onSelect={setIndex}
-              />
-            </div>
-          )}
-        </div>
-
-        <div className="relative z-10 order-2 max-w-xl space-y-5 sm:space-y-6 lg:order-1 lg:space-y-7">
+      {/*
+        DOM: writing first, image second.
+        Mobile: flex-col-reverse → image on top.
+        Large: flex-row → writing left, image right.
+      */}
+      <div className="container-page relative flex flex-col-reverse items-stretch gap-5 pb-24 pt-2 sm:gap-6 sm:pb-20 sm:pt-3 lg:flex-row lg:items-center lg:gap-6 lg:pb-16 lg:pt-0 xl:gap-8">
+        <div className="relative z-10 w-full max-w-xl shrink-0 space-y-5 sm:space-y-6 lg:space-y-7">
           <div className="grid min-h-[10.5rem] sm:min-h-[12rem]">
             <AnimatePresence initial={false} mode="popLayout">
               <motion.div
@@ -335,6 +290,55 @@ export function Hero({ content }: { content: HomeHeroContent }) {
               ))}
             </div>
           </div>
+        </div>
+
+        <div
+          className="relative mx-auto w-full min-w-0 max-w-[34rem] lg:mx-0 lg:max-w-none lg:flex-1"
+          onMouseEnter={() => setPaused(true)}
+          onMouseLeave={() => setPaused(false)}
+          onFocusCapture={() => setPaused(true)}
+          onBlurCapture={() => setPaused(false)}
+        >
+          {slides.length > 1 && (
+            <>
+              <HeroSideArrow dir="prev" onClick={() => go(-1)} />
+              <HeroSideArrow dir="next" onClick={() => go(1)} />
+            </>
+          )}
+          <Stage>
+            <div className="relative mx-auto flex aspect-[4/5] w-full max-w-full items-center justify-center overflow-visible">
+              <div aria-hidden className="hero-visual-shadow pointer-events-none absolute inset-x-[18%] bottom-[4%] h-20 rounded-[100%] bg-black/70 blur-3xl light:bg-black/8" />
+
+              <div className="relative z-[1] w-full max-w-full scale-100 sm:scale-[1.03] lg:scale-105">
+                <div className="grid">
+                  <AnimatePresence initial={false} mode="popLayout">
+                    <motion.div
+                      key={slide.key}
+                      className="col-start-1 row-start-1"
+                      initial={{ opacity: 0, scale: 0.96, y: 20 }}
+                      animate={{ opacity: 1, scale: 1, y: 0 }}
+                      exit={{ opacity: 0, scale: 1.02, y: -12 }}
+                      transition={{ duration: 0.45, ease }}
+                    >
+                      <SlideVisual slide={slide} priority={index === 0} />
+                    </motion.div>
+                  </AnimatePresence>
+                </div>
+              </div>
+            </div>
+          </Stage>
+
+          {slides.length > 1 && (
+            <div className="relative z-30 mt-3 flex justify-center px-3 sm:mt-4 lg:absolute lg:inset-x-0 lg:bottom-[6%] lg:mt-0 lg:px-3">
+              <HeroStagePager
+                index={index}
+                total={slides.length}
+                paused={paused || reduceMotion}
+                labels={slides.map((s) => s.brand)}
+                onSelect={setIndex}
+              />
+            </div>
+          )}
         </div>
       </div>
 
