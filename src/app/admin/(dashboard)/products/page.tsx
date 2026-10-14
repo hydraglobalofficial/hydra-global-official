@@ -1,12 +1,14 @@
 import Link from "next/link";
-import { Plus, Search } from "lucide-react";
+import { Plus, Search, Trash2 } from "lucide-react";
 import { AdminHeader, Card, Panel, StatusBadge, Table } from "@/components/admin/admin-ui";
+import { ConfirmDeleteForm } from "@/components/admin/confirm-delete-form";
 import { ReportActions } from "@/components/admin/report-actions";
 import { ButtonLink } from "@/components/ui/button";
 import { ProductImage } from "@/components/product/product-image";
 import { requireAdmin } from "@/lib/auth/session";
 import { db } from "@/lib/db";
 import { formatPrice } from "@/lib/utils";
+import { deleteProduct } from "@/server/actions/admin";
 
 export const metadata = { title: "Products" };
 
@@ -95,19 +97,35 @@ export default async function AdminProductsPage({ searchParams }: PageProps<"/ad
         <ul className="divide-y divide-line sm:hidden">
           {products.map((p) => (
             <li key={p.id} className="px-4 py-3.5">
-              <Link href={`/admin/products/${p.id}`} className="flex items-start gap-3">
-                <span className="relative size-12 shrink-0 overflow-hidden rounded-xl border border-line bg-surface-2">
-                  {p.images[0] && <ProductImage src={p.images[0].url} alt="" fill sizes="48px" className="object-contain p-1" />}
-                </span>
-                <span className="min-w-0 flex-1">
-                  <span className="block truncate font-medium">{p.name}</span>
-                  <span className="mt-0.5 block font-mono text-xs text-subtle">{p.sku}</span>
-                  <span className="mt-2 flex items-center justify-between gap-2">
-                    <StatusBadge status={p.status} />
-                    <span className="font-mono text-sm tabular-nums">{formatPrice(p.price)}</span>
+              <div className="flex items-start gap-3">
+                <Link href={`/admin/products/${p.id}`} className="flex min-w-0 flex-1 items-start gap-3">
+                  <span className="relative size-12 shrink-0 overflow-hidden rounded-xl border border-line bg-surface-2">
+                    {p.images[0] && <ProductImage src={p.images[0].url} alt="" fill sizes="48px" className="object-contain p-1" />}
                   </span>
-                </span>
-              </Link>
+                  <span className="min-w-0 flex-1">
+                    <span className="block truncate font-medium">{p.name}</span>
+                    <span className="mt-0.5 block font-mono text-xs text-subtle">{p.sku}</span>
+                    <span className="mt-2 flex items-center justify-between gap-2">
+                      <StatusBadge status={p.status} />
+                      <span className="font-mono text-sm tabular-nums">{formatPrice(p.price)}</span>
+                    </span>
+                  </span>
+                </Link>
+                <ConfirmDeleteForm
+                  action={deleteProduct}
+                  title={`Delete “${p.name}”?`}
+                  text="If this SKU has order history it will be archived. Otherwise it’s permanently removed."
+                >
+                  <input type="hidden" name="id" value={p.id} />
+                  <button
+                    type="submit"
+                    className="inline-flex items-center gap-1 rounded-full border border-danger/35 bg-danger/5 px-2.5 py-1.5 text-xs font-medium text-danger hover:bg-danger/15"
+                    aria-label={`Delete ${p.name}`}
+                  >
+                    <Trash2 size={13} /> Delete
+                  </button>
+                </ConfirmDeleteForm>
+              </div>
             </li>
           ))}
         </ul>
@@ -123,6 +141,7 @@ export default async function AdminProductsPage({ searchParams }: PageProps<"/ad
                 <th className="text-right">Stock</th>
                 <th className="text-right">Sold</th>
                 <th className="text-right">Value</th>
+                <th className="w-28 text-right"> </th>
               </tr>
             </thead>
             <tbody>
@@ -152,11 +171,28 @@ export default async function AdminProductsPage({ searchParams }: PageProps<"/ad
                   <td className={`text-right font-mono tabular-nums ${p.stock < 15 ? "text-warning" : ""}`}>{p.stock}</td>
                   <td className="text-right font-mono tabular-nums text-muted">{p.soldCount}</td>
                   <td className="text-right font-mono tabular-nums text-muted">{formatPrice(p.price * p.stock)}</td>
+                  <td className="text-right">
+                    <ConfirmDeleteForm
+                      action={deleteProduct}
+                      title={`Delete “${p.name}”?`}
+                      text="If this SKU has order history it will be archived. Otherwise it’s permanently removed."
+                      className="inline"
+                    >
+                      <input type="hidden" name="id" value={p.id} />
+                      <button
+                        type="submit"
+                        className="inline-flex items-center gap-1 rounded-full border border-danger/35 bg-danger/5 px-2.5 py-1.5 text-xs font-medium text-danger hover:bg-danger/15"
+                        aria-label={`Delete ${p.name}`}
+                      >
+                        <Trash2 size={13} /> Delete
+                      </button>
+                    </ConfirmDeleteForm>
+                  </td>
                 </tr>
               ))}
               {products.length === 0 && (
                 <tr>
-                  <td colSpan={7} className="py-10 text-center text-muted">
+                  <td colSpan={8} className="py-10 text-center text-muted">
                     No products found.
                   </td>
                 </tr>

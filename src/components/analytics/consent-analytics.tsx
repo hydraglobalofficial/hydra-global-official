@@ -61,7 +61,7 @@ export function ConsentAnalytics() {
             .
           </p>
           <div className="mt-4 flex gap-2">
-            <button type="button" onClick={() => decide("granted")} className="rounded-full bg-fg px-5 py-2 text-sm font-medium text-black">
+            <button type="button" onClick={() => decide("granted")} className="rounded-full bg-fg px-5 py-2 text-sm font-medium text-bg">
               Accept
             </button>
             <button type="button" onClick={() => decide("denied")} className="rounded-full border border-line px-5 py-2 text-sm text-muted hover:text-fg">

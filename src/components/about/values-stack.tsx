@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { createElement, useRef } from "react";
 import { BadgeCheck, Cpu, HeartHandshake, Leaf, Lightbulb, Scale, type LucideIcon } from "lucide-react";
 import {
   motion,
@@ -58,8 +58,9 @@ export function ValuesStack({ values }: { values: ValueItem[] }) {
   );
 }
 
-function valueIcon(value: ValueItem, index: number) {
-  return iconByKeyword[value.keyword] ?? fallbackIcons[index % fallbackIcons.length];
+function renderValueIcon(value: ValueItem, index: number, size: number) {
+  const Icon = iconByKeyword[value.keyword] ?? fallbackIcons[index % fallbackIcons.length]!;
+  return createElement(Icon, { size, strokeWidth: 1.55 });
 }
 
 function ValueCard({
@@ -85,8 +86,6 @@ function ValueCard({
   const dim = useTransform(progress, (v) =>
     interpolate(v, [index * slot, (index + 1) * slot, 1], [0, 0, Math.min(0.55, depth * 0.12)]),
   );
-
-  const Icon = valueIcon(value, index);
 
   return (
     <div
@@ -118,7 +117,7 @@ function ValueCard({
               whileHover={{ scale: 1.06, rotate: -3 }}
               transition={{ type: "spring", stiffness: 320, damping: 18 }}
             >
-              <Icon size={28} strokeWidth={1.55} />
+              {renderValueIcon(value, index, 28)}
             </motion.div>
             <span className="font-mono text-[10px] uppercase tracking-[0.32em] text-muted sm:text-[11px]">{value.keyword}</span>
           </div>
@@ -139,7 +138,6 @@ function StaticValueCard({
   index: number;
   total: number;
 }) {
-  const Icon = valueIcon(value, index);
   return (
     <article className="card-premium relative overflow-hidden rounded-[1.75rem] p-6 sm:rounded-[2rem] sm:p-8 md:p-10">
       <div className="relative grid gap-6 md:grid-cols-[1fr_auto] md:items-center">
@@ -152,7 +150,7 @@ function StaticValueCard({
         </div>
         <div className={cn("flex items-center gap-3 md:flex-col md:items-end")}>
           <div className="grid size-14 place-items-center rounded-2xl border border-line-strong bg-surface-3 text-fg">
-            <Icon size={26} strokeWidth={1.55} />
+            {renderValueIcon(value, index, 26)}
           </div>
           <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-muted">{value.keyword}</span>
         </div>

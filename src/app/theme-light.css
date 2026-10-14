@@ -107,20 +107,20 @@ html[data-theme="light"] .spotlight::after {
 html.light .product-media-stage,
 html[data-theme="light"] .product-media-stage {
   isolation: isolate;
-  background:
-    radial-gradient(ellipse 80% 70% at 50% 38%, #ffffff 0%, #f7f8fa 62%, #f1f2f5 100%) !important;
-  box-shadow: inset 0 -1px 0 rgb(0 0 0 / 0.04);
+  background: transparent !important;
+  box-shadow: none;
 }
 html.light .product-media-stage .bg-dots,
 html.light .product-media-stage .bg-grid,
 html[data-theme="light"] .product-media-stage .bg-dots,
 html[data-theme="light"] .product-media-stage .bg-grid {
   opacity: 0 !important;
+  display: none !important;
 }
 html.light .product-media-art,
 html[data-theme="light"] .product-media-art {
   mix-blend-mode: normal;
-  filter: drop-shadow(0 14px 22px rgb(30 58 138 / 0.1));
+  filter: none;
 }
 html.light .wa-glow,
 html[data-theme="light"] .wa-glow {

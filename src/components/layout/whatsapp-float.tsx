@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import type { WhatsappWidgetContent } from "@/content/site-sections";
+import { useHasMounted } from "@/hooks/use-has-mounted";
 import { cn } from "@/lib/utils";
 
 /** Admin staff faces only — never product catalog images. */
@@ -23,20 +24,13 @@ function liveStaff(staff: WhatsappWidgetContent["staff"]) {
 export function WhatsappFloat({ content }: { content: WhatsappWidgetContent }) {
   const staff = liveStaff(content.staff);
   const [index, setIndex] = useState(0);
-  const [mounted, setMounted] = useState(false);
+  const mounted = useHasMounted();
   const preferReduced = useReducedMotion();
   // Keep SSR + first client paint identical; enable motion only after mount.
   const reduceMotion = !mounted || !!preferReduced;
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
   const rotateCount = staff.length > 0 ? staff.length : 1;
-
-  useEffect(() => {
-    setIndex(0);
-  }, [rotateCount]);
+  const safeIndex = rotateCount > 0 ? index % rotateCount : 0;
 
   useEffect(() => {
     if (rotateCount < 2) return;
@@ -51,7 +45,7 @@ export function WhatsappFloat({ content }: { content: WhatsappWidgetContent }) {
 
   const href = `https://wa.me/${content.phone}?text=${encodeURIComponent(content.message || "Hi HYDRA!")}`;
   const hasStaff = staff.length > 0;
-  const active = hasStaff ? staff[index % staff.length]! : null;
+  const active = hasStaff ? staff[safeIndex]! : null;
   const agentName = active?.name?.trim() || "HYDRA";
   const a11y = `Contact with ${agentName} on WhatsApp`;
   const initial = agentName.slice(0, 1).toUpperCase();
@@ -136,7 +130,6 @@ export function WhatsappFloat({ content }: { content: WhatsappWidgetContent }) {
           {active?.image ? (
             mounted ? (
               <AnimatePresence mode="wait" initial={false}>
-                {/* eslint-disable-next-line @next/next/no-img-element -- CMS/R2 staff avatars */}
                 <motion.img
                   key={`${active.image}-${index}`}
                   src={active.image}

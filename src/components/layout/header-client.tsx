@@ -10,6 +10,7 @@ import { useTypingPlaceholder } from "@/components/search/typing-placeholder";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
 import { buttonStyles } from "@/components/ui/button";
 import { primaryNav, supportNav } from "@/config/navigation";
+import { useHasMounted } from "@/hooks/use-has-mounted";
 import { cn } from "@/lib/utils";
 import type { NavigationData } from "@/server/queries/catalog";
 import { Logo } from "./logo";
@@ -211,10 +212,7 @@ export function HeaderClient({ nav }: { nav: NavigationData }) {
 function MobileNav({ open, onClose, nav }: { open: boolean; onClose: () => void; nav: NavigationData }) {
   // Mount-only: avoids SSR/client nav mismatches that regenerate the tree and
   // can wipe fixed widgets (WhatsApp float). Drawer is closed on first paint anyway.
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const mounted = useHasMounted();
 
   if (!mounted) return null;
 

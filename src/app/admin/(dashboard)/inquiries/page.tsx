@@ -1,10 +1,11 @@
 import Link from "next/link";
-import { Mail, Phone } from "lucide-react";
+import { Mail, Phone, Trash2 } from "lucide-react";
 import { AdminHeader, Card, StatusBadge } from "@/components/admin/admin-ui";
+import { ConfirmDeleteForm } from "@/components/admin/confirm-delete-form";
 import { requireAdmin } from "@/lib/auth/session";
 import { db } from "@/lib/db";
 import { cn, formatDate } from "@/lib/utils";
-import { setInquiryStatus } from "@/server/actions/admin";
+import { deleteInquiry, setInquiryStatus } from "@/server/actions/admin";
 import type { InquiryStatus } from "@/generated/prisma/enums";
 
 export const metadata = { title: "Inquiries" };
@@ -57,7 +58,7 @@ export default async function AdminInquiriesPage({ searchParams }: PageProps<"/a
                 {i.phone && <a href={`tel:${i.phone}`} className="flex items-center gap-1 hover:text-fg"><Phone size={12} /> {i.phone}</a>}
                 {i.orderNumber && <span className="font-mono">Order {i.orderNumber}</span>}
               </div>
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2">
                 {(["IN_PROGRESS", "RESOLVED"] as const).filter((s) => s !== i.status).map((s) => (
                   <form key={s} action={setInquiryStatus}>
                     <input type="hidden" name="id" value={i.id} />
@@ -67,6 +68,19 @@ export default async function AdminInquiriesPage({ searchParams }: PageProps<"/a
                     </button>
                   </form>
                 ))}
+                <ConfirmDeleteForm
+                  action={deleteInquiry}
+                  title="Delete this inquiry?"
+                  text={`From ${i.name} (${i.email}). This cannot be undone.`}
+                >
+                  <input type="hidden" name="id" value={i.id} />
+                  <button
+                    type="submit"
+                    className="flex items-center gap-1 rounded-full border border-danger/30 px-3 py-1.5 text-xs text-danger hover:bg-danger/10"
+                  >
+                    <Trash2 size={12} /> Delete
+                  </button>
+                </ConfirmDeleteForm>
               </div>
             </div>
           </Card>

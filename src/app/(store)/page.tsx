@@ -9,7 +9,7 @@ import { SectionDivider } from "@/components/ui/section-divider";
 import { ShopByDevice } from "@/components/sections/home-sections";
 import { CollectionBento } from "@/components/sections/collection-bento";
 import { HomeBelowFold } from "@/components/sections/home-below-fold";
-import { HydraRise } from "@/components/hydra/hydra-rise";
+import { HydraRise } from "@/components/hydra/hydra-rise-lazy";
 import { JsonLd, organizationJsonLd } from "@/lib/seo";
 import { getFeaturedProducts, getNavigationData } from "@/server/queries/catalog";
 import { defaultCollectionsContent, defaultHomeHeroContent } from "@/content/site-sections";

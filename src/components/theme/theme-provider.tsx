@@ -4,9 +4,8 @@ import {
   createContext,
   useCallback,
   useContext,
-  useLayoutEffect,
   useMemo,
-  useState,
+  useSyncExternalStore,
   type ReactNode,
 } from "react";
 import {
@@ -26,26 +25,41 @@ type ThemeContextValue = {
 
 const ThemeContext = createContext<ThemeContextValue | null>(null);
 
-export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [theme, setThemeState] = useState<Theme>("dark");
+const listeners = new Set<() => void>();
 
-  useLayoutEffect(() => {
-    const next = readStoredTheme();
-    setThemeState(next);
-    applyTheme(next);
-  }, []);
+function subscribe(listener: () => void) {
+  listeners.add(listener);
+  return () => {
+    listeners.delete(listener);
+  };
+}
+
+function emit() {
+  listeners.forEach((l) => l());
+}
+
+function getClientTheme(): Theme {
+  return readStoredTheme();
+}
+
+function getServerTheme(): Theme {
+  return "dark";
+}
+
+export function ThemeProvider({ children }: { children: ReactNode }) {
+  const theme = useSyncExternalStore(subscribe, getClientTheme, getServerTheme);
 
   const setTheme = useCallback((next: Theme) => {
-    setThemeState(next);
     applyTheme(next);
+    emit();
   }, []);
 
   const toggleTheme = useCallback(() => {
     const attr = document.documentElement.getAttribute("data-theme");
     const current: Theme = attr === "light" || attr === "dark" ? attr : "dark";
     const next: Theme = current === "dark" ? "light" : "dark";
-    setThemeState(next);
     applyTheme(next);
+    emit();
   }, []);
 
   const value = useMemo(() => ({ theme, setTheme, toggleTheme }), [theme, setTheme, toggleTheme]);

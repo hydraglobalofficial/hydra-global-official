@@ -1,14 +1,14 @@
 import { CartProvider } from "@/components/cart/cart-provider";
-import { CartDrawer } from "@/components/cart/cart-drawer";
+import { CartDrawer } from "@/components/cart/cart-drawer-lazy";
 import { AnnouncementBar } from "@/components/layout/announcement-bar";
 import { AmbientBackground } from "@/components/layout/ambient-background";
 import { SiteHeader } from "@/components/layout/site-header";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SplashScreen } from "@/components/layout/splash-screen-lazy";
-import { NewsletterPopup } from "@/components/layout/newsletter-popup";
-import { WhatsappFloat } from "@/components/layout/whatsapp-float";
-import { ScrollTopButton } from "@/components/layout/scroll-top-button";
-import { ConsentAnalytics } from "@/components/analytics/consent-analytics";
+import { NewsletterPopup } from "@/components/layout/newsletter-popup-lazy";
+import { WhatsappFloat } from "@/components/layout/whatsapp-float-lazy";
+import { ScrollTopButton } from "@/components/layout/scroll-top-button-lazy";
+import { ConsentAnalytics } from "@/components/analytics/consent-analytics-lazy";
 import { getAnnouncements, getWhatsappWidgetContent } from "@/server/queries/content";
 import { getBrands } from "@/server/queries/catalog";
 

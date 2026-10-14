@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ExternalLink, Trash2 } from "lucide-react";
 import { AdminHeader } from "@/components/admin/admin-ui";
+import { ConfirmDeleteForm } from "@/components/admin/confirm-delete-form";
 import { ProductForm } from "@/components/admin/product-form";
 import { Button } from "@/components/ui/button";
 import { requireAdmin } from "@/lib/auth/session";
@@ -11,7 +12,7 @@ import { deleteProduct } from "@/server/actions/admin";
 export const metadata = { title: "Edit product" };
 
 export default async function EditProductPage({ params }: PageProps<"/admin/products/[id]">) {
-  const session = await requireAdmin();
+  await requireAdmin();
   const { id } = await params;
   const [product, categories, brands, devices] = await Promise.all([
     db.product.findUnique({ where: { id }, include: { devices: true, images: { orderBy: { position: "asc" } } } }),
@@ -42,12 +43,14 @@ export default async function EditProductPage({ params }: PageProps<"/admin/prod
             <Link href={`/product/${product.slug}`} target="_blank" className="flex items-center gap-2 rounded-full border border-line px-4 py-2 text-sm text-muted hover:text-fg">
               <ExternalLink size={14} /> View
             </Link>
-            {session.role === "OWNER" && (
-              <form action={deleteProduct}>
-                <input type="hidden" name="id" value={product.id} />
-                <Button type="submit" variant="danger" size="sm"><Trash2 size={14} /> Delete</Button>
-              </form>
-            )}
+            <ConfirmDeleteForm
+              action={deleteProduct}
+              title={`Delete “${product.name}”?`}
+              text="If this SKU has order history it will be archived. Otherwise it’s permanently removed."
+            >
+              <input type="hidden" name="id" value={product.id} />
+              <Button type="submit" variant="danger" size="sm"><Trash2 size={14} /> Delete</Button>
+            </ConfirmDeleteForm>
           </div>
         }
       />
@@ -76,6 +79,10 @@ export default async function EditProductPage({ params }: PageProps<"/admin/prod
           deviceIds: product.devices.map((d) => d.deviceId),
           highlights: product.highlights.join("\n"),
           imageUrls: product.images.map((i) => i.url).join("\n"),
+          specs: Object.entries((product.specs ?? {}) as Record<string, string>).map(([key, value]) => ({
+            key,
+            value,
+          })),
         }}
       />
     </>

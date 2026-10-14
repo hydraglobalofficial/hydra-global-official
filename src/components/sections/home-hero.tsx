@@ -165,7 +165,8 @@ export function Hero({ content }: { content: HomeHeroContent }) {
   /** Pause only while hovering the phone stage / controls — not the whole hero. */
   const [paused, setPaused] = useState(false);
   const [reduceMotion, setReduceMotion] = useState(false);
-  const slide = slides[Math.min(index, slides.length - 1)] ?? slides[0];
+  const safeIndex = slides.length ? ((index % slides.length) + slides.length) % slides.length : 0;
+  const slide = slides[safeIndex] ?? slides[0];
   const stats = content.stats;
 
   const go = useCallback(
@@ -186,11 +187,6 @@ export function Hero({ content }: { content: HomeHeroContent }) {
     const id = window.setTimeout(() => go(1), SLIDE_MS);
     return () => window.clearTimeout(id);
   }, [index, paused, reduceMotion, go, slides.length]);
-
-  // Keep index valid if CMS slide count shrinks after publish.
-  useEffect(() => {
-    if (index >= slides.length) setIndex(0);
-  }, [index, slides.length]);
 
   const social = useMemo(
     () => ({
@@ -231,7 +227,7 @@ export function Hero({ content }: { content: HomeHeroContent }) {
                 exit="exit"
                 variants={container}
                 aria-roledescription="slide"
-                aria-label={`${index + 1} of ${slides.length}: ${slide.brand}`}
+                aria-label={`${safeIndex + 1} of ${slides.length}: ${slide.brand}`}
               >
                 <motion.p
                   variants={item}
@@ -244,7 +240,7 @@ export function Hero({ content }: { content: HomeHeroContent }) {
                         ·
                       </span>
                       <span className="tabular-nums tracking-[0.18em] text-muted">
-                        {String(index + 1).padStart(2, "0")}
+                        {String(safeIndex + 1).padStart(2, "0")}
                         <span className="mx-1 text-fg/25">/</span>
                         {String(slides.length).padStart(2, "0")}
                       </span>
@@ -331,7 +327,7 @@ export function Hero({ content }: { content: HomeHeroContent }) {
           {slides.length > 1 && (
             <div className="relative z-30 mt-3 flex justify-center px-3 sm:mt-4 lg:absolute lg:inset-x-0 lg:bottom-[6%] lg:mt-0 lg:px-3">
               <HeroStagePager
-                index={index}
+                index={safeIndex}
                 total={slides.length}
                 paused={paused || reduceMotion}
                 labels={slides.map((s) => s.brand)}

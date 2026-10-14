@@ -1,13 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useHasMounted } from "@/hooks/use-has-mounted";
 
 /** Scroll-up — left of WhatsApp float. Inline geometry only (Tailwind arbitrary can compile to 0). */
 export function ScrollTopButton() {
-  const [ready, setReady] = useState(false);
-  useEffect(() => {
-    setReady(true);
-  }, []);
+  const ready = useHasMounted();
   if (!ready) return null;
 
   return (

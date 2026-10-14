@@ -30,9 +30,7 @@ export function ProductCard({ product, priority }: { product: ProductCardData; p
         href={`/product/${product.slug}`}
         className="card-premium group flex h-full min-w-0 flex-col overflow-hidden rounded-2xl sm:rounded-3xl"
       >
-        <div className="product-media-stage relative aspect-square overflow-hidden bg-[radial-gradient(circle_at_50%_40%,#1a1a22_0%,#08080b_72%)]">
-          <div className="bg-dots pointer-events-none absolute inset-0 opacity-40 [mask-image:radial-gradient(circle_at_50%_50%,#000,transparent_70%)]" />
-          <div className="pointer-events-none absolute inset-x-8 bottom-6 h-10 rounded-full bg-accent/20 blur-2xl opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+        <div className="relative aspect-square overflow-hidden bg-transparent">
           <ProductImage
             src={primarySrc}
             alt={primaryAlt}
@@ -40,7 +38,7 @@ export function ProductCard({ product, priority }: { product: ProductCardData; p
             priority={priority}
             sizes="(min-width: 1280px) 22vw, (min-width: 768px) 33vw, 50vw"
             className={cn(
-              "product-media-art object-contain p-2.5 transition-all duration-700 group-hover:scale-105 sm:p-4",
+              "object-contain p-2.5 transition-all duration-700 group-hover:scale-105 sm:p-4",
               secondary && "group-hover:opacity-0",
             )}
           />
@@ -50,7 +48,7 @@ export function ProductCard({ product, priority }: { product: ProductCardData; p
               alt={secondary.alt || product.name}
               fill
               sizes="(min-width: 1280px) 22vw, (min-width: 768px) 33vw, 50vw"
-              className="product-media-art object-contain p-2.5 opacity-0 transition-all duration-700 group-hover:scale-105 group-hover:opacity-100 sm:p-4"
+              className="object-contain p-2.5 opacity-0 transition-all duration-700 group-hover:scale-105 group-hover:opacity-100 sm:p-4"
             />
           ) : null}
           <div className="absolute left-2.5 top-2.5 flex flex-col gap-1.5 sm:left-4 sm:top-4 sm:gap-2">
