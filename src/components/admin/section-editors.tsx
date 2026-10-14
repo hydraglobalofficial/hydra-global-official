@@ -84,7 +84,15 @@ function RemoveBtn({ onClick, disabled, label }: { onClick: () => void; disabled
     <button
       type="button"
       disabled={disabled}
-      onClick={onClick}
+      onClick={async () => {
+        const { confirmDelete } = await import("@/lib/swal");
+        const result = await confirmDelete({
+          title: label,
+          text: "This slot will be removed from the editor. Publish to save the change.",
+          confirmText: "Yes, remove",
+        });
+        if (result.isConfirmed) onClick();
+      }}
       className="inline-flex items-center gap-1.5 rounded-full border border-white/10 px-2.5 py-1 text-[11px] text-muted transition hover:border-danger/40 hover:text-danger disabled:cursor-not-allowed disabled:opacity-30"
       aria-label={label}
     >
@@ -1163,14 +1171,10 @@ export function InstallationSectionEditor({ content }: { content: InstallationCo
                 <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-subtle">
                   Step {String(i + 1).padStart(2, "0")}
                 </p>
-                <button
-                  type="button"
+                <RemoveBtn
+                  label={`Remove step ${i + 1}`}
                   onClick={() => setSteps((prev) => prev.filter((s) => s.key !== step.key))}
-                  className="inline-flex items-center gap-1.5 rounded-full border border-white/10 px-2.5 py-1 text-[11px] text-muted transition hover:border-danger/40 hover:text-danger disabled:cursor-not-allowed disabled:opacity-30"
-                  aria-label={`Remove step ${i + 1}`}
-                >
-                  <Trash2 size={12} /> Remove
-                </button>
+                />
               </div>
               <Input
                 name="stepTitle"
@@ -1236,16 +1240,10 @@ export function InstallationSectionEditor({ content }: { content: InstallationCo
                 <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-subtle">
                   Issue {String(i + 1).padStart(2, "0")}
                 </p>
-                <button
-                  type="button"
-                  onClick={() =>
-                    setTroubles((prev) => prev.filter((x) => x.key !== t.key))
-                  }
-                  className="inline-flex items-center gap-1.5 rounded-full border border-white/10 px-2.5 py-1 text-[11px] text-muted transition hover:border-danger/40 hover:text-danger disabled:cursor-not-allowed disabled:opacity-30"
-                  aria-label={`Remove issue ${i + 1}`}
-                >
-                  <Trash2 size={12} /> Remove
-                </button>
+                <RemoveBtn
+                  label={`Remove issue ${i + 1}`}
+                  onClick={() => setTroubles((prev) => prev.filter((x) => x.key !== t.key))}
+                />
               </div>
               <Input
                 name="troubleProblem"

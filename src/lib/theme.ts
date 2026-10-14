@@ -74,8 +74,9 @@ html.light .bento-scrim,html[data-theme="light"] .bento-scrim{
   background-image:linear-gradient(to top,#ffffff 35%,rgb(255 255 255/.92) 70%,transparent)!important;
 }
 html.light .product-media-stage,html[data-theme="light"] .product-media-stage{
-  background:radial-gradient(ellipse 80% 70% at 50% 38%,#ffffff 0%,#f7f8fa 62%,#f1f2f5 100%)!important;
-  background-image:radial-gradient(ellipse 80% 70% at 50% 38%,#ffffff 0%,#f7f8fa 62%,#f1f2f5 100%)!important;
+  background:transparent!important;
+  background-image:none!important;
+  box-shadow:none!important;
 }
 html.light .product-media-stage .bg-dots,html.light .product-media-stage .bg-grid,
 html[data-theme="light"] .product-media-stage .bg-dots,html[data-theme="light"] .product-media-stage .bg-grid{

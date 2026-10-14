@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 
-/** False on SSR and the first client render; true after mount. Use to avoid motion style hydration mismatches. */
+const emptySubscribe = () => () => {};
+
+/** False on SSR and first paint; true on the client after hydration. */
 export function useHasMounted() {
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
-  return mounted;
+  return useSyncExternalStore(emptySubscribe, () => true, () => false);
 }

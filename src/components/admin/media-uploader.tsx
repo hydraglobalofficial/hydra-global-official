@@ -138,7 +138,15 @@ export function ImageUrlsField({
                 ) : null}
                 <button
                   type="button"
-                  onClick={() => removeAt(index)}
+                  onClick={async () => {
+                    const { confirmDelete } = await import("@/lib/swal");
+                    const result = await confirmDelete({
+                      title: "Remove this image?",
+                      text: "It will leave the product gallery. Save the product to apply.",
+                      confirmText: "Yes, remove",
+                    });
+                    if (result.isConfirmed) removeAt(index);
+                  }}
                   className="absolute right-2 top-2 grid size-7 place-items-center rounded-full bg-black/70 text-zinc-200 opacity-0 transition group-hover:opacity-100 hover:bg-danger/80 hover:text-white"
                   aria-label="Remove image"
                 >
@@ -293,7 +301,14 @@ export function ImageUrlField({
           <button
             type="button"
             className="absolute -right-2 -top-2 grid size-6 place-items-center rounded-full border border-line bg-surface text-muted hover:text-danger"
-            onClick={() => {
+            onClick={async () => {
+              const { confirmDelete } = await import("@/lib/swal");
+              const result = await confirmDelete({
+                title: "Clear this image?",
+                text: "You can upload another one after clearing.",
+                confirmText: "Yes, clear",
+              });
+              if (!result.isConfirmed) return;
               setPreview("");
               if (inputRef.current) inputRef.current.value = "";
             }}

@@ -23,6 +23,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
+import { useHasMounted } from "@/hooks/use-has-mounted";
 import { cn } from "@/lib/utils";
 
 type NavItem = {
@@ -121,18 +122,17 @@ export function AdminMobileChrome({
 }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
-  const [mounted, setMounted] = useState(false);
+  const [drawerPath, setDrawerPath] = useState(pathname);
+  const mounted = useHasMounted();
   const titleId = useId();
   const close = () => setOpen(false);
   const isActive = (href: string) => (href === "/admin" ? pathname === href : pathname.startsWith(href));
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  useEffect(() => {
-    setOpen(false);
-  }, [pathname]);
+  // Close drawer when the route changes (adjust during render).
+  if (pathname !== drawerPath) {
+    setDrawerPath(pathname);
+    if (open) setOpen(false);
+  }
 
   useEffect(() => {
     if (!open) return;

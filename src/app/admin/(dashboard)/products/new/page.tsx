@@ -37,8 +37,21 @@ export default async function NewProductPage() {
           brand: d.brand.code,
         }))}
         initial={{
-          name: "", slug: "", tagline: "", description: "", sku: "", price: "", compareAtPrice: "", stock: "",
-          status: "DRAFT", featured: false, categoryId: "", deviceIds: [], highlights: "", imageUrls: "",
+          name: "",
+          slug: "",
+          tagline: "",
+          description: "",
+          sku: "",
+          price: "",
+          compareAtPrice: "",
+          stock: "",
+          status: "DRAFT",
+          featured: false,
+          categoryId: "",
+          deviceIds: [],
+          highlights: "",
+          imageUrls: "",
+          specs: [],
         }}
       />
     </>

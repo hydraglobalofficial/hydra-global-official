@@ -285,9 +285,9 @@ export function CheckoutForm() {
         <ul className="max-h-72 space-y-4 overflow-y-auto overscroll-contain pr-1">
           {lines.map((l) => (
             <li key={`${l.productId}:${l.variantId}`} className="flex items-center gap-3">
-              <span className="product-media-stage relative size-14 shrink-0 overflow-hidden rounded-xl border border-line bg-surface-2">
+              <span className="relative size-14 shrink-0 overflow-hidden rounded-xl border border-line bg-transparent">
                 {l.image && (
-                  <ProductImage src={l.image} alt={l.name} fill sizes="56px" className="product-media-art object-contain p-1.5" />
+                  <ProductImage src={l.image} alt={l.name} fill sizes="56px" className="object-contain p-1.5" />
                 )}
                 <span className="absolute -right-1 -top-1 grid size-5 place-items-center rounded-full bg-accent font-mono text-[10px] text-black">
                   {l.quantity}

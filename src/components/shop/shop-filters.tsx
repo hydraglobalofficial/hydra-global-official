@@ -88,7 +88,7 @@ export function ShopFilters({ action, categories, devices, sortOptions, current 
       </label>
 
       <noscript>
-        <button type="submit" className="w-full rounded-full bg-fg py-2 text-sm text-black">Apply</button>
+        <button type="submit" className="w-full rounded-full bg-fg py-2 text-sm text-bg">Apply</button>
       </noscript>
     </Form>
   );

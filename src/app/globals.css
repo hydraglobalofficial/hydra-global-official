@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-/* light-pure-white-v5 — bump this when theme CSS fails to hot-reload */
+/* light-pure-white-v6 — bump this when theme CSS fails to hot-reload */
 /* Class-based themes (default: dark). */
 @custom-variant dark (&:where(.dark, .dark *));
 @custom-variant light (&:where(.light, .light *));
@@ -427,15 +427,17 @@ html.light .theme-mark-invert {
 }
 
 /* ── HYDRA SweetAlert2 theme ─────────────────────────────────────────────── */
-.swal-hydra {
-  background: var(--color-surface) !important;
-  border: 1px solid var(--color-line-strong) !important;
+.swal-hydra,
+.swal2-popup.swal-hydra {
+  background: #111114 !important;
+  border: 1px solid rgb(255 255 255 / 0.16) !important;
   border-radius: 1.5rem !important;
   box-shadow:
     0 40px 100px -40px rgb(0 0 0 / 0.55),
     0 0 0 1px rgb(0 0 0 / 0.12) !important;
   padding: 1.75rem 1.5rem 1.5rem !important;
   font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif !important;
+  color: #f4f4f6 !important;
 }
 
 .swal-hydra-toast {
@@ -444,29 +446,33 @@ html.light .theme-mark-invert {
   box-shadow: 0 20px 50px -20px rgb(0 0 0 / 0.7) !important;
 }
 
-.swal-hydra-title {
+.swal-hydra-title,
+.swal2-popup.swal-hydra .swal2-title {
   font-size: 1.35rem !important;
-  font-weight: 600 !important;
+  font-weight: 650 !important;
   letter-spacing: -0.02em !important;
-  color: var(--color-fg) !important;
+  color: #f4f4f6 !important;
+  opacity: 1 !important;
 }
 
-.swal-hydra-text {
-  color: var(--color-muted) !important;
+.swal-hydra-text,
+.swal2-popup.swal-hydra .swal2-html-container {
+  color: #a1a1aa !important;
   font-size: 0.95rem !important;
   line-height: 1.55 !important;
+  opacity: 1 !important;
 }
 
 .swal-hydra-lead {
   margin: 0 0 0.5rem;
-  color: var(--color-fg);
+  color: #f4f4f6;
   font-size: 1.05rem;
   line-height: 1.45;
 }
 
 .swal-hydra-sub {
   margin: 0;
-  color: var(--color-muted);
+  color: #a1a1aa;
   font-size: 0.9rem;
   line-height: 1.5;
 }
@@ -477,7 +483,7 @@ html.light .theme-mark-invert {
   font-size: 0.8rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: #5c5c66;
+  color: #71717a;
 }
 
 .swal-hydra-order span {
@@ -493,8 +499,8 @@ html.light .theme-mark-invert {
 .swal-hydra-confirm {
   border: 0 !important;
   border-radius: 999px !important;
-  background: var(--color-fg) !important;
-  color: var(--color-bg) !important;
+  background: #f4f4f6 !important;
+  color: #0a0a0c !important;
   font-size: 0.875rem !important;
   font-weight: 600 !important;
   padding: 0.7rem 1.4rem !important;
@@ -508,14 +514,95 @@ html.light .theme-mark-invert {
 }
 
 .swal-hydra-cancel {
-  border: 1px solid var(--color-line-strong) !important;
+  border: 1px solid rgb(255 255 255 / 0.2) !important;
   border-radius: 999px !important;
   background: transparent !important;
-  color: var(--color-muted) !important;
+  color: #d4d4d8 !important;
   font-size: 0.875rem !important;
   font-weight: 500 !important;
   padding: 0.7rem 1.25rem !important;
   box-shadow: none !important;
+}
+
+.swal-hydra-danger {
+  border-color: rgb(255 92 122 / 0.45) !important;
+  box-shadow:
+    0 40px 100px -40px rgb(0 0 0 / 0.55),
+    0 0 40px -20px rgb(255 92 122 / 0.25) !important;
+}
+
+.swal-hydra-confirm-danger,
+.swal2-popup.swal-hydra .swal-hydra-confirm-danger {
+  background: #e11d48 !important;
+  color: #ffffff !important;
+}
+
+.swal-hydra-confirm-danger:hover {
+  filter: brightness(1.08);
+}
+
+/* Light mode — hard black/white contrast (no CSS-var inheritance bugs) */
+html.light .swal-hydra,
+html.light .swal2-popup.swal-hydra,
+html[data-theme="light"] .swal-hydra,
+html[data-theme="light"] .swal2-popup.swal-hydra {
+  background: #ffffff !important;
+  border: 1px solid rgb(0 0 0 / 0.12) !important;
+  color: #0a0a0c !important;
+  box-shadow:
+    0 28px 80px -28px rgb(0 0 0 / 0.28),
+    0 0 0 1px rgb(0 0 0 / 0.06) !important;
+}
+
+html.light .swal-hydra-title,
+html.light .swal2-popup.swal-hydra .swal2-title,
+html[data-theme="light"] .swal-hydra-title,
+html[data-theme="light"] .swal2-popup.swal-hydra .swal2-title {
+  color: #0a0a0c !important;
+  opacity: 1 !important;
+}
+
+html.light .swal-hydra-text,
+html.light .swal2-popup.swal-hydra .swal2-html-container,
+html[data-theme="light"] .swal-hydra-text,
+html[data-theme="light"] .swal2-popup.swal-hydra .swal2-html-container {
+  color: #3f3f46 !important;
+  opacity: 1 !important;
+}
+
+html.light .swal-hydra-lead,
+html[data-theme="light"] .swal-hydra-lead {
+  color: #0a0a0c;
+}
+
+html.light .swal-hydra-sub,
+html[data-theme="light"] .swal-hydra-sub {
+  color: #52525b;
+}
+
+html.light .swal-hydra-confirm,
+html[data-theme="light"] .swal-hydra-confirm {
+  background: #0a0a0c !important;
+  color: #ffffff !important;
+}
+
+html.light .swal-hydra-cancel,
+html[data-theme="light"] .swal-hydra-cancel {
+  border-color: rgb(0 0 0 / 0.18) !important;
+  color: #3f3f46 !important;
+}
+
+html.light .swal-hydra-confirm-danger,
+html.light .swal2-popup.swal-hydra .swal-hydra-confirm-danger,
+html[data-theme="light"] .swal-hydra-confirm-danger,
+html[data-theme="light"] .swal2-popup.swal-hydra .swal-hydra-confirm-danger {
+  background: #e11d48 !important;
+  color: #ffffff !important;
+}
+
+html.light .swal-hydra-danger,
+html[data-theme="light"] .swal-hydra-danger {
+  border-color: rgb(225 29 72 / 0.35) !important;
 }
 
 .swal2-icon.swal2-success {
@@ -543,12 +630,25 @@ html.light .theme-mark-invert {
   border-color: #1e40af !important;
   color: #60a5fa !important;
 }
+.swal2-icon.swal2-warning {
+  border-color: #e11d48 !important;
+  color: #e11d48 !important;
+}
+html.light .swal2-icon.swal2-warning,
+html[data-theme="light"] .swal2-icon.swal2-warning {
+  border-color: #e11d48 !important;
+  color: #e11d48 !important;
+}
 .swal2-timer-progress-bar {
   background: rgb(30 64 175 / 0.85) !important;
 }
 .swal2-container.swal2-backdrop-show {
   background: var(--hydra-overlay) !important;
   backdrop-filter: blur(6px);
+}
+html.light .swal2-container.swal2-backdrop-show,
+html[data-theme="light"] .swal2-container.swal2-backdrop-show {
+  background: rgb(0 0 0 / 0.45) !important;
 }
 
 
@@ -711,27 +811,24 @@ html[data-theme="light"] .spotlight::after {
   display: none !important;
 }
 
-/*
-  Light mode: soft cool stage + transparent `-light.png` plates (see ProductImage).
-  Glass floats on white without a hard black square.
-*/
+/* Product art: no staged plate — CMS image only (transparent / page bg). */
 html.light .product-media-stage,
 html[data-theme="light"] .product-media-stage {
   isolation: isolate;
-  background:
-    radial-gradient(ellipse 80% 70% at 50% 38%, #ffffff 0%, #f7f8fa 62%, #f1f2f5 100%) !important;
-  box-shadow: inset 0 -1px 0 rgb(0 0 0 / 0.04);
+  background: transparent !important;
+  box-shadow: none;
 }
 html.light .product-media-stage .bg-dots,
 html.light .product-media-stage .bg-grid,
 html[data-theme="light"] .product-media-stage .bg-dots,
 html[data-theme="light"] .product-media-stage .bg-grid {
   opacity: 0 !important;
+  display: none !important;
 }
 html.light .product-media-art,
 html[data-theme="light"] .product-media-art {
   mix-blend-mode: normal;
-  filter: drop-shadow(0 14px 22px rgb(30 58 138 / 0.1));
+  filter: none;
 }
 
 html.light .wa-glow,

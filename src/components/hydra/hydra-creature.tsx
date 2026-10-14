@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Image from "next/image";
 import { motion, useTransform, type MotionValue } from "motion/react";
+import { useHasMounted } from "@/hooks/use-has-mounted";
 import { interpolate } from "@/lib/interpolate";
 import { cn } from "@/lib/utils";
 
@@ -76,8 +76,7 @@ const IMAGE_SIZES = "(min-width: 1024px) 760px, (min-width: 768px) 580px, 400px"
  * Sit the crest on a themed stage (dark absorbs the PNG black plate; light uses a designed charcoal well).
  */
 export function HydraCreature({ progress, className, ghost = false, still = false }: CreatureProps) {
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
+  const mounted = useHasMounted();
 
   const glowOpacity = useTransform(progress, (v) =>
     interpolate(v, [0, 0.12, 1], [0, ghost ? 0.18 : 0.4, ghost ? 0.2 : 0.5]),

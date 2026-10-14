@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useHasMounted } from "@/hooks/use-has-mounted";
 
 const DEFAULT_PHRASES = [
   "iPhone 17 Pro privacy",
@@ -12,17 +13,12 @@ const DEFAULT_PHRASES = [
 
 /** Cycles a typewriter-style placeholder when the input is empty and unfocused. */
 export function useTypingPlaceholder(phrases: readonly string[] = DEFAULT_PHRASES, active = true) {
-  const [ready, setReady] = useState(false);
+  const ready = useHasMounted();
   const [text, setText] = useState("");
   const [phraseIndex, setPhraseIndex] = useState(0);
 
   useEffect(() => {
-    setReady(true);
-  }, []);
-
-  useEffect(() => {
     if (!ready || !active || phrases.length === 0) {
-      setText("");
       return;
     }
 
@@ -61,6 +57,10 @@ export function useTypingPlaceholder(phrases: readonly string[] = DEFAULT_PHRASE
       clearTimeout(timer);
     };
   }, [active, phraseIndex, phrases, ready]);
+
+  if (!ready || !active || phrases.length === 0) {
+    return "Search products or devices";
+  }
 
   return text ? `Try “${text}”` : "Search products or devices";
 }

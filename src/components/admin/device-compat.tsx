@@ -171,7 +171,7 @@ export function DeviceCompatField({
             onClick={() => setBrandFilter("ALL")}
             className={cn(
               "rounded-full px-3 py-1.5 text-xs font-medium transition",
-              brandFilter === "ALL" ? "bg-fg text-black" : "text-muted hover:text-fg",
+              brandFilter === "ALL" ? "bg-fg text-bg" : "text-muted hover:text-fg",
             )}
           >
             All
@@ -183,7 +183,7 @@ export function DeviceCompatField({
               onClick={() => setBrandFilter(b.code)}
               className={cn(
                 "rounded-full px-3 py-1.5 text-xs font-medium transition",
-                brandFilter === b.code ? "bg-fg text-black" : "text-muted hover:text-fg",
+                brandFilter === b.code ? "bg-fg text-bg" : "text-muted hover:text-fg",
               )}
             >
               {b.shortLabel || b.label}

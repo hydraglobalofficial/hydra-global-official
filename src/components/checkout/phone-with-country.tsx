@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { Input, Select } from "@/components/ui/form";
 import { cn } from "@/lib/utils";
 import {
@@ -24,15 +24,18 @@ export function PhoneWithCountryCode({
   id = "phoneLocal",
   name = "phone",
 }: Props) {
-  const [dial, setDial] = useState(() => dialForCountry(country) || DEFAULT_DIAL);
+  const countryDial = dialForCountry(country) || DEFAULT_DIAL;
+  const [dialOverride, setDialOverride] = useState<string | null>(null);
+  const [syncedCountry, setSyncedCountry] = useState(country);
   const [local, setLocal] = useState("");
 
-  // When delivery country changes, prefer that country's dial (once user hasn't typed yet is ideal —
-  // always syncing is clearer for checkout: Bangladesh → +880).
-  useEffect(() => {
-    setDial(dialForCountry(country));
-  }, [country]);
+  // Adjust during render when delivery country changes (Bangladesh → +880).
+  if (country !== syncedCountry) {
+    setSyncedCountry(country);
+    setDialOverride(null);
+  }
 
+  const dial = dialOverride ?? countryDial;
   const meta = useMemo(() => dialCodes.find((d) => d.dial === dial) ?? dialCodes[0], [dial]);
   const full = composePhone(dial, local);
 
@@ -42,7 +45,7 @@ export function PhoneWithCountryCode({
         id="phoneDial"
         name="phoneDial"
         value={dial}
-        onChange={(e) => setDial(e.target.value)}
+        onChange={(e) => setDialOverride(e.target.value)}
         aria-label="Country code"
         className={cn(
           "w-[8.25rem] shrink-0 bg-[length:0.65rem] bg-[right_0.55rem_center] pl-2 pr-6 text-[11px] sm:w-[11rem] sm:bg-[right_0.65rem_center] sm:pl-2.5 sm:pr-7 sm:text-[13px]",

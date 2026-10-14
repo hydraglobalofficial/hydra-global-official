@@ -76,9 +76,7 @@ export function Testimonials() {
     [maxIndex],
   );
 
-  useEffect(() => {
-    setIndex((i) => Math.min(i, maxIndex));
-  }, [maxIndex]);
+  const safeIndex = Math.min(index, maxIndex);
 
   useEffect(() => {
     if (paused || maxIndex === 0) return;
@@ -86,7 +84,7 @@ export function Testimonials() {
     return () => clearTimeout(id);
   }, [index, paused, go, maxIndex]);
 
-  const visible = testimonials.slice(index, index + perView);
+  const visible = testimonials.slice(safeIndex, safeIndex + perView);
 
   return (
     <section
@@ -133,7 +131,7 @@ export function Testimonials() {
       <div className="relative overflow-hidden">
         <AnimatePresence mode="wait" initial={false}>
           <motion.div
-            key={`${index}-${perView}`}
+            key={`${safeIndex}-${perView}`}
             className={cn("grid gap-4", perView === 3 ? "lg:grid-cols-3" : perView === 2 ? "sm:grid-cols-2" : "grid-cols-1")}
             initial={{ opacity: 0, x: 36 }}
             animate={{ opacity: 1, x: 0 }}
@@ -176,11 +174,11 @@ export function Testimonials() {
             key={i}
             type="button"
             aria-label={`Go to review set ${i + 1}`}
-            aria-current={i === index ? "true" : undefined}
+            aria-current={i === safeIndex ? "true" : undefined}
             onClick={() => setIndex(i)}
             className={cn(
               "h-1.5 rounded-full transition-all",
-              i === index ? "w-7 bg-accent" : "w-1.5 bg-white/20 hover:bg-white/35",
+              i === safeIndex ? "w-7 bg-accent" : "w-1.5 bg-white/20 hover:bg-white/35",
             )}
           />
         ))}

@@ -13,8 +13,9 @@ const base: SweetAlertOptions = {
     icon: "swal-hydra-icon",
   },
   buttonsStyling: false,
-  background: "var(--color-surface)",
-  color: "var(--color-fg)",
+  // Avoid CSS-var inheritance bugs inside the Swal portal — theme CSS owns colors.
+  background: undefined,
+  color: undefined,
   confirmButtonText: "Got it",
   reverseButtons: true,
 };
@@ -123,4 +124,27 @@ export function alertFromFormStatus(status: "idle" | "success" | "error", messag
   if (status === "idle" || !message) return;
   if (status === "success") return alertSuccess("Done", message);
   return alertError("Something went wrong", message);
+}
+
+/** Beautiful danger confirm for admin delete / remove actions. */
+export async function confirmDelete(opts: {
+  title: string;
+  text?: string;
+  confirmText?: string;
+  cancelText?: string;
+}): Promise<SweetAlertResult> {
+  return fire({
+    icon: "warning",
+    title: opts.title,
+    text: opts.text ?? "This cannot be undone.",
+    showCancelButton: true,
+    focusCancel: true,
+    confirmButtonText: opts.confirmText ?? "Yes, delete",
+    cancelButtonText: opts.cancelText ?? "Keep it",
+    customClass: {
+      ...base.customClass,
+      popup: "swal-hydra swal-hydra-danger",
+      confirmButton: "swal-hydra-confirm swal-hydra-confirm-danger",
+    },
+  });
 }

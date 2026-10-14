@@ -14,10 +14,10 @@ export function CartLineItem({ line, onNavigate }: { line: CartLine; onNavigate?
       <Link
         href={`/product/${line.slug}`}
         onClick={onNavigate}
-        className="product-media-stage relative size-16 shrink-0 overflow-hidden rounded-xl border border-line bg-surface-2 sm:size-20"
+        className="relative size-16 shrink-0 overflow-hidden rounded-xl border border-line bg-transparent sm:size-20"
       >
         {line.image && (
-          <ProductImage src={line.image} alt={line.name} fill sizes="80px" className="product-media-art object-contain p-2" />
+          <ProductImage src={line.image} alt={line.name} fill sizes="80px" className="object-contain p-2" />
         )}
       </Link>
       <div className="flex min-w-0 flex-1 flex-col justify-between gap-3">

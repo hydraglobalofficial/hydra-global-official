@@ -77,7 +77,7 @@ function ContactFormInner({ defaultTopic, onReset }: { defaultTopic: ContactTopi
               <button type="button" onClick={onReset} className="inline-flex items-center gap-2 rounded-full border border-line-strong px-5 py-2.5 text-sm transition-colors hover:border-accent/50">
                 <RotateCcw size={14} /> Send another
               </button>
-              <Link href="/shop" className="inline-flex items-center gap-2 rounded-full bg-fg px-5 py-2.5 text-sm font-medium text-black transition-colors hover:bg-white">
+              <Link href="/shop" className="inline-flex items-center gap-2 rounded-full bg-fg px-5 py-2.5 text-sm font-medium text-bg transition-colors hover:opacity-90">
                 Continue shopping <ArrowRight size={14} />
               </Link>
             </div>
@@ -202,7 +202,7 @@ function ContactFormInner({ defaultTopic, onReset }: { defaultTopic: ContactTopi
               <button
                 type="submit"
                 disabled={pending}
-                className="group relative inline-flex h-12 w-full items-center justify-center gap-2 overflow-hidden rounded-full bg-fg px-7 text-sm font-medium text-black transition-all disabled:opacity-70 sm:w-auto"
+                className="group relative inline-flex h-12 w-full items-center justify-center gap-2 overflow-hidden rounded-full bg-fg px-7 text-sm font-medium text-bg transition-all disabled:opacity-70 sm:w-auto"
               >
                 <span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-accent/40 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
                 {pending ? <Loader2 size={16} className="animate-spin" /> : null}

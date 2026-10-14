@@ -2,8 +2,8 @@
 
 import dynamic from "next/dynamic";
 
-/** Brand video block — defer until after critical homepage content. */
+/** Heavy crest motion — load after hero paints. */
 export const HydraRise = dynamic(
   () => import("@/components/hydra/hydra-rise").then((m) => m.HydraRise),
-  { ssr: false, loading: () => <div className="min-h-[28rem]" aria-hidden /> },
+  { ssr: false, loading: () => <div className="min-h-[22rem] sm:min-h-[26rem]" aria-hidden /> },
 );

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { LayoutTemplate, Megaphone, Pencil, Plus, Trash2 } from "lucide-react";
 import { AdminHeader, Card } from "@/components/admin/admin-ui";
+import { ConfirmDeleteForm } from "@/components/admin/confirm-delete-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/form";
 import { SITE_SECTION_META } from "@/content/site-sections";
@@ -70,12 +71,17 @@ export default async function AdminContentPage() {
                   Save
                 </Button>
               </form>
-              <form action={deleteAnnouncement} className="lg:pt-6">
+              <ConfirmDeleteForm
+                action={deleteAnnouncement}
+                title="Delete this headline?"
+                text={a.message}
+                className="lg:pt-6"
+              >
                 <input type="hidden" name="id" value={a.id} />
                 <button type="submit" className="rounded-full p-2 text-muted hover:text-danger" aria-label="Delete headline">
                   <Trash2 size={14} />
                 </button>
-              </form>
+              </ConfirmDeleteForm>
             </div>
           ))}
 

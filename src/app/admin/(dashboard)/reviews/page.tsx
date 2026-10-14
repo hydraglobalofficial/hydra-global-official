@@ -1,11 +1,12 @@
 import Link from "next/link";
-import { Check, X } from "lucide-react";
+import { Check, Trash2, X } from "lucide-react";
 import { AdminHeader, Card, StatusBadge } from "@/components/admin/admin-ui";
+import { ConfirmDeleteForm } from "@/components/admin/confirm-delete-form";
 import { Rating } from "@/components/ui/primitives";
 import { requireAdmin } from "@/lib/auth/session";
 import { db } from "@/lib/db";
 import { formatDate } from "@/lib/utils";
-import { moderateReview } from "@/server/actions/admin";
+import { deleteReview, moderateReview } from "@/server/actions/admin";
 
 export const metadata = { title: "Reviews" };
 
@@ -33,7 +34,7 @@ export default async function AdminReviewsPage() {
               <p className="text-sm text-muted">{r.comment}</p>
               <Link href={`/product/${r.product.slug}`} target="_blank" className="text-xs text-accent hover:underline">{r.product.name}</Link>
             </div>
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2">
               {r.status !== "APPROVED" && (
                 <form action={moderateReview}>
                   <input type="hidden" name="id" value={r.id} />
@@ -48,6 +49,19 @@ export default async function AdminReviewsPage() {
                   <button type="submit" className="flex items-center gap-1 rounded-full border border-danger/30 px-3 py-1.5 text-xs text-danger hover:bg-danger/10"><X size={12} /> Reject</button>
                 </form>
               )}
+              <ConfirmDeleteForm
+                action={deleteReview}
+                title="Delete this review?"
+                text={`From ${r.authorName} on ${r.product.name}. Product ratings update automatically.`}
+              >
+                <input type="hidden" name="id" value={r.id} />
+                <button
+                  type="submit"
+                  className="flex items-center gap-1 rounded-full border border-danger/30 px-3 py-1.5 text-xs text-danger hover:bg-danger/10"
+                >
+                  <Trash2 size={12} /> Delete
+                </button>
+              </ConfirmDeleteForm>
             </div>
           </Card>
         ))}

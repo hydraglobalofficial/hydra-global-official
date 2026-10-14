@@ -63,6 +63,15 @@ export async function saveProduct(productId: string | null, _prev: FormState, fo
   const { deviceIds, highlights, imageUrls, compareAtPrice, tagline, ...data } = parsed.data;
   const images = lines(imageUrls).map((url, position) => ({ url, alt: data.name, position }));
 
+  const specKeys = formData.getAll("specKey").map((v) => String(v).trim());
+  const specValues = formData.getAll("specValue").map((v) => String(v).trim());
+  const specs: Record<string, string> = {};
+  for (let i = 0; i < specKeys.length; i++) {
+    const key = specKeys[i];
+    const value = specValues[i] ?? "";
+    if (key && value) specs[key] = value;
+  }
+
   try {
     const product = await withTransaction(async (tx) => {
       const base = {
@@ -70,6 +79,7 @@ export async function saveProduct(productId: string | null, _prev: FormState, fo
         tagline: tagline || null,
         compareAtPrice: compareAtPrice ?? null,
         highlights: lines(highlights),
+        specs,
       };
       if (productId) {
         await tx.productDevice.deleteMany({ where: { productId } });
@@ -103,12 +113,20 @@ export async function saveProduct(productId: string | null, _prev: FormState, fo
 }
 
 export async function deleteProduct(formData: FormData) {
-  await requireAdmin(["OWNER"]);
+  await requireAdmin();
   const id = String(formData.get("id"));
   const hasOrders = await db.orderItem.count({ where: { productId: id } });
-  // Products with order history are archived, never deleted, to keep records intact.
+  // Order history must stay intact — archive instead of hard-delete.
   if (hasOrders) await db.product.update({ where: { id }, data: { status: "ARCHIVED" } });
-  else await db.product.delete({ where: { id } });
+  else {
+    await withTransaction(async (tx) => {
+      await tx.productDevice.deleteMany({ where: { productId: id } });
+      await tx.productImage.deleteMany({ where: { productId: id } });
+      await tx.review.deleteMany({ where: { productId: id } });
+      await tx.productVariant.deleteMany({ where: { productId: id } });
+      await tx.product.delete({ where: { id } });
+    });
+  }
   refreshCatalog();
   redirect("/admin/products");
 }
@@ -144,11 +162,41 @@ export async function updateCategory(formData: FormData) {
 }
 
 export async function deleteCategory(formData: FormData) {
-  await requireAdmin(["OWNER"]);
+  await requireAdmin();
   const id = String(formData.get("id"));
-  if (await db.product.count({ where: { categoryId: id } })) return;
-  await db.category.delete({ where: { id } });
+
+  await withTransaction(async (tx) => {
+    const linked = await tx.product.count({ where: { categoryId: id } });
+    if (linked > 0) {
+      let fallback = await tx.category.findFirst({
+        where: { id: { not: id }, slug: "uncategorized" },
+        select: { id: true },
+      });
+      if (!fallback) {
+        fallback = await tx.category.findFirst({
+          where: { id: { not: id } },
+          orderBy: { position: "asc" },
+          select: { id: true },
+        });
+      }
+      if (!fallback) {
+        fallback = await tx.category.create({
+          data: {
+            name: "Uncategorized",
+            slug: `uncategorized-${Date.now().toString(36)}`,
+            description: "Auto-created when a category with products was deleted.",
+            position: await tx.category.count(),
+          },
+          select: { id: true },
+        });
+      }
+      await tx.product.updateMany({ where: { categoryId: id }, data: { categoryId: fallback.id } });
+    }
+    await tx.category.delete({ where: { id } });
+  });
+
   refreshCatalog();
+  revalidatePath("/admin/catalog");
 }
 
 export type DeviceMutationResult =
@@ -250,9 +298,14 @@ export async function updateDevice(formData: FormData): Promise<void> {
 }
 
 export async function deleteDevice(formData: FormData) {
-  await requireAdmin(["OWNER"]);
-  await db.device.delete({ where: { id: String(formData.get("id")) } });
+  await requireAdmin();
+  const id = String(formData.get("id"));
+  await withTransaction(async (tx) => {
+    await tx.productDevice.deleteMany({ where: { deviceId: id } });
+    await tx.device.delete({ where: { id } });
+  });
   refreshCatalog();
+  revalidatePath("/admin/catalog");
 }
 
 // ─── Brands ──────────────────────────────────────────────────────────────────
@@ -363,10 +416,19 @@ export async function updateBrand(formData: FormData) {
 }
 
 export async function deleteBrand(formData: FormData) {
-  await requireAdmin(["OWNER"]);
+  await requireAdmin();
   const id = String(formData.get("id"));
-  if (await db.device.count({ where: { brandId: id } })) return;
-  await db.brand.delete({ where: { id } });
+
+  await withTransaction(async (tx) => {
+    const devices = await tx.device.findMany({ where: { brandId: id }, select: { id: true } });
+    const deviceIds = devices.map((d) => d.id);
+    if (deviceIds.length) {
+      await tx.productDevice.deleteMany({ where: { deviceId: { in: deviceIds } } });
+      await tx.device.deleteMany({ where: { brandId: id } });
+    }
+    await tx.brand.delete({ where: { id } });
+  });
+
   refreshCatalog();
   revalidatePath("/admin/catalog");
   revalidatePath("/shop", "layout");
@@ -486,6 +548,57 @@ export async function moderateReview(formData: FormData) {
   });
   await invalidateAdminCache();
   refreshCatalog(product.slug);
+  revalidatePath("/admin", "layout");
+}
+
+export async function deleteReview(formData: FormData) {
+  await requireAdmin();
+  const id = z.string().min(1).parse(formData.get("id"));
+  const review = await db.review.findUnique({ where: { id }, select: { productId: true } });
+  if (!review) return;
+
+  await db.review.delete({ where: { id } });
+  const agg = await db.review.aggregate({
+    where: { productId: review.productId, status: "APPROVED" },
+    _avg: { rating: true },
+    _count: true,
+  });
+  const product = await db.product.update({
+    where: { id: review.productId },
+    data: { ratingAverage: agg._avg.rating ?? 0, ratingCount: agg._count },
+  });
+  await invalidateAdminCache();
+  refreshCatalog(product.slug);
+  revalidatePath("/admin", "layout");
+}
+
+export async function deleteInquiry(formData: FormData) {
+  await requireAdmin();
+  const id = z.string().min(1).parse(formData.get("id"));
+  await db.inquiry.delete({ where: { id } });
+  await invalidateAdminCache();
+  revalidatePath("/admin", "layout");
+}
+
+export async function deleteAdmin(formData: FormData) {
+  const session = await requireAdmin(["OWNER"]);
+  const id = z.string().min(1).parse(formData.get("id"));
+  if (id === session.userId) return;
+
+  const target = await db.user.findUnique({
+    where: { id },
+    select: { id: true, role: true },
+  });
+  if (!target || (target.role !== "OWNER" && target.role !== "STAFF")) return;
+
+  if (target.role === "OWNER") {
+    const ownerCount = await db.user.count({ where: { role: "OWNER" } });
+    if (ownerCount <= 1) return;
+  }
+
+  await db.user.delete({ where: { id } });
+  await invalidateAdminCache();
+  revalidatePath("/admin/team");
   revalidatePath("/admin", "layout");
 }
 
