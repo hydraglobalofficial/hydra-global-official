@@ -75,9 +75,13 @@ export default async function AdminCourierPage() {
         <Card className="p-4 sm:p-5">
           <p className="text-[10px] uppercase tracking-[0.16em] text-subtle">Invoice email</p>
           <p className={`mt-1 text-lg font-semibold ${smtpOk ? "text-emerald-500" : "text-amber-500"}`}>
-            {smtpOk ? "SMTP ready" : "SMTP missing"}
+            {smtpOk ? "Env set" : "SMTP missing"}
           </p>
-          <p className="mt-1 text-xs text-muted">Sent on order confirm</p>
+          <p className="mt-1 text-xs text-muted">
+            {smtpOk
+              ? "Env only — Hostinger must accept SMTP_PASS"
+              : "Add SMTP_HOST / USER / PASS"}
+          </p>
         </Card>
       </div>
 

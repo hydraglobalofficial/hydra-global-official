@@ -18,7 +18,14 @@ export type MailResult =
 function smtpPass() {
   const candidates = [process.env.SMTP_PASS, process.env.SMTP_PASSWORD];
   for (const raw of candidates) {
-    const pass = raw?.trim() ?? "";
+    let pass = raw?.trim() ?? "";
+    // Strip accidental wrapping quotes from .env
+    if (
+      (pass.startsWith('"') && pass.endsWith('"')) ||
+      (pass.startsWith("'") && pass.endsWith("'"))
+    ) {
+      pass = pass.slice(1, -1);
+    }
     if (!pass) continue;
     // Ignore scaffold placeholders left in .env
     if (/^your[_-]?mailbox[_-]?password$/i.test(pass)) continue;
@@ -39,7 +46,7 @@ function smtpConfigured() {
 
 function transporter() {
   const host = process.env.SMTP_HOST!.trim();
-  const port = Number(process.env.SMTP_PORT || 587);
+  const port = Number(process.env.SMTP_PORT || 465);
   const secure = process.env.SMTP_SECURE === "1" || process.env.SMTP_SECURE === "true" || port === 465;
   const options: SMTPTransport.Options = {
     host,
@@ -49,8 +56,26 @@ function transporter() {
       user: process.env.SMTP_USER!.trim(),
       pass: smtpPass(),
     },
+    connectionTimeout: 15_000,
+    greetingTimeout: 15_000,
+    socketTimeout: 20_000,
   };
+  // Port 587 = STARTTLS (Hostinger fallback when 465 SSL misbehaves).
+  if (!secure && port === 587) {
+    options.requireTLS = true;
+  }
   return nodemailer.createTransport(options);
+}
+
+function friendlySmtpError(error: unknown) {
+  const message = error instanceof Error ? error.message : "SMTP send failed.";
+  if (/535|Invalid login|authentication failed|EAUTH/i.test(message)) {
+    return (
+      "Hostinger rejected the mailbox login (SMTP 535). " +
+      "Reset the password for SMTP_USER in Hostinger Email, put the new password in SMTP_PASS / SMTP_PASSWORD, then restart the server."
+    );
+  }
+  return message;
 }
 
 /**
@@ -84,12 +109,23 @@ export async function sendMail(payload: MailPayload): Promise<MailResult> {
     });
     return { ok: true, messageId: info.messageId || "sent" };
   } catch (error) {
-    const message = error instanceof Error ? error.message : "SMTP send failed.";
-    console.error("[mail]", message);
+    const message = friendlySmtpError(error);
+    console.error("[mail]", error instanceof Error ? error.message : message);
     return { ok: false, error: message };
   }
 }
 
+/** Env vars present — does NOT prove Hostinger accepts the password. */
 export function isSmtpReady() {
   return smtpConfigured();
+}
+
+export function smtpConfigStatus() {
+  return {
+    configured: smtpConfigured(),
+    host: process.env.SMTP_HOST?.trim() || null,
+    user: process.env.SMTP_USER?.trim() || null,
+    from: process.env.SMTP_FROM?.trim() || process.env.SMTP_USER?.trim() || null,
+    port: Number(process.env.SMTP_PORT || 465),
+  };
 }
