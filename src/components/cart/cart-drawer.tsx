@@ -1,57 +1,90 @@
 "use client";
 
 import { useEffect } from "react";
-import { ShoppingBag, Truck, X } from "lucide-react";
+import { usePathname } from "next/navigation";
+import { ArrowRight, ShoppingBag, Truck, X } from "lucide-react";
 import { ButtonLink } from "@/components/ui/button";
 import { siteConfig } from "@/config/site";
 import { cn, formatPrice } from "@/lib/utils";
 import { CartLineItem } from "./cart-line-item";
+import { CartSuggestions } from "./cart-suggestions";
 import { useCart } from "./cart-provider";
 
 export function FreeShippingMeter({ subtotal }: { subtotal: number }) {
   const threshold = siteConfig.freeShippingThreshold;
   const remaining = Math.max(0, threshold - subtotal);
   const progress = Math.min(100, (subtotal / threshold) * 100);
+  const unlocked = remaining <= 0;
+
   return (
-    <div className="space-y-2">
-      <p className="flex items-center gap-2 text-xs text-muted">
-        <Truck size={14} className="text-accent" />
-        {remaining > 0 ? (
-          <>
-            Add <span className="font-mono text-fg">{formatPrice(remaining)}</span> more for free delivery
-          </>
+    <div
+      className={cn(
+        "rounded-xl px-3.5 py-3",
+        unlocked ? "bg-emerald-50 dark:bg-emerald-500/10" : "bg-zinc-100 dark:bg-white/[0.06]",
+      )}
+    >
+      <p
+        className={cn(
+          "flex items-center gap-2 text-[12px] leading-snug",
+          unlocked ? "font-medium text-emerald-700 dark:text-emerald-400" : "text-zinc-600 dark:text-zinc-400",
+        )}
+      >
+        <Truck size={14} className="shrink-0" />
+        {unlocked ? (
+          "Free delivery unlocked"
         ) : (
-          <span className="text-success">You&apos;ve unlocked free delivery</span>
+          <>
+            Add{" "}
+            <span className="font-mono font-semibold text-zinc-900 dark:text-zinc-100">{formatPrice(remaining)}</span>{" "}
+            for free delivery
+          </>
         )}
       </p>
-      <div className="h-1 overflow-hidden rounded-full bg-white/10 light:bg-black/10">
-        <div
-          className="h-full rounded-full bg-accent transition-[width] duration-500"
-          style={{ width: `${progress}%` }}
-        />
-      </div>
+      {!unlocked ? (
+        <div className="mt-2.5 h-1 overflow-hidden rounded-full bg-zinc-200 dark:bg-white/10">
+          <div
+            className="h-full rounded-full bg-zinc-900 transition-[width] duration-500 dark:bg-white"
+            style={{ width: `${progress}%` }}
+          />
+        </div>
+      ) : null}
     </div>
   );
 }
 
 export function CartDrawer() {
   const { lines, subtotal, count, isOpen, close } = useCart();
+  const pathname = usePathname();
+  const onCheckout = !!pathname && (pathname === "/checkout" || pathname.startsWith("/checkout/"));
 
   useEffect(() => {
-    if (!isOpen) return;
+    close();
+  }, [pathname, close]);
+
+  useEffect(() => {
+    if (!isOpen || onCheckout) return;
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && close();
     document.addEventListener("keydown", onKey);
+    const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     return () => {
       document.removeEventListener("keydown", onKey);
-      document.body.style.overflow = "";
+      document.body.style.overflow = prev;
     };
-  }, [isOpen, close]);
+  }, [isOpen, onCheckout, close]);
+
+  if (onCheckout) return null;
 
   return (
-    <div className={cn("fixed inset-0 z-[70]", !isOpen && "pointer-events-none")} aria-hidden={!isOpen}>
+    <div
+      className={cn("fixed inset-0 z-[70]", !isOpen && "pointer-events-none")}
+      aria-hidden={!isOpen}
+    >
       <div
-        className={cn("absolute inset-0 bg-black/70 backdrop-blur-sm transition-opacity duration-300 light:bg-black/40", isOpen ? "opacity-100" : "opacity-0")}
+        className={cn(
+          "absolute inset-0 bg-black/40 transition-opacity duration-300 dark:bg-black/70",
+          isOpen ? "opacity-100" : "opacity-0",
+        )}
         onClick={close}
       />
       <aside
@@ -59,18 +92,22 @@ export function CartDrawer() {
         aria-modal="true"
         aria-label="Shopping cart"
         className={cn(
-          "absolute inset-y-0 right-0 flex w-full max-w-md flex-col border-l border-line bg-bg pt-[max(0.75rem,env(safe-area-inset-top,0px))] shadow-2xl transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
+          "absolute inset-y-0 right-0 flex w-[min(100%,23rem)] flex-col overflow-hidden",
+          "bg-white text-zinc-900 shadow-[-12px_0_40px_-20px_rgba(0,0,0,0.35)]",
+          "dark:bg-[#0c0e14] dark:text-zinc-100 dark:shadow-[-12px_0_40px_-12px_rgba(0,0,0,0.85)]",
+          "pt-[max(0.5rem,env(safe-area-inset-top,0px))] transition-transform duration-400 ease-[cubic-bezier(0.22,1,0.36,1)]",
           isOpen ? "translate-x-0" : "translate-x-full",
         )}
       >
-        <header className="flex items-center justify-between border-b border-line px-4 py-4 sm:px-6 sm:py-5">
-          <h2 className="text-lg font-semibold">
-            Your Cart <span className="font-mono text-sm text-muted">({count})</span>
+        <header className="flex shrink-0 items-center justify-between px-5 pb-3 pt-3">
+          <h2 className="text-[15px] font-semibold tracking-tight text-zinc-950 dark:text-white">
+            Cart
+            <span className="ml-1.5 font-mono text-[13px] font-normal text-zinc-400">({count})</span>
           </h2>
           <button
             type="button"
             onClick={close}
-            className="touch-target grid place-items-center rounded-full text-muted hover:bg-white/5 hover:text-fg light:hover:bg-black/5"
+            className="grid size-8 place-items-center rounded-full text-zinc-400 transition hover:bg-zinc-100 hover:text-zinc-900 dark:hover:bg-white/10 dark:hover:text-white"
             aria-label="Close cart"
           >
             <X size={18} />
@@ -78,40 +115,63 @@ export function CartDrawer() {
         </header>
 
         {lines.length === 0 ? (
-          <div className="flex flex-1 flex-col items-center justify-center gap-4 px-4 pb-[max(1.25rem,env(safe-area-inset-bottom))] text-center sm:px-6">
-            <div className="grid size-16 place-items-center rounded-2xl border border-line bg-surface-2">
-              <ShoppingBag className="text-muted" />
+          <div className="flex flex-1 flex-col items-center justify-center gap-4 px-6 pb-[max(1.25rem,env(safe-area-inset-bottom))] text-center">
+            <div className="grid size-14 place-items-center rounded-2xl bg-zinc-100 dark:bg-white/[0.06]">
+              <ShoppingBag size={22} className="text-zinc-400" />
             </div>
-            <p className="font-medium">Your cart is empty</p>
-            <p className="text-sm text-muted">Find armor built for your exact device.</p>
-            <ButtonLink href="/shop" onClick={close} variant="outline" className="min-h-11">
+            <div>
+              <p className="font-medium text-zinc-900 dark:text-zinc-100">Your cart is empty</p>
+              <p className="mt-1 text-sm text-zinc-500">Find armor built for your device.</p>
+            </div>
+            <ButtonLink
+              href="/shop"
+              onClick={close}
+              className="min-h-11 rounded-full bg-zinc-950 px-6 text-white hover:bg-zinc-800 dark:bg-white dark:text-zinc-900"
+            >
               Browse products
             </ButtonLink>
           </div>
         ) : (
           <>
-            <div className="border-b border-line px-4 py-4 sm:px-6">
-              <FreeShippingMeter subtotal={subtotal} />
+            <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
+              <div className="px-5 pb-1">
+                <FreeShippingMeter subtotal={subtotal} />
+              </div>
+
+              <ul className="divide-y divide-zinc-100 px-5 dark:divide-white/8">
+                {lines.map((line) => (
+                  <CartLineItem key={`${line.productId}:${line.variantId}`} line={line} onNavigate={close} />
+                ))}
+              </ul>
+
+              <CartSuggestions onNavigate={close} />
             </div>
-            <ul className="flex-1 divide-y divide-line overflow-y-auto overscroll-contain px-4 sm:px-6">
-              {lines.map((line) => (
-                <CartLineItem key={`${line.productId}:${line.variantId}`} line={line} onNavigate={close} />
-              ))}
-            </ul>
-            <footer className="space-y-4 border-t border-line px-4 pt-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] sm:px-6">
-              <div className="flex items-center justify-between gap-3">
-                <span className="text-sm text-muted">Subtotal</span>
-                <span className="font-mono text-lg tabular-nums">{formatPrice(subtotal)}</span>
+
+            <footer className="shrink-0 border-t border-zinc-100 bg-white px-5 pt-4 pb-[max(1rem,env(safe-area-inset-bottom))] dark:border-white/10 dark:bg-[#0c0e14]">
+              <div className="mb-1 flex items-baseline justify-between gap-3">
+                <span className="text-sm text-zinc-500">Subtotal</span>
+                <span className="font-mono text-xl font-semibold tabular-nums tracking-tight text-zinc-950 dark:text-white">
+                  {formatPrice(subtotal)}
+                </span>
               </div>
-              <p className="text-xs text-subtle">Shipping calculated at checkout.</p>
-              <div className="grid grid-cols-2 gap-2.5 sm:gap-3">
-                <ButtonLink href="/cart" onClick={close} variant="secondary" className="min-h-11">
-                  View cart
-                </ButtonLink>
-                <ButtonLink href="/checkout" onClick={close} className="min-h-11">
-                  Checkout
-                </ButtonLink>
-              </div>
+              <p className="mb-4 text-[11px] text-zinc-400">Shipping calculated at checkout</p>
+
+              <ButtonLink
+                href="/checkout"
+                onClick={close}
+                className="flex min-h-12 w-full items-center justify-center gap-2 rounded-full bg-zinc-950 text-[14px] font-medium text-white hover:bg-zinc-800 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
+              >
+                Checkout
+                <ArrowRight size={16} />
+              </ButtonLink>
+              <ButtonLink
+                href="/cart"
+                onClick={close}
+                variant="ghost"
+                className="mt-1.5 flex min-h-10 w-full items-center justify-center rounded-full text-[13px] font-medium text-zinc-500 hover:bg-zinc-50 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-white/5 dark:hover:text-white"
+              >
+                View cart
+              </ButtonLink>
             </footer>
           </>
         )}

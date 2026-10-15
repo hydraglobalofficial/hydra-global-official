@@ -4,14 +4,18 @@ import { SpotlightCard } from "@/components/ui/spotlight-card";
 import { siteConfig } from "@/config/site";
 import { cn, formatPrice } from "@/lib/utils";
 
-const badges = [
-  { icon: ShieldCheck, title: "12-Month Warranty", text: "Free replacement for defects" },
-  { icon: BadgeCheck, title: "100% Genuine", text: "Official HYDRA quality" },
-  { icon: Truck, title: "Free Delivery", text: `On orders over ${formatPrice(siteConfig.freeShippingThreshold)}` },
-  { icon: RefreshCcw, title: "7-Day Returns", text: "No-questions-asked policy" },
-];
-
 export function TrustBadges({ compact = false }: { compact?: boolean }) {
+  const badges = [
+    { icon: ShieldCheck, title: "12-Month Warranty", text: "Free replacement for defects" },
+    { icon: BadgeCheck, title: "100% Genuine", text: "Official HYDRA quality" },
+    {
+      icon: Truck,
+      title: "Free Delivery",
+      text: `On orders over ${formatPrice(siteConfig.freeShippingThreshold)}`,
+    },
+    { icon: RefreshCcw, title: "7-Day Returns", text: "No-questions-asked policy" },
+  ];
+
   return (
     <RevealGroup className={cn("grid grid-cols-2 lg:grid-cols-4", compact ? "gap-6" : "gap-3 md:gap-5")} stagger={0.08}>
       {badges.map(({ icon: Icon, title, text }) => {

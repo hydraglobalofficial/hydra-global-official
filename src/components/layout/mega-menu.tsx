@@ -1,14 +1,6 @@
 import Link from "next/link";
-import { ArrowRight, Camera, EyeOff, Layers, Shield, Smartphone, Sparkles } from "lucide-react";
+import { ArrowRight, Smartphone } from "lucide-react";
 import type { NavigationData } from "@/server/queries/catalog";
-
-const categoryIcons: Record<string, typeof Shield> = {
-  shield: Shield,
-  "eye-off": EyeOff,
-  camera: Camera,
-  layers: Layers,
-  sparkles: Sparkles,
-};
 
 function groupBySeries(devices: NavigationData["devices"]) {
   const map = new Map<string, NavigationData["devices"]>();
@@ -28,20 +20,16 @@ export function MegaMenu({ nav }: { nav: NavigationData }) {
       <div className="col-span-4">
         <p className="mb-4 font-mono text-[10px] uppercase tracking-[0.25em] text-subtle">Shop by Category</p>
         <div className="grid gap-1">
-          {nav.categories.map((c) => {
-            const Icon = categoryIcons[c.icon ?? ""] ?? Shield;
-            return (
-              <Link key={c.slug} href={`/shop?category=${c.slug}`} className="group flex items-start gap-4 rounded-2xl p-3 hover:bg-white/[0.04]">
-                <span className="grid size-10 shrink-0 place-items-center rounded-xl border border-line bg-surface-2 text-accent group-hover:border-accent/40">
-                  <Icon size={18} />
-                </span>
-                <span>
-                  <span className="block text-sm font-medium group-hover:text-accent">{c.name}</span>
-                  {c.description && <span className="line-clamp-1 text-xs text-muted">{c.description}</span>}
-                </span>
-              </Link>
-            );
-          })}
+          {nav.categories.map((c) => (
+            <Link
+              key={c.slug}
+              href={`/shop?category=${c.slug}`}
+              className="group rounded-2xl p-3 hover:bg-white/[0.04]"
+            >
+              <span className="block text-sm font-medium group-hover:text-accent">{c.name}</span>
+              {c.description && <span className="mt-0.5 line-clamp-1 block text-xs text-muted">{c.description}</span>}
+            </Link>
+          ))}
         </div>
       </div>
 

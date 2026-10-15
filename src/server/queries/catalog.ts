@@ -298,18 +298,46 @@ export type ProductDetail = NonNullable<Awaited<ReturnType<typeof getProductBySl
 
 export async function getRelatedProducts(product: ProductDetail, limit = 4) {
   const deviceIds = product.devices.map((d) => d.deviceId);
+  // Prefer same-device fits only — never mix another phone's catalog into "you may also like".
+  const where =
+    deviceIds.length > 0
+      ? {
+          status: "ACTIVE" as const,
+          id: { not: product.id },
+          devices: { some: { deviceId: { in: deviceIds } } },
+        }
+      : {
+          status: "ACTIVE" as const,
+          id: { not: product.id },
+          categoryId: product.categoryId,
+        };
+
   const items = await db.product.findMany({
-    where: {
-      status: "ACTIVE",
-      id: { not: product.id },
-      OR: [
-        { categoryId: product.categoryId },
-        ...(deviceIds.length ? [{ devices: { some: { deviceId: { in: deviceIds } } } }] : []),
-      ],
-    },
+    where,
     select: productCardSelect,
     orderBy: [{ soldCount: "desc" }],
     take: limit,
+  });
+  return items.map(publicProductCard);
+}
+
+/** Cart drawer / upsell: products that fit the buyer's device(s) only. */
+export async function getProductsForDevices(
+  deviceSlugs: string[],
+  opts?: { excludeProductIds?: string[]; limit?: number },
+) {
+  const slugs = [...new Set(deviceSlugs.map((s) => s.trim().toLowerCase()).filter(Boolean))].slice(0, 8);
+  if (!slugs.length) return [];
+
+  const items = await db.product.findMany({
+    where: {
+      status: "ACTIVE",
+      ...(opts?.excludeProductIds?.length ? { id: { notIn: opts.excludeProductIds } } : {}),
+      devices: { some: { device: { slug: { in: slugs } } } },
+    },
+    select: productCardSelect,
+    orderBy: [{ soldCount: "desc" }, { featured: "desc" }],
+    take: opts?.limit ?? 4,
   });
   return items.map(publicProductCard);
 }

@@ -25,6 +25,7 @@ import { clampText, safeInternalHref, safeMediaUrl, safeSlug, safeVideoUrl } fro
 import {
   normalizeAboutContent,
   normalizeCollectionsContent,
+  normalizeCurrencyContent,
   normalizeHomeHeroContent,
   normalizeHowItWorksContent,
   normalizeInstallationContent,
@@ -481,6 +482,11 @@ export async function updateOrder(_prev: FormState, formData: FormData): Promise
       const { toInvoiceOrder } = await import("@/lib/invoice/from-order");
       const { sendOrderInvoiceEmail } = await import("@/lib/mail/send-order-invoice");
       const { createCourierShipment, orderToCourierRequest } = await import("@/lib/courier");
+      const { getCurrencyContent } = await import("@/server/queries/content");
+      const { bindMoneyFormat } = await import("@/lib/money");
+
+      const money = await getCurrencyContent();
+      bindMoneyFormat(money);
 
       const invoice = toInvoiceOrder(order);
       const mail = await sendOrderInvoiceEmail(invoice);
@@ -491,31 +497,129 @@ export async function updateOrder(_prev: FormState, formData: FormData): Promise
       }
 
       const courier = await createCourierShipment(
-        orderToCourierRequest({ ...order, currency: "USD" }),
+        orderToCourierRequest({
+          ...order,
+          currency: money.code,
+          paymentMethod: order.paymentMethod,
+          paymentStatus: order.paymentStatus,
+        }),
       );
-      if ("skipped" in courier && courier.skipped) {
+
+      let courierMsg = "";
+      if ("skipped" in courier) {
         console.info("[orders] courier skipped", order.number, courier.reason);
+        courierMsg = " Courier booking skipped (check Pathao env).";
       } else if (!courier.ok) {
         console.error("[orders] courier booking failed", order.number, courier.error);
+        courierMsg = ` Courier booking failed: ${courier.error ?? "unknown error"}.`;
+      } else {
+        const noteBits = [
+          order.fulfillmentNote?.trim() || null,
+          courier.consignmentId
+            ? `Pathao consignment ${courier.consignmentId}`
+            : "Pathao shipment booked",
+        ].filter(Boolean);
+        await db.order.update({
+          where: { id: order.id },
+          data: {
+            courierProvider: courier.provider,
+            courierConsignmentId: courier.consignmentId ?? null,
+            courierStatus: "Pending Pickup",
+            courierBookedAt: new Date(),
+            courierLastSyncAt: new Date(),
+            fulfillmentNote: noteBits.join(" · "),
+          },
+        });
+        courierMsg = courier.consignmentId
+          ? ` Pathao booked (${courier.consignmentId}).`
+          : " Pathao booked.";
       }
 
+      const courierDetail = courierMsg.trim() || "No courier update.";
       if (mail.ok && !("skipped" in mail && mail.skipped)) {
-        return { status: "success", message: "Order confirmed · invoice emailed to customer." };
+        return {
+          status: "success",
+          message: `ORDER_APPROVED|${order.number}|mail:ok|Invoice emailed to ${order.email}|${courierDetail}`,
+        };
       }
       if (mail.ok && "skipped" in mail && mail.skipped) {
         return {
           status: "success",
-          message: "Order confirmed. Invoice email skipped (add SMTP_* to env when ready).",
+          message: `ORDER_APPROVED|${order.number}|mail:skip|SMTP not configured — set SMTP_PASSWORD|${courierDetail}`,
         };
       }
       return {
         status: "success",
-        message: "Order confirmed, but invoice email failed — check SMTP settings / logs.",
+        message: `ORDER_APPROVED|${order.number}|mail:fail|${mail.error ?? "Hostinger SMTP login failed — wrong mailbox password in .env"}|${courierDetail}`,
       };
     }
   }
 
   return { status: "success", message: "Order updated." };
+}
+
+export async function deleteOrder(formData: FormData) {
+  await requireAdmin();
+  const id = z.string().min(1).parse(formData.get("id"));
+
+  await withTransaction(async (tx) => {
+    const order = await tx.order.findUnique({
+      where: { id },
+      include: { items: true },
+    });
+    if (!order) return;
+
+    const alreadyRestocked = order.status === "CANCELLED" || order.status === "RETURNED";
+    if (!alreadyRestocked) {
+      for (const item of order.items) {
+        await tx.product.update({
+          where: { id: item.productId },
+          data: { stock: { increment: item.quantity }, soldCount: { decrement: item.quantity } },
+        });
+        if (item.variantId) {
+          await tx.productVariant.update({
+            where: { id: item.variantId },
+            data: { stock: { increment: item.quantity } },
+          });
+        }
+      }
+    }
+
+    await tx.order.delete({ where: { id } });
+  });
+
+  updateTag(CATALOG_TAG);
+  await invalidateAdminCache();
+  revalidatePath("/admin", "layout");
+  revalidatePath("/admin/orders");
+  revalidatePath("/admin/courier");
+}
+
+/** Resend invoice email for an already-confirmed order. */
+export async function resendOrderInvoice(_prev: FormState, formData: FormData): Promise<FormState> {
+  await requireAdmin();
+  const id = z.string().min(1).parse(formData.get("id"));
+  const order = await db.order.findUnique({ where: { id }, include: { items: true } });
+  if (!order) return { status: "error", message: "Order not found." };
+
+  const { toInvoiceOrder } = await import("@/lib/invoice/from-order");
+  const { sendOrderInvoiceEmail } = await import("@/lib/mail/send-order-invoice");
+  const { getCurrencyContent } = await import("@/server/queries/content");
+  const { bindMoneyFormat } = await import("@/lib/money");
+  const money = await getCurrencyContent();
+  bindMoneyFormat(money);
+
+  const mail = await sendOrderInvoiceEmail(toInvoiceOrder(order));
+  if (mail.ok && !("skipped" in mail && mail.skipped)) {
+    return { status: "success", message: `Invoice resent to ${order.email}.` };
+  }
+  if (mail.ok && "skipped" in mail && mail.skipped) {
+    return { status: "error", message: `Email skipped — ${mail.reason}` };
+  }
+  return {
+    status: "error",
+    message: mail.error ?? "SMTP failed. Check Hostinger mailbox password in SMTP_PASSWORD.",
+  };
 }
 
 // ─── Inquiries & reviews ─────────────────────────────────────────────────────
@@ -1021,6 +1125,39 @@ export async function saveWhatsappWidgetSection(_prev: FormState, formData: Form
   } catch (error) {
     console.error("[saveWhatsappWidgetSection]", error);
     return { status: "error", message: "Could not publish WhatsApp float." };
+  }
+}
+
+export async function saveCurrencySection(_prev: FormState, formData: FormData): Promise<FormState> {
+  await requireAdmin();
+  try {
+    const data = normalizeCurrencyContent({
+      preset: String(formData.get("preset") ?? "bdt"),
+      code: String(formData.get("code") ?? ""),
+      symbol: String(formData.get("symbol") ?? ""),
+      position: String(formData.get("position") ?? "before"),
+      locale: String(formData.get("locale") ?? "en-BD"),
+      decimals: Number(formData.get("decimals") ?? 0),
+    });
+
+    if (!data.symbol.trim()) {
+      return { status: "error", message: "Currency symbol is required." };
+    }
+
+    await db.siteSection.upsert({
+      where: { key: "site.currency" },
+      create: { key: "site.currency", title: "Currency & price format", data },
+      update: { data, title: "Currency & price format" },
+    });
+    updateTag(CONTENT_TAG);
+    revalidatePath("/", "layout");
+    revalidatePath("/admin", "layout");
+    revalidatePath("/admin/content/sections/site.currency");
+    await bumpAdminContentHub();
+    return { status: "success", message: "Price format published." };
+  } catch (error) {
+    console.error("[saveCurrencySection]", error);
+    return { status: "error", message: "Could not publish price format." };
   }
 }
 

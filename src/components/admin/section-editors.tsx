@@ -5,6 +5,7 @@ import { Loader2, Plus, Trash2 } from "lucide-react";
 import {
   saveAboutSection,
   saveCollectionsSection,
+  saveCurrencySection,
   saveHomeHeroSection,
   saveHowItWorksSection,
   saveInstallationSection,
@@ -23,6 +24,7 @@ import type {
   WhatsappWidgetContent,
 } from "@/content/site-sections";
 import type { InstallationContent } from "@/content/installation";
+import { formatMoney, MONEY_PRESETS, type CurrencyContent, type MoneyPresetId } from "@/lib/money";
 import { initialFormState } from "@/lib/validations";
 import { ImageUrlField } from "@/components/admin/media-uploader";
 import { Button } from "@/components/ui/button";
@@ -1272,6 +1274,133 @@ export function InstallationSectionEditor({ content }: { content: InstallationCo
       <FormMessage status={state.status} message={state.message} toast />
       <Button type="submit" disabled={pending}>
         {pending && <Loader2 size={16} className="animate-spin" />} Publish installation
+      </Button>
+    </form>
+  );
+}
+
+export function CurrencySectionEditor({ content }: { content: CurrencyContent }) {
+  const [state, action, pending] = useActionState(saveCurrencySection, initialFormState);
+  const [preset, setPreset] = useState<MoneyPresetId>(content.preset);
+  const [symbol, setSymbol] = useState(content.symbol);
+  const [code, setCode] = useState(content.code);
+  const [position, setPosition] = useState<"before" | "after">(content.position);
+  const [locale, setLocale] = useState(content.locale);
+  const [decimals, setDecimals] = useState(content.decimals);
+
+  const live =
+    preset !== "custom" && MONEY_PRESETS[preset]
+      ? { preset, ...MONEY_PRESETS[preset].format }
+      : { preset: "custom" as const, symbol, code, position, locale, decimals };
+
+  const pickPreset = (id: MoneyPresetId) => {
+    setPreset(id);
+    if (id !== "custom" && MONEY_PRESETS[id]) {
+      const f = MONEY_PRESETS[id].format;
+      setSymbol(f.symbol);
+      setCode(f.code);
+      setPosition(f.position);
+      setLocale(f.locale);
+      setDecimals(f.decimals);
+    }
+  };
+
+  return (
+    <form action={action} className="space-y-5">
+      <input type="hidden" name="preset" value={live.preset} />
+      <input type="hidden" name="symbol" value={live.symbol} />
+      <input type="hidden" name="code" value={live.code} />
+      <input type="hidden" name="position" value={live.position} />
+      <input type="hidden" name="locale" value={live.locale} />
+      <input type="hidden" name="decimals" value={live.decimals} />
+
+      <Section title="Price display format">
+        <p className="text-sm text-muted">
+          Product amounts stay as plain numbers in the database. This only changes how they look on the store and in
+          admin — pick Taka, Dollar, or a custom symbol.
+        </p>
+        <div className="grid gap-2 sm:grid-cols-2">
+          {(Object.keys(MONEY_PRESETS) as Exclude<MoneyPresetId, "custom">[]).map((id) => {
+            const p = MONEY_PRESETS[id];
+            const active = preset === id;
+            return (
+              <button
+                key={id}
+                type="button"
+                onClick={() => pickPreset(id)}
+                className={`rounded-2xl border px-4 py-3 text-left transition ${
+                  active ? "border-accent bg-accent/10" : "border-line hover:border-accent/40"
+                }`}
+              >
+                <p className="text-sm font-medium text-fg">{p.label}</p>
+                <p className="mt-1 font-mono text-lg tabular-nums text-fg">{formatMoney(p.example, p.format)}</p>
+              </button>
+            );
+          })}
+          <button
+            type="button"
+            onClick={() => pickPreset("custom")}
+            className={`rounded-2xl border px-4 py-3 text-left transition sm:col-span-2 ${
+              preset === "custom" ? "border-accent bg-accent/10" : "border-line hover:border-accent/40"
+            }`}
+          >
+            <p className="text-sm font-medium text-fg">Custom symbol</p>
+            <p className="mt-1 text-xs text-muted">Set any prefix/suffix — e.g. TK, BDT, Rs</p>
+          </button>
+        </div>
+      </Section>
+
+      {preset === "custom" ? (
+        <Section title="Custom format">
+          <div className="grid gap-4 sm:grid-cols-2">
+            <Label label="Symbol">
+              <Input value={symbol} onChange={(e) => setSymbol(e.target.value)} placeholder="৳ or $" maxLength={12} />
+            </Label>
+            <Label label="Code (invoices)">
+              <Input value={code} onChange={(e) => setCode(e.target.value.toUpperCase())} placeholder="BDT" maxLength={8} />
+            </Label>
+            <Label label="Position">
+              <Select
+                value={position}
+                onChange={(e) => setPosition(e.target.value === "after" ? "after" : "before")}
+              >
+                <option value="before">Before number (৳1200)</option>
+                <option value="after">After number (1200 টাকা)</option>
+              </Select>
+            </Label>
+            <Label label="Decimals">
+              <Select value={String(decimals)} onChange={(e) => setDecimals(Number(e.target.value) || 0)}>
+                <option value="0">0 — 1,200</option>
+                <option value="2">2 — 1,200.00</option>
+              </Select>
+            </Label>
+            <Label label="Locale (grouping)" hint="en-BD → 1,200 · de-DE → 1.200">
+              <Input value={locale} onChange={(e) => setLocale(e.target.value)} placeholder="en-BD" maxLength={16} />
+            </Label>
+          </div>
+        </Section>
+      ) : null}
+
+      <Section title="Live preview">
+        <div className="flex flex-wrap items-end gap-6">
+          <div>
+            <p className="text-[10px] uppercase tracking-[0.16em] text-subtle">Product card</p>
+            <p className="mt-1 font-mono text-3xl font-semibold tabular-nums">{formatMoney(2490, live)}</p>
+          </div>
+          <div>
+            <p className="text-[10px] uppercase tracking-[0.16em] text-subtle">Compare-at</p>
+            <p className="mt-1 font-mono text-lg text-muted line-through tabular-nums">{formatMoney(3200, live)}</p>
+          </div>
+          <div>
+            <p className="text-[10px] uppercase tracking-[0.16em] text-subtle">Cart total</p>
+            <p className="mt-1 font-mono text-xl tabular-nums">{formatMoney(4980, live)}</p>
+          </div>
+        </div>
+      </Section>
+
+      <FormMessage status={state.status} message={state.message} toast />
+      <Button type="submit" disabled={pending}>
+        {pending && <Loader2 size={16} className="animate-spin" />} Publish price format
       </Button>
     </form>
   );

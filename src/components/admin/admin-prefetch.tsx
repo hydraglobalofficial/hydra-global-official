@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 const PREFETCH_ROUTES = [
   "/admin",
   "/admin/orders",
+  "/admin/courier",
   "/admin/inquiries",
   "/admin/reviews",
   "/admin/products",

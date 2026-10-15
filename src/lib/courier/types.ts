@@ -26,17 +26,33 @@ export type CourierShipmentRequest = {
   merchantOrderId: string;
 };
 
-export type CourierShipmentResult = {
-  ok: boolean;
-  provider: CourierProviderId;
-  /** Provider's consignment / tracking number when booked. */
-  consignmentId?: string;
-  /** Echo of invoice UID for reconciliation. */
-  invoiceUid: string;
-  labelUrl?: string;
-  raw?: unknown;
-  error?: string;
+export type CourierShipmentResult =
+  | {
+      ok: true;
+      provider: CourierProviderId;
+      /** Provider's consignment / tracking number when booked. */
+      consignmentId?: string;
+      /** Echo of invoice UID for reconciliation. */
+      invoiceUid: string;
+      labelUrl?: string;
+      raw?: unknown;
+    }
+  | {
+      ok: false;
+      provider: CourierProviderId;
+      invoiceUid: string;
+      error: string;
+      raw?: unknown;
+    };
+
+/** Returned when courier env / credentials are missing — not an API failure. */
+export type CourierShipmentSkipped = {
+  ok: true;
+  skipped: true;
+  reason: string;
 };
+
+export type CourierBookResult = CourierShipmentResult | CourierShipmentSkipped;
 
 export type CourierProvider = {
   id: CourierProviderId;

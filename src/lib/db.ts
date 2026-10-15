@@ -2,7 +2,16 @@ import "server-only";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { Prisma, PrismaClient } from "@/generated/prisma/client";
 
-const globalForPrisma = globalThis as unknown as { prisma?: PrismaClient };
+/**
+ * Bump when Order (or other) fields change so the HMR singleton is dropped.
+ * Without this, Next keeps an old PrismaClient that rejects new field names.
+ */
+const PRISMA_SCHEMA_REV = "order-courier-20261015";
+
+const globalForPrisma = globalThis as unknown as {
+  prisma?: PrismaClient;
+  prismaSchemaRev?: string;
+};
 
 /**
  * Neon / serverless-friendly pool.
@@ -31,10 +40,20 @@ function createClient() {
   });
 }
 
-// Reuse one client across hot reloads in development.
+if (process.env.NODE_ENV !== "production" && globalForPrisma.prismaSchemaRev !== PRISMA_SCHEMA_REV) {
+  if (globalForPrisma.prisma) {
+    void globalForPrisma.prisma.$disconnect().catch(() => undefined);
+  }
+  globalForPrisma.prisma = undefined;
+  globalForPrisma.prismaSchemaRev = PRISMA_SCHEMA_REV;
+}
+
 export const db = globalForPrisma.prisma ?? createClient();
 
-if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = db;
+if (process.env.NODE_ENV !== "production") {
+  globalForPrisma.prisma = db;
+  globalForPrisma.prismaSchemaRev = PRISMA_SCHEMA_REV;
+}
 
 /** Interactive transaction defaults — avoid P2028 on slow / cold Neon. */
 export const TX = {

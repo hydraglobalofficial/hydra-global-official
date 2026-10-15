@@ -1,9 +1,10 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, Mail, MapPin, Phone } from "lucide-react";
+import { ArrowLeft, Mail, MapPin, Phone, Truck } from "lucide-react";
 import { AdminHeader, Card, Panel, StatusBadge, Table } from "@/components/admin/admin-ui";
 import { ReportActions } from "@/components/admin/report-actions";
 import { OrderUpdateForm } from "@/components/admin/order-update-form";
+import { BookCourierButton, RefreshCourierButton } from "@/components/admin/courier-actions";
 import { requireAdmin } from "@/lib/auth/session";
 import { db } from "@/lib/db";
 import { formatDate, formatPrice } from "@/lib/utils";
@@ -136,14 +137,48 @@ export default async function AdminOrderPage({ params }: PageProps<"/admin/order
             {order.notes && <p className="text-muted md:col-span-3">Instructions: {order.notes}</p>}
           </Card>
         </div>
-        <Card className="h-fit p-4 sm:p-5">
-          <OrderUpdateForm
-            id={order.id}
-            status={order.status}
-            paymentStatus={order.paymentStatus}
-            fulfillmentNote={order.fulfillmentNote}
-          />
-        </Card>
+        <div className="space-y-4">
+          <Card className="h-fit space-y-3 p-4 sm:p-5">
+            <div className="flex items-center gap-2 text-sm font-medium">
+              <Truck size={16} className="text-accent" />
+              Courier
+            </div>
+            {order.courierConsignmentId ? (
+              <div className="space-y-2 text-sm">
+                <p className="text-xs uppercase tracking-[0.14em] text-subtle">
+                  {(order.courierProvider || "pathao").toUpperCase()}
+                </p>
+                <p className="font-mono text-xs break-all">{order.courierConsignmentId}</p>
+                <StatusBadge status={order.courierStatus || "Booked"} />
+                {order.courierLastSyncAt ? (
+                  <p className="text-xs text-muted">Synced {formatDate(order.courierLastSyncAt)}</p>
+                ) : null}
+                <RefreshCourierButton orderId={order.id} />
+                <Link
+                  href={`/track?order=${encodeURIComponent(order.number)}`}
+                  target="_blank"
+                  className="block text-xs text-accent hover:underline"
+                >
+                  Customer track link ↗
+                </Link>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                <p className="text-sm text-muted">Not booked yet. Confirm the order or book Pathao now.</p>
+                <BookCourierButton orderId={order.id} />
+              </div>
+            )}
+          </Card>
+          <Card className="h-fit p-4 sm:p-5">
+            <OrderUpdateForm
+              id={order.id}
+              orderNumber={order.number}
+              status={order.status}
+              paymentStatus={order.paymentStatus}
+              fulfillmentNote={order.fulfillmentNote}
+            />
+          </Card>
+        </div>
       </div>
     </div>
   );

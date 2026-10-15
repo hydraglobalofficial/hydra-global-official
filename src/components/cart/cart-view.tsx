@@ -29,7 +29,7 @@ export function CartView() {
           <CartLineItem key={`${line.productId}:${line.variantId}`} line={line} />
         ))}
       </ul>
-      <aside className="glass h-fit space-y-5 rounded-2xl p-5 sm:space-y-6 sm:rounded-3xl sm:p-6 lg:sticky lg:top-28">
+      <aside className="h-fit space-y-5 rounded-2xl border border-line bg-surface p-5 sm:space-y-6 sm:rounded-3xl sm:p-6 lg:sticky lg:top-28">
         <h2 className="text-lg font-semibold">Order summary</h2>
         <FreeShippingMeter subtotal={subtotal} />
         <div className="flex justify-between gap-3 text-sm">

@@ -1,5 +1,6 @@
 import "server-only";
 import { companyInfo, siteConfig } from "@/config/site";
+import { getActiveMoneyFormat } from "@/lib/money";
 import { escapeHtml, formatReportDate, formatReportMoney } from "@/lib/reports/format";
 import { reportDocument } from "@/lib/reports/document";
 import type { InvoiceOrder } from "./types";
@@ -100,7 +101,7 @@ export function buildInvoiceHtml(order: InvoiceOrder, opts?: { toolbar?: boolean
       { label: "Invoice UID", value: order.number },
       { label: "Order date", value: formatReportDate(order.createdAt) },
       { label: "Status", value: order.status.replaceAll("_", " ") },
-      { label: "Currency", value: siteConfig.currency },
+      { label: "Currency", value: getActiveMoneyFormat().code || siteConfig.currency },
     ],
     body,
     footerNote: `${siteConfig.legalName} · ${companyInfo.registeredOffice} · This invoice uses the same ID for courier consignment when shipping is booked.`,
@@ -131,20 +132,24 @@ export function buildInvoiceEmailHtml(order: InvoiceOrder) {
     )
     .join("");
 
+  const logo = `${site}/products/Hydra.png`;
+  const trackUrl = `${site}/track?order=${encodeURIComponent(order.number)}`;
+
   return `<!DOCTYPE html>
 <html lang="en">
 <head><meta charset="utf-8" /><meta name="viewport" content="width=device-width,initial-scale=1" /></head>
 <body style="margin:0;background:#eef1f7;font-family:Segoe UI,system-ui,-apple-system,sans-serif;color:#0f1117">
   <div style="max-width:640px;margin:24px auto;background:#fff;border:1px solid #d8dde8;border-radius:16px;overflow:hidden">
     <div style="padding:28px 28px 20px;background:linear-gradient(135deg,#0b1224,#1e3a8a);color:#fff">
-      <div style="font-size:11px;letter-spacing:0.2em;text-transform:uppercase;opacity:0.75">HYDRA · Official invoice</div>
+      <img src="${escapeHtml(logo)}" alt="HYDRA" width="168" height="48" style="display:block;height:48px;width:auto;max-width:200px;object-fit:contain;filter:brightness(0) invert(1)" />
+      <div style="margin-top:16px;font-size:11px;letter-spacing:0.2em;text-transform:uppercase;opacity:0.75">Official invoice</div>
       <h1 style="margin:10px 0 0;font-size:26px;letter-spacing:-0.02em">Order confirmed</h1>
       <p style="margin:8px 0 0;opacity:0.9;font-size:14px">Hi ${escapeHtml(order.customerName.split(" ")[0] || "there")}, your HYDRA order is confirmed.</p>
     </div>
     <div style="padding:24px 28px">
       <div style="display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;padding:14px 16px;background:#f4f6fb;border-radius:12px;margin-bottom:20px">
         <div>
-          <div style="font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:#5c6478">Invoice UID</div>
+          <div style="font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:#5c6478">Order / Invoice ID</div>
           <div style="margin-top:4px;font-family:ui-monospace,monospace;font-weight:700;font-size:16px">${escapeHtml(order.number)}</div>
         </div>
         <div style="text-align:right">
@@ -173,17 +178,22 @@ export function buildInvoiceEmailHtml(order: InvoiceOrder) {
         ${escapeHtml(shipTo(order))}
       </div>
 
-      <div style="margin-top:22px">
-        <a href="${escapeHtml(site)}/track?order=${encodeURIComponent(order.number)}"
-           style="display:inline-block;background:#1e40af;color:#fff;text-decoration:none;padding:12px 18px;border-radius:999px;font-weight:650;font-size:14px">
-          Track order status
+      <div style="margin-top:26px;padding:18px 16px;background:#f0f4ff;border-radius:14px;text-align:center">
+        <div style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#5c6478">Live courier status</div>
+        <p style="margin:8px 0 14px;font-size:13px;color:#334155;line-height:1.5">
+          Open this link anytime to see where your parcel is — same order ID as above.
+        </p>
+        <a href="${escapeHtml(trackUrl)}"
+           style="display:inline-block;background:#1e40af;color:#fff;text-decoration:none;padding:12px 20px;border-radius:999px;font-weight:650;font-size:14px">
+          Track order · ${escapeHtml(order.number)}
         </a>
+        <p style="margin:12px 0 0;font-size:11px;color:#64748b;word-break:break-all">${escapeHtml(trackUrl)}</p>
       </div>
     </div>
     <div style="padding:16px 28px 24px;background:#fafbfe;border-top:1px solid #eceff5;font-size:11px;color:#5c6478;line-height:1.5">
       ${escapeHtml(siteConfig.legalName)} · ${escapeHtml(companyInfo.registeredOffice)}<br/>
       Questions? ${escapeHtml(siteConfig.email)} · ${escapeHtml(siteConfig.phone)}<br/>
-      Invoice UID matches your courier consignment reference when the parcel ships.
+      Order ID is your invoice &amp; courier reference.
     </div>
   </div>
 </body>

@@ -8,9 +8,12 @@ import { AdminNav } from "@/components/admin/admin-nav";
 import { AdminRoutePrefetch } from "@/components/admin/admin-prefetch";
 import { LogoMark } from "@/components/layout/logo";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
+import { MoneyProvider } from "@/components/money/money-provider";
 import { getAdminCacheStatus } from "@/lib/admin-cache";
 import { requireAdmin } from "@/lib/auth/session";
+import { bindMoneyFormat } from "@/lib/money";
 import { getAdminNavBadges } from "@/server/queries/admin";
+import { getCurrencyContent } from "@/server/queries/content";
 import { logout } from "@/server/actions/auth";
 
 export const metadata: Metadata = {
@@ -95,7 +98,8 @@ function AttentionLabel({ attention }: { attention: number }) {
 }
 
 export default async function AdminLayout({ children }: LayoutProps<"/admin">) {
-  const session = await requireAdmin();
+  const [session, currency] = await Promise.all([requireAdmin(), getCurrencyContent()]);
+  bindMoneyFormat(currency);
   const initials = session.name
     .split(/\s+/)
     .filter(Boolean)
@@ -108,6 +112,7 @@ export default async function AdminLayout({ children }: LayoutProps<"/admin">) {
   );
 
   return (
+    <MoneyProvider format={currency}>
     <div className="relative min-h-dvh bg-bg text-fg">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_45%_at_0%_0%,rgba(30,64,175,0.22),transparent_55%)] light:bg-[radial-gradient(ellipse_80%_45%_at_0%_0%,rgba(30,64,175,0.1),transparent_55%)]" />
 
@@ -197,5 +202,6 @@ export default async function AdminLayout({ children }: LayoutProps<"/admin">) {
         </main>
       </div>
     </div>
+    </MoneyProvider>
   );
 }

@@ -1,18 +1,27 @@
 "use client";
 
-import { useState } from "react";
+import Image from "next/image";
 import { BrandPhoneBack } from "@/components/sections/brand-phone-back";
 import { cn } from "@/lib/utils";
 
-/** Local originals — latest flagship camera / back plates. */
-const DEFAULT_TILES: Record<string, string> = {
-  iphone: "/brands/iphone.jpg",
-  samsung: "/brands/samsung.jpg",
+/** Fallback photos when admin has not uploaded a brand image yet */
+const PHOTO_BY_FAMILY: Record<string, string> = {
+  iphone: "/brands/iphone18-back.jpg",
+  apple: "/brands/iphone18-back.jpg",
+  samsung: "/brands/samsung-s25-back.png",
+  galaxy: "/brands/samsung-s25-back.png",
 };
 
+function fallbackPhoto(slug: string, code?: string) {
+  const key = `${slug} ${code ?? ""}`.toLowerCase();
+  for (const [token, src] of Object.entries(PHOTO_BY_FAMILY)) {
+    if (key.includes(token)) return src;
+  }
+  return null;
+}
+
 /**
- * Shop-by-device media: fills the right-hand slot with the brand’s
- * original phone-back photo. Falls back to an SVG phone if the photo fails.
+ * Shop-by-device media — prefers admin-uploaded brand.image, else family fallback.
  */
 export function BrandPlatformMedia({
   slug,
@@ -27,40 +36,36 @@ export function BrandPlatformMedia({
   label: string;
   className?: string;
 }) {
-  const photo = (image?.trim() || DEFAULT_TILES[slug] || "").trim();
-  const [failed, setFailed] = useState(false);
-  const showPhoto = Boolean(photo) && !failed;
+  const uploaded = image?.trim() || null;
+  const photo = uploaded || fallbackPhoto(slug, code);
 
   return (
     <div
-      className={cn(
-        "relative z-[1] mx-auto w-44 shrink-0 sm:mx-0 sm:w-52 md:w-56 lg:w-64",
-        className,
-      )}
+      className={cn("relative z-[1] mx-auto flex shrink-0 items-center justify-center sm:mx-0", className)}
+      style={{ width: "min(100%, 12.5rem)", flex: "0 0 auto" }}
     >
-      <div className="relative w-full transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:-translate-y-2 group-hover:rotate-[-2.5deg]">
-        {showPhoto ? (
-          <div className="relative overflow-hidden rounded-[1.65rem] bg-[#ececef] shadow-[0_28px_48px_rgba(0,0,0,0.22)] ring-1 ring-black/10 light:shadow-[0_20px_40px_rgba(0,0,0,0.12)] light:ring-black/10">
-            {/* In-flow img so the slot gets real height (absolute-only boxes collapse). */}
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={photo}
-              alt={`${label} back`}
-              width={600}
-              height={800}
-              decoding="async"
-              onError={() => setFailed(true)}
-              style={{ aspectRatio: "3 / 4" }}
-              className="h-auto w-full object-cover object-[28%_22%]"
-            />
-            <div className="pointer-events-none absolute inset-0 rounded-[1.65rem] ring-1 ring-inset ring-white/35" />
-            <div className="pointer-events-none absolute inset-x-[12%] bottom-[2%] h-10 rounded-[100%] bg-black/25 blur-2xl light:bg-black/10" />
-          </div>
+      <div
+        className="relative w-full transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:-translate-y-2 group-hover:rotate-[-2deg]"
+        style={{ aspectRatio: "3 / 4" }}
+      >
+        <div
+          className="pointer-events-none absolute inset-x-[12%] bottom-[2%] h-7 rounded-[100%] bg-black/25 blur-xl light:bg-slate-900/12"
+          aria-hidden
+        />
+        {photo ? (
+          <Image
+            src={photo}
+            alt={label}
+            fill
+            sizes="200px"
+            className="object-contain object-center drop-shadow-[0_24px_40px_rgba(15,23,42,0.32)] light:drop-shadow-[0_16px_28px_rgba(15,23,42,0.18)]"
+            priority={false}
+          />
         ) : (
           <BrandPhoneBack
             slug={slug}
             code={code}
-            className="drop-shadow-[0_28px_44px_rgba(0,0,0,0.35)] light:drop-shadow-[0_20px_36px_rgba(0,0,0,0.16)]"
+            className="relative h-full w-full drop-shadow-[0_22px_36px_rgba(15,23,42,0.28)]"
           />
         )}
       </div>

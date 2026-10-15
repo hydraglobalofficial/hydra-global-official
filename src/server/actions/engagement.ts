@@ -6,8 +6,8 @@ import { rateLimit } from "@/lib/rate-limit";
 import { inquirySchema, newsletterSchema, reviewSchema, invalid, type FormState } from "@/lib/validations";
 
 export async function submitInquiry(_prev: FormState, formData: FormData): Promise<FormState> {
-  const limited = await rateLimit("inquiry", 5, 10 * 60_000);
-  if (!limited.ok) return { status: "error", message: "You've sent several messages already. Please try again later." };
+  const limited = await rateLimit("inquiry", 3, 60_000);
+  if (!limited.ok) return { status: "error", message: "Too many messages — wait a minute and try again." };
 
   // Honeypot: real users never see or fill this field.
   if (formData.get("company")) return { status: "success", message: "Thanks! We'll be in touch shortly." };
@@ -27,8 +27,8 @@ export async function submitInquiry(_prev: FormState, formData: FormData): Promi
 }
 
 export async function subscribe(_prev: FormState, formData: FormData): Promise<FormState> {
-  const limited = await rateLimit("newsletter", 5, 10 * 60_000);
-  if (!limited.ok) return { status: "error", message: "Too many attempts. Please try again later." };
+  const limited = await rateLimit("newsletter", 3, 60_000);
+  if (!limited.ok) return { status: "error", message: "Too many attempts — wait a minute and try again." };
 
   const parsed = newsletterSchema.safeParse(Object.fromEntries(formData));
   if (!parsed.success) return { status: "error", message: "Enter a valid email address." };
@@ -53,6 +53,8 @@ export async function subscribe(_prev: FormState, formData: FormData): Promise<F
 }
 
 export async function submitReview(_prev: FormState, formData: FormData): Promise<FormState> {
+  const burst = await rateLimit("review-burst", 3, 60_000);
+  if (!burst.ok) return { status: "error", message: "Too many reviews — wait a minute and try again." };
   const limited = await rateLimit("review", 3, 60 * 60_000);
   if (!limited.ok) return { status: "error", message: "Too many reviews submitted. Please try later." };
 

@@ -2,13 +2,15 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Minus, Plus, ShieldCheck, ShoppingBag, Zap } from "lucide-react";
+import { Minus, Plus, ShoppingBag, Zap } from "lucide-react";
 import { useCart } from "@/components/cart/cart-provider";
 import { Button } from "@/components/ui/button";
 import { alertToast } from "@/lib/swal";
 import { cn, discountPercent, formatPrice } from "@/lib/utils";
 
 type Variant = { id: string; name: string; priceOverride: number | null; stock: number };
+
+type DeviceFit = { slug: string; model: string };
 
 type Props = {
   product: {
@@ -21,9 +23,13 @@ type Props = {
     image: string | null;
   };
   variants: Variant[];
+  /** Compatible devices — used so cart upsells stay on THIS buyer's phone */
+  devices?: DeviceFit[];
+  /** When shopper arrived via ?device=, prefer that model label */
+  focusDeviceSlug?: string | null;
 };
 
-export function PurchasePanel({ product, variants }: Props) {
+export function PurchasePanel({ product, variants, devices = [], focusDeviceSlug }: Props) {
   const router = useRouter();
   const { add } = useCart();
   const [variantId, setVariantId] = useState<string | null>(variants.find((v) => v.stock > 0)?.id ?? variants[0]?.id ?? null);
@@ -35,8 +41,14 @@ export function PurchasePanel({ product, variants }: Props) {
   const off = discountPercent(price, product.compareAtPrice);
   const soldOut = available <= 0;
 
+  const focus = focusDeviceSlug
+    ? devices.find((d) => d.slug === focusDeviceSlug)
+    : null;
+  const deviceSlugs = focus ? [focus.slug] : devices.map((d) => d.slug);
+  const deviceLabel = focus?.model ?? (devices.length === 1 ? devices[0]?.model : null) ?? null;
+
   function addToCart(openDrawer = true) {
-    add(
+    const result = add(
       {
         productId: product.id,
         variantId,
@@ -46,10 +58,15 @@ export function PurchasePanel({ product, variants }: Props) {
         price,
         image: product.image,
         maxQuantity: available,
+        deviceSlugs,
+        deviceLabel,
       },
       quantity,
       { openDrawer },
     );
+
+    if (!result.ok) return;
+
     if (openDrawer) {
       void alertToast("Added to cart", "success");
     } else {
@@ -107,12 +124,12 @@ export function PurchasePanel({ product, variants }: Props) {
         </span>
       </div>
 
-      <div className="sticky bottom-0 z-30 -mx-4 mt-2 border-t border-line/80 bg-black/90 px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur-xl sm:static sm:mx-0 sm:mt-0 sm:border-0 sm:bg-transparent sm:p-0 sm:backdrop-blur-none">
+      <div className="sticky bottom-0 z-30 -mx-4 mt-2 border-t border-line/80 bg-black/90 px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur-xl sm:static sm:mx-0 sm:mt-0 sm:border-0 sm:bg-transparent sm:p-0 sm:backdrop-blur-none light:bg-white/95">
         <div className="flex flex-col gap-2.5 sm:flex-row sm:gap-3">
           <div className="flex h-12 items-center justify-between rounded-full border border-line px-1.5 sm:h-13 sm:w-40">
             <button
               type="button"
-              className="touch-target grid place-items-center rounded-full text-muted hover:bg-white/5 hover:text-fg"
+              className="touch-target grid place-items-center rounded-full text-muted hover:bg-white/5 hover:text-fg light:hover:bg-black/5"
               onClick={() => setQuantity((q) => Math.max(1, q - 1))}
               aria-label="Decrease quantity"
             >
@@ -121,7 +138,7 @@ export function PurchasePanel({ product, variants }: Props) {
             <span className="font-mono tabular-nums" aria-live="polite">{quantity}</span>
             <button
               type="button"
-              className="touch-target grid place-items-center rounded-full text-muted hover:bg-white/5 hover:text-fg disabled:opacity-30"
+              className="touch-target grid place-items-center rounded-full text-muted hover:bg-white/5 hover:text-fg disabled:opacity-30 light:hover:bg-black/5"
               onClick={() => setQuantity((q) => Math.min(available, q + 1))}
               disabled={quantity >= available}
               aria-label="Increase quantity"
@@ -137,11 +154,6 @@ export function PurchasePanel({ product, variants }: Props) {
           </Button>
         </div>
       </div>
-
-      <p className="flex items-center gap-2 text-xs text-muted">
-        <ShieldCheck size={14} className="text-accent" />
-        100% genuine HYDRA — backed by a 12-month warranty
-      </p>
     </div>
   );
 }

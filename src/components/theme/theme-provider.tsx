@@ -26,6 +26,7 @@ type ThemeContextValue = {
 const ThemeContext = createContext<ThemeContextValue | null>(null);
 
 const listeners = new Set<() => void>();
+const emptySubscribe = () => () => {};
 
 function subscribe(listener: () => void) {
   listeners.add(listener);
@@ -47,7 +48,11 @@ function getServerTheme(): Theme {
 }
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const theme = useSyncExternalStore(subscribe, getClientTheme, getServerTheme);
+  const stored = useSyncExternalStore(subscribe, getClientTheme, getServerTheme);
+  // Keep SSR + first client paint on the server default so ThemeToggle (etc.) don't hydrate-mismatch
+  // when localStorage has a different theme. After mount, switch to the stored value.
+  const hydrated = useSyncExternalStore(emptySubscribe, () => true, () => false);
+  const theme = hydrated ? stored : getServerTheme();
 
   const setTheme = useCallback((next: Theme) => {
     applyTheme(next);

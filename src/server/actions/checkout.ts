@@ -21,8 +21,8 @@ function orderNumber() {
 }
 
 export async function placeOrder(_prev: FormState, formData: FormData): Promise<FormState> {
-  const limited = await rateLimit("checkout", 8, 10 * 60_000);
-  if (!limited.ok) return { status: "error", message: "Too many attempts. Please wait a few minutes." };
+  const limited = await rateLimit("checkout", 3, 60_000);
+  if (!limited.ok) return { status: "error", message: "Too many checkout attempts — wait a minute and try again." };
 
   let lines: unknown;
   try {

@@ -96,12 +96,12 @@ export function CheckoutForm() {
   );
 
   return (
-    <form action={action} className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_26rem] lg:gap-10" noValidate>
+    <form action={action} className="relative z-0 grid gap-8 lg:grid-cols-[minmax(0,1fr)_26rem] lg:gap-10" noValidate>
       <input type="hidden" name="lines" value={payload} />
 
       <div className="min-w-0 space-y-5 sm:space-y-6 md:space-y-8">
         {/* 1 · Contact */}
-        <section className="rounded-[1.35rem] border border-white/[0.08] bg-gradient-to-br from-white/[0.04] via-transparent to-accent/[0.03] p-4 sm:rounded-[1.75rem] sm:p-7">
+        <section className="rounded-[1.35rem] border border-line bg-surface p-4 sm:rounded-[1.75rem] sm:p-7">
           <SectionTitle
             step="01"
             icon={User}
@@ -150,7 +150,7 @@ export function CheckoutForm() {
         </section>
 
         {/* 2 · Delivery */}
-        <section className="rounded-[1.35rem] border border-white/[0.08] bg-gradient-to-br from-white/[0.04] via-transparent to-blue-500/[0.03] p-4 sm:rounded-[1.75rem] sm:p-7">
+        <section className="rounded-[1.35rem] border border-line bg-surface p-4 sm:rounded-[1.75rem] sm:p-7">
           <SectionTitle
             step="02"
             icon={MapPin}
@@ -226,7 +226,7 @@ export function CheckoutForm() {
         </section>
 
         {/* 3 · Instructions */}
-        <section className="rounded-[1.35rem] border border-white/[0.08] bg-gradient-to-br from-white/[0.04] via-transparent to-transparent p-4 sm:rounded-[1.75rem] sm:p-7">
+        <section className="rounded-[1.35rem] border border-line bg-surface p-4 sm:rounded-[1.75rem] sm:p-7">
           <SectionTitle
             step="03"
             icon={Truck}
@@ -244,7 +244,7 @@ export function CheckoutForm() {
         </section>
 
         {/* 4 · Payment */}
-        <section className="rounded-[1.35rem] border border-white/[0.08] bg-gradient-to-br from-white/[0.04] via-transparent to-accent/[0.04] p-4 sm:rounded-[1.75rem] sm:p-7">
+        <section className="rounded-[1.35rem] border border-line bg-surface p-4 sm:rounded-[1.75rem] sm:p-7">
           <SectionTitle
             step="04"
             icon={Package}
@@ -280,7 +280,7 @@ export function CheckoutForm() {
         </section>
       </div>
 
-      <aside className="glass h-fit space-y-5 rounded-[1.35rem] border border-white/[0.08] p-5 sm:space-y-6 sm:rounded-[1.75rem] sm:p-6 lg:sticky lg:top-28">
+      <aside className="h-fit space-y-5 rounded-[1.35rem] border border-line bg-surface p-5 sm:space-y-6 sm:rounded-[1.75rem] sm:p-6 lg:sticky lg:top-28">
         <h2 className="text-lg font-semibold tracking-tight">Order summary</h2>
         <ul className="max-h-72 space-y-4 overflow-y-auto overscroll-contain pr-1">
           {lines.map((l) => (

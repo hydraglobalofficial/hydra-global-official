@@ -426,69 +426,63 @@ html.light .theme-mark-invert {
   filter: brightness(0);
 }
 
-/* ── HYDRA SweetAlert2 theme ─────────────────────────────────────────────── */
+/* ── HYDRA SweetAlert2 — theme class on popup (swal-hydra-light/dark) ─── */
 .swal-hydra,
 .swal2-popup.swal-hydra {
-  background: #111114 !important;
-  border: 1px solid rgb(255 255 255 / 0.16) !important;
   border-radius: 1.5rem !important;
-  box-shadow:
-    0 40px 100px -40px rgb(0 0 0 / 0.55),
-    0 0 0 1px rgb(0 0 0 / 0.12) !important;
   padding: 1.75rem 1.5rem 1.5rem !important;
   font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif !important;
-  color: #f4f4f6 !important;
 }
 
 .swal-hydra-toast {
   border-radius: 1rem !important;
   padding: 0.85rem 1rem !important;
-  box-shadow: 0 20px 50px -20px rgb(0 0 0 / 0.7) !important;
 }
 
 .swal-hydra-title,
-.swal2-popup.swal-hydra .swal2-title {
+.swal2-popup.swal-hydra .swal2-title,
+div:where(.swal2-container) .swal2-popup.swal-hydra .swal2-title {
   font-size: 1.35rem !important;
   font-weight: 650 !important;
   letter-spacing: -0.02em !important;
-  color: #f4f4f6 !important;
   opacity: 1 !important;
+  visibility: visible !important;
 }
 
 .swal-hydra-text,
-.swal2-popup.swal-hydra .swal2-html-container {
-  color: #a1a1aa !important;
+.swal2-popup.swal-hydra .swal2-html-container,
+div:where(.swal2-container) .swal2-popup.swal-hydra .swal2-html-container {
   font-size: 0.95rem !important;
   line-height: 1.55 !important;
   opacity: 1 !important;
+  visibility: visible !important;
 }
 
 .swal-hydra-lead {
-  margin: 0 0 0.5rem;
-  color: #f4f4f6;
-  font-size: 1.05rem;
-  line-height: 1.45;
+  margin: 0 0 0.5rem !important;
+  font-size: 1.05rem !important;
+  line-height: 1.45 !important;
+  opacity: 1 !important;
 }
 
 .swal-hydra-sub {
-  margin: 0;
-  color: #a1a1aa;
-  font-size: 0.9rem;
-  line-height: 1.5;
+  margin: 0 !important;
+  font-size: 0.9rem !important;
+  line-height: 1.5 !important;
+  opacity: 1 !important;
 }
 
 .swal-hydra-order {
-  margin: 1rem 0 0;
-  font-family: var(--font-geist-mono), ui-monospace, monospace;
-  font-size: 0.8rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: #71717a;
+  margin: 1rem 0 0 !important;
+  font-family: var(--font-geist-mono), ui-monospace, monospace !important;
+  font-size: 0.8rem !important;
+  letter-spacing: 0.08em !important;
+  text-transform: uppercase !important;
 }
 
 .swal-hydra-order span {
-  color: #93c5fd;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.12em !important;
+  font-weight: 650 !important;
 }
 
 .swal-hydra-actions {
@@ -499,136 +493,206 @@ html.light .theme-mark-invert {
 .swal-hydra-confirm {
   border: 0 !important;
   border-radius: 999px !important;
-  background: #f4f4f6 !important;
-  color: #0a0a0c !important;
+  background: #1d4ed8 !important;
+  color: #ffffff !important;
   font-size: 0.875rem !important;
   font-weight: 600 !important;
-  padding: 0.7rem 1.4rem !important;
-  box-shadow: none !important;
+  padding: 0.75rem 1.5rem !important;
+  box-shadow: 0 10px 24px -12px rgb(37 99 235 / 0.7) !important;
   transition: background 0.2s ease, transform 0.15s ease !important;
 }
 
 .swal-hydra-confirm:hover {
-  opacity: 0.92;
+  background: #1e40af !important;
   transform: translateY(-1px);
 }
 
 .swal-hydra-cancel {
-  border: 1px solid rgb(255 255 255 / 0.2) !important;
   border-radius: 999px !important;
-  background: transparent !important;
-  color: #d4d4d8 !important;
   font-size: 0.875rem !important;
   font-weight: 500 !important;
   padding: 0.7rem 1.25rem !important;
   box-shadow: none !important;
 }
 
-.swal-hydra-danger {
-  border-color: rgb(255 92 122 / 0.45) !important;
-  box-shadow:
-    0 40px 100px -40px rgb(0 0 0 / 0.55),
-    0 0 40px -20px rgb(255 92 122 / 0.25) !important;
-}
-
 .swal-hydra-confirm-danger,
 .swal2-popup.swal-hydra .swal-hydra-confirm-danger {
   background: #e11d48 !important;
   color: #ffffff !important;
+  box-shadow: 0 10px 24px -12px rgb(225 29 72 / 0.55) !important;
 }
 
 .swal-hydra-confirm-danger:hover {
   filter: brightness(1.08);
 }
 
-/* Light mode — hard black/white contrast (no CSS-var inheritance bugs) */
-html.light .swal-hydra,
+/* Dark popup palette */
+.swal-hydra-dark,
+.swal2-popup.swal-hydra-dark {
+  background: #111114 !important;
+  border: 1px solid rgb(255 255 255 / 0.14) !important;
+  color: #f4f4f6 !important;
+  box-shadow:
+    0 40px 100px -40px rgb(0 0 0 / 0.55),
+    0 0 0 1px rgb(0 0 0 / 0.12) !important;
+}
+.swal-hydra-dark .swal-hydra-title,
+.swal-hydra-dark.swal2-popup .swal2-title,
+.swal2-popup.swal-hydra-dark .swal2-title {
+  color: #fafafa !important;
+}
+.swal-hydra-dark .swal-hydra-text,
+.swal-hydra-dark .swal2-html-container,
+.swal2-popup.swal-hydra-dark .swal2-html-container {
+  color: #a1a1aa !important;
+}
+.swal-hydra-dark .swal-hydra-text strong,
+.swal-hydra-dark .swal2-html-container strong,
+.swal2-popup.swal-hydra-dark .swal2-html-container strong {
+  color: #fafafa !important;
+}
+.swal-hydra-dark .swal-hydra-lead {
+  color: #fafafa !important;
+}
+.swal-hydra-dark .swal-hydra-sub {
+  color: #a1a1aa !important;
+}
+.swal-hydra-dark .swal-hydra-order {
+  color: #a1a1aa !important;
+}
+.swal-hydra-dark .swal-hydra-order span {
+  color: #93c5fd !important;
+}
+.swal-hydra-dark .swal-hydra-cancel {
+  border: 1px solid rgb(255 255 255 / 0.22) !important;
+  background: transparent !important;
+  color: #e4e4e7 !important;
+}
+.swal-hydra-dark.swal-hydra-danger,
+.swal2-popup.swal-hydra-dark.swal-hydra-danger {
+  border-color: rgb(255 92 122 / 0.45) !important;
+}
+
+/* Light popup palette — high contrast on white (also keyed off html.light) */
+.swal-hydra-light,
+.swal2-popup.swal-hydra-light,
 html.light .swal2-popup.swal-hydra,
-html[data-theme="light"] .swal-hydra,
 html[data-theme="light"] .swal2-popup.swal-hydra {
   background: #ffffff !important;
-  border: 1px solid rgb(0 0 0 / 0.12) !important;
+  border: 1px solid rgb(15 23 42 / 0.12) !important;
   color: #0a0a0c !important;
+  --swal2-background: #ffffff !important;
+  --swal2-color: #0a0a0c !important;
   box-shadow:
-    0 28px 80px -28px rgb(0 0 0 / 0.28),
-    0 0 0 1px rgb(0 0 0 / 0.06) !important;
+    0 28px 80px -28px rgb(15 23 42 / 0.28),
+    0 0 0 1px rgb(15 23 42 / 0.04) !important;
 }
-
-html.light .swal-hydra-title,
+.swal-hydra-light .swal-hydra-title,
+.swal-hydra-light.swal2-popup .swal2-title,
+.swal2-popup.swal-hydra-light .swal2-title,
 html.light .swal2-popup.swal-hydra .swal2-title,
-html[data-theme="light"] .swal-hydra-title,
-html[data-theme="light"] .swal2-popup.swal-hydra .swal2-title {
+html[data-theme="light"] .swal2-popup.swal-hydra .swal2-title,
+html.light .swal2-popup.swal-hydra .swal-hydra-title,
+html[data-theme="light"] .swal2-popup.swal-hydra .swal-hydra-title {
   color: #0a0a0c !important;
-  opacity: 1 !important;
 }
-
-html.light .swal-hydra-text,
+.swal-hydra-light .swal-hydra-text,
+.swal-hydra-light .swal2-html-container,
+.swal2-popup.swal-hydra-light .swal2-html-container,
 html.light .swal2-popup.swal-hydra .swal2-html-container,
-html[data-theme="light"] .swal-hydra-text,
 html[data-theme="light"] .swal2-popup.swal-hydra .swal2-html-container {
   color: #3f3f46 !important;
-  opacity: 1 !important;
 }
-
-html.light .swal-hydra-lead,
-html[data-theme="light"] .swal-hydra-lead {
-  color: #0a0a0c;
+.swal-hydra-light .swal-hydra-text strong,
+.swal-hydra-light .swal2-html-container strong,
+.swal2-popup.swal-hydra-light .swal2-html-container strong,
+html.light .swal2-popup.swal-hydra .swal2-html-container strong,
+html[data-theme="light"] .swal2-popup.swal-hydra .swal2-html-container strong {
+  color: #0a0a0c !important;
 }
-
-html.light .swal-hydra-sub,
-html[data-theme="light"] .swal-hydra-sub {
-  color: #52525b;
+.swal-hydra-light .swal-hydra-lead,
+html.light .swal2-popup.swal-hydra .swal-hydra-lead,
+html[data-theme="light"] .swal2-popup.swal-hydra .swal-hydra-lead {
+  color: #0a0a0c !important;
 }
-
-html.light .swal-hydra-confirm,
-html[data-theme="light"] .swal-hydra-confirm {
+.swal-hydra-light .swal-hydra-sub,
+html.light .swal2-popup.swal-hydra .swal-hydra-sub,
+html[data-theme="light"] .swal2-popup.swal-hydra .swal-hydra-sub {
+  color: #52525b !important;
+}
+.swal-hydra-light .swal-hydra-order,
+html.light .swal2-popup.swal-hydra .swal-hydra-order,
+html[data-theme="light"] .swal2-popup.swal-hydra .swal-hydra-order {
+  color: #71717a !important;
+}
+.swal-hydra-light .swal-hydra-order span,
+html.light .swal2-popup.swal-hydra .swal-hydra-order span,
+html[data-theme="light"] .swal2-popup.swal-hydra .swal-hydra-order span {
+  color: #1e3a8a !important;
+}
+.swal-hydra-light .swal-hydra-confirm:not(.swal-hydra-confirm-danger),
+html.light .swal2-popup.swal-hydra .swal-hydra-confirm:not(.swal-hydra-confirm-danger),
+html[data-theme="light"] .swal2-popup.swal-hydra .swal-hydra-confirm:not(.swal-hydra-confirm-danger) {
   background: #0a0a0c !important;
   color: #ffffff !important;
+  box-shadow: 0 10px 24px -12px rgb(0 0 0 / 0.35) !important;
 }
-
-html.light .swal-hydra-cancel,
-html[data-theme="light"] .swal-hydra-cancel {
-  border-color: rgb(0 0 0 / 0.18) !important;
-  color: #3f3f46 !important;
+.swal-hydra-light .swal-hydra-cancel {
+  border: 1px solid rgb(15 23 42 / 0.18) !important;
+  background: #f4f4f5 !important;
+  color: #0a0a0c !important;
 }
-
-html.light .swal-hydra-confirm-danger,
-html.light .swal2-popup.swal-hydra .swal-hydra-confirm-danger,
-html[data-theme="light"] .swal-hydra-confirm-danger,
-html[data-theme="light"] .swal2-popup.swal-hydra .swal-hydra-confirm-danger {
-  background: #e11d48 !important;
-  color: #ffffff !important;
-}
-
-html.light .swal-hydra-danger,
-html[data-theme="light"] .swal-hydra-danger {
+.swal-hydra-light.swal-hydra-danger,
+.swal2-popup.swal-hydra-light.swal-hydra-danger {
   border-color: rgb(225 29 72 / 0.35) !important;
 }
 
+/* Success icon — checkmark visible; ring stays hollow */
+div:where(.swal2-icon).swal2-success,
 .swal2-icon.swal2-success {
-  border-color: #2ee6a6 !important;
-  color: #2ee6a6 !important;
+  border-color: #059669 !important;
+  color: #059669 !important;
 }
-.swal2-icon.swal2-success [class^="swal2-success-line"],
+div:where(.swal2-icon).swal2-success .swal2-success-ring,
 .swal2-icon.swal2-success .swal2-success-ring {
-  background-color: #2ee6a6 !important;
-  border-color: #2ee6a6 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  border-color: rgb(5 150 105 / 0.35) !important;
 }
+div:where(.swal2-icon).swal2-success .swal2-success-line-tip,
+div:where(.swal2-icon).swal2-success .swal2-success-line-long,
 .swal2-icon.swal2-success .swal2-success-line-tip,
 .swal2-icon.swal2-success .swal2-success-line-long {
-  background-color: #2ee6a6 !important;
+  background-color: #059669 !important;
 }
+html.light div:where(.swal2-icon).swal2-success .swal2-success-circular-line-left,
+html.light div:where(.swal2-icon).swal2-success .swal2-success-circular-line-right,
+html.light div:where(.swal2-icon).swal2-success .swal2-success-fix-tip,
+html[data-theme="light"] div:where(.swal2-icon).swal2-success .swal2-success-circular-line-left,
+html[data-theme="light"] div:where(.swal2-icon).swal2-success .swal2-success-circular-line-right,
+html[data-theme="light"] div:where(.swal2-icon).swal2-success .swal2-success-fix-tip {
+  background-color: #ffffff !important;
+}
+html.dark div:where(.swal2-icon).swal2-success .swal2-success-circular-line-left,
+html.dark div:where(.swal2-icon).swal2-success .swal2-success-circular-line-right,
+html.dark div:where(.swal2-icon).swal2-success .swal2-success-fix-tip,
+html[data-theme="dark"] div:where(.swal2-icon).swal2-success .swal2-success-circular-line-left,
+html[data-theme="dark"] div:where(.swal2-icon).swal2-success .swal2-success-circular-line-right,
+html[data-theme="dark"] div:where(.swal2-icon).swal2-success .swal2-success-fix-tip {
+  background-color: #111114 !important;
+}
+
 .swal2-icon.swal2-error {
-  border-color: #ff5c7a !important;
-  color: #ff5c7a !important;
+  border-color: #e11d48 !important;
+  color: #e11d48 !important;
 }
 .swal2-icon.swal2-error .swal2-x-mark-line-left,
 .swal2-icon.swal2-error .swal2-x-mark-line-right {
-  background-color: #ff5c7a !important;
+  background-color: #e11d48 !important;
 }
 .swal2-icon.swal2-info {
-  border-color: #1e40af !important;
-  color: #60a5fa !important;
+  border-color: #1d4ed8 !important;
+  color: #1d4ed8 !important;
 }
 .swal2-icon.swal2-warning {
   border-color: #e11d48 !important;
@@ -640,15 +704,15 @@ html[data-theme="light"] .swal2-icon.swal2-warning {
   color: #e11d48 !important;
 }
 .swal2-timer-progress-bar {
-  background: rgb(30 64 175 / 0.85) !important;
+  background: rgb(37 99 235 / 0.9) !important;
 }
 .swal2-container.swal2-backdrop-show {
-  background: var(--hydra-overlay) !important;
+  background: rgb(0 0 0 / 0.72) !important;
   backdrop-filter: blur(6px);
 }
 html.light .swal2-container.swal2-backdrop-show,
 html[data-theme="light"] .swal2-container.swal2-backdrop-show {
-  background: rgb(0 0 0 / 0.45) !important;
+  background: rgb(15 23 42 / 0.45) !important;
 }
 
 
@@ -869,9 +933,24 @@ html[data-theme="light"] .hydra-crest-stage {
   border: 0 !important;
   box-shadow: none !important;
 }
-/* Soft-crop the PNG’s baked-in black plate so light mode doesn’t show a hard square */
-html.light .hydra-crest-art,
-html[data-theme="light"] .hydra-crest-art {
+/*
+  Light mode crest ink — same pure black as header LogoMark (theme-mark-invert).
+  Filter on the <img> itself (parent filter can fail with motion/mask compositing).
+  Soft radial mask eats the PNG’s baked black plate. Splash omits .hydra-crest-ink.
+*/
+html.light .hydra-crest-ink,
+html[data-theme="light"] .hydra-crest-ink {
+  -webkit-mask-image: radial-gradient(ellipse 68% 64% at 50% 48%, #000 36%, transparent 74%);
+  mask-image: radial-gradient(ellipse 68% 64% at 50% 48%, #000 36%, transparent 74%);
+}
+html.light .hydra-crest-ink img,
+html[data-theme="light"] .hydra-crest-ink img,
+html.light img.hydra-mark-ink,
+html[data-theme="light"] img.hydra-mark-ink {
+  filter: brightness(0) !important;
+}
+html.light .hydra-crest-art:not(.hydra-crest-ink),
+html[data-theme="light"] .hydra-crest-art:not(.hydra-crest-ink) {
   -webkit-mask-image: radial-gradient(ellipse 72% 68% at 50% 46%, #000 42%, transparent 78%);
   mask-image: radial-gradient(ellipse 72% 68% at 50% 46%, #000 42%, transparent 78%);
 }

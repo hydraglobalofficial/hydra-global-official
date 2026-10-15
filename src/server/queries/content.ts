@@ -23,6 +23,7 @@ import { safeInternalHref } from "@/lib/content-safety";
 import {
   normalizeAboutContent,
   normalizeCollectionsContent,
+  normalizeCurrencyContent,
   normalizeHomeHeroContent,
   normalizeHowItWorksContent,
   normalizeInstallationContent,
@@ -30,6 +31,7 @@ import {
   normalizeShowcaseContent,
   normalizeWhatsappWidgetContent,
 } from "@/lib/normalize-sections";
+import { defaultCurrencyContent, type CurrencyContent } from "@/lib/money";
 import { CONTENT_TAG } from "./catalog";
 
 export const getAnnouncements = unstable_cache(
@@ -152,6 +154,19 @@ export const getWhatsappWidgetContent = unstable_cache(
   },
   ["site-section-whatsapp-v3"],
   { tags: [CONTENT_TAG], revalidate: 60 },
+);
+
+export const getCurrencyContent = unstable_cache(
+  async (): Promise<CurrencyContent> => {
+    try {
+      const row = await db.siteSection.findUnique({ where: { key: "site.currency" }, select: { data: true } });
+      return normalizeCurrencyContent(row?.data ?? defaultCurrencyContent);
+    } catch {
+      return defaultCurrencyContent;
+    }
+  },
+  ["site-section-currency-v1"],
+  { tags: [CONTENT_TAG], revalidate: 3600 },
 );
 
 export const listSiteSections = cache(async () =>

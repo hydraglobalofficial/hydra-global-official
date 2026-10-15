@@ -15,11 +15,24 @@ export type MailResult =
   | { ok: true; skipped: true; reason: string }
   | { ok: false; error: string };
 
+function smtpPass() {
+  const candidates = [process.env.SMTP_PASS, process.env.SMTP_PASSWORD];
+  for (const raw of candidates) {
+    const pass = raw?.trim() ?? "";
+    if (!pass) continue;
+    // Ignore scaffold placeholders left in .env
+    if (/^your[_-]?mailbox[_-]?password$/i.test(pass)) continue;
+    if (/^change.?me/i.test(pass)) continue;
+    return pass;
+  }
+  return "";
+}
+
 function smtpConfigured() {
   return Boolean(
     process.env.SMTP_HOST?.trim() &&
       process.env.SMTP_USER?.trim() &&
-      process.env.SMTP_PASS?.trim() &&
+      smtpPass() &&
       (process.env.SMTP_FROM?.trim() || process.env.SMTP_USER?.trim()),
   );
 }
@@ -34,7 +47,7 @@ function transporter() {
     secure,
     auth: {
       user: process.env.SMTP_USER!.trim(),
-      pass: process.env.SMTP_PASS!.trim(),
+      pass: smtpPass(),
     },
   };
   return nodemailer.createTransport(options);

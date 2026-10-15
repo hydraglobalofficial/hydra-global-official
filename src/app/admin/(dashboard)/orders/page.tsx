@@ -1,7 +1,9 @@
 import Link from "next/link";
-import { Search } from "lucide-react";
+import { Search, Trash2 } from "lucide-react";
 import { AdminHeader, Card, Panel, StatusBadge, Table } from "@/components/admin/admin-ui";
+import { ConfirmDeleteForm } from "@/components/admin/confirm-delete-form";
 import { ReportActions } from "@/components/admin/report-actions";
+import { deleteOrder } from "@/server/actions/admin";
 import { requireAdmin } from "@/lib/auth/session";
 import { db } from "@/lib/db";
 import { cn, formatDate, formatPrice } from "@/lib/utils";
@@ -119,7 +121,7 @@ export default async function AdminOrdersPage({ searchParams }: PageProps<"/admi
         </form>
       </div>
 
-      <Panel title="Order register" icon={<span className="font-mono text-[10px] text-accent">USD</span>}>
+      <Panel title="Order register">
         <ul className="divide-y divide-line sm:hidden">
           {orders.map((o) => (
             <li key={o.id} className="px-4 py-3.5">
@@ -133,9 +135,23 @@ export default async function AdminOrdersPage({ searchParams }: PageProps<"/admi
                     {formatDate(o.createdAt)} · {o.city}
                   </p>
                 </div>
-                <div className="shrink-0 text-right">
+                <div className="flex shrink-0 flex-col items-end gap-2">
                   <StatusBadge status={o.status} />
-                  <p className="mt-2 font-mono text-sm tabular-nums">{formatPrice(o.total)}</p>
+                  <p className="font-mono text-sm tabular-nums">{formatPrice(o.total)}</p>
+                  <ConfirmDeleteForm
+                    action={deleteOrder}
+                    title={`Delete ${o.number}?`}
+                    text="Removes this order and restocks items (if not already cancelled)."
+                    confirmText="Yes, delete order"
+                  >
+                    <input type="hidden" name="id" value={o.id} />
+                    <button
+                      type="submit"
+                      className="inline-flex items-center gap-1 rounded-full border border-danger/35 px-2.5 py-1 text-[11px] font-medium text-danger hover:bg-danger/10"
+                    >
+                      <Trash2 size={12} /> Delete
+                    </button>
+                  </ConfirmDeleteForm>
                 </div>
               </div>
             </li>
@@ -152,6 +168,7 @@ export default async function AdminOrdersPage({ searchParams }: PageProps<"/admi
                 <th>Payment</th>
                 <th>Status</th>
                 <th className="text-right">Total</th>
+                <th className="text-right">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -181,11 +198,29 @@ export default async function AdminOrdersPage({ searchParams }: PageProps<"/admi
                     <StatusBadge status={o.status} />
                   </td>
                   <td className="text-right font-mono tabular-nums">{formatPrice(o.total)}</td>
+                  <td className="text-right">
+                    <ConfirmDeleteForm
+                      action={deleteOrder}
+                      title={`Delete ${o.number}?`}
+                      text="Removes this order and restocks items (if not already cancelled)."
+                      confirmText="Yes, delete order"
+                      className="inline-flex justify-end"
+                    >
+                      <input type="hidden" name="id" value={o.id} />
+                      <button
+                        type="submit"
+                        className="inline-flex items-center gap-1.5 rounded-full border border-danger/35 px-3 py-1.5 text-xs font-medium text-danger transition-colors hover:bg-danger/10"
+                        aria-label={`Delete order ${o.number}`}
+                      >
+                        <Trash2 size={13} /> Delete
+                      </button>
+                    </ConfirmDeleteForm>
+                  </td>
                 </tr>
               ))}
               {orders.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="py-10 text-center text-muted">
+                  <td colSpan={6} className="py-10 text-center text-muted">
                     No orders found.
                   </td>
                 </tr>

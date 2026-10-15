@@ -12,6 +12,7 @@ import {
   PackagePlus,
   ShoppingCart,
   Star,
+  Truck,
   Users,
   Wrench,
   type LucideIcon,
@@ -32,6 +33,7 @@ const launchpad: {
   badgeKey?: "orders" | "inquiries" | "reviews";
 }[] = [
   { href: "/admin/orders", label: "Orders", hint: "Confirm & fulfill", icon: ShoppingCart, badgeKey: "orders" },
+  { href: "/admin/courier", label: "Courier", hint: "Pathao tracking board", icon: Truck },
   { href: "/admin/products", label: "Products", hint: "Catalog & stock", icon: Package },
   { href: "/admin/products/new", label: "Add product", hint: "One-click new SKU", icon: PackagePlus },
   { href: "/admin/catalog", label: "Brands & Devices", hint: "Brands, devices & taxonomy", icon: FolderTree },

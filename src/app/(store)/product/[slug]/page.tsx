@@ -12,6 +12,7 @@ import { Badge, Rating, SectionHeading } from "@/components/ui/primitives";
 import { JsonLd, breadcrumbJsonLd, productJsonLd } from "@/lib/seo";
 import { formatDate } from "@/lib/utils";
 import { getActiveProductSlugs, getProductBySlug, getRelatedProducts } from "@/server/queries/catalog";
+import { getCurrencyContent } from "@/server/queries/content";
 
 export const revalidate = 300;
 
@@ -36,14 +37,23 @@ export async function generateMetadata({ params }: PageProps<"/product/[slug]">)
   };
 }
 
-export default async function ProductPage({ params }: PageProps<"/product/[slug]">) {
+export default async function ProductPage({
+  params,
+  searchParams,
+}: PageProps<"/product/[slug]">) {
   const { slug } = await params;
+  const sp = await searchParams;
+  const focusDeviceSlug = typeof sp.device === "string" ? sp.device.trim() : "";
   const product = await getProductBySlug(slug);
   if (!product) notFound();
 
-  const related = await getRelatedProducts(product);
+  const [related, currency] = await Promise.all([getRelatedProducts(product), getCurrencyContent()]);
   const specs = Object.entries((product.specs ?? {}) as Record<string, string>);
   const brand = product.devices[0]?.device.brandSlug ?? "iphone";
+  const visibleDevices = focusDeviceSlug
+    ? product.devices.filter(({ device }) => device.slug === focusDeviceSlug)
+    : product.devices;
+  const devicesForCompat = visibleDevices.length > 0 ? visibleDevices : product.devices;
   const distribution = [5, 4, 3, 2, 1].map((star) => ({
     star,
     count: product.reviews.filter((r) => r.rating === star).length,
@@ -53,7 +63,11 @@ export default async function ProductPage({ params }: PageProps<"/product/[slug]
     <>
       <JsonLd
         data={[
-          productJsonLd({ ...product, images: product.images.map((i) => i.url) }),
+          productJsonLd({
+            ...product,
+            images: product.images.map((i) => i.url),
+            priceCurrency: currency.code,
+          }),
           breadcrumbJsonLd([
             { name: "Home", path: "/" },
             { name: "Shop", path: "/shop" },
@@ -108,6 +122,8 @@ export default async function ProductPage({ params }: PageProps<"/product/[slug]
               image: product.images[0]?.url ?? null,
             }}
             variants={product.variants.map((v) => ({ id: v.id, name: v.name, priceOverride: v.priceOverride, stock: v.stock }))}
+            devices={product.devices.map(({ device }) => ({ slug: device.slug, model: device.model }))}
+            focusDeviceSlug={focusDeviceSlug || null}
           />
 
           {product.highlights.length > 0 && (
@@ -120,13 +136,13 @@ export default async function ProductPage({ params }: PageProps<"/product/[slug]
             </ul>
           )}
 
-          {product.devices.length > 0 && (
+          {devicesForCompat.length > 0 && (
             <div className="space-y-3">
               <p className="flex items-center gap-2 text-xs font-medium uppercase tracking-[0.14em] text-muted">
                 <Smartphone size={14} /> Compatible with
               </p>
               <div className="flex flex-wrap gap-2">
-                {product.devices.map(({ device }) => (
+                {devicesForCompat.map(({ device }) => (
                   <span key={device.slug} className="rounded-full border border-line px-3 py-1.5 text-xs">{device.model}</span>
                 ))}
               </div>

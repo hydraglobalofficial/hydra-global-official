@@ -1805,6 +1805,11 @@ export const OrderScalarFieldEnum = {
   discount: 'discount',
   total: 'total',
   fulfillmentNote: 'fulfillmentNote',
+  courierProvider: 'courierProvider',
+  courierConsignmentId: 'courierConsignmentId',
+  courierStatus: 'courierStatus',
+  courierBookedAt: 'courierBookedAt',
+  courierLastSyncAt: 'courierLastSyncAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const

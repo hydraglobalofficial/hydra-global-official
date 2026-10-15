@@ -4,6 +4,7 @@ import { PackageSearch, Truck } from "lucide-react";
 import { ButtonLink } from "@/components/ui/button";
 import { PageHeader } from "@/components/ui/primitives";
 import { db } from "@/lib/db";
+import { trackCourierShipment } from "@/lib/courier";
 import { formatDate, formatPrice } from "@/lib/utils";
 import { siteConfig } from "@/config/site";
 
@@ -41,6 +42,7 @@ export default async function TrackOrderPage({ searchParams }: PageProps<"/track
     ? await db.order.findUnique({
         where: { number: query },
         select: {
+          id: true,
           number: true,
           status: true,
           paymentMethod: true,
@@ -51,10 +53,29 @@ export default async function TrackOrderPage({ searchParams }: PageProps<"/track
           total: true,
           createdAt: true,
           fulfillmentNote: true,
+          courierProvider: true,
+          courierConsignmentId: true,
+          courierStatus: true,
+          courierBookedAt: true,
+          courierLastSyncAt: true,
           items: { select: { name: true, variantName: true, quantity: true, unitPrice: true } },
         },
       })
     : null;
+
+  let liveCourierStatus = order?.courierStatus ?? null;
+  if (order?.courierConsignmentId) {
+    const tracked = await trackCourierShipment(order.courierConsignmentId, order.courierProvider);
+    if (!("error" in tracked)) {
+      liveCourierStatus = tracked.status;
+      if (tracked.status !== order.courierStatus) {
+        await db.order.update({
+          where: { id: order.id },
+          data: { courierStatus: tracked.status, courierLastSyncAt: new Date() },
+        });
+      }
+    }
+  }
 
   const active = order ? stepIndex(order.status) : -1;
   const firstName = order?.customerName.trim().split(/\s+/)[0] || "there";
@@ -64,7 +85,7 @@ export default async function TrackOrderPage({ searchParams }: PageProps<"/track
       <PageHeader
         eyebrow="Order tracking"
         title="Track your order"
-        description="Enter the invoice ID from your confirmation email or checkout receipt. Same ID is used for courier when we ship."
+        description="Enter the invoice ID from your confirmation email. Same ID is used for Pathao courier when we ship."
       />
 
       <section className="container-page max-w-2xl pb-16 sm:pb-20">
@@ -108,11 +129,11 @@ export default async function TrackOrderPage({ searchParams }: PageProps<"/track
               <p className="text-xs uppercase tracking-[0.18em] text-muted">Hello, {firstName}</p>
               <div className="mt-3 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
                 <div>
-                  <p className="text-xs uppercase tracking-[0.18em] text-muted">Invoice UID</p>
+                  <p className="text-xs uppercase tracking-[0.18em] text-muted">Order / Invoice ID</p>
                   <p className="mt-1 break-all font-mono text-lg tracking-wider sm:text-xl">{order.number}</p>
                 </div>
                 <div className="sm:text-right">
-                  <p className="text-xs uppercase tracking-[0.18em] text-muted">Status</p>
+                  <p className="text-xs uppercase tracking-[0.18em] text-muted">Order status</p>
                   <p className="mt-1 text-lg font-semibold text-accent">
                     {STATUS_LABEL[order.status] ?? order.status}
                   </p>
@@ -123,13 +144,38 @@ export default async function TrackOrderPage({ searchParams }: PageProps<"/track
                 {order.paymentMethod === "COD" ? "Pay on delivery" : order.paymentMethod} · {order.city},{" "}
                 {order.country}
               </p>
-              {order.fulfillmentNote ? (
-                <p className="mt-3 flex items-start gap-2 text-sm text-muted">
-                  <Truck size={16} className="mt-0.5 shrink-0 text-accent" />
-                  {order.fulfillmentNote}
-                </p>
-              ) : null}
             </div>
+
+            {order.courierConsignmentId || liveCourierStatus ? (
+              <div className="rounded-2xl border border-accent/25 bg-accent/[0.06] p-5 sm:rounded-3xl sm:p-6">
+                <p className="flex items-center gap-2 text-xs uppercase tracking-[0.18em] text-accent">
+                  <Truck size={14} />
+                  Courier · {(order.courierProvider || "pathao").toUpperCase()}
+                </p>
+                <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+                  <div>
+                    <p className="text-xs uppercase tracking-[0.14em] text-muted">Where is my parcel?</p>
+                    <p className="mt-1 text-xl font-semibold tracking-tight">
+                      {liveCourierStatus || "Booked — awaiting pickup"}
+                    </p>
+                  </div>
+                  {order.courierConsignmentId ? (
+                    <div className="sm:text-right">
+                      <p className="text-xs uppercase tracking-[0.14em] text-muted">Consignment</p>
+                      <p className="mt-1 font-mono text-sm">{order.courierConsignmentId}</p>
+                    </div>
+                  ) : null}
+                </div>
+                {order.fulfillmentNote ? (
+                  <p className="mt-3 text-sm text-muted">{order.fulfillmentNote}</p>
+                ) : null}
+              </div>
+            ) : order.fulfillmentNote ? (
+              <p className="flex items-start gap-2 rounded-2xl border border-line p-4 text-sm text-muted">
+                <Truck size={16} className="mt-0.5 shrink-0 text-accent" />
+                {order.fulfillmentNote}
+              </p>
+            ) : null}
 
             {active >= 0 ? (
               <ol className="grid gap-2 sm:grid-cols-5">
