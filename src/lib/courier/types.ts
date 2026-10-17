@@ -54,9 +54,14 @@ export type CourierShipmentSkipped = {
 
 export type CourierBookResult = CourierShipmentResult | CourierShipmentSkipped;
 
+export type CourierCancelResult =
+  | { ok: true; status: string; raw?: unknown }
+  | { ok: false; error: string; raw?: unknown };
+
 export type CourierProvider = {
   id: CourierProviderId;
   ready(): boolean;
   createShipment(input: CourierShipmentRequest): Promise<CourierShipmentResult>;
   track?(consignmentId: string): Promise<{ status: string; raw?: unknown }>;
+  cancel?(consignmentId: string): Promise<CourierCancelResult>;
 };

@@ -5,7 +5,9 @@ import { z } from "zod";
 import { db } from "@/lib/db";
 import { requireAdmin } from "@/lib/auth/session";
 import {
+  cancelCourierShipment,
   createCourierShipment,
+  isCourierCancelledStatus,
   orderToCourierRequest,
   trackCourierShipment,
 } from "@/lib/courier";
@@ -106,5 +108,50 @@ export async function bookCourierForOrder(
     message: courier.consignmentId
       ? `Courier booked · ${courier.consignmentId}`
       : "Courier booked.",
+  };
+}
+
+export async function cancelCourierForOrder(
+  _prev: FormState,
+  formData: FormData,
+): Promise<FormState> {
+  await requireAdmin();
+  const id = z.string().min(1).parse(formData.get("id"));
+  const order = await db.order.findUnique({ where: { id } });
+  if (!order) return { status: "error", message: "Order not found." };
+  if (!order.courierConsignmentId) {
+    return { status: "error", message: "No courier consignment to cancel." };
+  }
+  if (isCourierCancelledStatus(order.courierStatus)) {
+    return { status: "error", message: "Courier shipment is already cancelled." };
+  }
+
+  const result = await cancelCourierShipment(order.courierConsignmentId, order.courierProvider);
+  if (!result.ok) {
+    return { status: "error", message: result.error || "Courier cancel failed." };
+  }
+
+  const status = result.status || "Cancelled";
+  const noteBits = [
+    order.fulfillmentNote?.trim() || null,
+    `Pathao cancelled ${order.courierConsignmentId}`,
+  ].filter(Boolean);
+
+  await db.order.update({
+    where: { id },
+    data: {
+      courierStatus: status,
+      courierLastSyncAt: new Date(),
+      fulfillmentNote: noteBits.join(" · "),
+    },
+  });
+
+  revalidatePath("/admin/courier");
+  revalidatePath(`/admin/orders/${id}`);
+  revalidatePath("/admin/orders");
+  revalidatePath("/track");
+  return {
+    status: "success",
+    message: `Courier cancelled · ${order.courierConsignmentId}`,
   };
 }

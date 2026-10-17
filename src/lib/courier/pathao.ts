@@ -164,6 +164,38 @@ export async function pathaoTrack(consignmentId: string): Promise<{ status: stri
   return { status: String(status), raw };
 }
 
+function humanizePathaoCancelError(message: string) {
+  if (/contact\s*cx/i.test(message)) {
+    return (
+      "Pathao will not cancel this consignment via API anymore (rider already assigned / past Pending). " +
+      "Cancel it from Pathao Merchant Panel or call Pathao Merchant Support (CX) 09610-003030."
+    );
+  }
+  return message;
+}
+
+/** Pathao cancel uses PUT (POST returns Unauthorized on this API). */
+export async function pathaoCancel(consignmentId: string) {
+  const res = await pathaoFetch(`/aladdin/api/v1/orders/${encodeURIComponent(consignmentId)}/cancel`, {
+    method: "PUT",
+  });
+  const raw = (await res.json().catch(() => ({}))) as {
+    message?: string;
+    type?: string;
+    data?: unknown;
+    errors?: Record<string, string[] | string>;
+  };
+  if (!res.ok || raw.type === "error") {
+    const formatted = formatPathaoErrors(raw.message, raw.errors, `Pathao cancel failed (HTTP ${res.status})`);
+    return {
+      ok: false as const,
+      error: humanizePathaoCancelError(formatted),
+      raw,
+    };
+  }
+  return { ok: true as const, status: "Cancelled", raw };
+}
+
 export const pathaoProvider: CourierProvider = {
   id: "pathao",
   ready: pathaoReady,
@@ -239,6 +271,7 @@ export const pathaoProvider: CourierProvider = {
     }
   },
   track: pathaoTrack,
+  cancel: pathaoCancel,
 };
 
 /** Config checklist for admin UI (never exposes secrets). */

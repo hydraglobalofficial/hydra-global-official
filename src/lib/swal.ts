@@ -243,8 +243,8 @@ export function alertOrderApproved(opts: {
 }) {
   const mailLine = opts.mailOk
     ? `<p class="swal-hydra-lead">Invoice email <strong>sent</strong> to the customer.</p>`
-    : `<p class="swal-hydra-lead">Invoice email <strong>failed</strong>.</p>
-       <p class="swal-hydra-sub">${opts.mailDetail ?? "Check SMTP password in Hostinger / .env"}</p>`;
+    : `<p class="swal-hydra-lead">Invoice email <strong>not delivered</strong>.</p>
+       <p class="swal-hydra-sub">${opts.mailDetail ?? "Open Courier → Test SMTP login, then Resend invoice."}</p>`;
   const courierLine = opts.courierDetail
     ? `<p class="swal-hydra-sub">${opts.courierDetail}</p>`
     : "";

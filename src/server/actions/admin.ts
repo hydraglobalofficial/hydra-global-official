@@ -622,6 +622,28 @@ export async function resendOrderInvoice(_prev: FormState, formData: FormData): 
   };
 }
 
+/** Live Hostinger SMTP login check (admin Courier page). */
+export async function testSmtpConnection(_prev: FormState, _formData: FormData): Promise<FormState> {
+  await requireAdmin();
+  const { verifySmtp, smtpConfigStatus } = await import("@/lib/mail/smtp");
+  const status = smtpConfigStatus();
+  const result = await verifySmtp();
+
+  if (result.ok) {
+    return {
+      status: "success",
+      message: `SMTP connected · ${result.user} @ ${result.host}:${result.port}`,
+    };
+  }
+
+  return {
+    status: "error",
+    message:
+      result.error ||
+      `SMTP failed for ${status.user ?? "mailbox"} @ ${status.host ?? "host"}:${status.port}`,
+  };
+}
+
 // ─── Inquiries & reviews ─────────────────────────────────────────────────────
 
 export async function setInquiryStatus(formData: FormData) {

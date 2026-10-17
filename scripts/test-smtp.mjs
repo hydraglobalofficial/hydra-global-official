@@ -1,37 +1,41 @@
+/**
+ * Live Hostinger SMTP login check.
+ * Usage: pnpm mail:test
+ * Never prints the password — only length + verify result.
+ */
 import "dotenv/config";
 import nodemailer from "nodemailer";
-
-function smtpPass() {
-  for (const raw of [process.env.SMTP_PASS, process.env.SMTP_PASSWORD]) {
-    const pass = raw?.trim() ?? "";
-    if (!pass) continue;
-    if (/^your[_-]?mailbox[_-]?password$/i.test(pass)) continue;
-    if (/^change.?me/i.test(pass)) continue;
-    return pass;
-  }
-  return "";
-}
+import { readSmtpPass } from "./smtp-pass.mjs";
 
 const host = process.env.SMTP_HOST?.trim();
 const user = process.env.SMTP_USER?.trim();
-const pass = smtpPass();
+// Read from .env file (no $ expansion) — same as app smtp.ts
+const pass = readSmtpPass() || process.env.SMTP_PASSWORD?.trim() || "";
 const port = Number(process.env.SMTP_PORT || 465);
-const secure = process.env.SMTP_SECURE === "true" || port === 465;
+const secure =
+  process.env.SMTP_SECURE === "1" ||
+  process.env.SMTP_SECURE === "true" ||
+  port === 465;
+const from = process.env.SMTP_FROM?.trim() || (user ? `HYDRA <${user}>` : null);
 
 console.log(
-  JSON.stringify({
-    host,
-    port,
-    secure,
-    user,
-    from: process.env.SMTP_FROM,
-    passLen: pass.length,
-    configured: Boolean(host && user && pass),
-  }),
+  JSON.stringify(
+    {
+      host,
+      port,
+      secure,
+      user,
+      from,
+      passLen: pass.length,
+      configured: Boolean(host && user && pass),
+    },
+    null,
+    2,
+  ),
 );
 
 if (!host || !user || !pass) {
-  console.error("SMTP not configured");
+  console.error("\nSMTP not configured. Set SMTP_HOST, SMTP_USER, SMTP_PASSWORD in .env");
   process.exit(1);
 }
 
@@ -40,12 +44,28 @@ const transport = nodemailer.createTransport({
   port,
   secure,
   auth: { user, pass },
+  requireTLS: !secure && port === 587,
+  tls: { minVersion: "TLSv1.2" },
+  connectionTimeout: 15_000,
+  greetingTimeout: 15_000,
 });
 
 try {
   await transport.verify();
-  console.log("SMTP_VERIFY_OK");
+  console.log("\nSMTP_VERIFY_OK — Hostinger accepted login. Invoice emails can send.");
+  process.exit(0);
 } catch (e) {
-  console.error("SMTP_VERIFY_FAIL", e instanceof Error ? e.message : e);
+  const msg = e instanceof Error ? e.message : String(e);
+  console.error("\nSMTP_VERIFY_FAIL", msg);
+  if (/535|Invalid login|authentication failed|EAUTH/i.test(msg)) {
+    console.error(`
+Fix (Hostinger):
+  1. Hostinger hPanel → Emails → manage ${user}
+  2. Reset mailbox password (not your Hostinger account password)
+  3. Put the NEW password in .env:
+       SMTP_PASSWORD="your-new-password"
+  4. Restart the app, then run: pnpm mail:test
+`);
+  }
   process.exit(2);
 }

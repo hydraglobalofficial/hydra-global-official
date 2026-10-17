@@ -10,6 +10,7 @@ import type {
 
 export type {
   CourierBookResult,
+  CourierCancelResult,
   CourierShipmentRequest,
   CourierShipmentResult,
   CourierShipmentSkipped,
@@ -77,6 +78,29 @@ export async function trackCourierShipment(
   } catch (error) {
     return { error: error instanceof Error ? error.message : "Track failed." };
   }
+}
+
+export async function cancelCourierShipment(
+  consignmentId: string,
+  providerId?: string | null,
+) {
+  const id = (providerId || process.env.COURIER_PROVIDER || "").trim().toLowerCase();
+  const provider = providers[id] ?? activeProvider();
+  if (!provider?.cancel) {
+    return { ok: false as const, error: "Cancel is not available for this courier provider." };
+  }
+  try {
+    return await provider.cancel(consignmentId);
+  } catch (error) {
+    return {
+      ok: false as const,
+      error: error instanceof Error ? error.message : "Courier cancel failed.",
+    };
+  }
+}
+
+export function isCourierCancelledStatus(status: string | null | undefined) {
+  return /cancel/i.test(status || "");
 }
 
 /** Map a confirmed order into courier request (invoice UID = order number). */

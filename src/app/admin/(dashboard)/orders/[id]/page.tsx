@@ -4,7 +4,12 @@ import { ArrowLeft, Mail, MapPin, Phone, Truck } from "lucide-react";
 import { AdminHeader, Card, Panel, StatusBadge, Table } from "@/components/admin/admin-ui";
 import { ReportActions } from "@/components/admin/report-actions";
 import { OrderUpdateForm } from "@/components/admin/order-update-form";
-import { BookCourierButton, RefreshCourierButton } from "@/components/admin/courier-actions";
+import {
+  BookCourierButton,
+  CancelCourierButton,
+  RefreshCourierButton,
+} from "@/components/admin/courier-actions";
+import { isCourierCancelledStatus } from "@/lib/courier";
 import { requireAdmin } from "@/lib/auth/session";
 import { db } from "@/lib/db";
 import { formatDate, formatPrice } from "@/lib/utils";
@@ -153,7 +158,12 @@ export default async function AdminOrderPage({ params }: PageProps<"/admin/order
                 {order.courierLastSyncAt ? (
                   <p className="text-xs text-muted">Synced {formatDate(order.courierLastSyncAt)}</p>
                 ) : null}
-                <RefreshCourierButton orderId={order.id} />
+                <div className="flex flex-wrap items-center gap-2">
+                  <RefreshCourierButton orderId={order.id} />
+                  {!isCourierCancelledStatus(order.courierStatus) ? (
+                    <CancelCourierButton orderId={order.id} />
+                  ) : null}
+                </div>
                 <Link
                   href={`/track?order=${encodeURIComponent(order.number)}`}
                   target="_blank"

@@ -1,11 +1,17 @@
 import Link from "next/link";
 import { Package, RefreshCw, Truck } from "lucide-react";
 import { AdminHeader, Card, Panel, StatusBadge, Table } from "@/components/admin/admin-ui";
-import { BookCourierButton, RefreshCourierButton } from "@/components/admin/courier-actions";
+import {
+  BookCourierButton,
+  CancelCourierButton,
+  RefreshCourierButton,
+} from "@/components/admin/courier-actions";
+import { isCourierCancelledStatus } from "@/lib/courier";
 import { requireAdmin } from "@/lib/auth/session";
 import { db } from "@/lib/db";
 import { getActiveCourierProviderId, isCourierReady, pathaoConfigStatus } from "@/lib/courier";
-import { isSmtpReady } from "@/lib/mail/smtp";
+import { SmtpTestButton } from "@/components/admin/smtp-test-button";
+import { isSmtpReady, smtpConfigStatus } from "@/lib/mail/smtp";
 import { formatDate, formatPrice } from "@/lib/utils";
 
 export const metadata = { title: "Courier" };
@@ -17,6 +23,7 @@ export default async function AdminCourierPage() {
   const pathao = pathaoConfigStatus();
   const courierOk = isCourierReady();
   const smtpOk = isSmtpReady();
+  const smtp = smtpConfigStatus();
 
   const [booked, awaiting] = await Promise.all([
     db.order.findMany({
@@ -75,15 +82,39 @@ export default async function AdminCourierPage() {
         <Card className="p-4 sm:p-5">
           <p className="text-[10px] uppercase tracking-[0.16em] text-subtle">Invoice email</p>
           <p className={`mt-1 text-lg font-semibold ${smtpOk ? "text-emerald-500" : "text-amber-500"}`}>
-            {smtpOk ? "Env set" : "SMTP missing"}
+            {smtpOk ? "Configured" : "SMTP missing"}
           </p>
           <p className="mt-1 text-xs text-muted">
             {smtpOk
-              ? "Env only — Hostinger must accept SMTP_PASS"
-              : "Add SMTP_HOST / USER / PASS"}
+              ? `${smtp.user} · ${smtp.host}:${smtp.port}`
+              : "Add SMTP_HOST / USER / PASSWORD"}
           </p>
+          <div className="mt-3">
+            <SmtpTestButton />
+          </div>
         </Card>
       </div>
+
+      {smtpOk ? (
+        <Card className="border-amber-500/25 bg-amber-500/5 p-4 sm:p-5">
+          <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-subtle">Invoice mail checklist</p>
+          <ol className="mt-3 list-decimal space-y-1.5 pl-4 text-sm text-muted">
+            <li>
+              SMTP host must be <span className="font-mono text-fg">smtp.hostinger.com</span> port{" "}
+              <span className="font-mono text-fg">465</span> (SSL) — same as Hostinger Connect apps
+            </li>
+            <li>
+              Mailbox <span className="font-mono text-fg">{smtp.user}</span> → ⋮ →{" "}
+              <span className="font-mono text-fg">App passwords</span> → create one → paste into{" "}
+              <span className="font-mono text-fg">SMTP_PASSWORD=&quot;…&quot;</span>
+            </li>
+            <li>
+              Restart <span className="font-mono text-fg">pnpm dev</span> → <strong>Test SMTP login</strong> → Resend
+              invoice
+            </li>
+          </ol>
+        </Card>
+      ) : null}
 
       {provider === "pathao" ? (
         <Card className="p-4 sm:p-5">
@@ -190,7 +221,12 @@ export default async function AdminCourierPage() {
                     <Package size={12} className="mr-1 inline" />
                     {o.items.map((i) => `${i.name} ×${i.quantity}`).join(" · ")}
                   </p>
-                  <RefreshCourierButton orderId={o.id} />
+                  <div className="flex flex-wrap items-center gap-2">
+                    <RefreshCourierButton orderId={o.id} />
+                    {!isCourierCancelledStatus(o.courierStatus) ? (
+                      <CancelCourierButton orderId={o.id} />
+                    ) : null}
+                  </div>
                 </li>
               ))}
             </ul>
@@ -203,7 +239,7 @@ export default async function AdminCourierPage() {
                     <th>Products</th>
                     <th>Consignment</th>
                     <th>Courier status</th>
-                    <th className="text-right">Sync</th>
+                    <th className="text-right">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -227,7 +263,12 @@ export default async function AdminCourierPage() {
                         <StatusBadge status={o.courierStatus || "—"} />
                       </td>
                       <td className="text-right">
-                        <RefreshCourierButton orderId={o.id} />
+                        <div className="inline-flex flex-wrap items-center justify-end gap-2">
+                          <RefreshCourierButton orderId={o.id} />
+                          {!isCourierCancelledStatus(o.courierStatus) ? (
+                            <CancelCourierButton orderId={o.id} />
+                          ) : null}
+                        </div>
                       </td>
                     </tr>
                   ))}

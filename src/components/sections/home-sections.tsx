@@ -151,14 +151,13 @@ export function HowItWorks({ content }: { content: HowItWorksContent }) {
             return (
               <RevealItem key={title} className="relative h-full min-w-0">
                 <SpotlightCard className="group h-full overflow-hidden p-5 sm:p-7">
-                  <div className="pointer-events-none absolute -right-6 -top-6 font-mono text-6xl font-semibold text-white/[0.03] transition-colors group-hover:text-accent/[0.1]">
-                    0{i + 1}
-                  </div>
                   <div className="relative flex items-center gap-4">
                     <span className="relative grid size-12 place-items-center rounded-full border border-accent/30 bg-accent/10 text-accent transition-transform duration-500 group-hover:scale-105">
                       <Icon size={20} />
                     </span>
-                    <span className="font-mono text-xs tracking-[0.2em] text-subtle">STEP 0{i + 1}</span>
+                    <span className="font-mono text-xs font-medium tracking-[0.18em] text-accent">
+                      STEP 0{i + 1}
+                    </span>
                   </div>
                   <h3 className="relative mt-6 text-lg font-medium">{title}</h3>
                   <p className="relative mt-2 text-sm leading-relaxed text-muted">{text}</p>
