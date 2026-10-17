@@ -53,7 +53,7 @@ export function InquiryForm({
           <Field label="Topic" htmlFor="type">
             <Select id="type" name="type" defaultValue={defaultType}>
               <option value="SUPPORT">General support</option>
-              <option value="WARRANTY">Warranty claim</option>
+              <option value="SUPPORT">Product issue</option>
               <option value="RETURN">Return / replacement</option>
               <option value="CONTACT">Other</option>
             </Select>

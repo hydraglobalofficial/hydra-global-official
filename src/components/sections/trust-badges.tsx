@@ -6,7 +6,7 @@ import { cn, formatPrice } from "@/lib/utils";
 
 export function TrustBadges({ compact = false }: { compact?: boolean }) {
   const badges = [
-    { icon: ShieldCheck, title: "12-Month Warranty", text: "Free replacement for defects" },
+    { icon: ShieldCheck, title: "Precision Cut", text: "Device-specific ±0.05 mm fit" },
     { icon: BadgeCheck, title: "100% Genuine", text: "Official HYDRA quality" },
     {
       icon: Truck,

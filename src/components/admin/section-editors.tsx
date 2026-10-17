@@ -606,7 +606,7 @@ export function HomeHeroSectionEditor({ content }: { content: HomeHeroContent })
 
       <Section title="Bottom stats bar">
         <ListHeader
-          hint="Hardness / fit / warranty strip under the hero (1–4)."
+          hint="Hardness / fit / trust strip under the hero (1–4)."
           addLabel="Add stat"
           canAdd={stats.length < 4}
           onAdd={() =>

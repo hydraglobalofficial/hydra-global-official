@@ -24,7 +24,7 @@ export default async function AdminInquiriesPage({ searchParams }: PageProps<"/a
 
   return (
     <>
-      <AdminHeader title="Inquiries" description="Contact, support, warranty and return requests." />
+      <AdminHeader title="Inquiries" description="Contact, support and return requests." />
       <div className="no-scrollbar mb-5 flex gap-1 overflow-x-auto pb-0.5 sm:mb-6">
         {filters.map((f) => (
           <Link
