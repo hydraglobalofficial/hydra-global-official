@@ -69,8 +69,12 @@ async function loadAdminOverview(): Promise<Omit<AdminOverview, "cache">> {
   const since = daysAgo(30);
   const [badges, revenue, orders30, lowStock, recentOrders, recentInquiries] = await Promise.all([
     loadAdminNavBadges(),
+    // Revenue counts only confirmed+ orders (not PENDING / CANCELLED / RETURNED).
     db.order.aggregate({
-      where: { createdAt: { gte: since }, status: { notIn: ["CANCELLED", "RETURNED"] } },
+      where: {
+        createdAt: { gte: since },
+        status: { in: ["CONFIRMED", "PROCESSING", "SHIPPED", "DELIVERED"] },
+      },
       _sum: { total: true },
     }),
     db.order.count({ where: { createdAt: { gte: since } } }),

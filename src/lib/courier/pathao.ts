@@ -1,9 +1,18 @@
 import "server-only";
+import { readEnvSecret } from "@/lib/env-secret";
 import type {
   CourierProvider,
   CourierShipmentRequest,
   CourierShipmentResult,
 } from "./types";
+
+function pathaoPassword() {
+  return readEnvSecret(["PATHAO_PASSWORD"]);
+}
+
+function pathaoClientSecret() {
+  return readEnvSecret(["PATHAO_CLIENT_SECRET"]);
+}
 
 /**
  * Pathao Merchant Courier API
@@ -31,9 +40,9 @@ function baseUrl() {
 export function pathaoReady() {
   return Boolean(
     process.env.PATHAO_CLIENT_ID?.trim() &&
-      process.env.PATHAO_CLIENT_SECRET?.trim() &&
+      pathaoClientSecret() &&
       process.env.PATHAO_USERNAME?.trim() &&
-      process.env.PATHAO_PASSWORD?.trim(),
+      pathaoPassword(),
   );
 }
 
@@ -55,9 +64,9 @@ async function issueToken(force = false): Promise<string> {
     headers: { "Content-Type": "application/json", Accept: "application/json" },
     body: JSON.stringify({
       client_id: process.env.PATHAO_CLIENT_ID!.trim(),
-      client_secret: process.env.PATHAO_CLIENT_SECRET!.trim(),
+      client_secret: pathaoClientSecret(),
       username: process.env.PATHAO_USERNAME!.trim(),
-      password: process.env.PATHAO_PASSWORD!.trim(),
+      password: pathaoPassword(),
       grant_type: "password",
     }),
   });
@@ -243,7 +252,7 @@ export const pathaoProvider: CourierProvider = {
         errors?: Record<string, string[] | string>;
       };
 
-      if (!res.ok) {
+      if (!res.ok || raw.type === "error") {
         return {
           ok: false,
           provider: "pathao",
@@ -254,11 +263,25 @@ export const pathaoProvider: CourierProvider = {
       }
 
       const consignment = raw.data?.consignment_id;
+      if (consignment == null || String(consignment).trim() === "") {
+        return {
+          ok: false,
+          provider: "pathao",
+          invoiceUid: input.invoiceUid,
+          raw,
+          error: formatPathaoErrors(
+            raw.message,
+            raw.errors,
+            "Pathao returned success without a consignment_id.",
+          ),
+        };
+      }
+
       return {
         ok: true,
         provider: "pathao",
         invoiceUid: input.invoiceUid,
-        consignmentId: consignment != null ? String(consignment) : undefined,
+        consignmentId: String(consignment),
         raw,
       };
     } catch (error) {
@@ -279,9 +302,9 @@ export function pathaoConfigStatus() {
   return {
     provider: "pathao" as const,
     clientId: Boolean(process.env.PATHAO_CLIENT_ID?.trim()),
-    clientSecret: Boolean(process.env.PATHAO_CLIENT_SECRET?.trim()),
+    clientSecret: Boolean(pathaoClientSecret()),
     username: Boolean(process.env.PATHAO_USERNAME?.trim()),
-    password: Boolean(process.env.PATHAO_PASSWORD?.trim()),
+    password: Boolean(pathaoPassword()),
     storeId: Boolean(process.env.PATHAO_STORE_ID?.trim()),
     baseUrl: baseUrl(),
     ready: pathaoReady(),

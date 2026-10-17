@@ -2,22 +2,24 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 
 /**
- * Pathao parcel status webhook (optional).
- * Configure this URL in Pathao merchant developer settings if available:
- *   POST {NEXT_PUBLIC_SITE_URL}/api/webhooks/pathao
+ * Pathao parcel status webhook.
+ * Configure: POST {NEXT_PUBLIC_SITE_URL}/api/webhooks/pathao
  *
- * Optional shared secret: PATHAO_WEBHOOK_SECRET (compared to header x-pathao-signature / Authorization).
+ * Requires PATHAO_WEBHOOK_SECRET (header x-pathao-signature or Authorization: Bearer …).
  */
 export async function POST(request: Request) {
   const secret = process.env.PATHAO_WEBHOOK_SECRET?.trim();
-  if (secret) {
-    const header =
-      request.headers.get("x-pathao-signature") ||
-      request.headers.get("authorization")?.replace(/^Bearer\s+/i, "") ||
-      "";
-    if (header !== secret) {
-      return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 });
-    }
+  if (!secret) {
+    console.error("[pathao webhook] PATHAO_WEBHOOK_SECRET is not set");
+    return NextResponse.json({ ok: false, error: "Webhook not configured" }, { status: 503 });
+  }
+
+  const header =
+    request.headers.get("x-pathao-signature") ||
+    request.headers.get("authorization")?.replace(/^Bearer\s+/i, "") ||
+    "";
+  if (header !== secret) {
+    return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 });
   }
 
   let body: Record<string, unknown>;
@@ -28,10 +30,16 @@ export async function POST(request: Request) {
   }
 
   const consignmentId = String(
-    body.consignment_id ?? body.consignmentId ?? (body.data as { consignment_id?: string } | undefined)?.consignment_id ?? "",
+    body.consignment_id ??
+      body.consignmentId ??
+      (body.data as { consignment_id?: string } | undefined)?.consignment_id ??
+      "",
   ).trim();
   const status = String(
-    body.order_status ?? body.status ?? (body.data as { order_status?: string } | undefined)?.order_status ?? "",
+    body.order_status ??
+      body.status ??
+      (body.data as { order_status?: string } | undefined)?.order_status ??
+      "",
   ).trim();
   const merchantOrderId = String(body.merchant_order_id ?? body.merchantOrderId ?? "").trim();
 

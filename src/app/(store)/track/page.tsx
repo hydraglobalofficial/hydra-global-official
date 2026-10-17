@@ -4,7 +4,7 @@ import { PackageSearch, Truck } from "lucide-react";
 import { ButtonLink } from "@/components/ui/button";
 import { PageHeader } from "@/components/ui/primitives";
 import { db } from "@/lib/db";
-import { trackCourierShipment } from "@/lib/courier";
+import { verifyOrderAccess } from "@/lib/order-access";
 import { formatDate, formatPrice } from "@/lib/utils";
 import { siteConfig } from "@/config/site";
 
@@ -33,17 +33,26 @@ function stepIndex(status: string) {
   return i >= 0 ? i : 0;
 }
 
+function emailsMatch(a: string, b: string) {
+  return a.trim().toLowerCase() === b.trim().toLowerCase();
+}
+
 export default async function TrackOrderPage({ searchParams }: PageProps<"/track">) {
   const params = await searchParams;
   const raw = typeof params.order === "string" ? params.order.trim() : "";
   const query = raw.toUpperCase();
+  const token = typeof params.t === "string" ? params.t.trim() : "";
+  const emailRaw = typeof params.email === "string" ? params.email.trim() : "";
+  const attempted = Boolean(query);
 
-  const order = query
+  // Never return an order on invoice ID alone — requires HMAC token (email link) or matching checkout email.
+  const candidate = query
     ? await db.order.findUnique({
         where: { number: query },
         select: {
           id: true,
           number: true,
+          email: true,
           status: true,
           paymentMethod: true,
           paymentStatus: true,
@@ -52,40 +61,33 @@ export default async function TrackOrderPage({ searchParams }: PageProps<"/track
           country: true,
           total: true,
           createdAt: true,
-          fulfillmentNote: true,
           courierProvider: true,
           courierConsignmentId: true,
           courierStatus: true,
-          courierBookedAt: true,
-          courierLastSyncAt: true,
           items: { select: { name: true, variantName: true, quantity: true, unitPrice: true } },
         },
       })
     : null;
 
-  let liveCourierStatus = order?.courierStatus ?? null;
-  if (order?.courierConsignmentId) {
-    const tracked = await trackCourierShipment(order.courierConsignmentId, order.courierProvider);
-    if (!("error" in tracked)) {
-      liveCourierStatus = tracked.status;
-      if (tracked.status !== order.courierStatus) {
-        await db.order.update({
-          where: { id: order.id },
-          data: { courierStatus: tracked.status, courierLastSyncAt: new Date() },
-        });
-      }
-    }
-  }
+  const authorized =
+    candidate &&
+    (verifyOrderAccess(candidate.number, token || undefined) ||
+      (emailRaw.length > 0 && emailsMatch(candidate.email, emailRaw)));
+
+  const order = authorized ? candidate : null;
+  // Generic failure — do not reveal whether the invoice ID exists.
+  const notFound = attempted && !order;
 
   const active = order ? stepIndex(order.status) : -1;
   const firstName = order?.customerName.trim().split(/\s+/)[0] || "there";
+  const courierStatus = order?.courierStatus ?? null;
 
   return (
     <>
       <PageHeader
         eyebrow="Order tracking"
         title="Track your order"
-        description="Enter the invoice ID from your confirmation email. Same ID is used for Pathao courier when we ship."
+        description="Use the secure link from your confirmation email, or enter your invoice ID with the email used at checkout."
       />
 
       <section className="container-page max-w-2xl pb-16 sm:pb-20">
@@ -93,29 +95,45 @@ export default async function TrackOrderPage({ searchParams }: PageProps<"/track
           <label htmlFor="order" className="text-xs uppercase tracking-[0.18em] text-muted">
             Invoice ID / order number
           </label>
-          <div className="mt-3 flex flex-col gap-3 sm:flex-row">
-            <input
-              id="order"
-              name="order"
-              defaultValue={raw}
-              placeholder="e.g. HYD-260408-A1B2C3"
-              autoComplete="off"
-              spellCheck={false}
-              className="min-h-12 flex-1 rounded-xl border border-line bg-black/20 px-4 font-mono text-sm tracking-wide outline-none ring-accent/40 placeholder:text-subtle focus:ring-2"
-            />
-            <button
-              type="submit"
-              className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-accent px-5 text-sm font-semibold text-white transition hover:brightness-110"
-            >
-              <PackageSearch size={16} />
-              Track
-            </button>
-          </div>
+          <input
+            id="order"
+            name="order"
+            defaultValue={raw}
+            placeholder="e.g. HYD-260408-A1B2C3"
+            autoComplete="off"
+            spellCheck={false}
+            required
+            className="mt-3 min-h-12 w-full rounded-xl border border-line bg-black/20 px-4 font-mono text-sm tracking-wide outline-none ring-accent/40 placeholder:text-subtle focus:ring-2"
+          />
+          <label htmlFor="email" className="mt-4 block text-xs uppercase tracking-[0.18em] text-muted">
+            Email used at checkout
+          </label>
+          <p className="mt-1 text-xs text-subtle">
+            Required unless you open the track link from your invoice email (includes a secure token).
+          </p>
+          <input
+            id="email"
+            name="email"
+            type="email"
+            defaultValue={emailRaw}
+            placeholder="you@example.com"
+            autoComplete="email"
+            className="mt-3 min-h-12 w-full rounded-xl border border-line bg-black/20 px-4 text-sm outline-none ring-accent/40 placeholder:text-subtle focus:ring-2"
+          />
+          {token ? <input type="hidden" name="t" value={token} /> : null}
+          <button
+            type="submit"
+            className="mt-4 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-accent px-5 text-sm font-semibold text-white transition hover:brightness-110 sm:w-auto"
+          >
+            <PackageSearch size={16} />
+            Track
+          </button>
         </form>
 
-        {raw && !order ? (
+        {notFound ? (
           <div className="mt-6 rounded-2xl border border-line p-5 text-sm text-muted sm:p-6">
-            No order found for <span className="font-mono text-fg">{raw}</span>. Check the invoice ID in your email, or contact{" "}
+            We couldn&apos;t find an order with those details. Use the track link from your invoice email, or enter the
+            exact invoice ID and checkout email. Need help?{" "}
             <a href={`mailto:${siteConfig.email}`} className="text-accent underline-offset-2 hover:underline">
               {siteConfig.email}
             </a>
@@ -146,7 +164,7 @@ export default async function TrackOrderPage({ searchParams }: PageProps<"/track
               </p>
             </div>
 
-            {order.courierConsignmentId || liveCourierStatus ? (
+            {order.courierConsignmentId || courierStatus ? (
               <div className="rounded-2xl border border-accent/25 bg-accent/[0.06] p-5 sm:rounded-3xl sm:p-6">
                 <p className="flex items-center gap-2 text-xs uppercase tracking-[0.18em] text-accent">
                   <Truck size={14} />
@@ -156,7 +174,7 @@ export default async function TrackOrderPage({ searchParams }: PageProps<"/track
                   <div>
                     <p className="text-xs uppercase tracking-[0.14em] text-muted">Where is my parcel?</p>
                     <p className="mt-1 text-xl font-semibold tracking-tight">
-                      {liveCourierStatus || "Booked — awaiting pickup"}
+                      {courierStatus || "Booked — awaiting pickup"}
                     </p>
                   </div>
                   {order.courierConsignmentId ? (
@@ -166,15 +184,10 @@ export default async function TrackOrderPage({ searchParams }: PageProps<"/track
                     </div>
                   ) : null}
                 </div>
-                {order.fulfillmentNote ? (
-                  <p className="mt-3 text-sm text-muted">{order.fulfillmentNote}</p>
-                ) : null}
+                <p className="mt-3 text-xs text-subtle">
+                  Status updates when our team syncs courier, or via Pathao webhook — not on every page refresh.
+                </p>
               </div>
-            ) : order.fulfillmentNote ? (
-              <p className="flex items-start gap-2 rounded-2xl border border-line p-4 text-sm text-muted">
-                <Truck size={16} className="mt-0.5 shrink-0 text-accent" />
-                {order.fulfillmentNote}
-              </p>
             ) : null}
 
             {active >= 0 ? (
@@ -220,13 +233,13 @@ export default async function TrackOrderPage({ searchParams }: PageProps<"/track
           </div>
         ) : null}
 
-        {!raw ? (
+        {!attempted ? (
           <p className="mt-6 text-center text-sm text-muted">
-            Tip: your invoice ID looks like <span className="font-mono text-fg">HYD-YYMMDD-XXXXXX</span>. You can also open{" "}
+            Tip: open the track link in your invoice email, or enter invoice ID + checkout email. Need help?{" "}
             <Link href="/support" className="text-accent underline-offset-2 hover:underline">
               Support
-            </Link>{" "}
-            anytime.
+            </Link>
+            .
           </p>
         ) : null}
       </section>

@@ -281,7 +281,8 @@ export default async function AdminCourierPage() {
 
       <p className="flex items-center gap-2 text-xs text-subtle">
         <RefreshCw size={12} />
-        Customers track via <code className="font-mono">/track?order=INVOICE_ID</code> from the invoice email.
+        Customers track via the signed link in the invoice email (
+        <code className="font-mono">/track?order=…&amp;t=…</code>), or invoice ID + checkout email.
       </p>
     </div>
   );

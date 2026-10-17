@@ -1,8 +1,7 @@
 import "server-only";
-import fs from "fs";
-import path from "path";
 import nodemailer from "nodemailer";
 import type SMTPTransport from "nodemailer/lib/smtp-transport";
+import { readEnvSecret } from "@/lib/env-secret";
 
 export type MailPayload = {
   to: string | string[];
@@ -26,54 +25,8 @@ type MailTransporter = ReturnType<typeof nodemailer.createTransport>;
 let cached: MailTransporter | null = null;
 let cachedKey = "";
 
-function normalizePass(raw: string | undefined) {
-  let pass = raw?.trim() ?? "";
-  if (
-    (pass.startsWith('"') && pass.endsWith('"')) ||
-    (pass.startsWith("'") && pass.endsWith("'"))
-  ) {
-    pass = pass.slice(1, -1);
-  }
-  // Next.js dotenv-expand uses $$ → $; undo if still doubled in process.env
-  if (pass.includes("$$")) pass = pass.replaceAll("$$", "$");
-  if (!pass) return "";
-  if (/^your[_-]?mailbox[_-]?password$/i.test(pass)) return "";
-  if (/^change.?me/i.test(pass)) return "";
-  if (/^<.*>$/.test(pass)) return "";
-  return pass;
-}
-
-/**
- * Read SMTP password from .env without variable expansion.
- * Next.js expands $NAME in process.env (e.g. pa$sword → broken), which caused SMTP 535
- * while `pnpm mail:test` (dotenv) still worked.
- */
-function smtpPassFromDotenvFile() {
-  try {
-    const envPath = path.join(process.cwd(), ".env");
-    if (!fs.existsSync(envPath)) return "";
-    const text = fs.readFileSync(envPath, "utf8");
-    for (const key of ["SMTP_PASS", "SMTP_PASSWORD"]) {
-      const match = text.match(new RegExp(`^${key}=(.*)$`, "m"));
-      if (!match) continue;
-      const pass = normalizePass(match[1]);
-      if (pass) return pass;
-    }
-  } catch {
-    // Production (Vercel) has no .env file — fall through to process.env
-  }
-  return "";
-}
-
 function smtpPass() {
-  // Prefer raw .env so `$` in mailbox passwords survives Next.js dotenv-expand.
-  const fromFile = smtpPassFromDotenvFile();
-  if (fromFile) return fromFile;
-  for (const raw of [process.env.SMTP_PASS, process.env.SMTP_PASSWORD]) {
-    const pass = normalizePass(raw);
-    if (pass) return pass;
-  }
-  return "";
+  return readEnvSecret(["SMTP_PASS", "SMTP_PASSWORD"]);
 }
 
 function smtpConfigured() {
@@ -105,7 +58,6 @@ function buildTransportOptions(): SMTPTransport.Options {
     greetingTimeout: 15_000,
     socketTimeout: 25_000,
     tls: {
-      // Hostinger uses a valid public cert; keep verification on.
       minVersion: "TLSv1.2",
     },
   };
@@ -175,7 +127,7 @@ export async function sendMail(payload: MailPayload): Promise<MailResult> {
     return {
       ok: true,
       skipped: true,
-      reason: "SMTP_HOST / SMTP_USER / SMTP_PASSWORD / SMTP_FROM not set in env yet.",
+      reason: "SMTP_HOST / SMTP_USER / SMTP_PASSWORD not set in env yet.",
     };
   }
 
@@ -205,7 +157,7 @@ export async function verifySmtp(): Promise<SmtpVerifyResult> {
   if (!smtpConfigured()) {
     return {
       ok: false,
-      error: "SMTP env incomplete — set SMTP_HOST, SMTP_USER, SMTP_PASSWORD, SMTP_FROM.",
+      error: "SMTP env incomplete — set SMTP_HOST, SMTP_USER, and SMTP_PASSWORD (SMTP_FROM optional).",
       host,
       port,
       user,

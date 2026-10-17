@@ -450,8 +450,14 @@ export async function updateOrder(_prev: FormState, formData: FormData): Promise
   if (!parsed.success) return invalid(parsed.error);
   const { id, ...data } = parsed.data;
 
+  // First confirm only (PENDING → CONFIRMED) — avoids duplicate invoice/Pathao on re-confirm.
   let justConfirmed = false;
   let confirmedOrderId: string | null = null;
+  const pendingCourierCancel: {
+    consignmentId: string;
+    provider: string | null;
+    orderNumber: string;
+  }[] = [];
 
   await withTransaction(async (tx) => {
     const current = await tx.order.findUniqueOrThrow({ where: { id }, include: { items: true } });
@@ -462,8 +468,15 @@ export async function updateOrder(_prev: FormState, formData: FormData): Promise
         await tx.product.update({ where: { id: item.productId }, data: { stock: { increment: item.quantity }, soldCount: { decrement: item.quantity } } });
         if (item.variantId) await tx.productVariant.update({ where: { id: item.variantId }, data: { stock: { increment: item.quantity } } });
       }
+      if (current.courierConsignmentId) {
+        pendingCourierCancel.push({
+          consignmentId: current.courierConsignmentId,
+          provider: current.courierProvider,
+          orderNumber: current.number,
+        });
+      }
     }
-    justConfirmed = data.status === "CONFIRMED" && current.status !== "CONFIRMED";
+    justConfirmed = data.status === "CONFIRMED" && current.status === "PENDING";
     await tx.order.update({ where: { id }, data: { ...data, fulfillmentNote: data.fulfillmentNote || null } });
     if (justConfirmed) confirmedOrderId = id;
   });
@@ -471,6 +484,34 @@ export async function updateOrder(_prev: FormState, formData: FormData): Promise
   updateTag(CATALOG_TAG);
   await invalidateAdminCache();
   revalidatePath("/admin", "layout");
+
+  // Best-effort Pathao cancel when order is cancelled/returned with a live consignment.
+  const cancelCourier = pendingCourierCancel[0];
+  if (cancelCourier) {
+    const { cancelCourierShipment, isCourierCancelledStatus } = await import("@/lib/courier");
+    const live = await db.order.findUnique({
+      where: { id },
+      select: { courierStatus: true, fulfillmentNote: true },
+    });
+    if (live && !isCourierCancelledStatus(live.courierStatus)) {
+      const result = await cancelCourierShipment(cancelCourier.consignmentId, cancelCourier.provider);
+      if (result.ok) {
+        await db.order.update({
+          where: { id },
+          data: {
+            courierConsignmentId: null,
+            courierStatus: result.status || "Cancelled",
+            courierLastSyncAt: new Date(),
+            fulfillmentNote: [live.fulfillmentNote?.trim() || null, `Pathao cancelled ${cancelCourier.consignmentId}`]
+              .filter(Boolean)
+              .join(" · "),
+          },
+        });
+      } else {
+        console.error("[orders] Pathao cancel on order cancel failed", cancelCourier.orderNumber, result.error);
+      }
+    }
+  }
 
   // Invoice email + courier booking run after commit (never block admin on SMTP).
   if (justConfirmed && confirmedOrderId) {
@@ -496,43 +537,43 @@ export async function updateOrder(_prev: FormState, formData: FormData): Promise
         console.info("[orders] invoice email skipped", order.number, mail.reason);
       }
 
-      const courier = await createCourierShipment(
-        orderToCourierRequest({
-          ...order,
-          currency: money.code,
-          paymentMethod: order.paymentMethod,
-          paymentStatus: order.paymentStatus,
-        }),
-      );
-
       let courierMsg = "";
-      if ("skipped" in courier) {
-        console.info("[orders] courier skipped", order.number, courier.reason);
-        courierMsg = " Courier booking skipped (check Pathao env).";
-      } else if (!courier.ok) {
-        console.error("[orders] courier booking failed", order.number, courier.error);
-        courierMsg = ` Courier booking failed: ${courier.error ?? "unknown error"}.`;
+      if (order.courierConsignmentId) {
+        courierMsg = ` Courier already booked (${order.courierConsignmentId}).`;
       } else {
-        const noteBits = [
-          order.fulfillmentNote?.trim() || null,
-          courier.consignmentId
-            ? `Pathao consignment ${courier.consignmentId}`
-            : "Pathao shipment booked",
-        ].filter(Boolean);
-        await db.order.update({
-          where: { id: order.id },
-          data: {
-            courierProvider: courier.provider,
-            courierConsignmentId: courier.consignmentId ?? null,
-            courierStatus: "Pending Pickup",
-            courierBookedAt: new Date(),
-            courierLastSyncAt: new Date(),
-            fulfillmentNote: noteBits.join(" · "),
-          },
-        });
-        courierMsg = courier.consignmentId
-          ? ` Pathao booked (${courier.consignmentId}).`
-          : " Pathao booked.";
+        const courier = await createCourierShipment(
+          orderToCourierRequest({
+            ...order,
+            currency: money.code,
+            paymentMethod: order.paymentMethod,
+            paymentStatus: order.paymentStatus,
+          }),
+        );
+
+        if ("skipped" in courier) {
+          console.info("[orders] courier skipped", order.number, courier.reason);
+          courierMsg = " Courier booking skipped (check Pathao env).";
+        } else if (!courier.ok || !courier.consignmentId) {
+          console.error("[orders] courier booking failed", order.number, courier.ok ? "missing consignment_id" : courier.error);
+          courierMsg = ` Courier booking failed: ${!courier.ok ? (courier.error ?? "unknown error") : "no consignment ID"}.`;
+        } else {
+          const noteBits = [
+            order.fulfillmentNote?.trim() || null,
+            `Pathao consignment ${courier.consignmentId}`,
+          ].filter(Boolean);
+          await db.order.update({
+            where: { id: order.id },
+            data: {
+              courierProvider: courier.provider,
+              courierConsignmentId: courier.consignmentId,
+              courierStatus: "Pending Pickup",
+              courierBookedAt: new Date(),
+              courierLastSyncAt: new Date(),
+              fulfillmentNote: noteBits.join(" · "),
+            },
+          });
+          courierMsg = ` Pathao booked (${courier.consignmentId}).`;
+        }
       }
 
       const courierDetail = courierMsg.trim() || "No courier update.";

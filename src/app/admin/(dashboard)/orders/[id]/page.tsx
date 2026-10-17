@@ -12,6 +12,7 @@ import {
 import { isCourierCancelledStatus } from "@/lib/courier";
 import { requireAdmin } from "@/lib/auth/session";
 import { db } from "@/lib/db";
+import { signOrderAccess } from "@/lib/order-access";
 import { formatDate, formatPrice } from "@/lib/utils";
 
 export const metadata = { title: "Order" };
@@ -24,6 +25,8 @@ export default async function AdminOrderPage({ params }: PageProps<"/admin/order
     include: { items: { include: { product: { select: { slug: true } } } } },
   });
   if (!order) notFound();
+
+  const customerTrackHref = `/track?order=${encodeURIComponent(order.number)}&t=${encodeURIComponent(signOrderAccess(order.number))}`;
 
   return (
     <div className="space-y-6">
@@ -165,7 +168,7 @@ export default async function AdminOrderPage({ params }: PageProps<"/admin/order
                   ) : null}
                 </div>
                 <Link
-                  href={`/track?order=${encodeURIComponent(order.number)}`}
+                  href={customerTrackHref}
                   target="_blank"
                   className="block text-xs text-accent hover:underline"
                 >

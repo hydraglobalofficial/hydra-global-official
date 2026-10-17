@@ -1,6 +1,7 @@
 import "server-only";
 import { companyInfo, siteConfig } from "@/config/site";
 import { getActiveMoneyFormat } from "@/lib/money";
+import { signOrderAccess } from "@/lib/order-access";
 import { escapeHtml, formatReportDate, formatReportMoney } from "@/lib/reports/format";
 import { reportDocument } from "@/lib/reports/document";
 import type { InvoiceOrder } from "./types";
@@ -104,8 +105,8 @@ export function buildInvoiceHtml(order: InvoiceOrder, opts?: { toolbar?: boolean
     </div>
 
     <p style="margin-top:18px;color:#5c6478;font-size:12px">
-      Track this order anytime with invoice ID <strong class="mono">${escapeHtml(order.number)}</strong>
-      at ${escapeHtml(siteConfig.name)} · ${escapeHtml(siteBase())}/track
+      Track with invoice ID <strong class="mono">${escapeHtml(order.number)}</strong>
+      plus the secure link from your confirmation email (or invoice ID + checkout email).
     </p>
   `;
 
@@ -132,7 +133,8 @@ export function buildInvoiceHtml(order: InvoiceOrder, opts?: { toolbar?: boolean
 export function buildInvoiceEmailHtml(order: InvoiceOrder) {
   const site = siteBase();
   const firstName = order.customerName.trim().split(/\s+/)[0] || "there";
-  const trackUrl = `${site}/track?order=${encodeURIComponent(order.number)}`;
+  const trackToken = signOrderAccess(order.number);
+  const trackUrl = `${site}/track?order=${encodeURIComponent(order.number)}&t=${encodeURIComponent(trackToken)}`;
   const markUrl = `${site}/products/Hydra_Mark.png`;
   const issued = formatReportDate(order.createdAt);
 
@@ -327,7 +329,7 @@ export function buildInvoiceEmailHtml(order: InvoiceOrder) {
             <td style="padding:20px 28px 26px;background:#0c1222;font-size:11px;line-height:1.6;color:#8b9bb8">
               <div style="font-size:12px;font-weight:700;letter-spacing:0.12em;color:#ffffff;margin-bottom:8px">HYDRA</div>
               ${escapeHtml(siteConfig.legalName)} · ${escapeHtml(companyInfo.registeredOffice)}<br/>
-              Support: ${escapeHtml(siteConfig.email)} · ${escapeHtml(siteConfig.phone)}<br/>
+              Support: ${escapeHtml(process.env.SMTP_REPLY_TO?.trim() || siteConfig.email)} · ${escapeHtml(siteConfig.phone)}<br/>
               Invoice ID is your courier reference — please keep this email.
             </td>
           </tr>
@@ -341,6 +343,8 @@ export function buildInvoiceEmailHtml(order: InvoiceOrder) {
 
 export function buildInvoiceEmailText(order: InvoiceOrder) {
   const site = siteBase();
+  const trackToken = signOrderAccess(order.number);
+  const trackUrl = `${site}/track?order=${encodeURIComponent(order.number)}&t=${encodeURIComponent(trackToken)}`;
   const lines = [
     `${siteConfig.name} — Official invoice`,
     ``,
@@ -365,10 +369,10 @@ export function buildInvoiceEmailText(order: InvoiceOrder) {
     `  ${order.phone} · ${order.email}`,
     `  ${shipTo(order)}`,
     ``,
-    `Track shipment: ${site}/track?order=${encodeURIComponent(order.number)}`,
+    `Track shipment: ${trackUrl}`,
     ``,
     `${siteConfig.legalName}`,
-    `Support: ${siteConfig.email} · ${siteConfig.phone}`,
+    `Support: ${process.env.SMTP_REPLY_TO?.trim() || siteConfig.email} · ${siteConfig.phone}`,
   ];
   return lines.join("\n");
 }

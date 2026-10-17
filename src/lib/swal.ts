@@ -2,6 +2,16 @@
 
 import type { SweetAlertIcon, SweetAlertOptions, SweetAlertResult } from "sweetalert2";
 
+/** Escape untrusted strings before injecting into SweetAlert HTML. */
+function escapeHtml(value: string) {
+  return value
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
+}
+
 function isLightTheme() {
   if (typeof document === "undefined") return false;
   const root = document.documentElement;
@@ -223,11 +233,11 @@ export function alertOrderReady(opts: { name?: string; orderNumber: string }) {
   const who = opts.name?.trim() ? opts.name.trim().split(/\s+/)[0] : "there";
   return fire({
     icon: "success",
-    title: `Thank you, ${who}!`,
+    title: `Thank you, ${escapeHtml(who)}!`,
     html: `
       <p class="swal-hydra-lead" style="color:inherit;opacity:1">আপনার অর্ডার verify হয়ে <strong style="color:inherit">ready</strong> হচ্ছে।</p>
       <p class="swal-hydra-sub" style="color:inherit;opacity:1">Your order is confirmed — our team is verifying it and getting it ready to ship.</p>
-      <p class="swal-hydra-order">Order <span>${opts.orderNumber}</span></p>
+      <p class="swal-hydra-order">Order <span>${escapeHtml(opts.orderNumber)}</span></p>
     `,
     confirmButtonText: "Awesome",
     timer: 9000,
@@ -241,12 +251,15 @@ export function alertOrderApproved(opts: {
   mailDetail?: string;
   courierDetail?: string;
 }) {
+  const mailDetail = escapeHtml(
+    opts.mailDetail ?? "Open Courier → Test SMTP login, then Resend invoice.",
+  );
   const mailLine = opts.mailOk
     ? `<p class="swal-hydra-lead">Invoice email <strong>sent</strong> to the customer.</p>`
     : `<p class="swal-hydra-lead">Invoice email <strong>not delivered</strong>.</p>
-       <p class="swal-hydra-sub">${opts.mailDetail ?? "Open Courier → Test SMTP login, then Resend invoice."}</p>`;
+       <p class="swal-hydra-sub">${mailDetail}</p>`;
   const courierLine = opts.courierDetail
-    ? `<p class="swal-hydra-sub">${opts.courierDetail}</p>`
+    ? `<p class="swal-hydra-sub">${escapeHtml(opts.courierDetail)}</p>`
     : "";
   return fire({
     icon: opts.mailOk ? "success" : "warning",
@@ -254,7 +267,7 @@ export function alertOrderApproved(opts: {
     html: `
       ${mailLine}
       ${courierLine}
-      <p class="swal-hydra-order">Order <span>${opts.orderNumber}</span></p>
+      <p class="swal-hydra-order">Order <span>${escapeHtml(opts.orderNumber)}</span></p>
     `,
     confirmButtonText: opts.mailOk ? "Done" : "Fix SMTP & retry",
   });

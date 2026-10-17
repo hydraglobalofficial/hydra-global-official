@@ -61,7 +61,7 @@ export async function bookCourierForOrder(
     include: { items: true },
   });
   if (!order) return { status: "error", message: "Order not found." };
-  if (order.courierConsignmentId) {
+  if (order.courierConsignmentId && !isCourierCancelledStatus(order.courierStatus)) {
     return { status: "error", message: "Courier already booked for this order." };
   }
 
@@ -81,17 +81,20 @@ export async function bookCourierForOrder(
   if (!courier.ok) {
     return { status: "error", message: courier.error || "Courier booking failed." };
   }
+  if (!courier.consignmentId) {
+    return { status: "error", message: "Pathao did not return a consignment ID." };
+  }
 
   const noteBits = [
     order.fulfillmentNote?.trim() || null,
-    courier.consignmentId ? `Pathao consignment ${courier.consignmentId}` : "Pathao shipment booked",
+    `Pathao consignment ${courier.consignmentId}`,
   ].filter(Boolean);
 
   await db.order.update({
     where: { id },
     data: {
       courierProvider: courier.provider,
-      courierConsignmentId: courier.consignmentId ?? null,
+      courierConsignmentId: courier.consignmentId,
       courierStatus: "Pending Pickup",
       courierBookedAt: new Date(),
       courierLastSyncAt: new Date(),
@@ -105,9 +108,7 @@ export async function bookCourierForOrder(
   revalidatePath("/admin/orders");
   return {
     status: "success",
-    message: courier.consignmentId
-      ? `Courier booked · ${courier.consignmentId}`
-      : "Courier booked.",
+    message: `Courier booked · ${courier.consignmentId}`,
   };
 }
 
@@ -137,9 +138,12 @@ export async function cancelCourierForOrder(
     `Pathao cancelled ${order.courierConsignmentId}`,
   ].filter(Boolean);
 
+  const cancelledId = order.courierConsignmentId;
   await db.order.update({
     where: { id },
     data: {
+      // Clear so admin can re-book; cancelled ID stays in fulfillment note.
+      courierConsignmentId: null,
       courierStatus: status,
       courierLastSyncAt: new Date(),
       fulfillmentNote: noteBits.join(" · "),
@@ -152,6 +156,6 @@ export async function cancelCourierForOrder(
   revalidatePath("/track");
   return {
     status: "success",
-    message: `Courier cancelled · ${order.courierConsignmentId}`,
+    message: `Courier cancelled · ${cancelledId}`,
   };
 }
