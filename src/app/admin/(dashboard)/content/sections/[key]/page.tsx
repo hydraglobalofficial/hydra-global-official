@@ -5,6 +5,7 @@ import { AdminHeader } from "@/components/admin/admin-ui";
 import {
   AboutSectionEditor,
   CollectionsSectionEditor,
+  CurrencySectionEditor,
   HomeHeroSectionEditor,
   HowItWorksSectionEditor,
   InstallationSectionEditor,
@@ -17,6 +18,7 @@ import { requireAdmin } from "@/lib/auth/session";
 import {
   normalizeAboutContent,
   normalizeCollectionsContent,
+  normalizeCurrencyContent,
   normalizeHomeHeroContent,
   normalizeHowItWorksContent,
   normalizeInstallationContent,
@@ -62,6 +64,9 @@ export default async function EditSiteSectionPage({ params }: Props) {
       )}
       {key === "site.whatsapp" && (
         <WhatsappWidgetSectionEditor content={normalizeWhatsappWidgetContent(row?.data)} />
+      )}
+      {key === "site.currency" && (
+        <CurrencySectionEditor content={normalizeCurrencyContent(row?.data)} />
       )}
       {key === "installation" && (
         <InstallationSectionEditor content={normalizeInstallationContent(row?.data)} />

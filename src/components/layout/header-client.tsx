@@ -4,7 +4,7 @@ import Link from "next/link";
 import Form from "next/form";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { ChevronDown, Menu, Search, ShoppingBag, X } from "lucide-react";
+import { ChevronDown, Home, Menu, Search, ShoppingBag, X } from "lucide-react";
 import { useCart } from "@/components/cart/cart-provider";
 import { useTypingPlaceholder } from "@/components/search/typing-placeholder";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
@@ -240,6 +240,14 @@ function MobileNav({ open, onClose, nav }: { open: boolean; onClose: () => void;
             <X size={20} />
           </button>
         </div>
+        <Link
+          href="/"
+          onClick={onClose}
+          className="mb-6 flex min-h-12 items-center gap-3 rounded-xl border border-line bg-surface-2 px-4 text-base font-medium text-fg transition-colors hover:border-line-strong hover:bg-surface-3"
+        >
+          <Home size={18} className="shrink-0 text-muted" aria-hidden />
+          Home
+        </Link>
         <p className="mb-3 font-mono text-[10px] uppercase tracking-[0.25em] text-subtle">Shop</p>
         <div className="mb-6 grid grid-cols-2 gap-2">
           {[

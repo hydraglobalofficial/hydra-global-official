@@ -27,6 +27,12 @@ import {
   safeYoutubeUrl,
 } from "@/lib/content-safety";
 import { defaultInstallationContent, type InstallationContent } from "@/content/installation";
+import {
+  defaultCurrencyContent,
+  MONEY_PRESETS,
+  type CurrencyContent,
+  type MoneyPresetId,
+} from "@/lib/money";
 
 const HERO_VISUALS = new Set<HeroVisualKey>(["phone", "glass", "privacy", "image"]);
 
@@ -402,6 +408,28 @@ export function normalizeShowcaseContent(raw: unknown): ShowcaseContent {
     channelHref: clampText(data.channelHref, 240, defaults.channelHref) || defaults.channelHref,
     videos: videos.length > 0 ? videos : defaults.videos,
   };
+}
+
+export function normalizeCurrencyContent(raw: unknown): CurrencyContent {
+  const data = isRecord(raw) ? raw : {};
+  const presetRaw = typeof data.preset === "string" ? data.preset : "bdt";
+  const preset = (
+    ["bdt", "bdt-taka", "usd", "eur", "custom"] as const
+  ).includes(presetRaw as MoneyPresetId)
+    ? (presetRaw as MoneyPresetId)
+    : "bdt";
+
+  if (preset !== "custom" && MONEY_PRESETS[preset]) {
+    return { preset, ...MONEY_PRESETS[preset].format };
+  }
+
+  const position = data.position === "after" ? "after" : "before";
+  const decimals = Math.min(2, Math.max(0, Number(data.decimals) || 0));
+  const code = clampText(data.code, 8, defaultCurrencyContent.code).toUpperCase() || "BDT";
+  const symbol = clampText(data.symbol, 12, defaultCurrencyContent.symbol) || "৳";
+  const locale = clampText(data.locale, 16, defaultCurrencyContent.locale) || "en-BD";
+
+  return { preset: "custom", code, symbol, position, locale, decimals };
 }
 
 export function normalizeHomeHeroContent(raw: unknown): HomeHeroContent {

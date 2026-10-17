@@ -17,6 +17,7 @@ import {
   Package,
   ShoppingCart,
   Star,
+  Truck,
   Users,
   Wrench,
   X,
@@ -38,6 +39,7 @@ const groups: { label: string; items: NavItem[] }[] = [
     items: [
       { href: "/admin", label: "Overview", icon: LayoutDashboard },
       { href: "/admin/orders", label: "Orders", icon: ShoppingCart },
+      { href: "/admin/courier", label: "Courier", icon: Truck },
       { href: "/admin/inquiries", label: "Inquiries", icon: Inbox },
       { href: "/admin/reviews", label: "Reviews", icon: Star },
     ],

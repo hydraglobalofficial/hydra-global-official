@@ -449,6 +449,11 @@ export const SITE_SECTION_META = [
     description: "Right-side chat button: WhatsApp number, greeting, and rotating staff photos (admin uploads).",
   },
   {
+    key: "site.currency",
+    title: "Currency & price format",
+    description: "How product prices show on the store — Taka (৳), Dollar ($), Euro (€), or a custom symbol. Numbers stay the same; only the display changes.",
+  },
+  {
     key: "installation",
     title: "Installation guide",
     description: "One shared install flow for iPhone & Galaxy: hero copy, video, kit, animated steps (with images), troubleshooting.",

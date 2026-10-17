@@ -88,9 +88,9 @@ function HeroStagePager({
   onSelect: (i: number) => void;
 }) {
   return (
-    <div className="pointer-events-auto w-[min(100%,14rem)]">
-      <div className="rounded-full border border-line bg-bg/75 px-3 py-2 shadow-[0_14px_40px_-18px_rgba(0,0,0,0.55)] backdrop-blur-md light:bg-white/90 light:shadow-[0_10px_28px_-16px_rgba(0,0,0,0.16)]">
-        <div className="flex items-center justify-center gap-2">
+    <div className="pointer-events-auto w-[min(100%,12.5rem)] sm:w-[min(100%,14rem)]">
+      <div className="rounded-full border border-line bg-bg/80 px-2.5 py-1.5 shadow-[0_14px_40px_-18px_rgba(0,0,0,0.55)] backdrop-blur-md light:bg-white/90 light:shadow-[0_10px_28px_-16px_rgba(0,0,0,0.16)] sm:px-3 sm:py-2">
+        <div className="flex items-center justify-center gap-1.5 sm:gap-2">
           {Array.from({ length: total }, (_, i) => {
             const active = i === index;
             return (
@@ -102,7 +102,7 @@ function HeroStagePager({
                 aria-current={active ? "true" : undefined}
                 className={cn(
                   "relative overflow-hidden rounded-full transition-all duration-300",
-                  active ? "h-2 w-9 bg-fg/15" : "size-2 bg-fg/30 hover:bg-fg/55",
+                  active ? "h-1.5 w-7 bg-fg/15 sm:h-2 sm:w-9" : "size-1.5 bg-fg/30 hover:bg-fg/55 sm:size-2",
                 )}
               >
                 {active && (
@@ -119,7 +119,7 @@ function HeroStagePager({
             );
           })}
         </div>
-        <p className="mt-1 text-center font-mono text-[10px] tabular-nums tracking-[0.2em] text-muted">
+        <p className="mt-0.5 text-center font-mono text-[9px] tabular-nums tracking-[0.2em] text-muted sm:mt-1 sm:text-[10px]">
           <span className="text-fg">{String(index + 1).padStart(2, "0")}</span>
           <span className="mx-1 text-fg/25">/</span>
           {String(total).padStart(2, "0")}
@@ -200,7 +200,7 @@ export function Hero({ content }: { content: HomeHeroContent }) {
 
   return (
     <section
-      className="relative isolate min-h-[calc(100svh-7.5rem)] overflow-hidden"
+      className="relative isolate overflow-hidden sm:min-h-[calc(100svh-7.5rem)]"
       aria-roledescription="carousel"
       aria-label="Featured collections"
     >
@@ -215,13 +215,13 @@ export function Hero({ content }: { content: HomeHeroContent }) {
         Mobile: flex-col-reverse → image on top.
         Large: flex-row → writing left, image right.
       */}
-      <div className="container-page relative flex flex-col-reverse items-stretch gap-5 pb-24 pt-2 sm:gap-6 sm:pb-20 sm:pt-3 lg:flex-row lg:items-center lg:gap-6 lg:pb-16 lg:pt-0 xl:gap-8">
-        <div className="relative z-10 w-full max-w-xl shrink-0 space-y-5 sm:space-y-6 lg:space-y-7">
-          <div className="grid min-h-[10.5rem] sm:min-h-[12rem]">
+      <div className="container-page relative flex flex-col-reverse items-stretch gap-2 pb-20 pt-4 sm:gap-5 sm:pb-20 sm:pt-5 lg:flex-row lg:items-center lg:gap-6 lg:pb-16 lg:pt-0 xl:gap-8">
+        <div className="relative z-10 w-full max-w-xl shrink-0 space-y-4 sm:space-y-6 lg:space-y-7">
+          <div className="grid min-h-[8.5rem] sm:min-h-[12rem]">
             <AnimatePresence initial={false} mode="popLayout">
               <motion.div
                 key={slide.key}
-                className="col-start-1 row-start-1 space-y-4 sm:space-y-7"
+                className="col-start-1 row-start-1 space-y-3 sm:space-y-7"
                 initial="hidden"
                 animate="show"
                 exit="exit"
@@ -289,7 +289,7 @@ export function Hero({ content }: { content: HomeHeroContent }) {
         </div>
 
         <div
-          className="relative mx-auto w-full min-w-0 max-w-[34rem] lg:mx-0 lg:max-w-none lg:flex-1"
+          className="relative mx-auto mt-1 w-full min-w-0 max-w-[34rem] sm:mt-0 lg:mx-0 lg:max-w-none lg:flex-1"
           onMouseEnter={() => setPaused(true)}
           onMouseLeave={() => setPaused(false)}
           onFocusCapture={() => setPaused(true)}
@@ -302,10 +302,10 @@ export function Hero({ content }: { content: HomeHeroContent }) {
             </>
           )}
           <Stage>
-            <div className="relative mx-auto flex aspect-[4/5] w-full max-w-full items-center justify-center overflow-visible">
+            <div className="relative mx-auto flex aspect-[4/5] w-full max-w-full items-center justify-center overflow-visible pt-2 sm:pt-1 lg:pt-0">
               <div aria-hidden className="hero-visual-shadow pointer-events-none absolute inset-x-[18%] bottom-[4%] h-20 rounded-[100%] bg-black/70 blur-3xl light:bg-black/8" />
 
-              <div className="relative z-[1] w-full max-w-full scale-100 sm:scale-[1.03] lg:scale-105">
+              <div className="relative z-[1] w-full max-w-full scale-[0.96] sm:scale-[1.03] lg:scale-105">
                 <div className="grid">
                   <AnimatePresence initial={false} mode="popLayout">
                     <motion.div
@@ -325,7 +325,7 @@ export function Hero({ content }: { content: HomeHeroContent }) {
           </Stage>
 
           {slides.length > 1 && (
-            <div className="relative z-30 mt-3 flex justify-center px-3 sm:mt-4 lg:absolute lg:inset-x-0 lg:bottom-[6%] lg:mt-0 lg:px-3">
+            <div className="absolute inset-x-0 bottom-[3%] z-30 flex justify-center px-3 sm:bottom-[5%] lg:bottom-[6%]">
               <HeroStagePager
                 index={safeIndex}
                 total={slides.length}

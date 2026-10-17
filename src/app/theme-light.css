@@ -126,6 +126,12 @@ html.light .wa-glow,
 html[data-theme="light"] .wa-glow {
   opacity: 0.35 !important;
 }
+html.light .hydra-crest-ink img,
+html[data-theme="light"] .hydra-crest-ink img,
+html.light img.hydra-mark-ink,
+html[data-theme="light"] img.hydra-mark-ink {
+  filter: brightness(0) !important;
+}
 html.light .install-title-accent,
 html[data-theme="light"] .install-title-accent {
   background: none !important;

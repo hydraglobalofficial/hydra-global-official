@@ -48,6 +48,7 @@ export function productJsonLd(p: {
   images: string[];
   ratingAverage: number;
   ratingCount: number;
+  priceCurrency?: string;
 }): Json {
   return {
     "@context": "https://schema.org",
@@ -60,7 +61,7 @@ export function productJsonLd(p: {
     offers: {
       "@type": "Offer",
       url: absoluteUrl(`/product/${p.slug}`),
-      priceCurrency: siteConfig.currency,
+      priceCurrency: p.priceCurrency || siteConfig.currency,
       price: p.price,
       availability: p.stock > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
       itemCondition: "https://schema.org/NewCondition",

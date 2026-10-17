@@ -62,6 +62,11 @@ export type OrderMinAggregateOutputType = {
   discount: number | null
   total: number | null
   fulfillmentNote: string | null
+  courierProvider: string | null
+  courierConsignmentId: string | null
+  courierStatus: string | null
+  courierBookedAt: Date | null
+  courierLastSyncAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -88,6 +93,11 @@ export type OrderMaxAggregateOutputType = {
   discount: number | null
   total: number | null
   fulfillmentNote: string | null
+  courierProvider: string | null
+  courierConsignmentId: string | null
+  courierStatus: string | null
+  courierBookedAt: Date | null
+  courierLastSyncAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -114,6 +124,11 @@ export type OrderCountAggregateOutputType = {
   discount: number
   total: number
   fulfillmentNote: number
+  courierProvider: number
+  courierConsignmentId: number
+  courierStatus: number
+  courierBookedAt: number
+  courierLastSyncAt: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -156,6 +171,11 @@ export type OrderMinAggregateInputType = {
   discount?: true
   total?: true
   fulfillmentNote?: true
+  courierProvider?: true
+  courierConsignmentId?: true
+  courierStatus?: true
+  courierBookedAt?: true
+  courierLastSyncAt?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -182,6 +202,11 @@ export type OrderMaxAggregateInputType = {
   discount?: true
   total?: true
   fulfillmentNote?: true
+  courierProvider?: true
+  courierConsignmentId?: true
+  courierStatus?: true
+  courierBookedAt?: true
+  courierLastSyncAt?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -208,6 +233,11 @@ export type OrderCountAggregateInputType = {
   discount?: true
   total?: true
   fulfillmentNote?: true
+  courierProvider?: true
+  courierConsignmentId?: true
+  courierStatus?: true
+  courierBookedAt?: true
+  courierLastSyncAt?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -321,6 +351,11 @@ export type OrderGroupByOutputType = {
   discount: number
   total: number
   fulfillmentNote: string | null
+  courierProvider: string | null
+  courierConsignmentId: string | null
+  courierStatus: string | null
+  courierBookedAt: Date | null
+  courierLastSyncAt: Date | null
   createdAt: Date
   updatedAt: Date
   _count: OrderCountAggregateOutputType | null
@@ -370,6 +405,11 @@ export type OrderWhereInput = {
   discount?: Prisma.IntFilter<"Order"> | number
   total?: Prisma.IntFilter<"Order"> | number
   fulfillmentNote?: Prisma.StringNullableFilter<"Order"> | string | null
+  courierProvider?: Prisma.StringNullableFilter<"Order"> | string | null
+  courierConsignmentId?: Prisma.StringNullableFilter<"Order"> | string | null
+  courierStatus?: Prisma.StringNullableFilter<"Order"> | string | null
+  courierBookedAt?: Prisma.DateTimeNullableFilter<"Order"> | Date | string | null
+  courierLastSyncAt?: Prisma.DateTimeNullableFilter<"Order"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Order"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Order"> | Date | string
   user?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
@@ -398,6 +438,11 @@ export type OrderOrderByWithRelationInput = {
   discount?: Prisma.SortOrder
   total?: Prisma.SortOrder
   fulfillmentNote?: Prisma.SortOrderInput | Prisma.SortOrder
+  courierProvider?: Prisma.SortOrderInput | Prisma.SortOrder
+  courierConsignmentId?: Prisma.SortOrderInput | Prisma.SortOrder
+  courierStatus?: Prisma.SortOrderInput | Prisma.SortOrder
+  courierBookedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  courierLastSyncAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
@@ -429,6 +474,11 @@ export type OrderWhereUniqueInput = Prisma.AtLeast<{
   discount?: Prisma.IntFilter<"Order"> | number
   total?: Prisma.IntFilter<"Order"> | number
   fulfillmentNote?: Prisma.StringNullableFilter<"Order"> | string | null
+  courierProvider?: Prisma.StringNullableFilter<"Order"> | string | null
+  courierConsignmentId?: Prisma.StringNullableFilter<"Order"> | string | null
+  courierStatus?: Prisma.StringNullableFilter<"Order"> | string | null
+  courierBookedAt?: Prisma.DateTimeNullableFilter<"Order"> | Date | string | null
+  courierLastSyncAt?: Prisma.DateTimeNullableFilter<"Order"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Order"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Order"> | Date | string
   user?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
@@ -457,6 +507,11 @@ export type OrderOrderByWithAggregationInput = {
   discount?: Prisma.SortOrder
   total?: Prisma.SortOrder
   fulfillmentNote?: Prisma.SortOrderInput | Prisma.SortOrder
+  courierProvider?: Prisma.SortOrderInput | Prisma.SortOrder
+  courierConsignmentId?: Prisma.SortOrderInput | Prisma.SortOrder
+  courierStatus?: Prisma.SortOrderInput | Prisma.SortOrder
+  courierBookedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  courierLastSyncAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.OrderCountOrderByAggregateInput
@@ -491,6 +546,11 @@ export type OrderScalarWhereWithAggregatesInput = {
   discount?: Prisma.IntWithAggregatesFilter<"Order"> | number
   total?: Prisma.IntWithAggregatesFilter<"Order"> | number
   fulfillmentNote?: Prisma.StringNullableWithAggregatesFilter<"Order"> | string | null
+  courierProvider?: Prisma.StringNullableWithAggregatesFilter<"Order"> | string | null
+  courierConsignmentId?: Prisma.StringNullableWithAggregatesFilter<"Order"> | string | null
+  courierStatus?: Prisma.StringNullableWithAggregatesFilter<"Order"> | string | null
+  courierBookedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Order"> | Date | string | null
+  courierLastSyncAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Order"> | Date | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Order"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Order"> | Date | string
 }
@@ -516,6 +576,11 @@ export type OrderCreateInput = {
   discount?: number
   total: number
   fulfillmentNote?: string | null
+  courierProvider?: string | null
+  courierConsignmentId?: string | null
+  courierStatus?: string | null
+  courierBookedAt?: Date | string | null
+  courierLastSyncAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   user?: Prisma.UserCreateNestedOneWithoutOrdersInput
@@ -544,6 +609,11 @@ export type OrderUncheckedCreateInput = {
   discount?: number
   total: number
   fulfillmentNote?: string | null
+  courierProvider?: string | null
+  courierConsignmentId?: string | null
+  courierStatus?: string | null
+  courierBookedAt?: Date | string | null
+  courierLastSyncAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   items?: Prisma.OrderItemUncheckedCreateNestedManyWithoutOrderInput
@@ -570,6 +640,11 @@ export type OrderUpdateInput = {
   discount?: Prisma.IntFieldUpdateOperationsInput | number
   total?: Prisma.IntFieldUpdateOperationsInput | number
   fulfillmentNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  courierProvider?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  courierConsignmentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  courierStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  courierBookedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  courierLastSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneWithoutOrdersNestedInput
@@ -598,6 +673,11 @@ export type OrderUncheckedUpdateInput = {
   discount?: Prisma.IntFieldUpdateOperationsInput | number
   total?: Prisma.IntFieldUpdateOperationsInput | number
   fulfillmentNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  courierProvider?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  courierConsignmentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  courierStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  courierBookedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  courierLastSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   items?: Prisma.OrderItemUncheckedUpdateManyWithoutOrderNestedInput
@@ -625,6 +705,11 @@ export type OrderCreateManyInput = {
   discount?: number
   total: number
   fulfillmentNote?: string | null
+  courierProvider?: string | null
+  courierConsignmentId?: string | null
+  courierStatus?: string | null
+  courierBookedAt?: Date | string | null
+  courierLastSyncAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -650,6 +735,11 @@ export type OrderUpdateManyMutationInput = {
   discount?: Prisma.IntFieldUpdateOperationsInput | number
   total?: Prisma.IntFieldUpdateOperationsInput | number
   fulfillmentNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  courierProvider?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  courierConsignmentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  courierStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  courierBookedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  courierLastSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -676,6 +766,11 @@ export type OrderUncheckedUpdateManyInput = {
   discount?: Prisma.IntFieldUpdateOperationsInput | number
   total?: Prisma.IntFieldUpdateOperationsInput | number
   fulfillmentNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  courierProvider?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  courierConsignmentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  courierStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  courierBookedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  courierLastSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -712,6 +807,11 @@ export type OrderCountOrderByAggregateInput = {
   discount?: Prisma.SortOrder
   total?: Prisma.SortOrder
   fulfillmentNote?: Prisma.SortOrder
+  courierProvider?: Prisma.SortOrder
+  courierConsignmentId?: Prisma.SortOrder
+  courierStatus?: Prisma.SortOrder
+  courierBookedAt?: Prisma.SortOrder
+  courierLastSyncAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -745,6 +845,11 @@ export type OrderMaxOrderByAggregateInput = {
   discount?: Prisma.SortOrder
   total?: Prisma.SortOrder
   fulfillmentNote?: Prisma.SortOrder
+  courierProvider?: Prisma.SortOrder
+  courierConsignmentId?: Prisma.SortOrder
+  courierStatus?: Prisma.SortOrder
+  courierBookedAt?: Prisma.SortOrder
+  courierLastSyncAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -771,6 +876,11 @@ export type OrderMinOrderByAggregateInput = {
   discount?: Prisma.SortOrder
   total?: Prisma.SortOrder
   fulfillmentNote?: Prisma.SortOrder
+  courierProvider?: Prisma.SortOrder
+  courierConsignmentId?: Prisma.SortOrder
+  courierStatus?: Prisma.SortOrder
+  courierBookedAt?: Prisma.SortOrder
+  courierLastSyncAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -841,6 +951,10 @@ export type EnumPaymentStatusFieldUpdateOperationsInput = {
   set?: $Enums.PaymentStatus
 }
 
+export type NullableDateTimeFieldUpdateOperationsInput = {
+  set?: Date | string | null
+}
+
 export type OrderCreateNestedOneWithoutItemsInput = {
   create?: Prisma.XOR<Prisma.OrderCreateWithoutItemsInput, Prisma.OrderUncheckedCreateWithoutItemsInput>
   connectOrCreate?: Prisma.OrderCreateOrConnectWithoutItemsInput
@@ -876,6 +990,11 @@ export type OrderCreateWithoutUserInput = {
   discount?: number
   total: number
   fulfillmentNote?: string | null
+  courierProvider?: string | null
+  courierConsignmentId?: string | null
+  courierStatus?: string | null
+  courierBookedAt?: Date | string | null
+  courierLastSyncAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   items?: Prisma.OrderItemCreateNestedManyWithoutOrderInput
@@ -902,6 +1021,11 @@ export type OrderUncheckedCreateWithoutUserInput = {
   discount?: number
   total: number
   fulfillmentNote?: string | null
+  courierProvider?: string | null
+  courierConsignmentId?: string | null
+  courierStatus?: string | null
+  courierBookedAt?: Date | string | null
+  courierLastSyncAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   items?: Prisma.OrderItemUncheckedCreateNestedManyWithoutOrderInput
@@ -958,6 +1082,11 @@ export type OrderScalarWhereInput = {
   discount?: Prisma.IntFilter<"Order"> | number
   total?: Prisma.IntFilter<"Order"> | number
   fulfillmentNote?: Prisma.StringNullableFilter<"Order"> | string | null
+  courierProvider?: Prisma.StringNullableFilter<"Order"> | string | null
+  courierConsignmentId?: Prisma.StringNullableFilter<"Order"> | string | null
+  courierStatus?: Prisma.StringNullableFilter<"Order"> | string | null
+  courierBookedAt?: Prisma.DateTimeNullableFilter<"Order"> | Date | string | null
+  courierLastSyncAt?: Prisma.DateTimeNullableFilter<"Order"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Order"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Order"> | Date | string
 }
@@ -983,6 +1112,11 @@ export type OrderCreateWithoutItemsInput = {
   discount?: number
   total: number
   fulfillmentNote?: string | null
+  courierProvider?: string | null
+  courierConsignmentId?: string | null
+  courierStatus?: string | null
+  courierBookedAt?: Date | string | null
+  courierLastSyncAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   user?: Prisma.UserCreateNestedOneWithoutOrdersInput
@@ -1010,6 +1144,11 @@ export type OrderUncheckedCreateWithoutItemsInput = {
   discount?: number
   total: number
   fulfillmentNote?: string | null
+  courierProvider?: string | null
+  courierConsignmentId?: string | null
+  courierStatus?: string | null
+  courierBookedAt?: Date | string | null
+  courierLastSyncAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -1051,6 +1190,11 @@ export type OrderUpdateWithoutItemsInput = {
   discount?: Prisma.IntFieldUpdateOperationsInput | number
   total?: Prisma.IntFieldUpdateOperationsInput | number
   fulfillmentNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  courierProvider?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  courierConsignmentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  courierStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  courierBookedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  courierLastSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneWithoutOrdersNestedInput
@@ -1078,6 +1222,11 @@ export type OrderUncheckedUpdateWithoutItemsInput = {
   discount?: Prisma.IntFieldUpdateOperationsInput | number
   total?: Prisma.IntFieldUpdateOperationsInput | number
   fulfillmentNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  courierProvider?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  courierConsignmentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  courierStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  courierBookedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  courierLastSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -1103,6 +1252,11 @@ export type OrderCreateManyUserInput = {
   discount?: number
   total: number
   fulfillmentNote?: string | null
+  courierProvider?: string | null
+  courierConsignmentId?: string | null
+  courierStatus?: string | null
+  courierBookedAt?: Date | string | null
+  courierLastSyncAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -1128,6 +1282,11 @@ export type OrderUpdateWithoutUserInput = {
   discount?: Prisma.IntFieldUpdateOperationsInput | number
   total?: Prisma.IntFieldUpdateOperationsInput | number
   fulfillmentNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  courierProvider?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  courierConsignmentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  courierStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  courierBookedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  courierLastSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   items?: Prisma.OrderItemUpdateManyWithoutOrderNestedInput
@@ -1154,6 +1313,11 @@ export type OrderUncheckedUpdateWithoutUserInput = {
   discount?: Prisma.IntFieldUpdateOperationsInput | number
   total?: Prisma.IntFieldUpdateOperationsInput | number
   fulfillmentNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  courierProvider?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  courierConsignmentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  courierStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  courierBookedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  courierLastSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   items?: Prisma.OrderItemUncheckedUpdateManyWithoutOrderNestedInput
@@ -1180,6 +1344,11 @@ export type OrderUncheckedUpdateManyWithoutUserInput = {
   discount?: Prisma.IntFieldUpdateOperationsInput | number
   total?: Prisma.IntFieldUpdateOperationsInput | number
   fulfillmentNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  courierProvider?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  courierConsignmentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  courierStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  courierBookedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  courierLastSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -1237,6 +1406,11 @@ export type OrderSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   discount?: boolean
   total?: boolean
   fulfillmentNote?: boolean
+  courierProvider?: boolean
+  courierConsignmentId?: boolean
+  courierStatus?: boolean
+  courierBookedAt?: boolean
+  courierLastSyncAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.Order$userArgs<ExtArgs>
@@ -1266,6 +1440,11 @@ export type OrderSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   discount?: boolean
   total?: boolean
   fulfillmentNote?: boolean
+  courierProvider?: boolean
+  courierConsignmentId?: boolean
+  courierStatus?: boolean
+  courierBookedAt?: boolean
+  courierLastSyncAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.Order$userArgs<ExtArgs>
@@ -1293,6 +1472,11 @@ export type OrderSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   discount?: boolean
   total?: boolean
   fulfillmentNote?: boolean
+  courierProvider?: boolean
+  courierConsignmentId?: boolean
+  courierStatus?: boolean
+  courierBookedAt?: boolean
+  courierLastSyncAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.Order$userArgs<ExtArgs>
@@ -1320,11 +1504,16 @@ export type OrderSelectScalar = {
   discount?: boolean
   total?: boolean
   fulfillmentNote?: boolean
+  courierProvider?: boolean
+  courierConsignmentId?: boolean
+  courierStatus?: boolean
+  courierBookedAt?: boolean
+  courierLastSyncAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type OrderOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "number" | "userId" | "status" | "paymentMethod" | "paymentStatus" | "paymentRef" | "customerName" | "email" | "phone" | "address" | "country" | "city" | "area" | "postalCode" | "notes" | "subtotal" | "shippingFee" | "discount" | "total" | "fulfillmentNote" | "createdAt" | "updatedAt", ExtArgs["result"]["order"]>
+export type OrderOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "number" | "userId" | "status" | "paymentMethod" | "paymentStatus" | "paymentRef" | "customerName" | "email" | "phone" | "address" | "country" | "city" | "area" | "postalCode" | "notes" | "subtotal" | "shippingFee" | "discount" | "total" | "fulfillmentNote" | "courierProvider" | "courierConsignmentId" | "courierStatus" | "courierBookedAt" | "courierLastSyncAt" | "createdAt" | "updatedAt", ExtArgs["result"]["order"]>
 export type OrderInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.Order$userArgs<ExtArgs>
   items?: boolean | Prisma.Order$itemsArgs<ExtArgs>
@@ -1365,6 +1554,20 @@ export type $OrderPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     discount: number
     total: number
     fulfillmentNote: string | null
+    /**
+     * pathao | steadfast | …
+     */
+    courierProvider: string | null
+    /**
+     * Provider consignment / tracking id
+     */
+    courierConsignmentId: string | null
+    /**
+     * Last known courier status label (e.g. In Transit)
+     */
+    courierStatus: string | null
+    courierBookedAt: Date | null
+    courierLastSyncAt: Date | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["order"]>
@@ -1813,6 +2016,11 @@ export interface OrderFieldRefs {
   readonly discount: Prisma.FieldRef<"Order", 'Int'>
   readonly total: Prisma.FieldRef<"Order", 'Int'>
   readonly fulfillmentNote: Prisma.FieldRef<"Order", 'String'>
+  readonly courierProvider: Prisma.FieldRef<"Order", 'String'>
+  readonly courierConsignmentId: Prisma.FieldRef<"Order", 'String'>
+  readonly courierStatus: Prisma.FieldRef<"Order", 'String'>
+  readonly courierBookedAt: Prisma.FieldRef<"Order", 'DateTime'>
+  readonly courierLastSyncAt: Prisma.FieldRef<"Order", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"Order", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Order", 'DateTime'>
 }

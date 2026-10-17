@@ -4,14 +4,11 @@ export function cn(...classes: ClassValue[]) {
   return classes.filter(Boolean).join(" ");
 }
 
-const money = new Intl.NumberFormat("en-US", {
-  style: "currency",
-  currency: "USD",
-  maximumFractionDigits: 0,
-});
+import { formatMoney, type MoneyFormat } from "@/lib/money";
 
-export function formatPrice(amount: number) {
-  return money.format(amount);
+/** Formats catalog / cart money using the admin-chosen currency display. */
+export function formatPrice(amount: number, format?: MoneyFormat) {
+  return formatMoney(amount, format);
 }
 
 export function formatDate(date: Date | string) {

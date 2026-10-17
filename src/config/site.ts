@@ -15,7 +15,8 @@ export const siteConfig = {
   whatsapp: "8801635992804",
   messenger: "https://m.me/hydraglobal",
   mapsUrl: "https://www.google.com/maps/search/?api=1&query=HYDRA+Global",
-  currency: "USD",
+  /** Fallback only — live display comes from admin Content → Currency. */
+  currency: "BDT",
   freeShippingThreshold: 80,
   /** Express = major hub cities; standard = everywhere else. */
   shippingFee: { express: 8, standard: 14 },
@@ -64,7 +65,7 @@ export const defaultBrandSeeds: Omit<BrandRecord, "id">[] = [
     shortLabel: "iPhone",
     blurb:
       "Accessories cut to Apple's exact tolerances — from screen armor and cases to camera kits for iPhone 15 through the latest Pro Max.",
-    image: "/brands/iphone.jpg",
+    image: null,
     position: 0,
   },
   {
@@ -74,7 +75,7 @@ export const defaultBrandSeeds: Omit<BrandRecord, "id">[] = [
     shortLabel: "Samsung",
     blurb:
       "Ultrasonic-fingerprint friendly glass, cases and camera armor for Galaxy S and Z series flagships.",
-    image: "/brands/samsung.jpg",
+    image: null,
     position: 1,
   },
 ];

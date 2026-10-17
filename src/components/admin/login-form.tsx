@@ -6,36 +6,42 @@ import { Loader2 } from "lucide-react";
 import { PasswordInput } from "@/components/admin/password-input";
 import { login } from "@/server/actions/auth";
 import { initialFormState } from "@/lib/validations";
-import { Button } from "@/components/ui/button";
-import { Field, FormMessage, Input } from "@/components/ui/form";
+import { FormMessage } from "@/components/ui/form-message";
 
 export function LoginForm({ next }: { next?: string }) {
   const [state, action, pending] = useActionState(login, initialFormState);
   return (
-    <form action={action} className="space-y-5">
+    <form action={action} className="admin-auth-form">
       <input type="hidden" name="next" value={next ?? ""} />
-      <Field label="Username or email" htmlFor="identifier">
-        <Input
+
+      <div className="admin-auth-field">
+        <label htmlFor="identifier">Username or email</label>
+        <input
           id="identifier"
           name="identifier"
           type="text"
           autoComplete="username"
           required
           placeholder="owner or admin@hydraglobal.com"
+          className="auth-field"
         />
-      </Field>
-      <Field label="Password" htmlFor="password">
+      </div>
+
+      <div className="admin-auth-field">
+        <label htmlFor="password">Password</label>
         <PasswordInput id="password" name="password" autoComplete="current-password" required />
-      </Field>
+      </div>
+
       <FormMessage status={state.status} message={state.message} />
-      <Button type="submit" className="w-full" size="lg" disabled={pending}>
-        {pending && <Loader2 size={16} className="animate-spin" />} Sign in
-      </Button>
-      <p className="text-center text-sm text-muted">
+
+      <button type="submit" disabled={pending} className="admin-auth-submit">
+        {pending ? <Loader2 size={16} className="animate-spin" /> : null}
+        Sign in
+      </button>
+
+      <p className="admin-auth-alt">
         Need an account?{" "}
-        <Link href="/admin/register" className="text-accent hover:underline">
-          Register with master key
-        </Link>
+        <Link href="/admin/register">Register with master key</Link>
       </p>
     </form>
   );

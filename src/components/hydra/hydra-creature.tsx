@@ -87,9 +87,17 @@ export function HydraCreature({ progress, className, ghost = false, still = fals
 
   if (!mounted) {
     return (
-      <div className={cn("hydra-crest-art relative mx-auto aspect-[3930/3454] w-full", className)} aria-hidden>
+      <div className={cn("hydra-crest-art hydra-crest-ink relative mx-auto aspect-[3930/3454] w-full", className)} aria-hidden>
         <div className="absolute inset-0 opacity-20">
-          <Image src={HYDRA_SRC} alt="" fill sizes={IMAGE_SIZES} className="object-contain" priority={!ghost} quality={95} />
+          <Image
+            src={HYDRA_SRC}
+            alt=""
+            fill
+            sizes={IMAGE_SIZES}
+            className="hydra-mark-ink object-contain"
+            priority={!ghost}
+            quality={95}
+          />
         </div>
       </div>
     );
@@ -97,7 +105,7 @@ export function HydraCreature({ progress, className, ghost = false, still = fals
 
   return (
     <motion.div
-      className={cn("hydra-crest-art relative mx-auto aspect-[3930/3454] w-full overflow-visible", className)}
+      className={cn("hydra-crest-art hydra-crest-ink relative mx-auto aspect-[3930/3454] w-full overflow-visible", className)}
       aria-hidden
       animate={still || ghost ? undefined : { y: [0, -5, 0] }}
       transition={still || ghost ? undefined : { duration: 5.5, repeat: Infinity, ease: "easeInOut" }}
@@ -120,7 +128,7 @@ export function HydraCreature({ progress, className, ghost = false, still = fals
           fill
           sizes={IMAGE_SIZES}
           quality={95}
-          className="object-contain"
+          className="hydra-mark-ink object-contain"
           priority={!ghost}
         />
       </motion.div>
@@ -177,7 +185,14 @@ function HeadLayer({ head, progress, ghost }: { head: HydraHead; progress: Motio
         transformOrigin: isSide ? `${head.tip.left}% ${head.tip.top}%` : "50% 72%",
       }}
     >
-      <Image src={HYDRA_SRC} alt="" fill sizes={IMAGE_SIZES} quality={95} className="object-contain" />
+      <Image
+        src={HYDRA_SRC}
+        alt=""
+        fill
+        sizes={IMAGE_SIZES}
+        quality={95}
+        className="hydra-mark-ink object-contain"
+      />
     </motion.div>
   );
 }

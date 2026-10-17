@@ -95,6 +95,8 @@ html.light .admin-field,html[data-theme="light"] .admin-field{
 }
 html.light .admin-field::placeholder,html[data-theme="light"] .admin-field::placeholder{color:#71717a!important}
 html.light .theme-mark-invert,html[data-theme="light"] .theme-mark-invert{filter:brightness(0)!important}
+html.light .hydra-crest-ink img,html[data-theme="light"] .hydra-crest-ink img,
+html.light img.hydra-mark-ink,html[data-theme="light"] img.hydra-mark-ink{filter:brightness(0)!important}
 `.replace(/\s+/g, " ").trim();
   }
 

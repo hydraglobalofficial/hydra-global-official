@@ -1,4 +1,5 @@
 import "server-only";
+import { formatMoney, getActiveMoneyFormat, type MoneyFormat } from "@/lib/money";
 
 export function escapeHtml(value: string) {
   return value
@@ -9,8 +10,8 @@ export function escapeHtml(value: string) {
     .replaceAll("'", "&#39;");
 }
 
-export function formatReportMoney(amount: number) {
-  return `USD ${new Intl.NumberFormat("en-US", { maximumFractionDigits: 0 }).format(amount)}`;
+export function formatReportMoney(amount: number, format: MoneyFormat = getActiveMoneyFormat()) {
+  return formatMoney(amount, format);
 }
 
 export function formatReportDate(date: Date | string) {

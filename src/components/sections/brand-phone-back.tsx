@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "motion/react";
 import { cn } from "@/lib/utils";
 
 type Family = "iphone" | "samsung" | "pixel" | "generic";
@@ -53,16 +52,10 @@ export function BrandPhoneBack({
   const rxGhost = family === "samsung" ? 16 : family === "iphone" ? 26 : 22;
 
   return (
-    <motion.div
-      className={cn("relative aspect-[3/4] w-full select-none", className)}
-      aria-hidden
-      initial={false}
-      whileHover={{ y: -8, rotate: -3 }}
-      transition={{ type: "spring", stiffness: 240, damping: 20 }}
-    >
-      <div className="pointer-events-none absolute inset-x-[10%] bottom-[1%] h-11 rounded-[100%] bg-black/40 blur-2xl light:bg-black/12" />
+    <div className={cn("relative aspect-[3/4] w-full select-none", className)} aria-hidden>
+      <div className="pointer-events-none absolute inset-x-[12%] bottom-[0%] h-9 rounded-[100%] bg-black/30 blur-2xl light:bg-black/12" />
 
-      <svg viewBox="0 0 200 300" className="h-full w-full drop-shadow-[0_32px_48px_rgba(0,0,0,0.5)] light:drop-shadow-[0_22px_36px_rgba(0,0,0,0.16)]">
+      <svg viewBox="0 0 200 300" className="relative h-full w-full">
         <defs>
           <linearGradient id={`edge-metal-${uid}`} x1="0" y1="0" x2="1" y2="1">
             <stop offset="0" stopColor="#9aa0ad" />
@@ -85,31 +78,34 @@ export function BrandPhoneBack({
           </linearGradient>
 
           <linearGradient id={`body-iphone-${uid}`} x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0" stopColor="#3f4450" />
-            <stop offset="1" stopColor="#1a1c22" />
+            <stop offset="0" stopColor="#a8adb8" />
+            <stop offset="0.4" stopColor="#6b7280" />
+            <stop offset="1" stopColor="#3f4552" />
           </linearGradient>
-          <linearGradient id={`glass-iphone-${uid}`} x1="0.2" y1="0" x2="0.9" y2="1">
-            <stop offset="0" stopColor="#2c3038" />
-            <stop offset="0.4" stopColor="#14161c" />
-            <stop offset="1" stopColor="#0a0b0f" />
+          <linearGradient id={`glass-iphone-${uid}`} x1="0.1" y1="0" x2="0.95" y2="1">
+            <stop offset="0" stopColor="#8b919c" />
+            <stop offset="0.3" stopColor="#4b5160" />
+            <stop offset="0.7" stopColor="#2a2f3a" />
+            <stop offset="1" stopColor="#1a1e28" />
           </linearGradient>
           <linearGradient id={`island-iphone-${uid}`} x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0" stopColor="#2a2e38" />
-            <stop offset="1" stopColor="#0e1016" />
+            <stop offset="0" stopColor="#6a7080" />
+            <stop offset="1" stopColor="#2a303c" />
           </linearGradient>
 
           <linearGradient id={`body-samsung-${uid}`} x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0" stopColor="#1e3a5f" />
-            <stop offset="1" stopColor="#0b1524" />
+            <stop offset="0" stopColor="#7a8aa0" />
+            <stop offset="0.45" stopColor="#3d4f66" />
+            <stop offset="1" stopColor="#1e2a3c" />
           </linearGradient>
-          <linearGradient id={`glass-samsung-${uid}`} x1="0.15" y1="0" x2="0.85" y2="1">
-            <stop offset="0" stopColor="#15263d" />
-            <stop offset="0.5" stopColor="#0a121e" />
-            <stop offset="1" stopColor="#060a12" />
+          <linearGradient id={`glass-samsung-${uid}`} x1="0.1" y1="0" x2="0.9" y2="1">
+            <stop offset="0" stopColor="#5a6d86" />
+            <stop offset="0.4" stopColor="#2a3a50" />
+            <stop offset="1" stopColor="#121c2a" />
           </linearGradient>
-          <radialGradient id={`island-samsung-${uid}`} cx="50%" cy="40%" r="70%">
-            <stop offset="0" stopColor="#2a4060" />
-            <stop offset="1" stopColor="#0a1018" />
+          <radialGradient id={`island-samsung-${uid}`} cx="42%" cy="38%" r="72%">
+            <stop offset="0" stopColor="#4a5e78" />
+            <stop offset="1" stopColor="#152030" />
           </radialGradient>
 
           <linearGradient id={`body-pixel-${uid}`} x1="0" y1="0" x2="1" y2="1">
@@ -139,10 +135,9 @@ export function BrandPhoneBack({
           </linearGradient>
         </defs>
 
-        {/* Ghost phone behind — depth */}
-        <g transform="translate(26 -8) rotate(11 100 150)" opacity="0.42">
-          <rect x="48" y="28" width="110" height="236" rx={rxGhost} fill="#121218" stroke="rgba(255,255,255,0.08)" />
-          <rect x="52" y="32" width="102" height="228" rx={Math.max(10, rxGhost - 4)} fill={ghost} />
+        {/* Ghost phone behind — subtle depth only */}
+        <g transform="translate(18 -4) rotate(7 100 150)" opacity="0.18">
+          <rect x="48" y="28" width="110" height="236" rx={rxGhost} fill="#64748b" />
         </g>
 
         <g transform="translate(0 6)">
@@ -170,22 +165,21 @@ export function BrandPhoneBack({
 
           {family === "samsung" && (
             <g>
-              <rect x="38" y="18" width="124" height="264" rx="18" fill={`url(#body-samsung-${uid})`} stroke={edge} strokeWidth="1.4" />
-              <rect x="42" y="22" width="116" height="256" rx="14" fill={`url(#glass-samsung-${uid})`} />
-              <ellipse cx="78" cy="120" rx="40" ry="72" fill={shine} opacity="0.45" />
-              <circle cx="100" cy="78" r="42" fill={`url(#island-samsung-${uid})`} stroke="rgba(255,255,255,0.14)" strokeWidth="1.2" />
-              <circle cx="100" cy="78" r="36" fill="#0a0c12" opacity="0.45" />
-              <CameraLens cx={88} cy={64} r={10.5} glass={lens} />
-              <CameraLens cx={112} cy={64} r={10.5} glass={lens} />
-              <CameraLens cx={88} cy={90} r={9} glass={lens} />
-              <CameraLens cx={112} cy={90} r={9} glass={lens} />
-              <circle cx={100} cy={78} r={5} fill="#1a2030" stroke="rgba(120,180,255,0.4)" />
-              <text x="100" y="178" textAnchor="middle" fill="rgba(255,255,255,0.14)" fontSize="8.5" fontWeight="600" letterSpacing="3.2">
+              {/* S25 Ultra-style: boxy frame + vertical camera stack */}
+              <rect x="38" y="18" width="124" height="264" rx="14" fill={`url(#body-samsung-${uid})`} stroke={edge} strokeWidth="1.4" />
+              <rect x="42" y="22" width="116" height="256" rx="10" fill={`url(#glass-samsung-${uid})`} />
+              <ellipse cx="78" cy="120" rx="40" ry="72" fill={shine} opacity="0.4" />
+              <CameraLens cx={64} cy={48} r={12} glass={lens} />
+              <CameraLens cx={64} cy={78} r={12} glass={lens} />
+              <CameraLens cx={64} cy={108} r={12} glass={lens} />
+              <circle cx={88} cy={48} r={7} fill="#1a2030" stroke="rgba(255,255,255,0.16)" strokeWidth="0.8" />
+              <circle cx={88} cy={78} r={5.5} fill="#f5f0e6" opacity="0.92" />
+              <text x="100" y="196" textAnchor="middle" fill="rgba(255,255,255,0.16)" fontSize="8" fontWeight="600" letterSpacing="2.8">
                 SAMSUNG
               </text>
-              <rect x="33.5" y="92" width="3" height="42" rx="1.5" fill={edge} />
-              <rect x="162.5" y="78" width="3" height="22" rx="1.5" fill={edge} />
-              <rect x="162.5" y="108" width="3" height="34" rx="1.5" fill={edge} />
+              <rect x="33.5" y="92" width="3" height="42" rx="1.2" fill={edge} />
+              <rect x="162.5" y="78" width="3" height="22" rx="1.2" fill={edge} />
+              <rect x="162.5" y="108" width="3" height="34" rx="1.2" fill={edge} />
             </g>
           )}
 
@@ -220,6 +214,6 @@ export function BrandPhoneBack({
           )}
         </g>
       </svg>
-    </motion.div>
+    </div>
   );
 }

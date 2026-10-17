@@ -12,12 +12,6 @@ import type { BrandRecord } from "@/config/site";
 import type { HowItWorksContent, NewsletterContent } from "@/content/site-sections";
 import type { NavigationData } from "@/server/queries/catalog";
 
-/** Local originals — latest flagship camera / back plates per brand. */
-const DEFAULT_BRAND_TILES: Record<string, string> = {
-  iphone: "/brands/iphone.jpg",
-  samsung: "/brands/samsung.jpg",
-};
-
 export function ShopByDevice({
   devices,
   brands,
@@ -33,7 +27,7 @@ export function ShopByDevice({
       count: models.length,
       models: models.slice(0, 4),
       latest: models[0]?.model ?? brand.label,
-      image: brand.image?.trim() || DEFAULT_BRAND_TILES[brand.slug] || null,
+      image: brand.image?.trim() || null,
     };
   });
 
@@ -49,21 +43,21 @@ export function ShopByDevice({
             <SpotlightCard className="group h-full overflow-hidden">
               <Link
                 href={`/shop/${card.brand.slug}`}
-                className="relative flex min-h-[20rem] flex-col gap-6 overflow-hidden p-5 sm:min-h-[24rem] sm:flex-row sm:items-center sm:gap-3 sm:p-8 md:min-h-[25rem] md:p-9"
+                className="relative flex min-h-[20rem] flex-col gap-6 overflow-hidden p-5 sm:min-h-[22rem] sm:flex-row sm:items-center sm:gap-5 sm:p-7 md:min-h-[23rem] md:gap-6 md:p-8"
               >
                 <div
-                  className={`pointer-events-none absolute -right-10 top-1/3 size-[20rem] rounded-full ${card.glow} blur-[100px] opacity-45 transition-opacity duration-700 group-hover:opacity-85`}
+                  className={`pointer-events-none absolute -right-10 top-1/3 size-[18rem] rounded-full ${card.glow} blur-[100px] opacity-40 transition-opacity duration-700 group-hover:opacity-75`}
                 />
-                <div className="bg-dots pointer-events-none absolute inset-0 opacity-50 [mask-image:linear-gradient(to_bottom,#000_15%,transparent_80%)]" />
+                <div className="bg-dots pointer-events-none absolute inset-0 opacity-45 [mask-image:linear-gradient(to_bottom,#000_15%,transparent_80%)]" />
 
-                <div className="relative z-[1] flex min-w-0 flex-1 flex-col justify-center">
+                <div className="relative z-[1] flex min-w-0 flex-1 flex-col justify-center pr-1" style={{ minWidth: "12rem" }}>
                   <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-accent sm:text-[11px] sm:tracking-[0.25em]">
                     {card.count} models supported
                   </p>
-                  <h3 className="mt-3 text-3xl font-semibold tracking-tight sm:mt-3.5 sm:text-4xl md:text-[2.75rem]">
+                  <h3 className="mt-2.5 text-3xl font-semibold tracking-tight sm:mt-3 sm:text-4xl md:text-[2.5rem]">
                     {card.brand.label}
                   </h3>
-                  <p className="mt-2 max-w-sm text-sm text-muted sm:mt-2.5 sm:text-[0.95rem]">{card.brand.blurb}</p>
+                  <p className="mt-2 max-w-md text-sm leading-relaxed text-muted sm:text-[0.95rem]">{card.brand.blurb}</p>
                   <div className="mt-4 flex max-w-md flex-wrap gap-2">
                     {card.models.map((m) => (
                       <span
@@ -74,7 +68,7 @@ export function ShopByDevice({
                       </span>
                     ))}
                   </div>
-                  <span className="mt-6 inline-flex min-h-11 w-fit items-center gap-2 rounded-full border border-line-strong bg-bg/55 px-5 py-2.5 text-sm font-medium backdrop-blur-md transition-all group-hover:border-accent/45 group-hover:bg-accent/10 light:bg-white/85">
+                  <span className="mt-5 inline-flex min-h-11 w-fit items-center gap-2 rounded-full border border-line-strong bg-bg/55 px-5 py-2.5 text-sm font-medium backdrop-blur-md transition-all group-hover:border-accent/45 group-hover:bg-accent/10 light:bg-white/85">
                     Shop {card.brand.label}
                     <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
                   </span>
@@ -157,14 +151,13 @@ export function HowItWorks({ content }: { content: HowItWorksContent }) {
             return (
               <RevealItem key={title} className="relative h-full min-w-0">
                 <SpotlightCard className="group h-full overflow-hidden p-5 sm:p-7">
-                  <div className="pointer-events-none absolute -right-6 -top-6 font-mono text-6xl font-semibold text-white/[0.03] transition-colors group-hover:text-accent/[0.1]">
-                    0{i + 1}
-                  </div>
                   <div className="relative flex items-center gap-4">
                     <span className="relative grid size-12 place-items-center rounded-full border border-accent/30 bg-accent/10 text-accent transition-transform duration-500 group-hover:scale-105">
                       <Icon size={20} />
                     </span>
-                    <span className="font-mono text-xs tracking-[0.2em] text-subtle">STEP 0{i + 1}</span>
+                    <span className="font-mono text-xs font-medium tracking-[0.18em] text-accent">
+                      STEP 0{i + 1}
+                    </span>
                   </div>
                   <h3 className="relative mt-6 text-lg font-medium">{title}</h3>
                   <p className="relative mt-2 text-sm leading-relaxed text-muted">{text}</p>

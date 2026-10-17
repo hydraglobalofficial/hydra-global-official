@@ -251,7 +251,10 @@ export function BrandSection({ brands }: { brands: BrandRow[] }) {
             <Input name="blurb" placeholder="Shop page description" className={control} />
           </label>
           <div className="min-w-0 sm:col-span-2 lg:col-span-3">
-            <FieldLabel>Shop-by-Device image</FieldLabel>
+            <FieldLabel>Shop-by-Device image (homepage card)</FieldLabel>
+            <p className="mb-2 text-xs text-muted">
+              Upload a phone-back photo. Prefer PNG with transparent background (no black box).
+            </p>
             <ImageUrlField name="image" folder="brands" placeholder="Upload phone-back photo" />
           </div>
           <div className="sm:col-span-2 lg:col-span-3">
@@ -343,7 +346,10 @@ export function BrandSection({ brands }: { brands: BrandRow[] }) {
                   <Input name="blurb" defaultValue={brand.blurb} className={control} />
                 </label>
                 <div className="min-w-0">
-                  <FieldLabel>Shop-by-Device image</FieldLabel>
+                  <FieldLabel>Shop-by-Device image (homepage card)</FieldLabel>
+                  <p className="mb-2 text-xs text-muted">
+                    Upload a phone-back photo shown on the homepage. Transparent PNG looks best.
+                  </p>
                   <ImageUrlField
                     key={`brand-image-${brand.id}-${brand.image ?? ""}`}
                     name="image"

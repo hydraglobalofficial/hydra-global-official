@@ -1,2 +1,2 @@
-UPDATE "Brand" SET "image" = '/brands/iphone.jpg' WHERE "slug" = 'iphone';
-UPDATE "Brand" SET "image" = '/brands/samsung.jpg' WHERE "slug" = 'samsung';
+UPDATE "Brand" SET "image" = '/brands/iphone18-back.jpg' WHERE "slug" = 'iphone';
+UPDATE "Brand" SET "image" = '/brands/samsung-s25-back.jpg' WHERE "slug" = 'samsung';

@@ -93,12 +93,20 @@ function PowerCrest({ progress, loop }: { progress: MotionValue<number>; loop: b
 
   return (
     <motion.div
-      className="hydra-crest-art relative mx-auto aspect-[3930/3454] w-full"
+      className="hydra-crest-art hydra-crest-ink relative mx-auto aspect-[3930/3454] w-full"
       animate={loop ? { y: [0, -5, 0] } : undefined}
       transition={loop ? { duration: 5.5, repeat: Infinity, ease: "easeInOut", delay: 2.1 } : undefined}
     >
       <motion.div className="absolute inset-0 opacity-[0.16]" aria-hidden>
-        <Image src={HYDRA_SRC} alt="" fill sizes={IMAGE_SIZES} className="object-contain" quality={95} priority />
+        <Image
+          src={HYDRA_SRC}
+          alt=""
+          fill
+          sizes={IMAGE_SIZES}
+          className="hydra-mark-ink object-contain"
+          quality={95}
+          priority
+        />
       </motion.div>
 
       <motion.div
@@ -110,7 +118,7 @@ function PowerCrest({ progress, loop }: { progress: MotionValue<number>; loop: b
           alt="HYDRA crest"
           fill
           sizes={IMAGE_SIZES}
-          className="object-contain"
+          className="hydra-mark-ink object-contain"
           quality={95}
           priority
         />
@@ -122,9 +130,9 @@ function PowerCrest({ progress, loop }: { progress: MotionValue<number>; loop: b
         className="pointer-events-none absolute left-1/2 top-[6%] z-[2] h-[78%] w-[22%] -translate-x-1/2"
         style={{ opacity: beamOpacity, y: beamY }}
       >
-        <div className="absolute inset-x-[38%] inset-y-0 rounded-full bg-gradient-to-b from-white via-white/70 to-transparent blur-[1px] light:from-zinc-200 light:via-zinc-400/50" />
-        <div className="absolute inset-x-[44%] inset-y-[4%] rounded-full bg-gradient-to-b from-white to-transparent blur-[8px] light:from-zinc-300/80" />
-        <div className="absolute left-1/2 top-0 size-3 -translate-x-1/2 rounded-full bg-white blur-[3px] light:bg-zinc-300" />
+        <div className="absolute inset-x-[38%] inset-y-0 rounded-full bg-gradient-to-b from-white via-white/70 to-transparent blur-[1px] light:from-zinc-500 light:via-zinc-700/55" />
+        <div className="absolute inset-x-[44%] inset-y-[4%] rounded-full bg-gradient-to-b from-white to-transparent blur-[8px] light:from-zinc-600/70" />
+        <div className="absolute left-1/2 top-0 size-3 -translate-x-1/2 rounded-full bg-white blur-[3px] light:bg-zinc-700" />
       </motion.div>
 
       {/* Looping power — soft top → bottom pull */}
@@ -137,7 +145,7 @@ function PowerCrest({ progress, loop }: { progress: MotionValue<number>; loop: b
           transition={{ duration: 3.6, repeat: Infinity, repeatDelay: 1.4, ease: "easeInOut", delay: 1.8 }}
         >
           <motion.div
-            className="absolute inset-x-0 h-[28%] rounded-full bg-gradient-to-b from-transparent via-white/80 to-transparent blur-[6px] light:via-zinc-500/45"
+            className="absolute inset-x-0 h-[28%] rounded-full bg-gradient-to-b from-transparent via-white/80 to-transparent blur-[6px] light:via-zinc-600/50"
             animate={{ y: ["-10%", "280%"] }}
             transition={{ duration: 3.6, repeat: Infinity, repeatDelay: 1.4, ease: [0.45, 0, 0.2, 1], delay: 1.8 }}
           />
@@ -167,7 +175,7 @@ function HeadLabel({
       className="pointer-events-none absolute z-20 -translate-x-1/2 -translate-y-[110%] text-center"
       style={{ left: `${tip.left}%`, top: `${tip.top}%`, opacity, y }}
     >
-      <p className="whitespace-nowrap rounded-full border border-white/12 bg-black/90 px-2 py-0.5 font-mono text-[8px] font-semibold uppercase tracking-[0.16em] text-zinc-100 backdrop-blur-md sm:px-2.5 sm:py-1 sm:text-[10px] sm:tracking-[0.2em]">
+      <p className="whitespace-nowrap rounded-full border border-white/12 bg-black/90 px-2 py-0.5 font-mono text-[8px] font-semibold uppercase tracking-[0.16em] text-zinc-100 backdrop-blur-md light:border-black/20 light:bg-black light:text-white sm:px-2.5 sm:py-1 sm:text-[10px] sm:tracking-[0.2em]">
         {head.label}
       </p>
     </motion.div>
