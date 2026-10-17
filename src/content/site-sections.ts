@@ -150,7 +150,7 @@ export const defaultAboutContent: AboutContent = {
     {
       title: "Customer obsessed",
       keyword: "People",
-      text: "A real team that answers personally, a 12-month warranty, and replacements dispatched as soon as claims are approved.",
+      text: "A real team that answers personally — installation help and replacements handled quickly when something isn't right.",
     },
     {
       title: "Integrity always",
@@ -180,9 +180,9 @@ export const defaultAboutContent: AboutContent = {
       href: "/contact?topic=wholesale#write",
     },
     {
-      title: "After-sales & warranty",
-      text: "Installation help, warranty claims and replacements handled by our own team.",
-      href: "/support/warranty",
+      title: "After-sales support",
+      text: "Installation help, returns and replacements handled by our own team.",
+      href: "/support",
     },
   ],
   journey: [
@@ -256,7 +256,7 @@ export const defaultHowItWorksContent: HowItWorksContent = {
     { title: "Pick your armor", text: "Choose your exact model and finish. Every cut is device-specific." },
     { title: "Ship worldwide", text: "Express hubs in 2–4 days; standard delivery elsewhere. Pay on delivery where available." },
     { title: "Install in 2 minutes", text: "Alignment frame and clean kit included. Bubble-free, first time." },
-    { title: "Covered for a year", text: "12-month warranty plus one free replacement for accidental cracks." },
+    { title: "We've got your back", text: "7-day returns on unopened items and clear support if something isn't right." },
   ],
 };
 
@@ -326,7 +326,7 @@ export const defaultHomeHeroContent: HomeHeroContent = {
   stats: [
     { value: "9H+", label: "Hardness" },
     { value: "±0.05", label: "mm fit" },
-    { value: "12 mo", label: "Warranty" },
+    { value: "50k+", label: "Owners" },
   ],
   slides: [
     {

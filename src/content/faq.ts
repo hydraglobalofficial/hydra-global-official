@@ -54,18 +54,18 @@ export const faqGroups: FaqGroup[] = [
     ],
   },
   {
-    id: "warranty",
-    title: "Warranty & Returns",
+    id: "returns",
+    title: "Returns & replacements",
     items: [
-      {
-        question: "What does the warranty cover?",
-        answer:
-          "12 months against manufacturing defects such as lifting edges, adhesive failure or dead zones. One free replacement is included for accidental cracks within 30 days.",
-      },
       {
         question: "What is your return policy?",
         answer:
-          "Unopened products can be returned within 7 days for a full refund. Opened products are covered by warranty replacement.",
+          "Unopened products can be returned within 7 days of delivery for a full refund. Contact support if a product arrives damaged or defective.",
+      },
+      {
+        question: "How do I request a replacement?",
+        answer:
+          "Message support with your order number and a clear photo of the issue. Approved replacements are shipped as soon as we confirm.",
       },
     ],
   },

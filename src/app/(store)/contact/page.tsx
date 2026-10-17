@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight, ArrowUpRight, BadgeCheck, BookOpen, Building2, FileText, Plus, ReceiptText, RotateCcw, ShieldCheck, Truck, UserRound, Wrench } from "lucide-react";
+import { ArrowRight, ArrowUpRight, BadgeCheck, BookOpen, Building2, FileText, Plus, ReceiptText, RotateCcw, Truck, UserRound, Wrench } from "lucide-react";
 import { Reveal } from "@/components/motion/reveal";
 import { Eyebrow } from "@/components/ui/primitives";
 import { ContactChannels } from "@/components/contact/contact-channels";
@@ -25,7 +25,6 @@ const heroStats = [
 const selfHelp = [
   { icon: BookOpen, title: "FAQ", text: "Delivery, payments and compatibility answers.", href: "/support/faq" },
   { icon: Wrench, title: "Installation", text: "Step-by-step, bubble-free fitting guides.", href: "/installation" },
-  { icon: ShieldCheck, title: "Warranty", text: "12-month coverage and how to claim.", href: "/support/warranty" },
   { icon: RotateCcw, title: "Returns", text: "7-day hassle-free returns and replacements.", href: "/support/returns" },
 ];
 

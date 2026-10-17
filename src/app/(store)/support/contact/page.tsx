@@ -6,11 +6,11 @@ import { siteConfig } from "@/config/site";
 
 export const metadata: Metadata = {
   title: "Contact Support",
-  description: "Get help with orders, installation, warranty claims and returns from the HYDRA support team.",
+  description: "Get help with orders, installation and returns from the HYDRA support team.",
   alternates: { canonical: "/support/contact" },
 };
 
-const topicMap = { warranty: "WARRANTY", return: "RETURN", returns: "RETURN" } as const;
+const topicMap = { return: "RETURN", returns: "RETURN", support: "SUPPORT" } as const;
 
 export default async function SupportContactPage({ searchParams }: PageProps<"/support/contact">) {
   const { topic } = await searchParams;
@@ -18,7 +18,7 @@ export default async function SupportContactPage({ searchParams }: PageProps<"/s
 
   return (
     <>
-      <PageHeader eyebrow="Support" title="Contact support" description="Warranty claims, returns, installation trouble — tell us what's up and we'll sort it." />
+      <PageHeader eyebrow="Support" title="Contact support" description="Returns, installation trouble, or order help — tell us what's up and we'll sort it." />
       <div className="container-page grid gap-10 py-16 lg:grid-cols-[1fr_20rem]">
         <InquiryForm showType defaultType={type} />
         <aside className="space-y-4">

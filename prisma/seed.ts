@@ -105,7 +105,7 @@ const products: Seed[] = [
       { name: "Clear", stock: 120 },
       { name: "Matte", stock: 60, priceOverride: 1290 },
     ],
-    highlights: ["Five-layer impact core", "Oleophobic coating", "Bubble-free adhesive", "12-month warranty"],
+    highlights: ["Five-layer impact core", "Oleophobic coating", "Bubble-free adhesive", "Device-specific cut"],
     specs: glassSpecs,
     soldCount: 1320,
   },
@@ -157,7 +157,7 @@ const products: Seed[] = [
       { name: "iPhone 16 Pro", stock: 45 },
       { name: "iPhone 16 Pro Max", stock: 50 },
     ],
-    highlights: ["30° two-way privacy", "Model-specific cut", "Easy install", "12-month warranty"],
+    highlights: ["30° two-way privacy", "Model-specific cut", "Easy install", "Oleophobic coating"],
     specs: { ...glassSpecs, "Privacy angle": "30° (two-way)" },
     soldCount: 720,
   },
@@ -196,7 +196,7 @@ const products: Seed[] = [
       { name: "iPhone 15 Pro", stock: 70 },
       { name: "iPhone 15 Pro Max", stock: 70 },
     ],
-    highlights: ["9H hardness", "Full-glue adhesive", "Alignment frame", "12-month warranty"],
+    highlights: ["9H hardness", "Full-glue adhesive", "Alignment frame", "Bubble-free install"],
     specs: glassSpecs,
     soldCount: 1560,
   },
@@ -382,26 +382,6 @@ const reviewPool = [
 
 const pages = [
   {
-    slug: "warranty",
-    title: "Warranty",
-    summary: "Every HYDRA product is covered for 12 months against manufacturing defects.",
-    body: `## What's covered
-- Edge lifting or peeling not caused by misuse
-- Adhesive failure, dead touch zones or persistent bubbles
-- Coating defects (oleophobic or anti-glare layer wearing unevenly)
-
-## Accidental damage
-Every screen protector includes **one free replacement** for accidental cracks within 30 days of delivery. After 30 days, replacements are available at 50% off.
-
-## What's not covered
-- Damage from improper installation after 48 hours
-- Products bought from unauthorized sellers
-- Normal wear such as micro-scratches after extended use
-
-## How to claim
-Submit a request through Contact Support with your order number and a clear photo of the issue. Approved claims are shipped express to hub cities and via standard courier elsewhere.`,
-  },
-  {
     slug: "returns",
     title: "Returns",
     summary: "Changed your mind? Return unopened products within 7 days.",
@@ -478,7 +458,7 @@ You'll receive email updates with tracking details once your order ships.`,
 Unopened products may be returned within 7 days of delivery for a full refund.
 
 ## Replacements
-Defective products are replaced free of charge within the 12-month warranty period. Accidental cracks within 30 days qualify for one free replacement.
+If a product arrives damaged or defective, contact support with your order number and a photo — we'll arrange a replacement.
 
 ## Condition
 Returned items must include original packaging and tags in sellable condition.
@@ -491,7 +471,6 @@ Refunds are processed within 5 business days to your original payment method.`,
 const announcements = [
   { message: "Free worldwide shipping on orders over $80", href: "/shop" },
   { message: "New: Privacy Armor for iPhone 17 Pro Max is here", href: "/product/privacy-armor-iphone-17-pro-max" },
-  { message: "12-month warranty on every HYDRA protector", href: "/support/warranty" },
   { message: "Pay on delivery available in selected markets", href: null },
 ];
 
