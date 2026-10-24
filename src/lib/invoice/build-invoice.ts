@@ -22,16 +22,20 @@ function shipTo(order: InvoiceOrder) {
 }
 
 function siteBase() {
+  const official = siteConfig.website.replace(/\/$/, "");
   const fromEnv =
     process.env.NEXT_PUBLIC_SITE_URL?.trim() ||
     (process.env.VERCEL_PROJECT_PRODUCTION_URL
       ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
       : "") ||
     (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "");
-  // Public assets for email must be an https URL email clients can fetch (not localhost).
-  const base = (fromEnv || "https://hydraglobal.com").replace(/\/$/, "");
-  if (/^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/i.test(base)) {
-    return "https://hydraglobal.com";
+  const base = (fromEnv || official).replace(/\/$/, "");
+  // Email images and invoice links must be the public site, never localhost or the old domain.
+  if (
+    /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/i.test(base) ||
+    /^https?:\/\/(www\.)?hydraglobal\.com$/i.test(base)
+  ) {
+    return official;
   }
   return base;
 }
@@ -136,6 +140,7 @@ export function buildInvoiceEmailHtml(order: InvoiceOrder) {
   const trackToken = signOrderAccess(order.number);
   const trackUrl = `${site}/track?order=${encodeURIComponent(order.number)}&t=${encodeURIComponent(trackToken)}`;
   const markUrl = `${site}/products/Hydra_Mark.png`;
+  const websiteUrl = `${siteConfig.website}/`;
   const issued = formatReportDate(order.createdAt);
 
   const rows = order.items
@@ -325,12 +330,16 @@ export function buildInvoiceEmailHtml(order: InvoiceOrder) {
 
           <!-- Footer -->
           <tr>
-            <td style="padding:20px 28px 26px;background:#0c1222;font-size:11px;line-height:1.6;color:#8b9bb8">
-              <img src="${escapeHtml(markUrl)}" width="36" height="36" alt="${escapeHtml(siteConfig.name)}" style="display:block;width:36px;height:36px;border:0;border-radius:8px;background:#0c1222;margin-bottom:10px" />
-              ${escapeHtml(siteConfig.legalName)}<br/>
-              ${escapeHtml(companyInfo.registeredOffice)}<br/>
-              Support: ${escapeHtml(process.env.SMTP_REPLY_TO?.trim() || siteConfig.email)} · ${escapeHtml(siteConfig.phone)}<br/>
-              Invoice ID is your courier reference — please keep this email.
+            <td style="padding:26px 28px 28px;background:#0c1222;text-align:center">
+              <img src="${escapeHtml(markUrl)}" width="72" height="72" alt="${escapeHtml(siteConfig.name)}" style="display:inline-block;width:72px;height:72px;border:0;border-radius:16px;background:#0c1222" />
+              <div style="margin-top:14px;font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:#8b9bb8;font-weight:700">Website</div>
+              <a href="${escapeHtml(websiteUrl)}" style="display:inline-block;margin-top:6px;color:#e7c56a;font-size:15px;font-weight:750;text-decoration:none">${escapeHtml(websiteUrl)}</a>
+              <div style="margin-top:16px;font-size:11px;line-height:1.65;color:#8b9bb8">
+                ${escapeHtml(siteConfig.legalName)}<br/>
+                ${escapeHtml(companyInfo.registeredOffice)}<br/>
+                Support: ${escapeHtml(process.env.SMTP_REPLY_TO?.trim() || siteConfig.email)} · ${escapeHtml(siteConfig.phone)}<br/>
+                Invoice ID is your courier reference — please keep this email.
+              </div>
             </td>
           </tr>
         </table>
@@ -372,6 +381,8 @@ export function buildInvoiceEmailText(order: InvoiceOrder) {
     `  ${shipTo(order)}`,
     ``,
     `Track shipment: ${trackUrl}`,
+    ``,
+    `Website: ${siteConfig.website}/`,
     ``,
     `${siteConfig.legalName}`,
     companyInfo.registeredOffice,

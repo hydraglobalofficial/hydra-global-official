@@ -17,7 +17,7 @@ export default async function AdminAboutPage() {
       <AdminHeader
         eyebrow="Site"
         title="About page"
-        description="Edit the full About experience — hero, company overview, mission, values, journey and CTAs. Publish updates the live /about page."
+        description="The long paragraph is under “About page paragraph”. The rest of this page edits the hero, stats, mission, values and journey on /about."
         action={
           <Link
             href="/about"

@@ -23,17 +23,71 @@ export default async function AdminContentPage() {
     <>
       <AdminHeader
         title="Content"
-        description="Top headline marquee, editable site sections, and policy pages."
+        description="Each card below is named after the block you see on the website. Open the one that matches the page."
       />
 
-      <section className="space-y-4">
+      <section className="grid gap-3 sm:grid-cols-2">
+        {[
+          {
+            href: "#headlines",
+            title: "Top running lines",
+            detail: "The scrolling bar above the menu. Edit it on this page.",
+          },
+          {
+            href: "/admin/content/sections/home.showcase",
+            title: "Homepage video cards",
+            detail: "Poster image and YouTube link for each card.",
+          },
+          {
+            href: "/admin/content/sections/home.clarity",
+            title: "Clarity you can feel",
+            detail: "The two photos in the homepage compare slider.",
+          },
+          {
+            href: "/admin/content/sections/home.impact",
+            title: "20,000+ photos",
+            detail: "The pictures around the big 20,000+ number.",
+          },
+          {
+            href: "/admin/content/sections/home.impactLab",
+            title: "Impact lab cards",
+            detail: "The four blocks under the dropping phone. Two by two on a phone.",
+          },
+          {
+            href: "/admin/about",
+            title: "About page text",
+            detail: "The long paragraph, plus the rest of the About page.",
+          },
+          {
+            href: "/admin/orders",
+            title: "Orders",
+            detail: "Tap an order block to open it.",
+          },
+          {
+            href: "/admin/content/sections/home.hero",
+            title: "Homepage hero",
+            detail: "The big slider at the top of the homepage.",
+          },
+        ].map((item) => (
+          <Link
+            key={item.href}
+            href={item.href}
+            className="rounded-2xl border border-line bg-surface-2/40 p-4 transition-colors hover:border-accent/40"
+          >
+            <p className="text-sm font-medium text-fg">{item.title}</p>
+            <p className="mt-1 text-sm text-muted">{item.detail}</p>
+          </Link>
+        ))}
+      </section>
+
+      <section id="headlines" className="mt-10 scroll-mt-24 space-y-4">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
             <h2 className="flex items-center gap-2 font-medium">
-              <Megaphone size={16} className="text-accent" /> Headline marquee
+              <Megaphone size={16} className="text-accent" /> Top running lines
             </h2>
             <p className="mt-1 text-sm text-muted">
-              These lines scroll across the top of every storefront page. {liveCount} live
+              These are the lines that scroll across the top of every page. {liveCount} live
               {announcements.length ? ` · ${announcements.length} total` : ""}.
             </p>
           </div>
@@ -282,6 +336,40 @@ export default async function AdminContentPage() {
       <section className="mt-10 space-y-4">
         <div>
           <h2 className="flex items-center gap-2 font-medium">
+            <LayoutTemplate size={16} className="text-accent" /> Homepage video cards
+          </h2>
+          <p className="mt-1 text-sm text-muted">
+            The video cards on the homepage. Upload a poster image and paste a YouTube link for each card.
+          </p>
+        </div>
+        {SITE_SECTION_META.filter((s) => s.key === "home.showcase").map((s) => (
+          <Link
+            key={s.key}
+            href={`/admin/content/sections/${encodeURIComponent(s.key)}`}
+            className="block rounded-2xl border border-accent/25 bg-gradient-to-br from-accent/15 via-white/[0.03] to-transparent p-5 transition-colors hover:border-accent/45"
+          >
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <p className="text-[10px] font-medium uppercase tracking-[0.18em] text-accent">Homepage · poster + YouTube</p>
+                <p className="mt-1 text-base font-medium">{s.title}</p>
+                <p className="mt-1 text-sm text-muted">{s.description}</p>
+                <p className="mt-2 text-xs text-subtle">
+                  {sectionUpdated.has(s.key)
+                    ? `Updated ${formatDate(sectionUpdated.get(s.key)!)}`
+                    : "Add a poster and a YouTube link, then publish"}
+                </p>
+              </div>
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-white/10 px-3 py-1.5 text-xs text-muted">
+                <Pencil size={12} /> Edit
+              </span>
+            </div>
+          </Link>
+        ))}
+      </section>
+
+      <section className="mt-10 space-y-4">
+        <div>
+          <h2 className="flex items-center gap-2 font-medium">
             <LayoutTemplate size={16} className="text-accent" /> Clarity you can feel
           </h2>
           <p className="mt-1 text-sm text-muted">
@@ -325,7 +413,10 @@ export default async function AdminContentPage() {
               s.key !== "about" &&
               s.key !== "installation" &&
               s.key !== "site.whatsapp" &&
-              s.key !== "home.clarity",
+              s.key !== "home.clarity" &&
+              s.key !== "home.impact" &&
+              s.key !== "home.impactLab" &&
+              s.key !== "home.showcase",
           ).map((s) => (
             <Link
               key={s.key}

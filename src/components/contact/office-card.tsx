@@ -74,7 +74,15 @@ export function OfficeCard() {
 
   return (
     <div className="card-premium space-y-6 rounded-[2rem] p-5 md:p-6">
-      <OfficeMap />
+      <a
+        href={siteConfig.mapsUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Open the HYDRA office on Google Maps"
+        className="block rounded-2xl outline-none transition-opacity hover:opacity-95 focus-visible:ring-2 focus-visible:ring-accent"
+      >
+        <OfficeMap />
+      </a>
 
       <div className="flex items-start justify-between gap-4">
         <div>

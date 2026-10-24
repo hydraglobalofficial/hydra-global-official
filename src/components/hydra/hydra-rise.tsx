@@ -41,19 +41,19 @@ export function HydraRise() {
   }, [mounted, inView, progress, reduced]);
 
   return (
-    <section className="relative overflow-x-clip py-20 sm:py-24 md:py-28" aria-label="The HYDRA story">
+    <section className="relative overflow-x-clip py-20 sm:py-24 md:bg-[#070b14] md:py-28 md:text-white" aria-label="The HYDRA story">
       <div className="container-page relative grid w-full items-center gap-10 md:grid-cols-[1fr_1.15fr] md:gap-12">
         <div className="relative order-2 max-w-lg md:order-1">
           <p className="font-mono text-[11px] uppercase tracking-[0.3em] text-accent">Unleashed</p>
-          <h2 className="mt-3 text-3xl font-semibold tracking-tight text-balance sm:text-4xl md:text-5xl">
-            Meet the <span className="text-muted">HYDRA.</span>
+          <h2 className="mt-3 text-3xl font-semibold tracking-tight text-balance sm:text-4xl md:text-5xl md:text-white">
+            Meet the <span className="text-muted md:text-white/65">HYDRA.</span>
           </h2>
-          <p className="mt-4 text-sm text-muted sm:text-base">
+          <p className="mt-4 text-sm text-muted sm:text-base md:text-white/70">
             {siteConfig.slogan}. Accessories for iPhone and Samsung Galaxy, shipped worldwide.
           </p>
           <Link
             href="/shop"
-            className="mt-6 inline-flex items-center gap-2 text-sm font-medium text-fg transition hover:text-accent"
+            className="mt-6 inline-flex items-center gap-2 text-sm font-medium text-fg transition hover:text-accent md:text-white md:hover:text-accent"
           >
             Shop accessories <ArrowRight size={16} />
           </Link>
@@ -61,7 +61,7 @@ export function HydraRise() {
 
         <div
           ref={stageRef}
-          className="relative order-1 mx-auto w-[min(100%,22rem)] overflow-visible px-1 pt-12 sm:w-full sm:max-w-[24rem] sm:pt-14 md:order-2 md:max-w-[34rem] md:pt-16"
+          className="hydra-crest-on-dark relative order-1 mx-auto w-[min(100%,22rem)] overflow-visible rounded-[2rem] bg-[#070b14] px-1 pt-12 sm:w-full sm:max-w-[24rem] sm:pt-14 md:order-2 md:max-w-[34rem] md:bg-transparent md:pt-16"
         >
           <div className="hydra-crest-stage relative mx-auto w-full overflow-visible p-2 sm:p-3 md:p-4">
             <div className="relative mx-auto w-full">

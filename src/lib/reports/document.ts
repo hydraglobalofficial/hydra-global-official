@@ -188,6 +188,44 @@ export function reportDocument({
       gap: 16px;
       flex-wrap: wrap;
     }
+    .site-foot {
+      margin-top: 22px;
+      padding: 16px 18px;
+      border-radius: 14px;
+      background: #0c1222;
+      color: #d5dbe8;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    .site-mark {
+      width: 64px;
+      height: 64px;
+      object-fit: contain;
+      background: #0c1222;
+      border-radius: 14px;
+      flex: 0 0 auto;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    .site-foot .label {
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: #8b9bb8;
+    }
+    .site-foot a {
+      display: inline-block;
+      margin-top: 4px;
+      color: #e7c56a;
+      font-size: 14px;
+      font-weight: 750;
+      text-decoration: none;
+    }
     .sign {
       margin-top: 36px;
       display: grid;
@@ -206,6 +244,13 @@ export function reportDocument({
       .toolbar { display: none !important; }
       .pad { padding: 0; }
       a { color: inherit; text-decoration: none; }
+      .site-foot, .site-mark {
+        background: #0c1222;
+        color: #d5dbe8;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+      .site-foot a { color: #e7c56a; }
     }
   </style>
 </head>
@@ -240,6 +285,15 @@ export function reportDocument({
       <div class="sign">
         <div class="line">Prepared by · HYDRA Admin</div>
         <div class="line">Authorized signature</div>
+      </div>
+
+      <div class="site-foot">
+        <img class="site-mark" src="/products/Hydra_Mark.png" alt="${escapeHtml(siteConfig.name)}" width="64" height="64" />
+        <div style="flex:1;min-width:220px">
+          <div class="label">Website</div>
+          <a href="${escapeHtml(siteConfig.website)}/">${escapeHtml(siteConfig.website)}/</a>
+        </div>
+        <div>${escapeHtml(siteConfig.legalName)}</div>
       </div>
 
       <footer class="footer">

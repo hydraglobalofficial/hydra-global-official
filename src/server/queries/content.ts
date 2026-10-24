@@ -5,6 +5,8 @@ import { db } from "@/lib/db";
 import {
   defaultAboutContent,
   defaultClarityContent,
+  defaultImpactContent,
+  defaultImpactLabContent,
   defaultCollectionsContent,
   defaultHomeHeroContent,
   defaultHowItWorksContent,
@@ -14,6 +16,8 @@ import {
   defaultWhatsappWidgetContent,
   type AboutContent,
   type ClarityContent,
+  type ImpactContent,
+  type ImpactLabContent,
   type CollectionsContent,
   type HomeHeroContent,
   type HowItWorksContent,
@@ -27,6 +31,8 @@ import { safeInternalHref } from "@/lib/content-safety";
 import {
   normalizeAboutContent,
   normalizeClarityContent,
+  normalizeImpactContent,
+  normalizeImpactLabContent,
   normalizeCollectionsContent,
   normalizeCurrencyContent,
   normalizeHomeHeroContent,
@@ -173,6 +179,32 @@ export const getShippingContent = unstable_cache(
   },
   ["site-section-shipping-v1"],
   { tags: [CONTENT_TAG], revalidate: 60 },
+);
+
+export const getImpactContent = unstable_cache(
+  async (): Promise<ImpactContent> => {
+    try {
+      const row = await db.siteSection.findUnique({ where: { key: "home.impact" }, select: { data: true } });
+      return normalizeImpactContent(row?.data ?? defaultImpactContent);
+    } catch {
+      return defaultImpactContent;
+    }
+  },
+  ["site-section-impact-v3"],
+  { tags: [CONTENT_TAG], revalidate: 3600 },
+);
+
+export const getImpactLabContent = unstable_cache(
+  async (): Promise<ImpactLabContent> => {
+    try {
+      const row = await db.siteSection.findUnique({ where: { key: "home.impactLab" }, select: { data: true } });
+      return normalizeImpactLabContent(row?.data ?? defaultImpactLabContent);
+    } catch {
+      return defaultImpactLabContent;
+    }
+  },
+  ["site-section-impact-lab-v1"],
+  { tags: [CONTENT_TAG], revalidate: 3600 },
 );
 
 export const getClarityContent = unstable_cache(

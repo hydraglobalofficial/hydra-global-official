@@ -2,16 +2,9 @@
 
 import { createElement, useRef } from "react";
 import { BadgeCheck, Cpu, HeartHandshake, Leaf, Lightbulb, Scale, type LucideIcon } from "lucide-react";
-import {
-  motion,
-  useReducedMotion,
-  useScroll,
-  useTransform,
-  type MotionValue,
-} from "motion/react";
+import { motion, useScroll, useTransform, type MotionValue } from "motion/react";
 import type { AboutContent } from "@/content/site-sections";
 import { interpolate } from "@/lib/interpolate";
-import { cn } from "@/lib/utils";
 
 const iconByKeyword: Record<string, LucideIcon> = {
   Precision: Cpu,
@@ -32,22 +25,11 @@ type ValueItem = AboutContent["values"][number];
  * earlier cards gently scale + dim — so the stack reads as one composition.
  */
 export function ValuesStack({ values }: { values: ValueItem[] }) {
-  const reduced = useReducedMotion();
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start start", "end end"],
   });
-
-  if (reduced) {
-    return (
-      <div className="space-y-4">
-        {values.map((value, i) => (
-          <StaticValueCard key={`${value.title}-${i}`} value={value} index={i} total={values.length} />
-        ))}
-      </div>
-    );
-  }
 
   return (
     <div ref={ref} className="relative">
@@ -126,35 +108,5 @@ function ValueCard({
         <motion.div className="pointer-events-none absolute inset-0 rounded-[inherit] bg-bg" style={{ opacity: dim }} />
       </motion.article>
     </div>
-  );
-}
-
-function StaticValueCard({
-  value,
-  index,
-  total,
-}: {
-  value: ValueItem;
-  index: number;
-  total: number;
-}) {
-  return (
-    <article className="card-premium relative overflow-hidden rounded-[1.75rem] p-6 sm:rounded-[2rem] sm:p-8 md:p-10">
-      <div className="relative grid gap-6 md:grid-cols-[1fr_auto] md:items-center">
-        <div>
-          <p className="font-mono text-[11px] tracking-[0.22em] text-muted">
-            {String(index + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}
-          </p>
-          <h3 className="mt-3 text-2xl font-semibold tracking-tight text-fg md:text-3xl">{value.title}</h3>
-          <p className="mt-3 max-w-xl text-pretty text-muted">{value.text}</p>
-        </div>
-        <div className={cn("flex items-center gap-3 md:flex-col md:items-end")}>
-          <div className="grid size-14 place-items-center rounded-2xl border border-line-strong bg-surface-3 text-fg">
-            {renderValueIcon(value, index, 26)}
-          </div>
-          <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-muted">{value.keyword}</span>
-        </div>
-      </div>
-    </article>
   );
 }

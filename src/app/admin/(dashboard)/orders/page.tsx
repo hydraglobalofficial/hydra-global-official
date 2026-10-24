@@ -71,7 +71,7 @@ export default async function AdminOrdersPage({ searchParams }: PageProps<"/admi
       <AdminHeader
         eyebrow="Commerce"
         title="Orders"
-        description="Confirm, fulfil and track customer orders. Download a company-style register anytime."
+        description="Tap an order block to open it. Download a company-style register anytime."
         action={<ReportActions htmlHref={htmlHref} csvHref={csvHref} label="Order statement" />}
       />
 
@@ -124,7 +124,8 @@ export default async function AdminOrdersPage({ searchParams }: PageProps<"/admi
       <Panel title="Order register">
         <ul className="divide-y divide-line sm:hidden">
           {orders.map((o) => (
-            <li key={o.id} className="px-4 py-3.5">
+            <li key={o.id} className="relative px-4 py-3.5">
+              <Link href={`/admin/orders/${o.id}`} className="absolute inset-0 z-0" aria-label={`Open order ${o.number}`} />
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
                   <Link href={`/admin/orders/${o.id}`} className="font-mono text-sm text-accent">
@@ -135,7 +136,7 @@ export default async function AdminOrdersPage({ searchParams }: PageProps<"/admi
                     {formatDate(o.createdAt)} · {o.city}
                   </p>
                 </div>
-                <div className="flex shrink-0 flex-col items-end gap-2">
+                <div className="relative z-10 flex shrink-0 flex-col items-end gap-2">
                   <StatusBadge status={o.status} />
                   <p className="font-mono text-sm tabular-nums">{formatPrice(o.total)}</p>
                   <ConfirmDeleteForm
@@ -173,11 +174,10 @@ export default async function AdminOrdersPage({ searchParams }: PageProps<"/admi
             </thead>
             <tbody>
               {orders.map((o) => (
-                <tr key={o.id}>
+                <tr key={o.id} className="relative cursor-pointer hover:bg-white/[0.03]">
                   <td>
-                    <Link href={`/admin/orders/${o.id}`} className="font-mono text-accent transition-colors hover:text-fg">
-                      {o.number}
-                    </Link>
+                    <Link href={`/admin/orders/${o.id}`} className="absolute inset-0 z-0" aria-label={`Open order ${o.number}`} />
+                    <span className="font-mono text-accent">{o.number}</span>
                     <p className="text-xs text-subtle">
                       {formatDate(o.createdAt)} · {o._count.items} item(s)
                     </p>
@@ -198,7 +198,7 @@ export default async function AdminOrdersPage({ searchParams }: PageProps<"/admi
                     <StatusBadge status={o.status} />
                   </td>
                   <td className="text-right font-mono tabular-nums">{formatPrice(o.total)}</td>
-                  <td className="text-right">
+                  <td className="relative z-10 text-right">
                     <ConfirmDeleteForm
                       action={deleteOrder}
                       title={`Delete ${o.number}?`}

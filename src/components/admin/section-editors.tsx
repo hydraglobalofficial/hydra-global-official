@@ -6,6 +6,8 @@ import {
   saveAboutSection,
   saveCollectionsSection,
   saveClaritySection,
+  saveImpactSection,
+  saveImpactLabSection,
   saveCurrencySection,
   saveHomeHeroSection,
   saveHowItWorksSection,
@@ -18,6 +20,8 @@ import {
 import type {
   AboutContent,
   ClarityContent,
+  ImpactContent,
+  ImpactLabContent,
   CollectionsContent,
   HeroVisualKey,
   HomeHeroContent,
@@ -182,7 +186,10 @@ export function AboutSectionEditor({ content }: { content: AboutContent }) {
         )}
       </Section>
 
-      <Section title="Manifesto">
+      <Section title="About page paragraph">
+        <p className="text-xs text-subtle">
+          This is the long text on the About page — the one that mentions Protection, Precision and Progression.
+        </p>
         <Label label="Text"><Textarea name="manifestoText" defaultValue={content.manifesto.text} className="min-h-28" required /></Label>
         <Label label="Highlight words (one per line)" hint="Exact words to tint accent blue">
           <Textarea
@@ -890,8 +897,8 @@ export function ShowcaseSectionEditor({ content }: { content: ShowcaseContent })
       <Section title="Video cards">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <p className="text-xs text-subtle">
-            Add or remove cards anytime (1–{MAX_SHOWCASE_VIDEOS}). YouTube link only — no MP4. Poster required. Empty
-            YouTube → card opens the fallback link.
+            Each card needs a poster image and a YouTube link. Upload the poster, then paste the YouTube URL. These cards
+            show on the homepage.
           </p>
           <Button
             type="button"
@@ -1470,6 +1477,114 @@ export function ShippingSectionEditor({ content }: { content: ShippingContent })
       <FormMessage status={state.status} message={state.message} toast />
       <Button type="submit" disabled={pending}>
         {pending && <Loader2 size={16} className="animate-spin" />} Publish shipping
+      </Button>
+    </form>
+  );
+}
+
+const MAX_IMPACT_PHOTOS = 10;
+
+export function ImpactSectionEditor({ content }: { content: ImpactContent }) {
+  const [state, action, pending] = useActionState(saveImpactSection, initialFormState);
+  const [images, setImages] = useState(() =>
+    toKeyed(
+      content.images.length > 0
+        ? content.images
+        : [{ url: "", alt: "" }],
+    ),
+  );
+
+  return (
+    <form action={action} className="space-y-5">
+      <Section title="Photos around 20,000+">
+        <ListHeader
+          hint="These photos sit around the big 20,000+ number on the homepage. They land in different spots, not a straight row. Up to 10."
+          addLabel="Add photo"
+          canAdd={images.length < MAX_IMPACT_PHOTOS}
+          onAdd={() =>
+            setImages((prev) =>
+              prev.length >= MAX_IMPACT_PHOTOS ? prev : [...prev, { key: rowKey(), url: "", alt: "" }],
+            )
+          }
+        />
+        {images.length === 0 ? <EmptyHint>No photos yet — click Add photo.</EmptyHint> : null}
+        <div className="space-y-4">
+          {images.map((photo, i) => (
+            <div key={photo.key} className="space-y-3 rounded-2xl border border-line p-4">
+              <div className="flex items-center justify-between gap-2">
+                <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-subtle">Photo {i + 1}</p>
+                <RemoveBtn
+                  label={`Remove photo ${i + 1}`}
+                  onClick={() => setImages((prev) => prev.filter((row) => row.key !== photo.key))}
+                />
+              </div>
+              <Label label="Image" hint="Upload from your device, or paste an image link.">
+                <ImageUrlField name="impactImage" defaultValue={photo.url} folder="impact" placeholder="Upload a photo" />
+              </Label>
+              <Label label="Short description" hint="Optional. Used if the photo cannot be seen.">
+                <Input name="impactAlt" defaultValue={photo.alt} maxLength={80} placeholder="Customer holding HYDRA glass" />
+              </Label>
+            </div>
+          ))}
+        </div>
+      </Section>
+      <FormMessage status={state.status} message={state.message} toast />
+      <Button type="submit" disabled={pending}>
+        {pending && <Loader2 size={16} className="animate-spin" />} Publish photos
+      </Button>
+    </form>
+  );
+}
+
+export function ImpactLabSectionEditor({ content }: { content: ImpactLabContent }) {
+  const [state, action, pending] = useActionState(saveImpactLabSection, initialFormState);
+  const cards = content.cards.length > 0 ? content.cards : [{ value: "", label: "", image: "" }];
+
+  return (
+    <form action={action} className="space-y-5">
+      <Section title="Heading">
+        <p className="text-sm text-muted">
+          These four blocks sit under the dropping-phone animation. On a phone they show two per row. The phone animation
+          stays as it is until the new file is ready.
+        </p>
+        <Label label="Small label">
+          <Input name="eyebrow" defaultValue={content.eyebrow} required />
+        </Label>
+        <div className="grid gap-3 sm:grid-cols-2">
+          <Label label="Title">
+            <Input name="title" defaultValue={content.title} required />
+          </Label>
+          <Label label="Muted title">
+            <Input name="titleMuted" defaultValue={content.titleMuted} required />
+          </Label>
+        </div>
+        <Label label="Paragraph">
+          <Textarea name="text" defaultValue={content.text} className="min-h-20" required />
+        </Label>
+      </Section>
+      <Section title="Four blocks">
+        <div className="space-y-4">
+          {cards.slice(0, 4).map((card, i) => (
+            <div key={i} className="space-y-3 rounded-2xl border border-line p-4">
+              <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-subtle">Block {i + 1}</p>
+              <div className="grid gap-3 sm:grid-cols-2">
+                <Label label="Big text">
+                  <Input name="labValue" defaultValue={card.value} placeholder="2 m" maxLength={16} />
+                </Label>
+                <Label label="Line under it">
+                  <Input name="labLabel" defaultValue={card.label} placeholder="Drop-tested onto granite" maxLength={80} />
+                </Label>
+              </div>
+              <Label label="Picture" hint="Optional. Leave empty to show just the words.">
+                <ImageUrlField name="labImage" defaultValue={card.image} folder="impact" placeholder="Upload a picture" />
+              </Label>
+            </div>
+          ))}
+        </div>
+      </Section>
+      <FormMessage status={state.status} message={state.message} toast />
+      <Button type="submit" disabled={pending}>
+        {pending && <Loader2 size={16} className="animate-spin" />} Publish four blocks
       </Button>
     </form>
   );

@@ -5,6 +5,8 @@ import { AdminHeader } from "@/components/admin/admin-ui";
 import {
   AboutSectionEditor,
   ClaritySectionEditor,
+  ImpactSectionEditor,
+  ImpactLabSectionEditor,
   CollectionsSectionEditor,
   CurrencySectionEditor,
   HomeHeroSectionEditor,
@@ -20,6 +22,8 @@ import { requireAdmin } from "@/lib/auth/session";
 import {
   normalizeAboutContent,
   normalizeClarityContent,
+  normalizeImpactContent,
+  normalizeImpactLabContent,
   normalizeCollectionsContent,
   normalizeCurrencyContent,
   normalizeHomeHeroContent,
@@ -77,6 +81,12 @@ export default async function EditSiteSectionPage({ params }: Props) {
       )}
       {key === "home.clarity" && (
         <ClaritySectionEditor content={normalizeClarityContent(row?.data)} />
+      )}
+      {key === "home.impact" && (
+        <ImpactSectionEditor content={normalizeImpactContent(row?.data)} />
+      )}
+      {key === "home.impactLab" && (
+        <ImpactLabSectionEditor content={normalizeImpactLabContent(row?.data)} />
       )}
       {key === "installation" && (
         <InstallationSectionEditor content={normalizeInstallationContent(row?.data)} />

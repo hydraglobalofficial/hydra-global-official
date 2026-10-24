@@ -667,22 +667,6 @@ html.light .bento-scrim {
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-
-  /* The headline ticker is the content, so it keeps scrolling. */
-  .animate-marquee {
-    animation-duration: 60s !important;
-    animation-iteration-count: infinite !important;
-  }
-}
-
 /* Brand marks: white on dark, black on light */
 .theme-mark-invert {
   filter: brightness(0) invert(1);
@@ -1213,6 +1197,15 @@ html[data-theme="light"] .hydra-crest-ink img,
 html.light img.hydra-mark-ink,
 html[data-theme="light"] img.hydra-mark-ink {
   filter: brightness(0) !important;
+}
+/* Black plate: show the real silver crest, not the light-mode black ink. */
+html.light .hydra-crest-on-dark .hydra-crest-ink,
+html[data-theme="light"] .hydra-crest-on-dark .hydra-crest-ink,
+html.light .hydra-crest-on-dark img.hydra-mark-ink,
+html[data-theme="light"] .hydra-crest-on-dark img.hydra-mark-ink {
+  filter: none !important;
+  -webkit-mask-image: none;
+  mask-image: none;
 }
 html.light .hydra-crest-art:not(.hydra-crest-ink),
 html[data-theme="light"] .hydra-crest-art:not(.hydra-crest-ink) {

@@ -19,6 +19,8 @@ import type {
   HowItWorksContent,
   NewsletterContent,
   ClarityContent,
+  ImpactContent,
+  ImpactLabContent,
   ShowcaseContent,
   ShippingContent,
   WhatsappWidgetContent,
@@ -28,6 +30,8 @@ import {
   normalizeAboutContent,
   normalizeCollectionsContent,
   normalizeClarityContent,
+  normalizeImpactContent,
+  normalizeImpactLabContent,
   normalizeCurrencyContent,
   normalizeHomeHeroContent,
   normalizeHowItWorksContent,
@@ -1280,6 +1284,59 @@ export async function saveClaritySection(_prev: FormState, formData: FormData): 
   }
 }
 
+export async function saveImpactSection(_prev: FormState, formData: FormData): Promise<FormState> {
+  await requireAdmin();
+  try {
+    const urls = formData.getAll("impactImage").map(String);
+    const alts = formData.getAll("impactAlt").map(String);
+    const data = normalizeImpactContent({
+      images: urls.map((url, i) => ({ url, alt: alts[i] ?? "" })),
+    } satisfies ImpactContent);
+    await db.siteSection.upsert({
+      where: { key: "home.impact" },
+      create: { key: "home.impact", title: "20,000+ photos", data },
+      update: { data, title: "20,000+ photos" },
+    });
+    updateTag(CONTENT_TAG);
+    revalidatePath("/");
+    revalidatePath("/admin/content/sections/home.impact");
+    await bumpAdminContentHub();
+    return { status: "success", message: "Photos published around the 20,000+ number." };
+  } catch (error) {
+    console.error("[saveImpactSection]", error);
+    return { status: "error", message: "Could not publish those photos." };
+  }
+}
+
+export async function saveImpactLabSection(_prev: FormState, formData: FormData): Promise<FormState> {
+  await requireAdmin();
+  try {
+    const values = formData.getAll("labValue").map(String);
+    const labels = formData.getAll("labLabel").map(String);
+    const images = formData.getAll("labImage").map(String);
+    const data = normalizeImpactLabContent({
+      eyebrow: clampText(formData.get("eyebrow"), 40),
+      title: clampText(formData.get("title"), 80),
+      titleMuted: clampText(formData.get("titleMuted"), 80),
+      text: clampText(formData.get("text"), 280),
+      cards: values.map((value, i) => ({ value, label: labels[i] ?? "", image: images[i] ?? "" })),
+    } satisfies ImpactLabContent);
+    await db.siteSection.upsert({
+      where: { key: "home.impactLab" },
+      create: { key: "home.impactLab", title: "Impact lab cards", data },
+      update: { data, title: "Impact lab cards" },
+    });
+    updateTag(CONTENT_TAG);
+    revalidatePath("/");
+    revalidatePath("/admin/content/sections/home.impactLab");
+    await bumpAdminContentHub();
+    return { status: "success", message: "Impact lab cards published." };
+  } catch (error) {
+    console.error("[saveImpactLabSection]", error);
+    return { status: "error", message: "Could not publish the impact lab cards." };
+  }
+}
+
 export async function saveShowcaseSection(_prev: FormState, formData: FormData): Promise<FormState> {
   await requireAdmin();
   try {
@@ -1314,8 +1371,8 @@ export async function saveShowcaseSection(_prev: FormState, formData: FormData):
 
     await db.siteSection.upsert({
       where: { key: "home.showcase" },
-      create: { key: "home.showcase", title: "Home · Video showcase", data },
-      update: { data, title: "Home · Video showcase" },
+      create: { key: "home.showcase", title: "Homepage video cards", data },
+      update: { data, title: "Homepage video cards" },
     });
     updateTag(CONTENT_TAG);
     revalidatePath("/");

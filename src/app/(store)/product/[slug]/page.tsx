@@ -104,7 +104,7 @@ export default async function ProductPage({
               <Badge tone="accent">{product.category.name}</Badge>
               {product.featured && <Badge>Bestseller</Badge>}
             </div>
-            <h1 className="text-[1.65rem] font-semibold tracking-tight text-balance sm:text-3xl md:text-5xl">{product.name}</h1>
+            <h1 className="text-lg font-semibold leading-snug tracking-tight text-balance sm:text-xl md:text-2xl">{product.name}</h1>
             {product.ratingCount > 0 && (
               <a href="#reviews" className="inline-flex items-center gap-2 text-sm text-muted hover:text-fg">
                 <Rating value={product.ratingAverage} size={14} />

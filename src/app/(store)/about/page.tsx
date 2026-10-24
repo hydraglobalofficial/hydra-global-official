@@ -39,8 +39,8 @@ export default async function AboutPage() {
   return (
     <>
       <section className="relative min-h-[min(92vh,52rem)] overflow-hidden">
-        <div className="container-page relative grid min-h-[min(72vh,40rem)] items-center gap-8 pb-8 pt-12 sm:gap-10 sm:pb-10 sm:pt-16 md:gap-14 md:pt-24 lg:grid-cols-[1.15fr_1fr] lg:pb-14">
-          <Reveal className="min-w-0 space-y-6 sm:space-y-7 md:space-y-8">
+        <div className="container-page relative grid min-h-[min(72vh,40rem)] items-center gap-8 pb-8 pt-12 sm:gap-10 sm:pb-10 sm:pt-16 md:gap-14 md:pt-24 lg:grid-cols-[1.15fr_1fr] lg:rounded-[2rem] lg:bg-[#070b14] lg:px-10 lg:pb-14 lg:text-white">
+          <Reveal className="min-w-0 space-y-6 sm:space-y-7 md:space-y-8 lg:[&_h1]:text-white lg:[&_h1_span]:text-white lg:[&_p]:text-white/75">
             <Eyebrow>{content.hero.eyebrow}</Eyebrow>
             <h1 className="text-balance text-[2.35rem] font-semibold tracking-tight sm:text-5xl md:text-7xl lg:text-[5.25rem] lg:leading-[0.95]">
               {content.hero.title}
@@ -63,7 +63,9 @@ export default async function AboutPage() {
               )}
             </div>
           </Reveal>
-          <HeroEmblem />
+          <div className="hydra-crest-on-dark rounded-[2rem] bg-[#070b14] px-3 py-4 lg:bg-transparent lg:p-0">
+            <HeroEmblem />
+          </div>
         </div>
 
         <div className="container-page relative pb-14 sm:pb-20 md:pb-24">

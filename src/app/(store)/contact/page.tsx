@@ -5,7 +5,6 @@ import { Reveal } from "@/components/motion/reveal";
 import { Eyebrow } from "@/components/ui/primitives";
 import { ContactChannels } from "@/components/contact/contact-channels";
 import { ContactForm } from "@/components/contact/contact-form";
-import { LiveStatus } from "@/components/contact/live-status";
 import { OfficeCard } from "@/components/contact/office-card";
 import { isContactTopic } from "@/components/contact/topics";
 import { siteConfig } from "@/config/site";
@@ -65,7 +64,6 @@ export default async function ContactPage({ searchParams }: PageProps<"/contact"
             <p className="max-w-lg text-base text-pretty text-muted sm:text-lg">
               Orders, installs, wholesale or press — our team answers every message personally. Pick the channel that suits you.
             </p>
-            <LiveStatus />
             <dl className="grid max-w-md grid-cols-3 gap-3 border-t border-line pt-6 sm:gap-6 sm:pt-7">
               {heroStats.map((s) => (
                 <div key={s.label} className="flex min-w-0 flex-col-reverse">

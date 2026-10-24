@@ -39,6 +39,7 @@ function SlideVisual({ slide, priority }: { slide: HeroSlide; priority?: boolean
           sizes="(max-width: 1024px) 92vw, 36rem"
           className="h-auto w-full rounded-[1.75rem] object-contain"
           priority={priority}
+          loading="eager"
         />
       </div>
     );
@@ -164,7 +165,6 @@ export function Hero({ content }: { content: HomeHeroContent }) {
   const [index, setIndex] = useState(0);
   /** Pause only while hovering the phone stage / controls — not the whole hero. */
   const [paused, setPaused] = useState(false);
-  const [reduceMotion, setReduceMotion] = useState(false);
   const safeIndex = slides.length ? ((index % slides.length) + slides.length) % slides.length : 0;
   const slide = slides[safeIndex] ?? slides[0];
   const stats = content.stats;
@@ -175,18 +175,10 @@ export function Hero({ content }: { content: HomeHeroContent }) {
   );
 
   useEffect(() => {
-    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const sync = () => setReduceMotion(mq.matches);
-    sync();
-    mq.addEventListener("change", sync);
-    return () => mq.removeEventListener("change", sync);
-  }, []);
-
-  useEffect(() => {
-    if (paused || reduceMotion || slides.length < 2) return;
+    if (paused || slides.length < 2) return;
     const id = window.setTimeout(() => go(1), SLIDE_MS);
     return () => window.clearTimeout(id);
-  }, [index, paused, reduceMotion, go, slides.length]);
+  }, [index, paused, go, slides.length]);
 
   const social = useMemo(
     () => ({
@@ -348,7 +340,7 @@ export function Hero({ content }: { content: HomeHeroContent }) {
               <HeroStagePager
                 index={safeIndex}
                 total={slides.length}
-                paused={paused || reduceMotion}
+                paused={paused}
                 labels={slides.map((s) => s.brand)}
                 onSelect={setIndex}
               />
@@ -361,8 +353,8 @@ export function Hero({ content }: { content: HomeHeroContent }) {
         <div className="container-page pointer-events-auto pb-4 pt-2 sm:pb-7">
           <div className="rounded-2xl border border-line bg-bg/70 px-2 py-2.5 backdrop-blur-xl sm:rounded-full sm:px-5 sm:py-3">
             <dl className="grid grid-cols-3 divide-x divide-line sm:flex sm:justify-center sm:divide-x">
-              {stats.map((s) => (
-                <div key={s.label} className="flex min-w-0 flex-col items-center px-1.5 py-1 sm:flex-row sm:gap-2 sm:px-8">
+              {stats.map((s, i) => (
+                <div key={`${s.value}-${i}`} className="flex min-w-0 flex-col items-center px-1.5 py-1 sm:flex-row sm:gap-2 sm:px-8">
                   <dt className="order-2 max-w-full truncate text-center text-[9px] uppercase tracking-[0.12em] text-subtle sm:order-1 sm:text-xs sm:tracking-[0.14em]">
                     {s.label}
                   </dt>

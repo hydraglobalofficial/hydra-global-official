@@ -32,7 +32,7 @@ type Props = {
 export function PurchasePanel({ product, variants, devices = [], focusDeviceSlug }: Props) {
   const router = useRouter();
   const { add } = useCart();
-  const [variantId, setVariantId] = useState<string | null>(variants.find((v) => v.stock > 0)?.id ?? variants[0]?.id ?? null);
+  const variantId = variants.find((v) => v.stock > 0)?.id ?? variants[0]?.id ?? null;
   const [quantity, setQuantity] = useState(1);
 
   const variant = variants.find((v) => v.id === variantId) ?? null;
@@ -86,36 +86,6 @@ export function PurchasePanel({ product, variants, devices = [], focusDeviceSlug
           </>
         )}
       </div>
-
-      {variants.length > 0 && (
-        <fieldset className="space-y-3">
-          <legend className="text-xs font-medium uppercase tracking-[0.14em] text-muted">
-            Finish — <span className="text-fg">{variant?.name}</span>
-          </legend>
-          <div className="flex flex-wrap gap-2">
-            {variants.map((v) => (
-              <button
-                key={v.id}
-                type="button"
-                onClick={() => {
-                  setVariantId(v.id);
-                  setQuantity(1);
-                }}
-                disabled={v.stock <= 0}
-                aria-pressed={v.id === variantId}
-                className={cn(
-                  "min-h-11 rounded-full border px-5 py-2.5 text-sm transition-all disabled:cursor-not-allowed disabled:line-through disabled:opacity-40",
-                  v.id === variantId
-                    ? "border-accent bg-accent/10 text-fg"
-                    : "border-line text-muted hover:border-line-strong hover:text-fg",
-                )}
-              >
-                {v.name}
-              </button>
-            ))}
-          </div>
-        </fieldset>
-      )}
 
       <div className="flex items-center gap-2 text-sm">
         <span className={cn("size-2 rounded-full", soldOut ? "bg-danger" : available < 10 ? "bg-warning" : "bg-success")} />

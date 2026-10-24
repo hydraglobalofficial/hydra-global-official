@@ -5,6 +5,8 @@ export const siteConfig = {
   slogan: "Technology within reach",
   description:
     "HYDRA is a global mobile accessories brand for iPhone and Samsung Galaxy — screen protection, cases, camera armor and everyday essentials, engineered for a perfect fit and shipped worldwide.",
+  /** Public storefront. Shown on invoices and used for customer links. */
+  website: "https://www.hydraglobalofficial.com",
   email: "support@hydraglobal.com",
   phone: "01635-992804",
   address: "Boxnagar, Sarulia, Demra, Dhaka 1361",
@@ -14,14 +16,14 @@ export const siteConfig = {
   /** Digits only with country code for wa.me (BD 01635-992804 → 8801635992804). */
   whatsapp: "8801635992804",
   messenger: "https://m.me/hydraglobal",
-  mapsUrl: "https://www.google.com/maps/search/?api=1&query=Boxnagar+Sarulia+Demra+Dhaka+1361",
+  mapsUrl: "https://maps.app.goo.gl/EtG6NxxJVcwRrSDaA",
   /** Fallback only — live display comes from admin Content → Currency. */
   currency: "BDT",
   social: {
     facebook: "https://facebook.com/hydraglobal",
     instagram: "https://instagram.com/hydraglobal",
     youtube: "https://youtube.com/@hydraglobal",
-    tiktok: "https://tiktok.com/@hydraglobal",
+    x: "https://x.com/hydraglobal",
   },
 } as const;
 

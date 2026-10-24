@@ -8,6 +8,7 @@ import {
   useSyncExternalStore,
   type ReactNode,
 } from "react";
+import { MotionConfig } from "motion/react";
 import {
   applyTheme,
   DEFAULT_THEME,
@@ -70,7 +71,11 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
   const value = useMemo(() => ({ theme, setTheme, toggleTheme }), [theme, setTheme, toggleTheme]);
 
-  return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
+  return (
+    <ThemeContext.Provider value={value}>
+      <MotionConfig reducedMotion="never">{children}</MotionConfig>
+    </ThemeContext.Provider>
+  );
 }
 
 export function useTheme() {

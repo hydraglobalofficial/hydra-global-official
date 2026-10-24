@@ -451,6 +451,48 @@ export const defaultClarityContent: ClarityContent = {
   afterLabel: "HYDRA armor",
 };
 
+/** Photos scattered around the homepage 20,000+ block. */
+export type ImpactPhoto = {
+  url: string;
+  alt: string;
+};
+
+export type ImpactContent = {
+  images: ImpactPhoto[];
+};
+
+export const defaultImpactContent: ImpactContent = {
+  images: [],
+};
+
+/** Four blocks under the homepage drop animation. */
+export type ImpactLabCard = {
+  value: string;
+  label: string;
+  image: string;
+};
+
+export type ImpactLabContent = {
+  eyebrow: string;
+  title: string;
+  titleMuted: string;
+  text: string;
+  cards: ImpactLabCard[];
+};
+
+export const defaultImpactLabContent: ImpactLabContent = {
+  eyebrow: "Impact lab",
+  title: "Glass breaks.",
+  titleMuted: "Your screen doesn't.",
+  text: "HYDRA's sacrificial layer absorbs and spreads impact energy — so the protector takes the hit, not your display.",
+  cards: [
+    { value: "2 m", label: "Drop-tested onto granite", image: "" },
+    { value: "9H+", label: "Surface hardness", image: "" },
+    { value: "3.2×", label: "Stronger than standard glass", image: "" },
+    { value: "100%", label: "Touch stays as it was", image: "" },
+  ],
+};
+
 export const SITE_SECTION_META = [
   {
     key: "home.hero",
@@ -465,8 +507,8 @@ export const SITE_SECTION_META = [
   { key: "home.collections", title: "Home · Collections", description: "Shop-by-collection bento: heading, CTA and category cards." },
   {
     key: "home.showcase",
-    title: "Home · Video showcase",
-    description: "“See HYDRA in action” cards — poster image + YouTube link per card (no file upload).",
+    title: "Homepage video cards",
+    description: "The video cards on the homepage. Each card has a poster image and a YouTube link.",
   },
   { key: "home.howItWorks", title: "Home · How it works", description: "Checkout-to-armored steps on the homepage." },
   { key: "home.newsletter", title: "Home · Newsletter", description: "Members list signup block copy." },
@@ -489,6 +531,16 @@ export const SITE_SECTION_META = [
     key: "home.clarity",
     title: "Home · Clarity you can feel",
     description: "The two photos in the homepage compare slider. Left is ordinary glass, right is HYDRA armor.",
+  },
+  {
+    key: "home.impact",
+    title: "20,000+ photos",
+    description: "The photos around the big 20,000+ number on the homepage. Add them here. They sit in different spots around the number.",
+  },
+  {
+    key: "home.impactLab",
+    title: "Impact lab cards",
+    description: "The four blocks under the dropping-phone animation. On a phone they sit two by two. Change the words and pictures here.",
   },
   {
     key: "installation",

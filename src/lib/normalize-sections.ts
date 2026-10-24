@@ -5,6 +5,8 @@ import {
   defaultHowItWorksContent,
   defaultNewsletterContent,
   defaultClarityContent,
+  defaultImpactContent,
+  defaultImpactLabContent,
   defaultShowcaseContent,
   defaultWhatsappWidgetContent,
   type AboutContent,
@@ -15,6 +17,8 @@ import {
   type HowItWorksContent,
   type NewsletterContent,
   type ClarityContent,
+  type ImpactContent,
+  type ImpactLabContent,
   type ShippingContent,
   type ShowcaseContent,
   type ShowcaseVideoItem,
@@ -418,6 +422,51 @@ export function normalizeShippingContent(raw: unknown): ShippingContent {
   const mode = data.mode === "free" ? "free" : "paid";
   const amount = Math.min(1_000_000, Math.max(0, Math.round(Number(data.amount) || 0)));
   return { mode, amount: mode === "free" ? 0 : amount };
+}
+
+export function normalizeImpactContent(raw: unknown): ImpactContent {
+  const data = isRecord(raw) ? raw : {};
+  const images = Array.isArray(data.images)
+    ? data.images
+        .map((row) => {
+          if (!isRecord(row)) return null;
+          const url = safeMediaUrl(row.url, "");
+          if (!url) return null;
+          return { url, alt: clampText(row.alt, 80, "HYDRA") || "HYDRA" };
+        })
+        .filter((row): row is ImpactContent["images"][number] => !!row)
+        .slice(0, 10)
+    : [];
+  return { images: images.length > 0 ? images : defaultImpactContent.images };
+}
+
+export function normalizeImpactLabContent(raw: unknown): ImpactLabContent {
+  const data = isRecord(raw) ? raw : {};
+  const defaults = defaultImpactLabContent;
+  const cards = Array.isArray(data.cards)
+    ? data.cards
+        .map((row, index) => {
+          if (!isRecord(row)) return null;
+          const fallback = defaults.cards[index];
+          const value = clampText(row.value, 16, fallback?.value ?? "");
+          const label = clampText(row.label, 80, fallback?.label ?? "");
+          if (!value && !label) return null;
+          return {
+            value: value || fallback?.value || "",
+            label: label || fallback?.label || "",
+            image: safeMediaUrl(row.image, ""),
+          };
+        })
+        .filter((row): row is ImpactLabContent["cards"][number] => !!row)
+        .slice(0, 4)
+    : [];
+  return {
+    eyebrow: clampText(data.eyebrow, 40, defaults.eyebrow) || defaults.eyebrow,
+    title: clampText(data.title, 80, defaults.title) || defaults.title,
+    titleMuted: clampText(data.titleMuted, 80, defaults.titleMuted) || defaults.titleMuted,
+    text: clampText(data.text, 280, defaults.text) || defaults.text,
+    cards: cards.length > 0 ? cards : defaults.cards,
+  };
 }
 
 export function normalizeClarityContent(raw: unknown): ClarityContent {

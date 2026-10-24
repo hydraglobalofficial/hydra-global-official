@@ -4,14 +4,13 @@ import type { ReactNode } from "react";
 import dynamic from "next/dynamic";
 import { SectionDivider } from "@/components/ui/section-divider";
 import { Reveal } from "@/components/motion/reveal";
-import type { ClarityContent, HowItWorksContent, NewsletterContent } from "@/content/site-sections";
+import type { ClarityContent, HowItWorksContent, ImpactContent, ImpactLabContent, NewsletterContent } from "@/content/site-sections";
 
 const ImpactStat = dynamic(
   () => import("@/components/sections/impact-stat").then((m) => m.ImpactStat),
 );
 const DropTest = dynamic(
   () => import("@/components/sections/drop-test").then((m) => m.DropTest),
-  { ssr: false },
 );
 const ClarityCompare = dynamic(
   () => import("@/components/sections/clarity-compare").then((m) => m.ClarityCompare),
@@ -34,17 +33,21 @@ export function HomeBelowFold({
   howItWorks,
   newsletter,
   clarity,
+  impact,
+  impactLab,
   bestsellers,
 }: {
   howItWorks: HowItWorksContent;
   newsletter: NewsletterContent;
   clarity?: ClarityContent;
+  impact?: ImpactContent;
+  impactLab?: ImpactLabContent;
   bestsellers: ReactNode;
 }) {
   return (
     <div>
-      <ImpactStat />
-      <DropTest />
+      <ImpactStat images={impact?.images} />
+      <DropTest content={impactLab} />
       {bestsellers}
       <SectionDivider />
       <Reveal>
