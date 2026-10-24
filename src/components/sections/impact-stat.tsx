@@ -28,90 +28,41 @@ function CountUp({ to, className }: { to: number; className?: string }) {
   );
 }
 
-/** Same photos always land in the same spots until the set changes. */
-function scatter<T extends { url: string }>(items: T[]): T[] {
-  const seed = items.map((item) => item.url).join("|");
-  let hash = 2166136261;
-  for (let i = 0; i < seed.length; i++) hash = Math.imul(hash ^ seed.charCodeAt(i), 16777619);
-  return items
-    .map((item, index) => {
-      hash = Math.imul(hash ^ (index + 1), 16777619);
-      return { item, rank: hash >>> 0 };
-    })
-    .sort((a, b) => a.rank - b.rank)
-    .map((row) => row.item);
-}
+/** Quiet places around the type. Small tilt, same frame, so it feels placed — not thrown. */
+const SPOTS = [
+  { className: "left-[3%] top-[10%] w-[6.25rem] -rotate-2 sm:w-[8.5rem]" },
+  { className: "left-[18%] top-[3%] hidden w-[7.25rem] rotate-1 md:block" },
+  { className: "right-[18%] top-2 w-[6.25rem] -rotate-1 sm:w-32" },
+  { className: "right-[3%] top-[14%] hidden w-[8.25rem] rotate-2 lg:block" },
+  { className: "bottom-[8%] left-[5%] w-[6.5rem] rotate-2 sm:w-[9rem]" },
+  { className: "bottom-[5%] right-[6%] w-[7rem] -rotate-2 sm:w-[9.5rem]" },
+] as const;
 
-const TILTS = [-8, 6, -5, 7, -3, 9, -7, 4, -6, 5];
-const LIFTS = ["translate-y-2", "-translate-y-3", "translate-y-4", "-translate-y-1", "translate-y-1", "-translate-y-4"];
-
-function Polaroid({
-  photo,
-  index,
-  className,
-}: {
-  photo: ImpactPhoto;
-  index: number;
-  className?: string;
-}) {
-  const tilt = TILTS[index % TILTS.length] ?? 0;
-  const portrait = index % 3 !== 1;
+function ScatteredPhoto({ photo, index }: { photo: ImpactPhoto; index: number }) {
+  const spot = SPOTS[index % SPOTS.length]!;
   return (
     <motion.figure
       className={cn(
-        "relative shrink-0 rounded-[1.15rem] bg-white p-1.5 shadow-[0_22px_44px_-26px_rgba(15,17,23,0.7)] ring-1 ring-black/10",
-        LIFTS[index % LIFTS.length],
-        portrait ? "w-[5.35rem] sm:w-36 lg:w-40" : "w-[4.4rem] sm:w-28 lg:w-32",
-        className,
+        "absolute rounded-[1.15rem] bg-white p-2 shadow-[0_28px_50px_-34px_rgba(15,23,42,0.45)] ring-1 ring-[#C5E0F3]",
+        spot.className,
       )}
-      style={{ rotate: tilt }}
-      initial={{ opacity: 0, y: 22 }}
+      initial={{ opacity: 0, y: 18 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.3 }}
-      transition={{ duration: 0.7, delay: (index % 5) * 0.06, ease: [0.16, 1, 0.3, 1] }}
+      viewport={{ once: true, amount: 0.25 }}
+      transition={{ duration: 0.75, delay: index * 0.06, ease: [0.16, 1, 0.3, 1] }}
     >
-      <div className={cn("relative overflow-hidden rounded-[0.85rem] bg-zinc-100", portrait ? "aspect-[3/4]" : "aspect-square")}>
-        <Image
-          src={photo.url}
-          alt={photo.alt || "HYDRA"}
-          fill
-          sizes="(min-width: 1024px) 180px, 30vw"
-          className="object-cover"
-        />
+      <div className="relative aspect-[4/5] overflow-hidden rounded-[0.8rem] bg-[#07080c]">
+        <Image src={photo.url} alt={photo.alt || "HYDRA"} fill sizes="180px" className="object-contain p-2" />
       </div>
     </motion.figure>
   );
 }
 
-function PhotoStrip({ photos, start, className }: { photos: ImpactPhoto[]; start: number; className?: string }) {
-  if (photos.length === 0) return null;
+function Copy() {
   return (
-    <div className={cn("flex flex-wrap items-center justify-center gap-x-3 gap-y-5 sm:gap-x-4", className)}>
-      {photos.map((photo, i) => (
-        <Polaroid key={`${photo.url}-${start + i}`} photo={photo} index={start + i} />
-      ))}
-    </div>
-  );
-}
-
-function place(photos: ImpactPhoto[]) {
-  if (photos.length <= 4) {
-    const mid = Math.ceil(photos.length / 2);
-    return { top: photos.slice(0, mid), bottom: photos.slice(mid), left: [] as ImpactPhoto[], right: [] as ImpactPhoto[] };
-  }
-  const side = photos.length >= 8 ? 2 : 1;
-  const left = photos.slice(0, side);
-  const right = photos.slice(side, side * 2);
-  const rest = photos.slice(side * 2);
-  const mid = Math.ceil(rest.length / 2);
-  return { left, right, top: rest.slice(0, mid), bottom: rest.slice(mid) };
-}
-
-function Copy({ crowded }: { crowded: boolean }) {
-  return (
-    <div className="relative z-10 mx-auto max-w-xl px-2 text-center">
+    <div className="relative z-10 mx-auto max-w-2xl px-4 text-center">
       <motion.p
-        className="font-mono text-[11px] uppercase tracking-[0.28em] text-muted sm:text-xs"
+        className="font-mono text-[11px] uppercase tracking-[0.32em] text-muted"
         initial={{ opacity: 0, y: 10 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
@@ -119,27 +70,27 @@ function Copy({ crowded }: { crowded: boolean }) {
         Protected worldwide
       </motion.p>
       <motion.p
-        className="mt-4 font-semibold leading-[0.9] tracking-[-0.07em] text-fg sm:mt-6"
-        style={{ fontSize: crowded ? "clamp(3.4rem, 13vw, 8.5rem)" : "clamp(4.75rem, 20vw, 13rem)" }}
-        initial={{ opacity: 0, scale: 0.88, y: 24 }}
-        whileInView={{ opacity: 1, scale: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.35 }}
-        transition={{ duration: 0.85, ease: [0.16, 1, 0.3, 1] }}
+        className="mt-3 font-semibold leading-[0.86] tracking-[-0.07em] text-fg sm:mt-4"
+        style={{ fontSize: "clamp(4.25rem, 14vw, 9.5rem)" }}
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.4 }}
+        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
       >
         <CountUp to={20000} className="tabular-nums" />
         <span>+</span>
       </motion.p>
       <motion.div
-        className="mx-auto mt-6 max-w-xl space-y-3 sm:mt-8 sm:space-y-4"
-        initial={{ opacity: 0, y: 18 }}
+        className="mx-auto mt-5 max-w-lg space-y-3 sm:mt-6"
+        initial={{ opacity: 0, y: 16 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
-        transition={{ duration: 0.65, delay: 0.2 }}
+        transition={{ duration: 0.6, delay: 0.12 }}
       >
         <h2 className="text-2xl font-semibold tracking-tight text-fg sm:text-3xl md:text-4xl">
           Devices equipped by HYDRA.
         </h2>
-        <p className="text-sm text-pretty text-muted sm:text-base md:text-lg">
+        <p className="text-sm text-pretty text-muted sm:text-base">
           Engineered for the flagship phones people actually carry. Screen armor, cases, camera kits and more — cut per
           model, quality-checked and shipped worldwide.
         </p>
@@ -149,46 +100,42 @@ function Copy({ crowded }: { crowded: boolean }) {
 }
 
 export function ImpactStat({ images = [] }: { images?: ImpactPhoto[] }) {
-  const photos = useMemo(() => scatter(images.filter((photo) => photo.url).slice(0, 10)), [images]);
-  const crowded = photos.length > 0;
-  const { top, bottom, left, right } = place(photos);
+  const photos = useMemo(() => images.filter((photo) => photo.url).slice(0, SPOTS.length), [images]);
 
   return (
-    <section className={cn("relative overflow-hidden", crowded ? "py-8 sm:py-12 lg:py-16" : "py-20 sm:py-28 md:py-40")}>
+    <section className={cn("relative overflow-hidden", photos.length > 0 ? "py-10 sm:py-14" : "py-20 sm:py-28 md:py-40")}>
       <div
         aria-hidden
-        className="pointer-events-none absolute left-1/2 top-1/2 h-[min(78vw,560px)] w-[min(96vw,760px)] -translate-x-1/2 -translate-y-1/2 opacity-80"
+        className="pointer-events-none absolute left-1/2 top-1/2 h-[min(64vw,480px)] w-[min(78vw,680px)] -translate-x-1/2 -translate-y-[46%]"
         style={{
           backgroundImage:
-            "radial-gradient(circle, color-mix(in oklab, var(--color-fg, currentColor) 16%, transparent) 1px, transparent 1.5px)",
+            "radial-gradient(circle, color-mix(in oklab, var(--color-fg, currentColor) 14%, transparent) 0.9px, transparent 1.4px)",
           backgroundSize: "13px 13px",
-          maskImage: "radial-gradient(ellipse at center, black 18%, transparent 70%)",
-          WebkitMaskImage: "radial-gradient(ellipse at center, black 18%, transparent 70%)",
+          maskImage: "radial-gradient(ellipse 70% 78% at 50% 50%, black 12%, transparent 72%)",
+          WebkitMaskImage: "radial-gradient(ellipse 70% 78% at 50% 50%, black 12%, transparent 72%)",
         }}
       />
 
-      {crowded ? (
-        <div className="relative mx-auto flex max-w-[1240px] flex-col gap-6 px-3 sm:gap-8 sm:px-5 lg:gap-2">
-          <PhotoStrip photos={top} start={0} className="lg:-mb-8" />
-          <div className="grid items-center gap-6 lg:grid-cols-[minmax(7.5rem,1fr)_minmax(16rem,36rem)_minmax(7.5rem,1fr)] lg:gap-x-2">
-            <div className="hidden lg:flex lg:justify-end">
-              <PhotoStrip photos={left} start={top.length} className="flex-col items-end" />
-            </div>
-            <Copy crowded />
-            <div className="hidden lg:flex lg:justify-start">
-              <PhotoStrip photos={right} start={top.length + left.length} className="flex-col items-start" />
+      {photos.length > 0 ? (
+        <div className="relative mx-auto h-[32rem] max-w-[68rem] sm:h-[36rem] lg:h-[40rem]">
+          {photos.map((photo, index) => (
+            <ScatteredPhoto key={`${photo.url}-${index}`} photo={photo} index={index} />
+          ))}
+          <div className="absolute inset-0 z-10 flex items-center justify-center">
+            <div
+              className="max-w-xl px-4"
+              style={{
+                background:
+                  "radial-gradient(ellipse at center, var(--color-bg, #fff) 46%, transparent 74%)",
+              }}
+            >
+              <Copy />
             </div>
           </div>
-          <PhotoStrip
-            photos={[...left, ...right, ...bottom]}
-            start={top.length}
-            className="lg:hidden"
-          />
-          <PhotoStrip photos={bottom} start={top.length + left.length + right.length} className="hidden lg:-mt-6 lg:flex" />
         </div>
       ) : (
         <div className="container-page relative">
-          <Copy crowded={false} />
+          <Copy />
         </div>
       )}
     </section>

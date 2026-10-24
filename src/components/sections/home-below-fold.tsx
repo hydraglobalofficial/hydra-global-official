@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 import dynamic from "next/dynamic";
 import { SectionDivider } from "@/components/ui/section-divider";
 import { Reveal } from "@/components/motion/reveal";
-import type { ClarityContent, HowItWorksContent, ImpactContent, ImpactLabContent, NewsletterContent } from "@/content/site-sections";
+import type { ClarityContent, HowItWorksContent, ImpactContent, ImpactLabContent, NewsletterContent, TechContent } from "@/content/site-sections";
 
 const ImpactStat = dynamic(
   () => import("@/components/sections/impact-stat").then((m) => m.ImpactStat),
@@ -31,6 +31,7 @@ const NewsletterBlock = dynamic(
 /** Below-fold motion / 3D blocks — code-split; bestsellers slot keeps original order. */
 export function HomeBelowFold({
   howItWorks,
+  tech,
   newsletter,
   clarity,
   impact,
@@ -38,6 +39,7 @@ export function HomeBelowFold({
   bestsellers,
 }: {
   howItWorks: HowItWorksContent;
+  tech: TechContent;
   newsletter: NewsletterContent;
   clarity?: ClarityContent;
   impact?: ImpactContent;
@@ -55,7 +57,7 @@ export function HomeBelowFold({
       </Reveal>
       <Testimonials />
       <SectionDivider />
-      <TechGrid />
+      <TechGrid content={tech} />
       <HowItWorks content={howItWorks} />
       <NewsletterBlock content={newsletter} />
     </div>

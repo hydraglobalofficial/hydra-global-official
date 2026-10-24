@@ -5,6 +5,7 @@ import Link from "next/link";
 import { NewsletterForm } from "@/components/forms/newsletter-form";
 import { SocialLinks } from "@/components/ui/social-links";
 import { footerNav, type NavLink } from "@/config/navigation";
+import type { SocialContent } from "@/content/site-sections";
 import { siteConfig, type BrandRecord } from "@/config/site";
 import { Logo } from "./logo";
 
@@ -17,7 +18,7 @@ function shopFooterLinks(brands: BrandRecord[]): NavLink[] {
 }
 
 /** Premium footer — original HYDRA wordmark (not CSS text). */
-export function SiteFooter({ brands = [] }: { brands?: BrandRecord[] }) {
+export function SiteFooter({ brands = [], social }: { brands?: BrandRecord[]; social?: SocialContent }) {
   const groups = footerNav.map((group) =>
     group.title === "Shop" ? { ...group, links: shopFooterLinks(brands) } : group,
   );
@@ -37,7 +38,7 @@ export function SiteFooter({ brands = [] }: { brands?: BrandRecord[] }) {
               <p className="text-sm font-medium text-fg">Stay ahead of every drop</p>
               <NewsletterForm />
             </div>
-            <SocialLinks />
+            <SocialLinks links={social} />
           </div>
 
           <div className="grid grid-cols-2 gap-x-6 gap-y-8 sm:grid-cols-4 sm:gap-x-8 sm:gap-y-10">

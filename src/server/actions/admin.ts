@@ -17,15 +17,17 @@ import type {
   HeroVisualKey,
   HomeHeroContent,
   HowItWorksContent,
+  TechContent,
   NewsletterContent,
   ClarityContent,
   ImpactContent,
   ImpactLabContent,
   ShowcaseContent,
   ShippingContent,
+  SocialContent,
   WhatsappWidgetContent,
 } from "@/content/site-sections";
-import { clampText, safeInternalHref, safeMediaUrl, safeSlug, safeVideoUrl } from "@/lib/content-safety";
+import { clampText, safeInternalHref, safeMediaUrl, safeSlug, safeSocialUrl, safeVideoUrl } from "@/lib/content-safety";
 import {
   normalizeAboutContent,
   normalizeCollectionsContent,
@@ -35,9 +37,11 @@ import {
   normalizeCurrencyContent,
   normalizeHomeHeroContent,
   normalizeHowItWorksContent,
+  normalizeTechContent,
   normalizeInstallationContent,
   normalizeNewsletterContent,
   normalizeShippingContent,
+  normalizeSocialContent,
   normalizeShowcaseContent,
   normalizeWhatsappWidgetContent,
 } from "@/lib/normalize-sections";
@@ -1017,6 +1021,45 @@ export async function saveAboutSection(_prev: FormState, formData: FormData): Pr
   }
 }
 
+export async function saveTechSection(_prev: FormState, formData: FormData): Promise<FormState> {
+  await requireAdmin();
+  try {
+    const titles = formData.getAll("techTitle").map(String);
+    const texts = formData.getAll("techText").map(String);
+    const stats = formData.getAll("techStat").map(String);
+    const images = formData.getAll("techImage").map(String);
+    const data = normalizeTechContent({
+      eyebrow: clampText(formData.get("eyebrow"), 40),
+      title: clampText(formData.get("title"), 80),
+      titleMuted: clampText(formData.get("titleMuted"), 80),
+      description: clampText(formData.get("description"), 240),
+      cards: defaultRange(titles, texts, stats, images),
+    } satisfies TechContent);
+    await db.siteSection.upsert({
+      where: { key: "home.tech" },
+      create: { key: "home.tech", title: "Protection, re-engineered", data },
+      update: { data, title: "Protection, re-engineered" },
+    });
+    updateTag(CONTENT_TAG);
+    revalidatePath("/");
+    revalidatePath("/admin/content/sections/home.tech");
+    await bumpAdminContentHub();
+    return { status: "success", message: "Protection cards published." };
+  } catch (error) {
+    console.error("[saveTechSection]", error);
+    return { status: "error", message: "Could not publish the protection cards." };
+  }
+}
+
+function defaultRange(titles: string[], texts: string[], stats: string[], images: string[]) {
+  return titles.slice(0, 6).map((title, i) => ({
+    title,
+    text: texts[i] ?? "",
+    stat: stats[i] ?? "",
+    image: images[i] ?? "",
+  }));
+}
+
 export async function saveHowItWorksSection(_prev: FormState, formData: FormData): Promise<FormState> {
   await requireAdmin();
   try {
@@ -1256,6 +1299,45 @@ export async function saveShippingSection(_prev: FormState, formData: FormData):
   } catch (error) {
     console.error("[saveShippingSection]", error);
     return { status: "error", message: "Could not publish shipping." };
+  }
+}
+
+const SOCIAL_FIELDS = [
+  ["facebook", "Facebook", "facebook.com"],
+  ["instagram", "Instagram", "instagram.com"],
+  ["youtube", "YouTube", "youtube.com"],
+  ["x", "X", "x.com"],
+] as const;
+
+export async function saveSocialSection(_prev: FormState, formData: FormData): Promise<FormState> {
+  await requireAdmin();
+  try {
+    const raw = {
+      facebook: String(formData.get("facebook") ?? "").trim(),
+      instagram: String(formData.get("instagram") ?? "").trim(),
+      youtube: String(formData.get("youtube") ?? "").trim(),
+      x: String(formData.get("x") ?? "").trim(),
+    } satisfies SocialContent;
+    for (const [key, label, host] of SOCIAL_FIELDS) {
+      if (!raw[key] || safeSocialUrl(key, raw[key], "") === "") {
+        return { status: "error", message: `${label} needs a full https link on ${host}.` };
+      }
+    }
+    const data = normalizeSocialContent(raw);
+    await db.siteSection.upsert({
+      where: { key: "site.social" },
+      create: { key: "site.social", title: "Social links", data },
+      update: { data, title: "Social links" },
+    });
+    updateTag(CONTENT_TAG);
+    revalidatePath("/", "layout");
+    revalidatePath("/contact");
+    revalidatePath("/admin/content/sections/site.social");
+    await bumpAdminContentHub();
+    return { status: "success", message: "Social links published." };
+  } catch (error) {
+    console.error("[saveSocialSection]", error);
+    return { status: "error", message: "Could not publish social links." };
   }
 }
 

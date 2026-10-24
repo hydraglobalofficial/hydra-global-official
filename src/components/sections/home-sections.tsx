@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, Droplets, Fingerprint, Layers, PackageCheck, ScanLine, ShoppingBag, Sparkles, Truck, Wrench, Zap } from "lucide-react";
 import { motion } from "motion/react";
@@ -9,7 +10,7 @@ import { SectionHeading } from "@/components/ui/primitives";
 import { SpotlightCard } from "@/components/ui/spotlight-card";
 import { NewsletterForm } from "@/components/forms/newsletter-form";
 import type { BrandRecord } from "@/config/site";
-import type { HowItWorksContent, NewsletterContent } from "@/content/site-sections";
+import type { HowItWorksContent, NewsletterContent, TechContent } from "@/content/site-sections";
 import type { NavigationData } from "@/server/queries/catalog";
 
 export function ShopByDevice({
@@ -62,13 +63,13 @@ export function ShopByDevice({
                     {card.models.map((m) => (
                       <span
                         key={m.slug}
-                        className="rounded-full border border-line bg-bg/40 px-2.5 py-1 text-[11px] text-muted backdrop-blur-sm sm:px-3 sm:text-xs light:bg-white/70"
+                        className="rounded-full border border-line bg-bg/40 px-2.5 py-1 text-[11px] text-muted backdrop-blur-sm sm:px-3 sm:text-xs light:border-[#C5E0F3] light:bg-white"
                       >
                         {m.model}
                       </span>
                     ))}
                   </div>
-                  <span className="mt-5 inline-flex min-h-11 w-fit items-center gap-2 rounded-full border border-line-strong bg-bg/55 px-5 py-2.5 text-sm font-medium backdrop-blur-md transition-all group-hover:border-accent/45 group-hover:bg-accent/10 light:bg-white/85">
+                  <span className="mt-5 inline-flex min-h-11 w-fit items-center gap-2 rounded-full border border-line-strong bg-bg/55 px-5 py-2.5 text-sm font-medium backdrop-blur-md transition-all group-hover:border-accent/45 group-hover:bg-accent/10 light:border-[#C5E0F3] light:bg-white">
                     Shop {card.brand.label}
                     <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
                   </span>
@@ -90,38 +91,85 @@ export function ShopByDevice({
   );
 }
 
-const tech = [
-  { icon: Layers, title: "5-layer construction", text: "Anti-shatter film, tempered core, optical adhesive, AR coat and oleophobic top layer.", stat: "5 layers" },
-  { icon: Zap, title: "Impact absorption", text: "Drop-tested from 2 meters onto granite. Glass sacrifices itself — your screen doesn't.", stat: "2 m drop" },
-  { icon: Fingerprint, title: "Ultrasonic ready", text: "Certified with in-display fingerprint readers on Galaxy S and iPhone Face ID sensors.", stat: "100% touch" },
-  { icon: Droplets, title: "Hydrophobic coat", text: "Water and oil bead off. Wipes clean with a single swipe.", stat: "110° contact" },
-  { icon: ScanLine, title: "Laser-cut precision", text: "±0.05mm tolerance ensures full coverage without case conflicts.", stat: "±0.05 mm" },
-  { icon: Sparkles, title: "Dust-free install", text: "Alignment frame and clean-room kit included in every box.", stat: "2 min fit" },
-];
+const techIcons = [Layers, Zap, Fingerprint, Droplets, ScanLine, Sparkles];
 
-export function TechGrid() {
+export function TechGrid({ content }: { content: TechContent }) {
   return (
     <section className="relative overflow-hidden py-14 sm:py-20 md:py-28">
       <div className="light-wash pointer-events-none absolute inset-x-0 top-1/2 h-72 -translate-y-1/2 bg-[radial-gradient(ellipse_at_center,rgb(30,64,175,0.12),transparent_65%)]" />
       <div className="container-page relative">
-        <SectionHeading align="center" eyebrow="Engineering" title={<>Protection, <span className="text-muted">re-engineered.</span></>} description="Every HYDRA protector is designed in-house and quality-checked batch by batch." />
+        <SectionHeading
+          align="center"
+          eyebrow={content.eyebrow}
+          title={
+            <>
+              {content.title} <span className="text-muted">{content.titleMuted}</span>
+            </>
+          }
+          description={content.description}
+        />
         <RevealGroup className="grid gap-3 sm:gap-4 md:grid-cols-2 lg:grid-cols-3" stagger={0.06}>
-          {tech.map(({ icon: Icon, title, text, stat }) => (
-            <RevealItem key={title} className="h-full min-w-0">
-              <SpotlightCard className="group h-full overflow-hidden p-5 sm:p-8">
-                <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-accent/35 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
-                <div className="flex items-start justify-between">
-                  <span className="relative grid size-12 place-items-center rounded-2xl border border-accent/25 bg-accent/10 text-accent">
-                    <span className="absolute inset-0 rounded-2xl bg-accent/20 opacity-0 blur-md transition-opacity duration-500 group-hover:opacity-100" />
-                    <Icon className="relative transition-transform duration-500 group-hover:scale-110" size={22} />
-                  </span>
-                  <span className="rounded-full border border-white/8 bg-white/[0.03] px-2.5 py-1 font-mono text-xs text-subtle transition-colors group-hover:border-accent/30 group-hover:text-accent">{stat}</span>
-                </div>
-                <h3 className="mt-8 text-lg font-medium">{title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-muted">{text}</p>
-              </SpotlightCard>
-            </RevealItem>
-          ))}
+          {content.cards.slice(0, 6).map((card, i) => {
+            const Icon = techIcons[i % techIcons.length]!;
+            const photo = Boolean(card.image);
+            return (
+              <RevealItem key={`${card.title}-${i}`} className="h-full min-w-0">
+                <article
+                  className={`group relative flex h-full flex-col overflow-hidden rounded-[1.35rem] border p-5 sm:p-6 ${
+                    photo
+                      ? "min-h-[17.5rem] justify-between border-white/15 shadow-[0_22px_50px_-32px_rgba(15,23,42,0.7)]"
+                      : "border-line bg-surface light:border-[#C5E0F3] light:bg-white"
+                  }`}
+                >
+                  {photo ? (
+                    <Image
+                      src={card.image}
+                      alt=""
+                      fill
+                      sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
+                      className="object-cover transition duration-700 ease-out group-hover:scale-[1.04]"
+                    />
+                  ) : null}
+                  {photo ? (
+                    <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/85 via-black/45 to-black/20" />
+                  ) : (
+                    <>
+                      <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-accent/40 to-transparent" />
+                      <div className="pointer-events-none absolute -right-10 -top-12 size-36 rounded-full bg-accent/[0.08] blur-2xl" />
+                    </>
+                  )}
+                  <div className="relative flex items-start justify-between gap-3">
+                    <span
+                      className={`grid size-11 place-items-center rounded-2xl border backdrop-blur-sm ${
+                        photo
+                          ? "border-white/25 bg-white/15 text-white"
+                          : "border-accent/25 bg-accent/10 text-accent"
+                      }`}
+                    >
+                      <Icon size={20} />
+                    </span>
+                    {card.stat ? (
+                      <span
+                        className={`rounded-full border px-2.5 py-1 font-mono text-[11px] tracking-wide backdrop-blur-sm ${
+                          photo
+                            ? "border-white/25 bg-black/35 text-white"
+                            : "border-line bg-surface-2 text-accent light:border-[#C5E0F3] light:bg-white"
+                        }`}
+                      >
+                        {card.stat}
+                      </span>
+                    ) : null}
+                  </div>
+                  <div className={photo ? "relative mt-10" : "relative mt-6"}>
+                    <h3 className={`text-lg font-semibold tracking-tight ${photo ? "text-white" : "text-fg"}`}>
+                      {card.title}
+                    </h3>
+                    <p className={`mt-2 text-sm leading-relaxed ${photo ? "text-white/80" : "text-muted"}`}>{card.text}</p>
+                  </div>
+                </article>
+              </RevealItem>
+            );
+          })}
         </RevealGroup>
       </div>
     </section>

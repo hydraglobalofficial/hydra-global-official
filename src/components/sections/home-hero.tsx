@@ -90,7 +90,7 @@ function HeroStagePager({
 }) {
   return (
     <div className="pointer-events-auto w-[min(100%,12.5rem)] sm:w-[min(100%,14rem)]">
-      <div className="rounded-full border border-line bg-bg/80 px-2.5 py-1.5 shadow-[0_14px_40px_-18px_rgba(0,0,0,0.55)] backdrop-blur-md light:bg-white/90 light:shadow-[0_10px_28px_-16px_rgba(0,0,0,0.16)] sm:px-3 sm:py-2">
+      <div className="rounded-full border border-line bg-bg/80 px-2.5 py-1.5 shadow-[0_14px_40px_-18px_rgba(0,0,0,0.55)] backdrop-blur-md light:border-[#C5E0F3] light:bg-white light:shadow-[0_10px_28px_-16px_rgba(0,0,0,0.14)] sm:px-3 sm:py-2">
         <div className="flex items-center justify-center gap-1.5 sm:gap-2">
           {Array.from({ length: total }, (_, i) => {
             const active = i === index;
@@ -351,7 +351,7 @@ export function Hero({ content }: { content: HomeHeroContent }) {
 
       <div className="pointer-events-none absolute inset-x-0 bottom-0 z-20 pb-[env(safe-area-inset-bottom)]">
         <div className="container-page pointer-events-auto pb-4 pt-2 sm:pb-7">
-          <div className="rounded-2xl border border-line bg-bg/70 px-2 py-2.5 backdrop-blur-xl sm:rounded-full sm:px-5 sm:py-3">
+          <div className="rounded-2xl border border-line bg-bg/70 px-2 py-2.5 backdrop-blur-xl sm:rounded-full sm:px-5 sm:py-3 light:border-[#C5E0F3] light:bg-white">
             <dl className="grid grid-cols-3 divide-x divide-line sm:flex sm:justify-center sm:divide-x">
               {stats.map((s, i) => (
                 <div key={`${s.value}-${i}`} className="flex min-w-0 flex-col items-center px-1.5 py-1 sm:flex-row sm:gap-2 sm:px-8">

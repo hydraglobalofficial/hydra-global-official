@@ -122,6 +122,29 @@ export function safeYoutubeUrl(raw: unknown, fallback = ""): string {
   }
 }
 
+const SOCIAL_HOSTS = {
+  facebook: ["facebook.com", "www.facebook.com", "m.facebook.com", "fb.com", "www.fb.com"],
+  instagram: ["instagram.com", "www.instagram.com"],
+  youtube: ["youtube.com", "www.youtube.com", "m.youtube.com", "youtu.be"],
+  x: ["x.com", "www.x.com", "twitter.com", "www.twitter.com"],
+} as const;
+
+/** https link for one social network. Anything else falls back. */
+export function safeSocialUrl(network: keyof typeof SOCIAL_HOSTS, raw: unknown, fallback: string): string {
+  if (typeof raw !== "string") return fallback;
+  const url = raw.trim();
+  if (!url || url.length > 400) return fallback;
+  try {
+    const parsed = new URL(url);
+    if (parsed.protocol !== "https:") return fallback;
+    const host = parsed.hostname.toLowerCase();
+    const allowed: readonly string[] = SOCIAL_HOSTS[network];
+    return allowed.includes(host) ? parsed.toString() : fallback;
+  } catch {
+    return fallback;
+  }
+}
+
 export function safeSlug(raw: unknown, fallback = ""): string {
   if (typeof raw !== "string") return fallback;
   const slug = raw.trim().toLowerCase();

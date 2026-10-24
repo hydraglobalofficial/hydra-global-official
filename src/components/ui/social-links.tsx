@@ -1,4 +1,5 @@
 import { siteConfig } from "@/config/site";
+import type { SocialContent } from "@/content/site-sections";
 import { cn } from "@/lib/utils";
 
 const icons = {
@@ -21,13 +22,21 @@ export function SocialIcon({ network, size = 16 }: { network: Network; size?: nu
   );
 }
 
-export function SocialLinks({ className, itemClassName }: { className?: string; itemClassName?: string }) {
+export function SocialLinks({
+  links = siteConfig.social,
+  className,
+  itemClassName,
+}: {
+  links?: SocialContent;
+  className?: string;
+  itemClassName?: string;
+}) {
   return (
     <div className={cn("flex items-center gap-2", className)}>
       {(Object.keys(labels) as Network[]).map((network) => (
         <a
           key={network}
-          href={siteConfig.social[network]}
+          href={links[network]}
           target="_blank"
           rel="noopener noreferrer"
           aria-label={labels[network]}

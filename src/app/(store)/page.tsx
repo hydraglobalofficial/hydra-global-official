@@ -21,6 +21,8 @@ import {
   getHomeHeroContent,
   getHowItWorksContent,
   getNewsletterContent,
+  getSocialContent,
+  getTechContent,
 } from "@/server/queries/content";
 import { Reveal } from "@/components/motion/reveal";
 
@@ -28,7 +30,7 @@ import { Reveal } from "@/components/motion/reveal";
 export const revalidate = 900;
 
 export default async function HomePage() {
-  const [featured, nav, collections, howItWorks, newsletter, hero, clarity, impact, impactLab] = await Promise.all([
+  const [featured, nav, collections, howItWorks, newsletter, hero, clarity, impact, impactLab, social, tech] = await Promise.all([
     getFeaturedProducts(8),
     getNavigationData(),
     getCollectionsContent(),
@@ -38,13 +40,15 @@ export default async function HomePage() {
     getClarityContent(),
     getImpactContent(),
     getImpactLabContent(),
+    getSocialContent(),
+    getTechContent(),
   ]);
   const collectionsContent = collections ?? defaultCollectionsContent;
   const heroContent = hero ?? defaultHomeHeroContent;
 
   return (
     <>
-      <JsonLd data={organizationJsonLd()} />
+      <JsonLd data={organizationJsonLd(social)} />
       <Hero content={heroContent} />
       <div id="explore" className="mt-16 scroll-mt-24">
         <BrandMarquee />
@@ -62,6 +66,7 @@ export default async function HomePage() {
 
       <HomeBelowFold
         howItWorks={howItWorks}
+        tech={tech}
         newsletter={newsletter}
         clarity={clarity}
         impact={impact}

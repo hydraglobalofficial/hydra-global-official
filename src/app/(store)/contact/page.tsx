@@ -8,6 +8,7 @@ import { ContactForm } from "@/components/contact/contact-form";
 import { OfficeCard } from "@/components/contact/office-card";
 import { isContactTopic } from "@/components/contact/topics";
 import { siteConfig } from "@/config/site";
+import { getSocialContent } from "@/server/queries/content";
 
 export const metadata: Metadata = {
   title: "Contact",
@@ -45,7 +46,7 @@ const faqs = [
 ];
 
 export default async function ContactPage({ searchParams }: PageProps<"/contact">) {
-  const { topic } = await searchParams;
+  const [{ topic }, social] = await Promise.all([searchParams, getSocialContent()]);
   const defaultTopic = isContactTopic(topic) ? topic : "general";
 
   return (
@@ -83,7 +84,7 @@ export default async function ContactPage({ searchParams }: PageProps<"/contact"
             <ContactForm key={defaultTopic} defaultTopic={defaultTopic} />
           </Reveal>
           <Reveal delay={0.1}>
-            <OfficeCard />
+            <OfficeCard social={social} />
           </Reveal>
         </div>
       </section>

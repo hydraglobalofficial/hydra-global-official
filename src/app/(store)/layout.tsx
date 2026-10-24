@@ -12,16 +12,17 @@ import { ConsentAnalytics } from "@/components/analytics/consent-analytics-lazy"
 import { MoneyProvider } from "@/components/money/money-provider";
 import { bindMoneyFormat } from "@/lib/money";
 import { ShippingProvider } from "@/components/shipping/shipping-provider";
-import { getAnnouncements, getCurrencyContent, getShippingContent, getWhatsappWidgetContent } from "@/server/queries/content";
+import { getAnnouncements, getCurrencyContent, getShippingContent, getSocialContent, getWhatsappWidgetContent } from "@/server/queries/content";
 import { getBrands } from "@/server/queries/catalog";
 
 export default async function StoreLayout({ children }: LayoutProps<"/">) {
-  const [announcements, whatsapp, brands, currency, shipping] = await Promise.all([
+  const [announcements, whatsapp, brands, currency, shipping, social] = await Promise.all([
     getAnnouncements(),
     getWhatsappWidgetContent(),
     getBrands(),
     getCurrencyContent(),
     getShippingContent(),
+    getSocialContent(),
   ]);
   bindMoneyFormat(currency);
 
@@ -41,7 +42,7 @@ export default async function StoreLayout({ children }: LayoutProps<"/">) {
         <main id="main" className="min-w-0 flex-1 overflow-x-clip">
           {children}
         </main>
-        <SiteFooter brands={brands} />
+        <SiteFooter brands={brands} social={social} />
         {/* Fixed overlays — siblings of footer so position:fixed is not trapped */}
         {/* Fixed overlays — siblings so footer overflow cannot trap them */}
         <ScrollTopButton />

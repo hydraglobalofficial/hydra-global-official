@@ -20,10 +20,10 @@ export const siteConfig = {
   /** Fallback only — live display comes from admin Content → Currency. */
   currency: "BDT",
   social: {
-    facebook: "https://facebook.com/hydraglobal",
-    instagram: "https://instagram.com/hydraglobal",
-    youtube: "https://youtube.com/@hydraglobal",
-    x: "https://x.com/hydraglobal",
+    facebook: "https://www.facebook.com/share/1C5gw1m8am/",
+    instagram: "https://www.instagram.com/hydraglobalofficial?vrfl=YmVyeHQzbTcwcGU5",
+    youtube: "https://youtube.com/@hydraglobalofficial?si=sJ3izB9ZTDj9wrxL",
+    x: "https://x.com/hydragloballtd",
   },
 } as const;
 

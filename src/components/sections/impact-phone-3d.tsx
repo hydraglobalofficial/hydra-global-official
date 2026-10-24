@@ -42,6 +42,18 @@ const FROST = [
   "M74 251 L51 289 L62 268 Z",
 ];
 
+/** Still phone, framed by the section card. No drop playback. */
+export function ImpactPhoneCard({ className }: { className?: string }) {
+  return (
+    <div className={cn("relative grid h-[20rem] w-full place-items-center sm:h-[26rem] md:h-[30rem]", className)}>
+      <div className="pointer-events-none absolute bottom-[14%] left-1/2 h-3 w-36 -translate-x-1/2 rounded-full bg-black/15 blur-lg sm:w-44" />
+      <div className="relative z-10">
+        <PhoneBody cracked showCracks growing={false} flashing={false} />
+      </div>
+    </div>
+  );
+}
+
 /** Photoreal drop demo — no floating badges, no neon FX. */
 export function ImpactPhone3D({ className }: { className?: string }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -183,7 +195,7 @@ export function ImpactPhone3D({ className }: { className?: string }) {
         <button
           type="button"
           onClick={replay}
-          className="absolute bottom-1 right-1 inline-flex items-center gap-1.5 rounded-md border border-line bg-black/70 px-2.5 py-1 text-[10px] uppercase tracking-[0.16em] text-muted transition hover:text-fg"
+          className="absolute bottom-2 right-2 inline-flex items-center gap-1.5 rounded-full border border-[#C5E0F3] bg-white px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.16em] text-fg shadow-sm transition hover:bg-[#f4f9fd]"
         >
           <RotateCcw size={11} /> Replay
         </button>

@@ -101,9 +101,9 @@ export function CheckoutForm() {
     <form action={action} className="relative z-0 grid gap-8 lg:grid-cols-[minmax(0,1fr)_26rem] lg:gap-10" noValidate>
       <input type="hidden" name="lines" value={payload} />
 
-      <div className="min-w-0 space-y-5 sm:space-y-6 md:space-y-8">
+      <div className="min-w-0 overflow-hidden rounded-[1.35rem] border border-line bg-surface light:border-[#C5E0F3] light:bg-white sm:rounded-[1.75rem]">
         {/* 1 · Contact */}
-        <section className="rounded-[1.35rem] border border-line bg-surface p-4 sm:rounded-[1.75rem] sm:p-7">
+        <section className="p-4 sm:p-7">
           <SectionTitle
             step="01"
             icon={User}
@@ -152,7 +152,7 @@ export function CheckoutForm() {
         </section>
 
         {/* 2 · Delivery */}
-        <section className="rounded-[1.35rem] border border-line bg-surface p-4 sm:rounded-[1.75rem] sm:p-7">
+        <section className="px-4 pb-4 pt-1 sm:px-7 sm:pb-7 sm:pt-2">
           <SectionTitle
             step="02"
             icon={MapPin}
@@ -228,7 +228,7 @@ export function CheckoutForm() {
         </section>
 
         {/* 3 · Instructions */}
-        <section className="rounded-[1.35rem] border border-line bg-surface p-4 sm:rounded-[1.75rem] sm:p-7">
+        <section className="px-4 pb-4 pt-1 sm:px-7 sm:pb-7 sm:pt-2">
           <SectionTitle
             step="03"
             icon={Truck}
@@ -246,7 +246,7 @@ export function CheckoutForm() {
         </section>
 
         {/* 4 · Payment */}
-        <section className="rounded-[1.35rem] border border-line bg-surface p-4 sm:rounded-[1.75rem] sm:p-7">
+        <section className="px-4 pb-4 pt-1 sm:px-7 sm:pb-7 sm:pt-2">
           <SectionTitle
             step="04"
             icon={Package}
@@ -282,7 +282,7 @@ export function CheckoutForm() {
         </section>
       </div>
 
-      <aside className="h-fit space-y-5 rounded-[1.35rem] border border-line bg-surface p-5 sm:space-y-6 sm:rounded-[1.75rem] sm:p-6 lg:sticky lg:top-28">
+      <aside className="h-fit space-y-5 rounded-[1.35rem] border border-line bg-surface p-5 light:border-[#C5E0F3] light:bg-white sm:space-y-6 sm:rounded-[1.75rem] sm:p-6 lg:sticky lg:top-28">
         <h2 className="text-lg font-semibold tracking-tight">Order summary</h2>
         <ul className="max-h-72 space-y-4 overflow-y-auto overscroll-contain pr-1">
           {lines.map((l) => (

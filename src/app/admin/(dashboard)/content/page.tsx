@@ -336,6 +336,40 @@ export default async function AdminContentPage() {
       <section className="mt-10 space-y-4">
         <div>
           <h2 className="flex items-center gap-2 font-medium">
+            <LayoutTemplate size={16} className="text-accent" /> Social links
+          </h2>
+          <p className="mt-1 text-sm text-muted">
+            Facebook, Instagram, YouTube and X — shown in the footer and on the contact page.
+          </p>
+        </div>
+        {SITE_SECTION_META.filter((s) => s.key === "site.social").map((s) => (
+          <Link
+            key={s.key}
+            href={`/admin/content/sections/${encodeURIComponent(s.key)}`}
+            className="block rounded-2xl border border-white/10 bg-gradient-to-br from-white/[0.04] via-white/[0.02] to-transparent p-5 transition-colors hover:border-accent/35"
+          >
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <p className="text-[10px] font-medium uppercase tracking-[0.18em] text-accent">Global · Footer</p>
+                <p className="mt-1 text-base font-medium">{s.title}</p>
+                <p className="mt-1 text-sm text-muted">{s.description}</p>
+                <p className="mt-2 text-xs text-subtle">
+                  {sectionUpdated.has(s.key)
+                    ? `Updated ${formatDate(sectionUpdated.get(s.key)!)}`
+                    : "Using the official profiles until you publish"}
+                </p>
+              </div>
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-white/10 px-3 py-1.5 text-xs text-muted">
+                <Pencil size={12} /> Edit
+              </span>
+            </div>
+          </Link>
+        ))}
+      </section>
+
+      <section className="mt-10 space-y-4">
+        <div>
+          <h2 className="flex items-center gap-2 font-medium">
             <LayoutTemplate size={16} className="text-accent" /> Homepage video cards
           </h2>
           <p className="mt-1 text-sm text-muted">
@@ -402,6 +436,40 @@ export default async function AdminContentPage() {
       </section>
 
       <section className="mt-10 space-y-4">
+        <div>
+          <h2 className="flex items-center gap-2 font-medium">
+            <LayoutTemplate size={16} className="text-accent" /> Protection, re-engineered
+          </h2>
+          <p className="mt-1 text-sm text-muted">
+            The six homepage cards. Upload a background photo and edit the title, text and stat on each one.
+          </p>
+        </div>
+        {SITE_SECTION_META.filter((s) => s.key === "home.tech").map((s) => (
+          <Link
+            key={s.key}
+            href={`/admin/content/sections/${encodeURIComponent(s.key)}`}
+            className="block rounded-2xl border border-accent/25 bg-gradient-to-br from-accent/15 via-white/[0.03] to-transparent p-5 transition-colors hover:border-accent/45"
+          >
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <p className="text-[10px] font-medium uppercase tracking-[0.18em] text-accent">Homepage · 6 cards</p>
+                <p className="mt-1 text-base font-medium">{s.title}</p>
+                <p className="mt-1 text-sm text-muted">{s.description}</p>
+                <p className="mt-2 text-xs text-subtle">
+                  {sectionUpdated.has(s.key)
+                    ? `Updated ${formatDate(sectionUpdated.get(s.key)!)}`
+                    : "Add a background photo on any card, then publish"}
+                </p>
+              </div>
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-white/10 px-3 py-1.5 text-xs text-muted">
+                <Pencil size={12} /> Edit
+              </span>
+            </div>
+          </Link>
+        ))}
+      </section>
+
+      <section className="mt-10 space-y-4">
         <h2 className="flex items-center gap-2 font-medium">
           <LayoutTemplate size={16} className="text-accent" /> Other site sections
         </h2>
@@ -413,9 +481,11 @@ export default async function AdminContentPage() {
               s.key !== "about" &&
               s.key !== "installation" &&
               s.key !== "site.whatsapp" &&
+              s.key !== "site.social" &&
               s.key !== "home.clarity" &&
               s.key !== "home.impact" &&
               s.key !== "home.impactLab" &&
+              s.key !== "home.tech" &&
               s.key !== "home.showcase",
           ).map((s) => (
             <Link

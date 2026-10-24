@@ -39,6 +39,23 @@ export type HowItWorksContent = {
   steps: { title: string; text: string }[];
 };
 
+/** Homepage “Protection, re-engineered” — six photo cards. */
+export type TechCard = {
+  title: string;
+  text: string;
+  stat: string;
+  /** Optional full-bleed background. Empty keeps the plain card. */
+  image: string;
+};
+
+export type TechContent = {
+  eyebrow: string;
+  title: string;
+  titleMuted: string;
+  description: string;
+  cards: TechCard[];
+};
+
 export type NewsletterContent = {
   eyebrow: string;
   title: string;
@@ -248,6 +265,51 @@ export const defaultAboutContent: AboutContent = {
   },
 };
 
+export const defaultTechContent: TechContent = {
+  eyebrow: "Engineering",
+  title: "Protection,",
+  titleMuted: "re-engineered.",
+  description: "Every HYDRA protector is designed in-house and quality-checked batch by batch.",
+  cards: [
+    {
+      title: "5-layer construction",
+      text: "Anti-shatter film, tempered core, optical adhesive, AR coat and oleophobic top layer.",
+      stat: "5 layers",
+      image: "/products/glass-clear.jpg",
+    },
+    {
+      title: "Impact absorption",
+      text: "Drop-tested from 2 meters onto granite. Glass sacrifices itself — your screen doesn't.",
+      stat: "2 m drop",
+      image: "/products/glass-matte.jpg",
+    },
+    {
+      title: "Ultrasonic ready",
+      text: "Certified with in-display fingerprint readers on Galaxy S and iPhone Face ID sensors.",
+      stat: "100% touch",
+      image: "/products/glass-privacy.jpg",
+    },
+    {
+      title: "Hydrophobic coat",
+      text: "Water and oil bead off. Wipes clean with a single swipe.",
+      stat: "110° contact",
+      image: "/products/camera-lens.jpg",
+    },
+    {
+      title: "Laser-cut precision",
+      text: "±0.05mm tolerance ensures full coverage without case conflicts.",
+      stat: "±0.05 mm",
+      image: "/products/case-clear.jpg",
+    },
+    {
+      title: "Dust-free install",
+      text: "Alignment frame and clean-room kit included in every box.",
+      stat: "2 min fit",
+      image: "/products/box.jpg",
+    },
+  ],
+};
+
 export const defaultHowItWorksContent: HowItWorksContent = {
   eyebrow: "How it works",
   title: "From checkout to",
@@ -436,6 +498,21 @@ export const defaultShippingContent: ShippingContent = {
   amount: 80,
 };
 
+/** Footer and contact social icons. Admin can replace each URL. */
+export type SocialContent = {
+  facebook: string;
+  instagram: string;
+  youtube: string;
+  x: string;
+};
+
+export const defaultSocialContent: SocialContent = {
+  facebook: "https://www.facebook.com/share/1C5gw1m8am/",
+  instagram: "https://www.instagram.com/hydraglobalofficial?vrfl=YmVyeHQzbTcwcGU5",
+  youtube: "https://youtube.com/@hydraglobalofficial?si=sJ3izB9ZTDj9wrxL",
+  x: "https://x.com/hydragloballtd",
+};
+
 /** Homepage clarity slider. Empty images keep the built-in glass scene. */
 export type ClarityContent = {
   beforeImage: string;
@@ -462,7 +539,14 @@ export type ImpactContent = {
 };
 
 export const defaultImpactContent: ImpactContent = {
-  images: [],
+  images: [
+    { url: "/products/glass-clear.jpg", alt: "HYDRA clear screen armor" },
+    { url: "/products/glass-privacy.jpg", alt: "HYDRA privacy glass" },
+    { url: "/products/glass-matte.jpg", alt: "HYDRA matte glass" },
+    { url: "/products/camera-lens.jpg", alt: "HYDRA camera lens armor" },
+    { url: "/products/case-clear.jpg", alt: "HYDRA clear case" },
+    { url: "/products/box.jpg", alt: "HYDRA install kit" },
+  ],
 };
 
 /** Four blocks under the homepage drop animation. */
@@ -510,12 +594,22 @@ export const SITE_SECTION_META = [
     title: "Homepage video cards",
     description: "The video cards on the homepage. Each card has a poster image and a YouTube link.",
   },
+  {
+    key: "home.tech",
+    title: "Protection, re-engineered",
+    description: "The six homepage cards. Each one has its own background photo, title, text and small stat.",
+  },
   { key: "home.howItWorks", title: "Home · How it works", description: "Checkout-to-armored steps on the homepage." },
   { key: "home.newsletter", title: "Home · Newsletter", description: "Members list signup block copy." },
   {
     key: "site.whatsapp",
     title: "WhatsApp float",
     description: "Right-side chat button: WhatsApp number, greeting, and rotating staff photos (admin uploads).",
+  },
+  {
+    key: "site.social",
+    title: "Social links",
+    description: "Facebook, Instagram, YouTube and X icons in the footer and on the contact page.",
   },
   {
     key: "site.currency",

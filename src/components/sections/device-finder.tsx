@@ -40,7 +40,7 @@ export function DeviceFinder({
   }
 
   return (
-    <div className="relative overflow-hidden rounded-[1.5rem] border border-line bg-surface p-4 sm:rounded-[2rem] sm:p-6 md:p-10">
+    <div className="relative overflow-hidden rounded-[1.5rem] border border-line bg-surface p-4 sm:rounded-[2rem] sm:p-6 md:p-10 light:border-[#C5E0F3] light:bg-white">
       <div className="relative grid gap-6 sm:gap-8 lg:grid-cols-[1fr_2fr] lg:items-center">
         <div className="space-y-3">
           <p className="font-mono text-[11px] uppercase tracking-[0.25em] text-subtle">Find your fit</p>
@@ -97,7 +97,7 @@ export function DeviceFinder({
                 <Link
                   key={d.slug}
                   href={`/shop/${d.brandSlug}?device=${d.slug}`}
-                  className="group inline-flex items-center gap-1 rounded-full border border-line bg-white/[0.03] px-3 py-1.5 text-xs text-muted transition-all hover:border-accent/40 hover:bg-accent/10 hover:text-fg"
+                  className="group inline-flex items-center gap-1 rounded-full border border-line bg-white/[0.03] px-3 py-1.5 text-xs text-muted transition-all hover:border-accent/40 hover:bg-accent/10 hover:text-fg light:border-[#C5E0F3] light:bg-white"
                 >
                   {d.model}
                   <ArrowUpRight size={12} className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />

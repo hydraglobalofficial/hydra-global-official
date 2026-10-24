@@ -1,5 +1,6 @@
 import { createElement } from "react";
 import { siteConfig } from "@/config/site";
+import type { SocialContent } from "@/content/site-sections";
 import { absoluteUrl } from "./utils";
 
 type Json = Record<string, unknown>;
@@ -12,7 +13,7 @@ export function JsonLd({ data }: { data: Json | Json[] }) {
   });
 }
 
-export function organizationJsonLd(): Json {
+export function organizationJsonLd(social: SocialContent = siteConfig.social): Json {
   return {
     "@context": "https://schema.org",
     "@type": "Organization",
@@ -21,7 +22,7 @@ export function organizationJsonLd(): Json {
     email: siteConfig.email,
     telephone: siteConfig.phone,
     address: { "@type": "PostalAddress", streetAddress: siteConfig.address, addressCountry: "BD" },
-    sameAs: Object.values(siteConfig.social),
+    sameAs: [social.facebook, social.instagram, social.youtube, social.x],
   };
 }
 

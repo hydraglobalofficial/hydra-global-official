@@ -11,9 +11,11 @@ import {
   CurrencySectionEditor,
   HomeHeroSectionEditor,
   HowItWorksSectionEditor,
+  TechSectionEditor,
   InstallationSectionEditor,
   NewsletterSectionEditor,
   ShippingSectionEditor,
+  SocialSectionEditor,
   ShowcaseSectionEditor,
   WhatsappWidgetSectionEditor,
 } from "@/components/admin/section-editors";
@@ -28,9 +30,11 @@ import {
   normalizeCurrencyContent,
   normalizeHomeHeroContent,
   normalizeHowItWorksContent,
+  normalizeTechContent,
   normalizeInstallationContent,
   normalizeNewsletterContent,
   normalizeShippingContent,
+  normalizeSocialContent,
   normalizeShowcaseContent,
   normalizeWhatsappWidgetContent,
 } from "@/lib/normalize-sections";
@@ -64,6 +68,7 @@ export default async function EditSiteSectionPage({ params }: Props) {
       {key === "home.howItWorks" && (
         <HowItWorksSectionEditor content={normalizeHowItWorksContent(row?.data)} />
       )}
+      {key === "home.tech" && <TechSectionEditor content={normalizeTechContent(row?.data)} />}
       {key === "home.showcase" && (
         <ShowcaseSectionEditor content={normalizeShowcaseContent(row?.data)} />
       )}
@@ -78,6 +83,9 @@ export default async function EditSiteSectionPage({ params }: Props) {
       )}
       {key === "site.shipping" && (
         <ShippingSectionEditor content={normalizeShippingContent(row?.data)} />
+      )}
+      {key === "site.social" && (
+        <SocialSectionEditor content={normalizeSocialContent(row?.data)} />
       )}
       {key === "home.clarity" && (
         <ClaritySectionEditor content={normalizeClarityContent(row?.data)} />

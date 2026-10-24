@@ -2,6 +2,7 @@
 
 import { Clock, MapPin, Navigation } from "lucide-react";
 import { motion } from "motion/react";
+import type { SocialContent } from "@/content/site-sections";
 import { SocialLinks } from "@/components/ui/social-links";
 import { siteConfig } from "@/config/site";
 import { useBusinessStatus } from "./live-status";
@@ -66,7 +67,7 @@ function OfficeMap() {
   );
 }
 
-export function OfficeCard() {
+export function OfficeCard({ social }: { social?: SocialContent }) {
   const status = useBusinessStatus();
   const today = status?.day ?? null;
   const { open, close } = siteConfig.businessHours;
@@ -127,7 +128,7 @@ export function OfficeCard() {
 
       <div className="flex items-center justify-between border-t border-line pt-5">
         <p className="text-xs text-muted">Follow the lab</p>
-        <SocialLinks itemClassName="size-9 rounded-xl" />
+        <SocialLinks links={social} itemClassName="size-9 rounded-xl" />
       </div>
     </div>
   );

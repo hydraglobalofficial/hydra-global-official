@@ -3,11 +3,13 @@ import {
   defaultCollectionsContent,
   defaultHomeHeroContent,
   defaultHowItWorksContent,
+  defaultTechContent,
   defaultNewsletterContent,
   defaultClarityContent,
   defaultImpactContent,
   defaultImpactLabContent,
   defaultShowcaseContent,
+  defaultSocialContent,
   defaultWhatsappWidgetContent,
   type AboutContent,
   type CollectionsContent,
@@ -15,11 +17,13 @@ import {
   type HeroVisualKey,
   type HomeHeroContent,
   type HowItWorksContent,
+  type TechContent,
   type NewsletterContent,
   type ClarityContent,
   type ImpactContent,
   type ImpactLabContent,
   type ShippingContent,
+  type SocialContent,
   type ShowcaseContent,
   type ShowcaseVideoItem,
   type WhatsappWidgetContent,
@@ -30,6 +34,7 @@ import {
   safeInternalHref,
   safeMediaUrl,
   safeSlug,
+  safeSocialUrl,
   safeVideoUrl,
   safeYoutubeUrl,
 } from "@/lib/content-safety";
@@ -199,6 +204,27 @@ export function normalizeAboutContent(raw: unknown): AboutContent {
       text: clampText(partner.text, 400, defaultAboutContent.partner.text),
       cta: clampText(partner.cta, 60, defaultAboutContent.partner.cta),
     },
+  };
+}
+
+export function normalizeTechContent(raw: unknown): TechContent {
+  const data = isRecord(raw) ? raw : {};
+  const incoming = Array.isArray(data.cards) ? data.cards : [];
+  const cards = defaultTechContent.cards.map((fallback, i) => {
+    const row = isRecord(incoming[i]) ? incoming[i] : {};
+    return {
+      title: clampText(row.title, 80, fallback.title),
+      text: clampText(row.text, 280, fallback.text),
+      stat: clampText(row.stat, 24, fallback.stat),
+      image: safeMediaUrl(row.image, fallback.image),
+    };
+  });
+  return {
+    eyebrow: clampText(data.eyebrow, 40, defaultTechContent.eyebrow),
+    title: clampText(data.title, 80, defaultTechContent.title),
+    titleMuted: clampText(data.titleMuted, 80, defaultTechContent.titleMuted),
+    description: clampText(data.description, 240, defaultTechContent.description),
+    cards,
   };
 }
 
@@ -422,6 +448,17 @@ export function normalizeShippingContent(raw: unknown): ShippingContent {
   const mode = data.mode === "free" ? "free" : "paid";
   const amount = Math.min(1_000_000, Math.max(0, Math.round(Number(data.amount) || 0)));
   return { mode, amount: mode === "free" ? 0 : amount };
+}
+
+export function normalizeSocialContent(raw: unknown): SocialContent {
+  const data = isRecord(raw) ? raw : {};
+  const defaults = defaultSocialContent;
+  return {
+    facebook: safeSocialUrl("facebook", data.facebook, defaults.facebook),
+    instagram: safeSocialUrl("instagram", data.instagram, defaults.instagram),
+    youtube: safeSocialUrl("youtube", data.youtube, defaults.youtube),
+    x: safeSocialUrl("x", data.x, defaults.x),
+  };
 }
 
 export function normalizeImpactContent(raw: unknown): ImpactContent {

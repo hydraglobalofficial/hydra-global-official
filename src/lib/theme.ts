@@ -45,8 +45,8 @@ html.light .card-premium,html[data-theme="light"] .card-premium,
 html.light .spotlight.card-premium,html[data-theme="light"] .spotlight.card-premium{
   background:#ffffff!important;
   background-image:none!important;
-  border:1px solid rgb(0 0 0/.1)!important;
-  box-shadow:0 1px 0 rgb(0 0 0/.04),0 14px 36px -24px rgb(0 0 0/.2)!important;
+  border:1px solid #C5E0F3!important;
+  box-shadow:0 1px 0 rgb(255 255 255/.8),0 14px 36px -24px rgb(30 64 120/.22)!important;
   color:#0a0a0c!important;
 }
 html.light .ambient-fx,html[data-theme="light"] .ambient-fx,

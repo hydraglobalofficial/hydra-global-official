@@ -30,6 +30,25 @@ const ThemeContext = createContext<ThemeContextValue | null>(null);
 const listeners = new Set<() => void>();
 const emptySubscribe = () => () => {};
 
+/**
+ * Motion prints a dev warning whenever the OS asks for reduced motion.
+ * The in-editor browser always reports that, so the Next.js issue badge
+ * stays red even though MotionConfig already forces animations on.
+ * Swallow only that one message, before any motion child renders.
+ */
+function quietReducedMotionWarning() {
+  if (process.env.NODE_ENV === "production" || typeof window === "undefined") return;
+  const current = console.warn as typeof console.warn & { __hydraQuiet?: boolean };
+  if (current.__hydraQuiet) return;
+  const wrapped = ((...args: unknown[]) => {
+    const first = args[0];
+    if (typeof first === "string" && first.includes("Reduced Motion enabled")) return;
+    current.apply(console, args as Parameters<typeof console.warn>);
+  }) as typeof console.warn & { __hydraQuiet?: boolean };
+  wrapped.__hydraQuiet = true;
+  console.warn = wrapped;
+}
+
 function subscribe(listener: () => void) {
   listeners.add(listener);
   return () => {
@@ -50,6 +69,7 @@ function getServerTheme(): Theme {
 }
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
+  quietReducedMotionWarning();
   const stored = useSyncExternalStore(subscribe, getClientTheme, getServerTheme);
   // Keep SSR + first client paint on the server default so ThemeToggle (etc.) don't hydrate-mismatch
   // when localStorage has a different theme. After mount, switch to the stored value.

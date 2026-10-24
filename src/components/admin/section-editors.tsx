@@ -11,9 +11,11 @@ import {
   saveCurrencySection,
   saveHomeHeroSection,
   saveHowItWorksSection,
+  saveTechSection,
   saveInstallationSection,
   saveNewsletterSection,
   saveShippingSection,
+  saveSocialSection,
   saveShowcaseSection,
   saveWhatsappWidgetSection,
 } from "@/server/actions/admin";
@@ -26,8 +28,10 @@ import type {
   HeroVisualKey,
   HomeHeroContent,
   HowItWorksContent,
+  TechContent,
   NewsletterContent,
   ShippingContent,
+  SocialContent,
   ShowcaseContent,
   WhatsappWidgetContent,
 } from "@/content/site-sections";
@@ -522,6 +526,63 @@ export function HowItWorksSectionEditor({ content }: { content: HowItWorksConten
       <FormMessage status={state.status} message={state.message} toast />
       <Button type="submit" disabled={pending}>
         {pending && <Loader2 size={16} className="animate-spin" />} Publish
+      </Button>
+    </form>
+  );
+}
+
+export function TechSectionEditor({ content }: { content: TechContent }) {
+  const [state, action, pending] = useActionState(saveTechSection, initialFormState);
+  const cards = content.cards.slice(0, 6);
+
+  return (
+    <form action={action} className="space-y-5">
+      <Section title="Heading">
+        <p className="text-sm text-muted">
+          These are the six cards under “Protection, re-engineered.” Each card can have its own background photo. Leave
+          the photo empty to keep the plain card.
+        </p>
+        <div className="grid gap-3 sm:grid-cols-3">
+          <Label label="Small label">
+            <Input name="eyebrow" defaultValue={content.eyebrow} required />
+          </Label>
+          <Label label="Title">
+            <Input name="title" defaultValue={content.title} required />
+          </Label>
+          <Label label="Muted title">
+            <Input name="titleMuted" defaultValue={content.titleMuted} required />
+          </Label>
+        </div>
+        <Label label="Paragraph">
+          <Textarea name="description" defaultValue={content.description} className="min-h-20" required />
+        </Label>
+      </Section>
+      <Section title="Six cards">
+        <div className="space-y-4">
+          {cards.map((card, i) => (
+            <div key={i} className="space-y-3 rounded-2xl border border-line p-4">
+              <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-subtle">Block {i + 1}</p>
+              <Label label="Background photo" hint="A photo is already set. Upload another to replace it.">
+                <ImageUrlField name="techImage" defaultValue={card.image} folder="content" placeholder="Upload a background" />
+              </Label>
+              <div className="grid gap-3 sm:grid-cols-[1fr_8rem]">
+                <Label label="Title">
+                  <Input name="techTitle" defaultValue={card.title} maxLength={80} required />
+                </Label>
+                <Label label="Small stat">
+                  <Input name="techStat" defaultValue={card.stat} maxLength={24} placeholder="5 layers" />
+                </Label>
+              </div>
+              <Label label="Text">
+                <Textarea name="techText" defaultValue={card.text} className="min-h-20" maxLength={280} required />
+              </Label>
+            </div>
+          ))}
+        </div>
+      </Section>
+      <FormMessage status={state.status} message={state.message} toast />
+      <Button type="submit" disabled={pending}>
+        {pending && <Loader2 size={16} className="animate-spin" />} Publish six cards
       </Button>
     </form>
   );
@@ -1482,6 +1543,37 @@ export function ShippingSectionEditor({ content }: { content: ShippingContent })
   );
 }
 
+export function SocialSectionEditor({ content }: { content: SocialContent }) {
+  const [state, action, pending] = useActionState(saveSocialSection, initialFormState);
+
+  return (
+    <form action={action} className="space-y-5">
+      <Section title="Profiles">
+        <p className="text-sm text-muted">
+          These open from the footer and the contact page. Paste a full https link for each network.
+        </p>
+        <Label label="Facebook" hint="facebook.com">
+          <Input name="facebook" type="url" defaultValue={content.facebook} required />
+        </Label>
+        <Label label="Instagram" hint="instagram.com">
+          <Input name="instagram" type="url" defaultValue={content.instagram} required />
+        </Label>
+        <Label label="YouTube" hint="youtube.com or youtu.be">
+          <Input name="youtube" type="url" defaultValue={content.youtube} required />
+        </Label>
+        <Label label="X" hint="x.com">
+          <Input name="x" type="url" defaultValue={content.x} required />
+        </Label>
+      </Section>
+
+      <FormMessage status={state.status} message={state.message} toast />
+      <Button type="submit" disabled={pending}>
+        {pending && <Loader2 size={16} className="animate-spin" />} Publish social links
+      </Button>
+    </form>
+  );
+}
+
 const MAX_IMPACT_PHOTOS = 10;
 
 export function ImpactSectionEditor({ content }: { content: ImpactContent }) {
@@ -1544,8 +1636,8 @@ export function ImpactLabSectionEditor({ content }: { content: ImpactLabContent 
     <form action={action} className="space-y-5">
       <Section title="Heading">
         <p className="text-sm text-muted">
-          These four blocks sit under the dropping-phone animation. On a phone they show two per row. The phone animation
-          stays as it is until the new file is ready.
+          These four blocks sit under the Impact lab heading. On a phone they show two per row. Each card draws its own
+          diagram for the stat — drop, hardness, strength, or touch.
         </p>
         <Label label="Small label">
           <Input name="eyebrow" defaultValue={content.eyebrow} required />

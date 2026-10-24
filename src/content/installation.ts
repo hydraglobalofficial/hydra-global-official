@@ -32,7 +32,7 @@ export const defaultInstallationContent: InstallationContent = {
   intro:
     "One alignment-frame kit. One clean-room ritual. The same bubble-free install whether you wear iPhone or Galaxy — watch the guide, then follow each step.",
   duration: "2–3 minutes",
-  videoUrl: "/brand/hydra-animation.mp4",
+  videoUrl: "/brand/hydra-video.mp4",
   brandsNote: "Same process for Apple & Samsung",
   kit: [
     "HYDRA glass",

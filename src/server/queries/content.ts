@@ -10,8 +10,10 @@ import {
   defaultCollectionsContent,
   defaultHomeHeroContent,
   defaultHowItWorksContent,
+  defaultTechContent,
   defaultNewsletterContent,
   defaultShippingContent,
+  defaultSocialContent,
   defaultShowcaseContent,
   defaultWhatsappWidgetContent,
   type AboutContent,
@@ -21,8 +23,10 @@ import {
   type CollectionsContent,
   type HomeHeroContent,
   type HowItWorksContent,
+  type TechContent,
   type NewsletterContent,
   type ShippingContent,
+  type SocialContent,
   type ShowcaseContent,
   type WhatsappWidgetContent,
 } from "@/content/site-sections";
@@ -37,9 +41,11 @@ import {
   normalizeCurrencyContent,
   normalizeHomeHeroContent,
   normalizeHowItWorksContent,
+  normalizeTechContent,
   normalizeInstallationContent,
   normalizeNewsletterContent,
   normalizeShippingContent,
+  normalizeSocialContent,
   normalizeShowcaseContent,
   normalizeWhatsappWidgetContent,
 } from "@/lib/normalize-sections";
@@ -74,6 +80,19 @@ export const getAboutContent = unstable_cache(
     }
   },
   ["site-section-about-v2"],
+  { tags: [CONTENT_TAG], revalidate: 3600 },
+);
+
+export const getTechContent = unstable_cache(
+  async (): Promise<TechContent> => {
+    try {
+      const row = await db.siteSection.findUnique({ where: { key: "home.tech" }, select: { data: true } });
+      return normalizeTechContent(row?.data ?? defaultTechContent);
+    } catch {
+      return defaultTechContent;
+    }
+  },
+  ["site-section-tech-v2"],
   { tags: [CONTENT_TAG], revalidate: 3600 },
 );
 
@@ -181,6 +200,19 @@ export const getShippingContent = unstable_cache(
   { tags: [CONTENT_TAG], revalidate: 60 },
 );
 
+export const getSocialContent = unstable_cache(
+  async (): Promise<SocialContent> => {
+    try {
+      const row = await db.siteSection.findUnique({ where: { key: "site.social" }, select: { data: true } });
+      return normalizeSocialContent(row?.data ?? defaultSocialContent);
+    } catch {
+      return defaultSocialContent;
+    }
+  },
+  ["site-section-social-v1"],
+  { tags: [CONTENT_TAG], revalidate: 3600 },
+);
+
 export const getImpactContent = unstable_cache(
   async (): Promise<ImpactContent> => {
     try {
@@ -190,7 +222,7 @@ export const getImpactContent = unstable_cache(
       return defaultImpactContent;
     }
   },
-  ["site-section-impact-v3"],
+  ["site-section-impact-v4"],
   { tags: [CONTENT_TAG], revalidate: 3600 },
 );
 
