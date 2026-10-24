@@ -235,8 +235,8 @@ export function alertOrderReady(opts: { name?: string; orderNumber: string }) {
     icon: "success",
     title: `Thank you, ${escapeHtml(who)}!`,
     html: `
-      <p class="swal-hydra-lead" style="color:inherit;opacity:1">আপনার অর্ডার verify হয়ে <strong style="color:inherit">ready</strong> হচ্ছে।</p>
-      <p class="swal-hydra-sub" style="color:inherit;opacity:1">Your order is confirmed — our team is verifying it and getting it ready to ship.</p>
+      <p class="swal-hydra-lead" style="color:inherit;opacity:1">Your order is confirmed and being prepared.</p>
+      <p class="swal-hydra-sub" style="color:inherit;opacity:1">We'll check the details and have it ready to ship.</p>
       <p class="swal-hydra-order">Order <span>${escapeHtml(opts.orderNumber)}</span></p>
     `,
     confirmButtonText: "Awesome",

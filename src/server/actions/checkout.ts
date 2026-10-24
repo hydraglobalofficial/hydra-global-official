@@ -6,6 +6,7 @@ import { updateTag } from "next/cache";
 import { withTransaction } from "@/lib/db";
 import { checkoutSchema, invalid, type FormState } from "@/lib/validations";
 import { isPaymentEnabled, shippingFee } from "@/lib/pricing";
+import { getShippingContent } from "@/server/queries/content";
 import { signOrderAccess } from "@/lib/order-access";
 import { rateLimit } from "@/lib/rate-limit";
 import { invalidateAdminCache } from "@/server/queries/admin";
@@ -40,6 +41,8 @@ export async function placeOrder(_prev: FormState, formData: FormData): Promise<
   if (!isPaymentEnabled(input.paymentMethod)) {
     return { status: "error", message: "That payment method isn't available yet. Please choose Cash on Delivery." };
   }
+
+  const shippingSettings = await getShippingContent();
 
   let number: string;
   try {
@@ -84,7 +87,7 @@ export async function placeOrder(_prev: FormState, formData: FormData): Promise<
 
       const subtotal = items.reduce((sum, i) => sum + i.unitPrice * i.quantity, 0);
       const city = input.city?.trim() || "";
-      const shipping = shippingFee(subtotal, city, input.country);
+      const shipping = shippingFee(subtotal, shippingSettings);
       const street =
         input.address?.trim() ||
         [input.area, city, input.country].filter(Boolean).join(", ");

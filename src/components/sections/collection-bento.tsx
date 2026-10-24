@@ -51,7 +51,7 @@ export function CollectionBento({ content }: { content?: CollectionsContent | nu
                   {c.image && (
                     <div
                       className={cn(
-                        "absolute inset-x-0 top-0 transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:-translate-y-1 group-hover:scale-[1.03]",
+                        "absolute inset-x-0 top-0",
                         hero ? "bottom-20 sm:bottom-24" : "bottom-14 sm:bottom-16",
                       )}
                     >
@@ -60,12 +60,11 @@ export function CollectionBento({ content }: { content?: CollectionsContent | nu
                         alt=""
                         fill
                         sizes={hero ? "(min-width: 768px) 50vw, 100vw" : "(min-width: 768px) 25vw, 100vw"}
-                        className="object-contain p-3 opacity-90 sm:p-4"
+                        className="object-contain p-3 sm:p-4"
                         priority={hero}
                       />
                     </div>
                   )}
-                  <div className="bento-scrim pointer-events-none absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black via-black/75 to-transparent" />
                   <div className="relative flex items-end justify-between gap-3 sm:gap-4">
                     <div className="min-w-0">
                       <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-subtle">{index}</p>

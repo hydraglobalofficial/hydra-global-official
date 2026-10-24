@@ -18,18 +18,22 @@ import type {
   HomeHeroContent,
   HowItWorksContent,
   NewsletterContent,
+  ClarityContent,
   ShowcaseContent,
+  ShippingContent,
   WhatsappWidgetContent,
 } from "@/content/site-sections";
 import { clampText, safeInternalHref, safeMediaUrl, safeSlug, safeVideoUrl } from "@/lib/content-safety";
 import {
   normalizeAboutContent,
   normalizeCollectionsContent,
+  normalizeClarityContent,
   normalizeCurrencyContent,
   normalizeHomeHeroContent,
   normalizeHowItWorksContent,
   normalizeInstallationContent,
   normalizeNewsletterContent,
+  normalizeShippingContent,
   normalizeShowcaseContent,
   normalizeWhatsappWidgetContent,
 } from "@/lib/normalize-sections";
@@ -1224,6 +1228,58 @@ export async function saveCurrencySection(_prev: FormState, formData: FormData):
   }
 }
 
+export async function saveShippingSection(_prev: FormState, formData: FormData): Promise<FormState> {
+  await requireAdmin();
+  try {
+    const mode = String(formData.get("mode") ?? "") === "free" ? "free" : "paid";
+    const amount = Math.round(Number(formData.get("amount") ?? 0));
+    if (mode === "paid" && (!Number.isFinite(amount) || amount < 1)) {
+      return { status: "error", message: "Enter the shipping amount in whole taka, or switch to Free." };
+    }
+    const data = normalizeShippingContent({ mode, amount } satisfies ShippingContent);
+    await db.siteSection.upsert({
+      where: { key: "site.shipping" },
+      create: { key: "site.shipping", title: "Shipping charge", data },
+      update: { data, title: "Shipping charge" },
+    });
+    updateTag(CONTENT_TAG);
+    revalidatePath("/", "layout");
+    revalidatePath("/checkout");
+    revalidatePath("/cart");
+    revalidatePath("/admin/content/sections/site.shipping");
+    await bumpAdminContentHub();
+    return { status: "success", message: mode === "free" ? "Shipping is free (৳0)." : "Shipping charge published." };
+  } catch (error) {
+    console.error("[saveShippingSection]", error);
+    return { status: "error", message: "Could not publish shipping." };
+  }
+}
+
+export async function saveClaritySection(_prev: FormState, formData: FormData): Promise<FormState> {
+  await requireAdmin();
+  try {
+    const data = normalizeClarityContent({
+      beforeImage: String(formData.get("beforeImage") ?? ""),
+      afterImage: String(formData.get("afterImage") ?? ""),
+      beforeLabel: clampText(formData.get("beforeLabel"), 40),
+      afterLabel: clampText(formData.get("afterLabel"), 40),
+    } satisfies ClarityContent);
+    await db.siteSection.upsert({
+      where: { key: "home.clarity" },
+      create: { key: "home.clarity", title: "Home · Clarity you can feel", data },
+      update: { data, title: "Home · Clarity you can feel" },
+    });
+    updateTag(CONTENT_TAG);
+    revalidatePath("/");
+    revalidatePath("/admin/content/sections/home.clarity");
+    await bumpAdminContentHub();
+    return { status: "success", message: "Clarity images published." };
+  } catch (error) {
+    console.error("[saveClaritySection]", error);
+    return { status: "error", message: "Could not publish clarity images." };
+  }
+}
+
 export async function saveShowcaseSection(_prev: FormState, formData: FormData): Promise<FormState> {
   await requireAdmin();
   try {
@@ -1349,7 +1405,7 @@ export async function saveHomeHeroSection(_prev: FormState, formData: FormData):
       .slice(0, 6);
 
     const data = normalizeHomeHeroContent({
-      ratingLabel: clampText(formData.get("ratingLabel"), 80) || "50,000+ owners · worldwide",
+      ratingLabel: clampText(formData.get("ratingLabel"), 80) || "20,000+ owners · worldwide",
       quickLinks,
       stats,
       slides,

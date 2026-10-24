@@ -4,12 +4,14 @@ import { ArrowLeft } from "lucide-react";
 import { AdminHeader } from "@/components/admin/admin-ui";
 import {
   AboutSectionEditor,
+  ClaritySectionEditor,
   CollectionsSectionEditor,
   CurrencySectionEditor,
   HomeHeroSectionEditor,
   HowItWorksSectionEditor,
   InstallationSectionEditor,
   NewsletterSectionEditor,
+  ShippingSectionEditor,
   ShowcaseSectionEditor,
   WhatsappWidgetSectionEditor,
 } from "@/components/admin/section-editors";
@@ -17,12 +19,14 @@ import { SITE_SECTION_META } from "@/content/site-sections";
 import { requireAdmin } from "@/lib/auth/session";
 import {
   normalizeAboutContent,
+  normalizeClarityContent,
   normalizeCollectionsContent,
   normalizeCurrencyContent,
   normalizeHomeHeroContent,
   normalizeHowItWorksContent,
   normalizeInstallationContent,
   normalizeNewsletterContent,
+  normalizeShippingContent,
   normalizeShowcaseContent,
   normalizeWhatsappWidgetContent,
 } from "@/lib/normalize-sections";
@@ -67,6 +71,12 @@ export default async function EditSiteSectionPage({ params }: Props) {
       )}
       {key === "site.currency" && (
         <CurrencySectionEditor content={normalizeCurrencyContent(row?.data)} />
+      )}
+      {key === "site.shipping" && (
+        <ShippingSectionEditor content={normalizeShippingContent(row?.data)} />
+      )}
+      {key === "home.clarity" && (
+        <ClaritySectionEditor content={normalizeClarityContent(row?.data)} />
       )}
       {key === "installation" && (
         <InstallationSectionEditor content={normalizeInstallationContent(row?.data)} />

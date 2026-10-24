@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 /* light-pure-white-v6 — bump this when theme CSS fails to hot-reload */
-/* Class-based themes (default: dark). */
+/* Class-based themes (default: light, applied before paint). */
 @custom-variant dark (&:where(.dark, .dark *));
 @custom-variant light (&:where(.light, .light *));
 
@@ -674,6 +674,12 @@ html.light .bento-scrim {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+
+  /* The headline ticker is the content, so it keeps scrolling. */
+  .animate-marquee {
+    animation-duration: 60s !important;
+    animation-iteration-count: infinite !important;
   }
 }
 

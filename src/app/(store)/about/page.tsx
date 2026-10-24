@@ -220,7 +220,7 @@ export default async function AboutPage() {
             eyebrow="Our journey"
             title={
               <>
-                From one idea to <span className="text-muted">50,000 devices.</span>
+                From one idea to <span className="text-muted">20,000 devices.</span>
               </>
             }
           />

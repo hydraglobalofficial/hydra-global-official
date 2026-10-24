@@ -11,20 +11,23 @@ import { ScrollTopButton } from "@/components/layout/scroll-top-button-lazy";
 import { ConsentAnalytics } from "@/components/analytics/consent-analytics-lazy";
 import { MoneyProvider } from "@/components/money/money-provider";
 import { bindMoneyFormat } from "@/lib/money";
-import { getAnnouncements, getCurrencyContent, getWhatsappWidgetContent } from "@/server/queries/content";
+import { ShippingProvider } from "@/components/shipping/shipping-provider";
+import { getAnnouncements, getCurrencyContent, getShippingContent, getWhatsappWidgetContent } from "@/server/queries/content";
 import { getBrands } from "@/server/queries/catalog";
 
 export default async function StoreLayout({ children }: LayoutProps<"/">) {
-  const [announcements, whatsapp, brands, currency] = await Promise.all([
+  const [announcements, whatsapp, brands, currency, shipping] = await Promise.all([
     getAnnouncements(),
     getWhatsappWidgetContent(),
     getBrands(),
     getCurrencyContent(),
+    getShippingContent(),
   ]);
   bindMoneyFormat(currency);
 
   return (
     <MoneyProvider format={currency}>
+      <ShippingProvider value={shipping}>
       <CartProvider>
         <AmbientBackground />
         <SplashScreen />
@@ -47,6 +50,7 @@ export default async function StoreLayout({ children }: LayoutProps<"/">) {
         <NewsletterPopup />
         <ConsentAnalytics />
       </CartProvider>
+      </ShippingProvider>
     </MoneyProvider>
   );
 }

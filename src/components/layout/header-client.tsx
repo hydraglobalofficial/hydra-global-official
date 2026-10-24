@@ -98,7 +98,10 @@ export function HeaderClient({ nav }: { nav: NavigationData }) {
           <nav className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-1 lg:flex" aria-label="Primary">
             {primaryNav.map((item) => {
               const hasMenu = item.href === "/shop" ? "shop" : item.href === "/support" ? "support" : null;
-              const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
+              const active =
+                item.href === "/"
+                  ? pathname === "/"
+                  : pathname === item.href || pathname.startsWith(`${item.href}/`);
               return (
                 <div key={item.href} onMouseEnter={() => (hasMenu ? openMenu(hasMenu) : scheduleClose())}>
                   <Link
@@ -266,11 +269,13 @@ function MobileNav({ open, onClose, nav }: { open: boolean; onClose: () => void;
           ))}
         </div>
         <div className="flex flex-col divide-y divide-line border-y border-line">
-          {primaryNav.slice(1).map((item) => (
-            <Link key={item.href} href={item.href} onClick={onClose} className="flex min-h-12 items-center py-3.5 text-lg">
-              {item.label}
-            </Link>
-          ))}
+          {primaryNav
+            .filter((item) => item.href !== "/" && item.href !== "/shop")
+            .map((item) => (
+              <Link key={item.href} href={item.href} onClick={onClose} className="flex min-h-12 items-center py-3.5 text-lg">
+                {item.label}
+              </Link>
+            ))}
         </div>
         <div className="mt-auto space-y-1 border-t border-line pt-5">
           <p className="mb-2 font-mono text-[10px] uppercase tracking-[0.25em] text-subtle">Support</p>

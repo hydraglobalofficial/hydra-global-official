@@ -1,18 +1,24 @@
 import { BadgeCheck, RefreshCcw, ShieldCheck, Truck } from "lucide-react";
 import { RevealGroup, RevealItem } from "@/components/motion/reveal";
 import { SpotlightCard } from "@/components/ui/spotlight-card";
-import { siteConfig } from "@/config/site";
+import type { ShippingContent } from "@/content/site-sections";
 import { cn, formatPrice } from "@/lib/utils";
 
-export function TrustBadges({ compact = false }: { compact?: boolean }) {
+export function TrustBadges({
+  compact = false,
+  shipping,
+}: {
+  compact?: boolean;
+  shipping?: ShippingContent;
+}) {
+  const delivery =
+    shipping?.mode === "paid"
+      ? { title: "Delivery", text: `${formatPrice(shipping.amount)} on every order` }
+      : { title: "Free delivery", text: `${formatPrice(0)} shipping on every order` };
   const badges = [
     { icon: ShieldCheck, title: "Precision Cut", text: "Device-specific ±0.05 mm fit" },
     { icon: BadgeCheck, title: "100% Genuine", text: "Official HYDRA quality" },
-    {
-      icon: Truck,
-      title: "Free Delivery",
-      text: `On orders over ${formatPrice(siteConfig.freeShippingThreshold)}`,
-    },
+    { icon: Truck, title: delivery.title, text: delivery.text },
     { icon: RefreshCcw, title: "7-Day Returns", text: "No-questions-asked policy" },
   ];
 

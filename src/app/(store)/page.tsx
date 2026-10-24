@@ -14,6 +14,7 @@ import { JsonLd, organizationJsonLd } from "@/lib/seo";
 import { getFeaturedProducts, getNavigationData } from "@/server/queries/catalog";
 import { defaultCollectionsContent, defaultHomeHeroContent } from "@/content/site-sections";
 import {
+  getClarityContent,
   getCollectionsContent,
   getHomeHeroContent,
   getHowItWorksContent,
@@ -25,13 +26,14 @@ import { Reveal } from "@/components/motion/reveal";
 export const revalidate = 900;
 
 export default async function HomePage() {
-  const [featured, nav, collections, howItWorks, newsletter, hero] = await Promise.all([
+  const [featured, nav, collections, howItWorks, newsletter, hero, clarity] = await Promise.all([
     getFeaturedProducts(8),
     getNavigationData(),
     getCollectionsContent(),
     getHowItWorksContent(),
     getNewsletterContent(),
     getHomeHeroContent(),
+    getClarityContent(),
   ]);
   const collectionsContent = collections ?? defaultCollectionsContent;
   const heroContent = hero ?? defaultHomeHeroContent;
@@ -57,6 +59,7 @@ export default async function HomePage() {
       <HomeBelowFold
         howItWorks={howItWorks}
         newsletter={newsletter}
+        clarity={clarity}
         bestsellers={
           <section className="container-page py-14 sm:py-20 md:py-24">
             <SectionHeading

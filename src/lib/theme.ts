@@ -2,6 +2,9 @@
 
 export type Theme = "dark" | "light";
 
+/** Used when the visitor has not chosen a theme yet. */
+export const DEFAULT_THEME: Theme = "light";
+
 export const THEME_STORAGE_KEY = "hydra-theme";
 export const THEME_STYLE_ID = "hydra-theme-live";
 
@@ -190,11 +193,11 @@ export function readStoredTheme(): Theme {
   } catch {
     /* ignore */
   }
-  return "dark";
+  return DEFAULT_THEME;
 }
 
 /**
  * Blocking boot script — static string so SSR + client always match
  * (avoids hydration mismatch from generated template literals).
  */
-export const themeInitScript = `(function(){try{var k=${JSON.stringify(THEME_STORAGE_KEY)};var id=${JSON.stringify(THEME_STYLE_ID)};var t=localStorage.getItem(k);if(t!=="light"&&t!=="dark")t="dark";var d=document.documentElement;d.classList.remove("dark","light");d.classList.add(t);d.setAttribute("data-theme",t);d.style.colorScheme=t;var css=t==="light"?${JSON.stringify(themeVarsCss("light"))}:${JSON.stringify(themeVarsCss("dark"))};var s=document.getElementById(id);if(!s){s=document.createElement("style");s.id=id;(document.head||d).appendChild(s);}s.textContent=css;}catch(e){var r=document.documentElement;r.classList.add("dark");r.setAttribute("data-theme","dark");r.style.colorScheme="dark";}})();`;
+export const themeInitScript = `(function(){try{var k=${JSON.stringify(THEME_STORAGE_KEY)};var id=${JSON.stringify(THEME_STYLE_ID)};var fallback=${JSON.stringify(DEFAULT_THEME)};var t=localStorage.getItem(k);if(t!=="light"&&t!=="dark")t=fallback;var d=document.documentElement;d.classList.remove("dark","light");d.classList.add(t);d.setAttribute("data-theme",t);d.style.colorScheme=t;var css=t==="light"?${JSON.stringify(themeVarsCss("light"))}:${JSON.stringify(themeVarsCss("dark"))};var s=document.getElementById(id);if(!s){s=document.createElement("style");s.id=id;(document.head||d).appendChild(s);}s.textContent=css;}catch(e){var r=document.documentElement;r.classList.remove("dark","light");r.classList.add("light");r.setAttribute("data-theme","light");r.style.colorScheme="light";}})();`;

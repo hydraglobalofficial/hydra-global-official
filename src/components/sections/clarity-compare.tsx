@@ -1,8 +1,10 @@
 "use client";
 
+import Image from "next/image";
 import { Check } from "lucide-react";
 import { SectionHeading } from "@/components/ui/primitives";
 import { useLocalLockScreen } from "@/hooks/use-local-lock-screen";
+import type { ClarityContent } from "@/content/site-sections";
 import { CompareSlider } from "./compare-slider";
 
 function Scene({ damaged }: { damaged?: boolean }) {
@@ -69,7 +71,17 @@ function Scene({ damaged }: { damaged?: boolean }) {
   );
 }
 
-export function ClarityCompare() {
+function CustomPhoto({ src, alt }: { src: string; alt: string }) {
+  return (
+    <div className="relative h-full w-full">
+      <Image src={src} alt={alt} fill sizes="(min-width: 1024px) 50vw, 100vw" className="object-cover" />
+    </div>
+  );
+}
+
+export function ClarityCompare({ content }: { content?: ClarityContent }) {
+  const beforeLabel = content?.beforeLabel || "Ordinary glass";
+  const afterLabel = content?.afterLabel || "HYDRA armor";
   return (
     <section className="container-page py-14 sm:py-20 md:py-24">
       <div className="grid items-center gap-8 sm:gap-12 lg:grid-cols-[1fr_1.4fr]">
@@ -93,7 +105,18 @@ export function ClarityCompare() {
         <div className="relative min-w-0">
           <div aria-hidden className="pointer-events-none absolute -inset-3 rounded-[2rem] bg-gradient-to-br from-accent/20 via-transparent to-white/[0.06] blur-2xl sm:-inset-6 sm:rounded-[2.5rem]" />
           <div className="card-premium relative rounded-[1.25rem] p-1.5 sm:rounded-[2rem] sm:p-2">
-            <CompareSlider before={<Scene damaged />} after={<Scene />} beforeLabel="Ordinary glass" afterLabel="HYDRA armor" />
+            <CompareSlider
+              before={
+                content?.beforeImage ? (
+                  <CustomPhoto src={content.beforeImage} alt={beforeLabel} />
+                ) : (
+                  <Scene damaged />
+                )
+              }
+              after={content?.afterImage ? <CustomPhoto src={content.afterImage} alt={afterLabel} /> : <Scene />}
+              beforeLabel={beforeLabel}
+              afterLabel={afterLabel}
+            />
           </div>
         </div>
       </div>

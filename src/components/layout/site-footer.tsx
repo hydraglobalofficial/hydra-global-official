@@ -31,6 +31,7 @@ export function SiteFooter({ brands = [] }: { brands?: BrandRecord[] }) {
           <div className="max-w-md space-y-5 sm:space-y-7">
             <Logo />
             <p className="text-sm leading-relaxed text-muted">{siteConfig.description}</p>
+            <p className="text-sm text-muted">{siteConfig.address}</p>
             <p className="text-[11px] uppercase tracking-[0.28em] text-zinc-500">{siteConfig.slogan}</p>
             <div className="space-y-3">
               <p className="text-sm font-medium text-fg">Stay ahead of every drop</p>

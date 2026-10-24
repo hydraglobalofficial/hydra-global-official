@@ -30,16 +30,16 @@ const item: Variants = {
 function SlideVisual({ slide, priority }: { slide: HeroSlide; priority?: boolean }) {
   if (slide.visual === "image" && slide.image) {
     return (
-      <div className="relative mx-auto aspect-[4/5] w-full max-w-[30rem] overflow-hidden rounded-[2rem]">
+      <div className="relative mx-auto w-full max-w-[36rem]">
         <Image
           src={slide.image}
           alt={slide.brand}
-          fill
-          sizes="(max-width: 1024px) 90vw, 34rem"
-          className="object-cover"
+          width={1600}
+          height={1000}
+          sizes="(max-width: 1024px) 92vw, 36rem"
+          className="h-auto w-full rounded-[1.75rem] object-contain"
           priority={priority}
         />
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-white/5" />
       </div>
     );
   }
@@ -302,10 +302,22 @@ export function Hero({ content }: { content: HomeHeroContent }) {
             </>
           )}
           <Stage>
-            <div className="relative mx-auto flex aspect-[4/5] w-full max-w-full items-center justify-center overflow-visible pt-2 sm:pt-1 lg:pt-0">
-              <div aria-hidden className="hero-visual-shadow pointer-events-none absolute inset-x-[18%] bottom-[4%] h-20 rounded-[100%] bg-black/70 blur-3xl light:bg-black/8" />
+            <div
+              className={cn(
+                "relative mx-auto flex w-full max-w-full items-center justify-center overflow-visible pt-2 sm:pt-1 lg:pt-0",
+                slide.visual === "image" ? "min-h-[16rem]" : "aspect-[4/5]",
+              )}
+            >
+              {slide.visual !== "image" && (
+                <div aria-hidden className="hero-visual-shadow pointer-events-none absolute inset-x-[18%] bottom-[4%] h-20 rounded-[100%] bg-black/70 blur-3xl light:bg-black/8" />
+              )}
 
-              <div className="relative z-[1] w-full max-w-full scale-[0.96] sm:scale-[1.03] lg:scale-105">
+              <div
+                className={cn(
+                  "relative z-[1] w-full max-w-full",
+                  slide.visual === "image" ? "" : "scale-[0.96] sm:scale-[1.03] lg:scale-105",
+                )}
+              >
                 <div className="grid">
                   <AnimatePresence initial={false} mode="popLayout">
                     <motion.div
@@ -325,7 +337,14 @@ export function Hero({ content }: { content: HomeHeroContent }) {
           </Stage>
 
           {slides.length > 1 && (
-            <div className="absolute inset-x-0 bottom-[3%] z-30 flex justify-center px-3 sm:bottom-[5%] lg:bottom-[6%]">
+            <div
+              className={cn(
+                "z-30 flex justify-center px-3",
+                slide.visual === "image"
+                  ? "relative mt-3"
+                  : "absolute inset-x-0 bottom-[3%] sm:bottom-[5%] lg:bottom-[6%]",
+              )}
+            >
               <HeroStagePager
                 index={safeIndex}
                 total={slides.length}

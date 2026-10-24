@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 import dynamic from "next/dynamic";
 import { SectionDivider } from "@/components/ui/section-divider";
 import { Reveal } from "@/components/motion/reveal";
-import type { HowItWorksContent, NewsletterContent } from "@/content/site-sections";
+import type { ClarityContent, HowItWorksContent, NewsletterContent } from "@/content/site-sections";
 
 const ImpactStat = dynamic(
   () => import("@/components/sections/impact-stat").then((m) => m.ImpactStat),
@@ -33,10 +33,12 @@ const NewsletterBlock = dynamic(
 export function HomeBelowFold({
   howItWorks,
   newsletter,
+  clarity,
   bestsellers,
 }: {
   howItWorks: HowItWorksContent;
   newsletter: NewsletterContent;
+  clarity?: ClarityContent;
   bestsellers: ReactNode;
 }) {
   return (
@@ -46,7 +48,7 @@ export function HomeBelowFold({
       {bestsellers}
       <SectionDivider />
       <Reveal>
-        <ClarityCompare />
+        <ClarityCompare content={clarity} />
       </Reveal>
       <Testimonials />
       <SectionDivider />

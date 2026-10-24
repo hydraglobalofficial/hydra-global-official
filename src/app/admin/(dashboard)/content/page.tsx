@@ -280,6 +280,40 @@ export default async function AdminContentPage() {
       </section>
 
       <section className="mt-10 space-y-4">
+        <div>
+          <h2 className="flex items-center gap-2 font-medium">
+            <LayoutTemplate size={16} className="text-accent" /> Clarity you can feel
+          </h2>
+          <p className="mt-1 text-sm text-muted">
+            Homepage compare slider. Upload the left image and the right image here — both show on the live page.
+          </p>
+        </div>
+        {SITE_SECTION_META.filter((s) => s.key === "home.clarity").map((s) => (
+          <Link
+            key={s.key}
+            href={`/admin/content/sections/${encodeURIComponent(s.key)}`}
+            className="block rounded-2xl border border-accent/25 bg-gradient-to-br from-accent/15 via-white/[0.03] to-transparent p-5 transition-colors hover:border-accent/45"
+          >
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <p className="text-[10px] font-medium uppercase tracking-[0.18em] text-accent">Featured · Home · 2 images</p>
+                <p className="mt-1 text-base font-medium">{s.title}</p>
+                <p className="mt-1 text-sm text-muted">{s.description}</p>
+                <p className="mt-2 text-xs text-subtle">
+                  {sectionUpdated.has(s.key)
+                    ? `Updated ${formatDate(sectionUpdated.get(s.key)!)}`
+                    : "Upload both images, then publish"}
+                </p>
+              </div>
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-white/10 px-3 py-1.5 text-xs text-muted">
+                <Pencil size={12} /> Edit
+              </span>
+            </div>
+          </Link>
+        ))}
+      </section>
+
+      <section className="mt-10 space-y-4">
         <h2 className="flex items-center gap-2 font-medium">
           <LayoutTemplate size={16} className="text-accent" /> Other site sections
         </h2>
@@ -290,7 +324,8 @@ export default async function AdminContentPage() {
               s.key !== "home.collections" &&
               s.key !== "about" &&
               s.key !== "installation" &&
-              s.key !== "site.whatsapp",
+              s.key !== "site.whatsapp" &&
+              s.key !== "home.clarity",
           ).map((s) => (
             <Link
               key={s.key}

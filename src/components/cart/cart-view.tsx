@@ -3,13 +3,15 @@
 import { ArrowRight, Lock } from "lucide-react";
 import { ButtonLink } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/primitives";
+import { shippingFee } from "@/lib/pricing";
+import { useShipping } from "@/components/shipping/shipping-provider";
 import { formatPrice } from "@/lib/utils";
 import { CartLineItem } from "./cart-line-item";
-import { FreeShippingMeter } from "./cart-drawer";
 import { useCart } from "./cart-provider";
 
 export function CartView() {
   const { lines, subtotal, hydrated } = useCart();
+  const shipping = shippingFee(subtotal, useShipping());
 
   if (!hydrated) return <div className="h-64 animate-pulse rounded-3xl bg-surface" />;
   if (lines.length === 0) {
@@ -31,14 +33,17 @@ export function CartView() {
       </ul>
       <aside className="h-fit space-y-5 rounded-2xl border border-line bg-surface p-5 sm:space-y-6 sm:rounded-3xl sm:p-6 lg:sticky lg:top-28">
         <h2 className="text-lg font-semibold">Order summary</h2>
-        <FreeShippingMeter subtotal={subtotal} />
         <div className="flex justify-between gap-3 text-sm">
           <span className="text-muted">Subtotal</span>
           <span className="font-mono tabular-nums">{formatPrice(subtotal)}</span>
         </div>
         <div className="flex justify-between gap-3 text-sm">
           <span className="text-muted">Shipping</span>
-          <span className="shrink-0 text-muted">Calculated at checkout</span>
+          <span className="shrink-0 font-mono tabular-nums">{formatPrice(shipping)}</span>
+        </div>
+        <div className="flex justify-between gap-3 border-t border-line pt-3 text-base">
+          <span className="font-medium">Total</span>
+          <span className="font-mono tabular-nums">{formatPrice(subtotal + shipping)}</span>
         </div>
         <ButtonLink href="/checkout" size="lg" className="min-h-12 w-full">
           Checkout <ArrowRight size={18} />

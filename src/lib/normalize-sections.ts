@@ -4,6 +4,7 @@ import {
   defaultHomeHeroContent,
   defaultHowItWorksContent,
   defaultNewsletterContent,
+  defaultClarityContent,
   defaultShowcaseContent,
   defaultWhatsappWidgetContent,
   type AboutContent,
@@ -13,6 +14,8 @@ import {
   type HomeHeroContent,
   type HowItWorksContent,
   type NewsletterContent,
+  type ClarityContent,
+  type ShippingContent,
   type ShowcaseContent,
   type ShowcaseVideoItem,
   type WhatsappWidgetContent,
@@ -407,6 +410,23 @@ export function normalizeShowcaseContent(raw: unknown): ShowcaseContent {
     channelLabel: clampText(data.channelLabel, 40, defaults.channelLabel),
     channelHref: clampText(data.channelHref, 240, defaults.channelHref) || defaults.channelHref,
     videos: videos.length > 0 ? videos : defaults.videos,
+  };
+}
+
+export function normalizeShippingContent(raw: unknown): ShippingContent {
+  const data = isRecord(raw) ? raw : {};
+  const mode = data.mode === "free" ? "free" : "paid";
+  const amount = Math.min(1_000_000, Math.max(0, Math.round(Number(data.amount) || 0)));
+  return { mode, amount: mode === "free" ? 0 : amount };
+}
+
+export function normalizeClarityContent(raw: unknown): ClarityContent {
+  const data = isRecord(raw) ? raw : {};
+  return {
+    beforeImage: safeMediaUrl(data.beforeImage, ""),
+    afterImage: safeMediaUrl(data.afterImage, ""),
+    beforeLabel: clampText(data.beforeLabel, 40, defaultClarityContent.beforeLabel) || defaultClarityContent.beforeLabel,
+    afterLabel: clampText(data.afterLabel, 40, defaultClarityContent.afterLabel) || defaultClarityContent.afterLabel,
   };
 }
 

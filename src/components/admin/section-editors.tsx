@@ -5,21 +5,25 @@ import { Loader2, Plus, Trash2 } from "lucide-react";
 import {
   saveAboutSection,
   saveCollectionsSection,
+  saveClaritySection,
   saveCurrencySection,
   saveHomeHeroSection,
   saveHowItWorksSection,
   saveInstallationSection,
   saveNewsletterSection,
+  saveShippingSection,
   saveShowcaseSection,
   saveWhatsappWidgetSection,
 } from "@/server/actions/admin";
 import type {
   AboutContent,
+  ClarityContent,
   CollectionsContent,
   HeroVisualKey,
   HomeHeroContent,
   HowItWorksContent,
   NewsletterContent,
+  ShippingContent,
   ShowcaseContent,
   WhatsappWidgetContent,
 } from "@/content/site-sections";
@@ -1401,6 +1405,118 @@ export function CurrencySectionEditor({ content }: { content: CurrencyContent })
       <FormMessage status={state.status} message={state.message} toast />
       <Button type="submit" disabled={pending}>
         {pending && <Loader2 size={16} className="animate-spin" />} Publish price format
+      </Button>
+    </form>
+  );
+}
+
+export function ShippingSectionEditor({ content }: { content: ShippingContent }) {
+  const [state, action, pending] = useActionState(saveShippingSection, initialFormState);
+  const [mode, setMode] = useState<"free" | "paid">(content.mode);
+  const [amount, setAmount] = useState(String(content.amount || ""));
+  const preview = mode === "free" ? 0 : Math.max(0, Math.round(Number(amount) || 0));
+
+  return (
+    <form action={action} className="space-y-5">
+      <input type="hidden" name="mode" value={mode} />
+      <input type="hidden" name="amount" value={mode === "free" ? "0" : String(preview)} />
+
+      <Section title="Delivery fee">
+        <p className="text-sm text-muted">
+          This is the shipping line on checkout, the cart, the invoice, and the confirmation email. The order total is
+          subtotal plus this amount.
+        </p>
+        <div className="grid gap-2 sm:grid-cols-2">
+          <button
+            type="button"
+            onClick={() => setMode("free")}
+            className={`rounded-2xl border px-4 py-3 text-left transition ${
+              mode === "free" ? "border-accent bg-accent/10" : "border-line hover:border-accent/40"
+            }`}
+          >
+            <p className="text-sm font-medium text-fg">Free</p>
+            <p className="mt-1 font-mono text-lg tabular-nums">৳0</p>
+            <p className="mt-1 text-xs text-muted">No delivery charge on any order.</p>
+          </button>
+          <button
+            type="button"
+            onClick={() => setMode("paid")}
+            className={`rounded-2xl border px-4 py-3 text-left transition ${
+              mode === "paid" ? "border-accent bg-accent/10" : "border-line hover:border-accent/40"
+            }`}
+          >
+            <p className="text-sm font-medium text-fg">Paid</p>
+            <p className="mt-1 text-xs text-muted">Charge one flat amount on every order.</p>
+          </button>
+        </div>
+        {mode === "paid" ? (
+          <Label label="Shipping amount" hint="Whole taka. Example: 80">
+            <Input
+              inputMode="numeric"
+              value={amount}
+              onChange={(e) => setAmount(e.target.value.replace(/[^\d]/g, ""))}
+              placeholder="80"
+              required
+            />
+          </Label>
+        ) : null}
+        <div className="rounded-2xl border border-line bg-surface-2 px-4 py-3 text-sm">
+          <p className="text-[10px] uppercase tracking-[0.16em] text-subtle">Customer sees</p>
+          <p className="mt-1 font-mono text-xl tabular-nums">Shipping {formatMoney(preview)}</p>
+          <p className="mt-1 text-xs text-muted">Added to the product subtotal before they place the order.</p>
+        </div>
+      </Section>
+
+      <FormMessage status={state.status} message={state.message} toast />
+      <Button type="submit" disabled={pending}>
+        {pending && <Loader2 size={16} className="animate-spin" />} Publish shipping
+      </Button>
+    </form>
+  );
+}
+
+export function ClaritySectionEditor({ content }: { content: ClarityContent }) {
+  const [state, action, pending] = useActionState(saveClaritySection, initialFormState);
+
+  return (
+    <form action={action} className="space-y-5">
+      <Section title="Two slider images">
+        <p className="text-sm text-muted">
+          These are the two photos on the homepage block “Clarity you can feel.” Drag the slider to compare them. Upload
+          from your device, or paste an image link. Publish to update the live page.
+        </p>
+        <div className="grid gap-4 lg:grid-cols-2">
+          <div className="space-y-3 rounded-2xl border border-line p-4">
+            <p className="text-sm font-medium">1 · Left image</p>
+            <p className="text-xs text-muted">Shown on the left of the slider. Usually the ordinary, scratched glass.</p>
+            <ImageUrlField
+              name="beforeImage"
+              defaultValue={content.beforeImage}
+              folder="clarity"
+              placeholder="Upload the left image"
+            />
+            <Label label="Left label">
+              <Input name="beforeLabel" defaultValue={content.beforeLabel} maxLength={40} />
+            </Label>
+          </div>
+          <div className="space-y-3 rounded-2xl border border-line p-4">
+            <p className="text-sm font-medium">2 · Right image</p>
+            <p className="text-xs text-muted">Shown on the right of the slider. Usually the clear HYDRA glass.</p>
+            <ImageUrlField
+              name="afterImage"
+              defaultValue={content.afterImage}
+              folder="clarity"
+              placeholder="Upload the right image"
+            />
+            <Label label="Right label">
+              <Input name="afterLabel" defaultValue={content.afterLabel} maxLength={40} />
+            </Label>
+          </div>
+        </div>
+      </Section>
+      <FormMessage status={state.status} message={state.message} toast />
+      <Button type="submit" disabled={pending}>
+        {pending && <Loader2 size={16} className="animate-spin" />} Publish both images
       </Button>
     </form>
   );

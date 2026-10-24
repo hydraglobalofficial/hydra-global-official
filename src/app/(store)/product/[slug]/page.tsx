@@ -12,7 +12,7 @@ import { Badge, Rating, SectionHeading } from "@/components/ui/primitives";
 import { JsonLd, breadcrumbJsonLd, productJsonLd } from "@/lib/seo";
 import { formatDate } from "@/lib/utils";
 import { getActiveProductSlugs, getProductBySlug, getRelatedProducts } from "@/server/queries/catalog";
-import { getCurrencyContent } from "@/server/queries/content";
+import { getCurrencyContent, getShippingContent } from "@/server/queries/content";
 
 export const revalidate = 300;
 
@@ -47,7 +47,11 @@ export default async function ProductPage({
   const product = await getProductBySlug(slug);
   if (!product) notFound();
 
-  const [related, currency] = await Promise.all([getRelatedProducts(product), getCurrencyContent()]);
+  const [related, currency, shipping] = await Promise.all([
+    getRelatedProducts(product),
+    getCurrencyContent(),
+    getShippingContent(),
+  ]);
   const specs = Object.entries((product.specs ?? {}) as Record<string, string>);
   const brand = product.devices[0]?.device.brandSlug ?? "iphone";
   const visibleDevices = focusDeviceSlug
@@ -187,7 +191,7 @@ export default async function ProductPage({
       </section>
 
       <section className="container-page">
-        <TrustBadges />
+        <TrustBadges shipping={shipping} />
       </section>
 
       <section id="reviews" className="container-page scroll-mt-28 py-14 sm:py-20 md:py-24">

@@ -4,56 +4,43 @@ import { useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { ArrowRight, ShoppingBag, Truck, X } from "lucide-react";
 import { ButtonLink } from "@/components/ui/button";
-import { siteConfig } from "@/config/site";
+import { shippingFee } from "@/lib/pricing";
+import { useShipping } from "@/components/shipping/shipping-provider";
 import { cn, formatPrice } from "@/lib/utils";
 import { CartLineItem } from "./cart-line-item";
 import { CartSuggestions } from "./cart-suggestions";
 import { useCart } from "./cart-provider";
 
 export function FreeShippingMeter({ subtotal }: { subtotal: number }) {
-  const threshold = siteConfig.freeShippingThreshold;
-  const remaining = Math.max(0, threshold - subtotal);
-  const progress = Math.min(100, (subtotal / threshold) * 100);
-  const unlocked = remaining <= 0;
+  const shipping = shippingFee(subtotal, useShipping());
+  const free = shipping === 0;
 
   return (
     <div
       className={cn(
         "rounded-xl px-3.5 py-3",
-        unlocked ? "bg-emerald-50 dark:bg-emerald-500/10" : "bg-zinc-100 dark:bg-white/[0.06]",
+        free ? "bg-emerald-50 dark:bg-emerald-500/10" : "bg-zinc-100 dark:bg-white/[0.06]",
       )}
     >
       <p
         className={cn(
-          "flex items-center gap-2 text-[12px] leading-snug",
-          unlocked ? "font-medium text-emerald-700 dark:text-emerald-400" : "text-zinc-600 dark:text-zinc-400",
+          "flex items-center justify-between gap-2 text-[12px] leading-snug",
+          free ? "font-medium text-emerald-700 dark:text-emerald-400" : "text-zinc-600 dark:text-zinc-400",
         )}
       >
-        <Truck size={14} className="shrink-0" />
-        {unlocked ? (
-          "Free delivery unlocked"
-        ) : (
-          <>
-            Add{" "}
-            <span className="font-mono font-semibold text-zinc-900 dark:text-zinc-100">{formatPrice(remaining)}</span>{" "}
-            for free delivery
-          </>
-        )}
+        <span className="inline-flex items-center gap-2">
+          <Truck size={14} className="shrink-0" />
+          Shipping
+        </span>
+        <span className="font-mono font-semibold tabular-nums text-zinc-900 dark:text-zinc-100">{formatPrice(shipping)}</span>
       </p>
-      {!unlocked ? (
-        <div className="mt-2.5 h-1 overflow-hidden rounded-full bg-zinc-200 dark:bg-white/10">
-          <div
-            className="h-full rounded-full bg-zinc-900 transition-[width] duration-500 dark:bg-white"
-            style={{ width: `${progress}%` }}
-          />
-        </div>
-      ) : null}
     </div>
   );
 }
 
 export function CartDrawer() {
   const { lines, subtotal, count, isOpen, close } = useCart();
+  const shipping = shippingFee(subtotal, useShipping());
   const pathname = usePathname();
   const onCheckout = !!pathname && (pathname === "/checkout" || pathname.startsWith("/checkout/"));
 
@@ -150,11 +137,18 @@ export function CartDrawer() {
             <footer className="shrink-0 border-t border-zinc-100 bg-white px-5 pt-4 pb-[max(1rem,env(safe-area-inset-bottom))] dark:border-white/10 dark:bg-[#0c0e14]">
               <div className="mb-1 flex items-baseline justify-between gap-3">
                 <span className="text-sm text-zinc-500">Subtotal</span>
+                <span className="font-mono text-sm tabular-nums text-zinc-700 dark:text-zinc-200">{formatPrice(subtotal)}</span>
+              </div>
+              <div className="mb-1 flex items-baseline justify-between gap-3">
+                <span className="text-sm text-zinc-500">Shipping</span>
+                <span className="font-mono text-sm tabular-nums text-zinc-700 dark:text-zinc-200">{formatPrice(shipping)}</span>
+              </div>
+              <div className="mb-4 flex items-baseline justify-between gap-3 border-t border-zinc-100 pt-2 dark:border-white/10">
+                <span className="text-sm font-medium text-zinc-950 dark:text-white">Total</span>
                 <span className="font-mono text-xl font-semibold tabular-nums tracking-tight text-zinc-950 dark:text-white">
-                  {formatPrice(subtotal)}
+                  {formatPrice(subtotal + shipping)}
                 </span>
               </div>
-              <p className="mb-4 text-[11px] text-zinc-400">Shipping calculated at checkout</p>
 
               <ButtonLink
                 href="/checkout"

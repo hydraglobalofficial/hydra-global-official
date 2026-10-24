@@ -62,7 +62,7 @@ export function ProductCard({ product, priority }: { product: ProductCardData; p
 
         <div className="flex min-w-0 flex-1 flex-col gap-1.5 p-3.5 sm:gap-2 sm:p-5">
           <p className="truncate font-mono text-[9px] uppercase tracking-[0.18em] text-subtle sm:text-[10px] sm:tracking-[0.2em]">{product.category.name}</p>
-          <h3 className="line-clamp-2 text-sm font-medium leading-snug text-fg transition-colors group-hover:text-accent sm:text-base">
+          <h3 className="line-clamp-3 text-sm font-medium leading-snug text-fg transition-colors group-hover:text-accent sm:text-base">
             {product.name}
           </h3>
           {product.ratingCount > 0 && <Rating value={product.ratingAverage} count={product.ratingCount} size={12} />}

@@ -9,7 +9,8 @@ import { Button, ButtonLink } from "@/components/ui/button";
 import { Field, FormMessage, Input, Select, Textarea } from "@/components/ui/form";
 import { EmptyState } from "@/components/ui/primitives";
 import { PhoneWithCountryCode } from "@/components/checkout/phone-with-country";
-import { countries, paymentMethods, shippingFee, shippingLabel } from "@/lib/pricing";
+import { countries, paymentMethods, shippingFee } from "@/lib/pricing";
+import { useShipping } from "@/components/shipping/shipping-provider";
 import { initialFormState } from "@/lib/validations";
 import { cn, formatPrice } from "@/lib/utils";
 import { placeOrder } from "@/server/actions/checkout";
@@ -41,12 +42,13 @@ function SectionTitle({
 
 export function CheckoutForm() {
   const { lines, subtotal, hydrated } = useCart();
+  const shippingSettings = useShipping();
   const [state, action, pending] = useActionState(placeOrder, initialFormState);
   const [country, setCountry] = useState("Bangladesh");
   const [city, setCity] = useState("");
   const [payment, setPayment] = useState("COD");
   const errors = state.fieldErrors ?? {};
-  const shipping = shippingFee(subtotal, city, country);
+  const shipping = shippingFee(subtotal, shippingSettings);
 
   const checkoutTracked = useRef(false);
   useEffect(() => {
@@ -307,10 +309,8 @@ export function CheckoutForm() {
             <dd className="font-mono tabular-nums">{formatPrice(subtotal)}</dd>
           </div>
           <div className="flex justify-between gap-3">
-            <dt className="min-w-0 text-muted">Shipping ({shippingLabel(city, country)})</dt>
-            <dd className="shrink-0 font-mono tabular-nums">
-              {shipping === 0 ? <span className="text-success">Free</span> : formatPrice(shipping)}
-            </dd>
+            <dt className="min-w-0 text-muted">Shipping</dt>
+            <dd className="shrink-0 font-mono tabular-nums">{formatPrice(shipping)}</dd>
           </div>
           <div className="flex justify-between gap-3 border-t border-line pt-3 text-base">
             <dt className="font-medium">Total</dt>

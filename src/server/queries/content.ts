@@ -4,17 +4,21 @@ import { unstable_cache } from "next/cache";
 import { db } from "@/lib/db";
 import {
   defaultAboutContent,
+  defaultClarityContent,
   defaultCollectionsContent,
   defaultHomeHeroContent,
   defaultHowItWorksContent,
   defaultNewsletterContent,
+  defaultShippingContent,
   defaultShowcaseContent,
   defaultWhatsappWidgetContent,
   type AboutContent,
+  type ClarityContent,
   type CollectionsContent,
   type HomeHeroContent,
   type HowItWorksContent,
   type NewsletterContent,
+  type ShippingContent,
   type ShowcaseContent,
   type WhatsappWidgetContent,
 } from "@/content/site-sections";
@@ -22,12 +26,14 @@ import { defaultInstallationContent, type InstallationContent } from "@/content/
 import { safeInternalHref } from "@/lib/content-safety";
 import {
   normalizeAboutContent,
+  normalizeClarityContent,
   normalizeCollectionsContent,
   normalizeCurrencyContent,
   normalizeHomeHeroContent,
   normalizeHowItWorksContent,
   normalizeInstallationContent,
   normalizeNewsletterContent,
+  normalizeShippingContent,
   normalizeShowcaseContent,
   normalizeWhatsappWidgetContent,
 } from "@/lib/normalize-sections";
@@ -154,6 +160,32 @@ export const getWhatsappWidgetContent = unstable_cache(
   },
   ["site-section-whatsapp-v3"],
   { tags: [CONTENT_TAG], revalidate: 60 },
+);
+
+export const getShippingContent = unstable_cache(
+  async (): Promise<ShippingContent> => {
+    try {
+      const row = await db.siteSection.findUnique({ where: { key: "site.shipping" }, select: { data: true } });
+      return normalizeShippingContent(row?.data ?? defaultShippingContent);
+    } catch {
+      return defaultShippingContent;
+    }
+  },
+  ["site-section-shipping-v1"],
+  { tags: [CONTENT_TAG], revalidate: 60 },
+);
+
+export const getClarityContent = unstable_cache(
+  async (): Promise<ClarityContent> => {
+    try {
+      const row = await db.siteSection.findUnique({ where: { key: "home.clarity" }, select: { data: true } });
+      return normalizeClarityContent(row?.data ?? defaultClarityContent);
+    } catch {
+      return defaultClarityContent;
+    }
+  },
+  ["site-section-clarity-v1"],
+  { tags: [CONTENT_TAG], revalidate: 3600 },
 );
 
 export const getCurrencyContent = unstable_cache(

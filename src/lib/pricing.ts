@@ -1,4 +1,4 @@
-import { siteConfig } from "@/config/site";
+import type { ShippingContent } from "@/content/site-sections";
 
 /** Countries offered at checkout (Bangladesh first). */
 export const countries = [
@@ -15,7 +15,7 @@ export const countries = [
   "Other",
 ] as const;
 
-/** Major hubs get express shipping; everything else is standard. */
+/** Cities offered at checkout. Delivery price comes from admin shipping settings. */
 export const cities = [
   "Dhaka",
   "Chattogram",
@@ -33,33 +33,11 @@ export const cities = [
   "Other",
 ] as const;
 
-const expressCities = new Set<string>([
-  "Dhaka",
-  "Chattogram",
-  "Sylhet",
-  "New York",
-  "London",
-  "Dubai",
-  "Singapore",
-  "Tokyo",
-  "Sydney",
-  "Toronto",
-  "Berlin",
-]);
-
-const expressCountries = new Set<string>(["Bangladesh"]);
-
-export function shippingFee(subtotal: number, city: string, country = "") {
+/** Admin-set delivery fee. Free is 0; paid is the flat amount, added to the order total. */
+export function shippingFee(subtotal: number, settings: Pick<ShippingContent, "mode" | "amount">) {
   if (subtotal <= 0) return 0;
-  if (subtotal >= siteConfig.freeShippingThreshold) return 0;
-  if (expressCities.has(city) || expressCountries.has(country)) {
-    return siteConfig.shippingFee.express;
-  }
-  return siteConfig.shippingFee.standard;
-}
-
-export function shippingLabel(city: string, country = "") {
-  return expressCities.has(city) || expressCountries.has(country) ? "express" : "standard";
+  if (settings.mode === "free") return 0;
+  return Math.max(0, Math.round(Number(settings.amount) || 0));
 }
 
 export const paymentMethods = [

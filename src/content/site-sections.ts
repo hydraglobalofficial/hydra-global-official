@@ -103,7 +103,7 @@ export const defaultAboutContent: AboutContent = {
   },
   stats: [
     { value: "2023", label: "Founded" },
-    { value: "50K+", label: "Devices equipped" },
+    { value: "20K+", label: "Devices equipped" },
     { value: "40+", label: "Markets shipped" },
     { value: "18", label: "Flagship models" },
     { value: "4.9★", label: "Customer rating" },
@@ -203,7 +203,7 @@ export const defaultAboutContent: AboutContent = {
     },
     {
       year: "2026",
-      title: "50,000+ devices equipped",
+      title: "20,000+ devices equipped",
       text: "Screen armor, camera armor, cases — and shipping that reaches customers far beyond our first city.",
     },
     {
@@ -317,7 +317,7 @@ export const defaultCollectionsContent: CollectionsContent = {
 };
 
 export const defaultHomeHeroContent: HomeHeroContent = {
-  ratingLabel: "50,000+ owners · worldwide",
+  ratingLabel: "20,000+ owners · worldwide",
   quickLinks: [
     { label: "iPhone", href: "/shop/iphone" },
     { label: "Samsung", href: "/shop/samsung" },
@@ -326,7 +326,7 @@ export const defaultHomeHeroContent: HomeHeroContent = {
   stats: [
     { value: "9H+", label: "Hardness" },
     { value: "±0.05", label: "mm fit" },
-    { value: "50k+", label: "Owners" },
+    { value: "20k+", label: "Owners" },
   ],
   slides: [
     {
@@ -424,6 +424,33 @@ export const defaultShowcaseContent: ShowcaseContent = {
   ],
 };
 
+/** Flat delivery charge chosen in admin. Free shows ৳0; paid shows the amount. */
+export type ShippingContent = {
+  mode: "free" | "paid";
+  /** Whole currency units. Used only when mode is paid. */
+  amount: number;
+};
+
+export const defaultShippingContent: ShippingContent = {
+  mode: "paid",
+  amount: 80,
+};
+
+/** Homepage clarity slider. Empty images keep the built-in glass scene. */
+export type ClarityContent = {
+  beforeImage: string;
+  afterImage: string;
+  beforeLabel: string;
+  afterLabel: string;
+};
+
+export const defaultClarityContent: ClarityContent = {
+  beforeImage: "",
+  afterImage: "",
+  beforeLabel: "Ordinary glass",
+  afterLabel: "HYDRA armor",
+};
+
 export const SITE_SECTION_META = [
   {
     key: "home.hero",
@@ -452,6 +479,16 @@ export const SITE_SECTION_META = [
     key: "site.currency",
     title: "Currency & price format",
     description: "How product prices show on the store — Taka (৳), Dollar ($), Euro (€), or a custom symbol. Numbers stay the same; only the display changes.",
+  },
+  {
+    key: "site.shipping",
+    title: "Shipping charge",
+    description: "One delivery fee for every order. Free shows ৳0. Paid shows the amount you set, added into the checkout and invoice total.",
+  },
+  {
+    key: "home.clarity",
+    title: "Home · Clarity you can feel",
+    description: "The two photos in the homepage compare slider. Left is ordinary glass, right is HYDRA armor.",
   },
   {
     key: "installation",

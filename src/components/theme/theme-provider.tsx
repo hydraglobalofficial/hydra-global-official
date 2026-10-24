@@ -10,6 +10,7 @@ import {
 } from "react";
 import {
   applyTheme,
+  DEFAULT_THEME,
   readStoredTheme,
   type Theme,
 } from "@/lib/theme";
@@ -44,7 +45,7 @@ function getClientTheme(): Theme {
 }
 
 function getServerTheme(): Theme {
-  return "dark";
+  return DEFAULT_THEME;
 }
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
@@ -61,7 +62,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
   const toggleTheme = useCallback(() => {
     const attr = document.documentElement.getAttribute("data-theme");
-    const current: Theme = attr === "light" || attr === "dark" ? attr : "dark";
+    const current: Theme = attr === "light" || attr === "dark" ? attr : DEFAULT_THEME;
     const next: Theme = current === "dark" ? "light" : "dark";
     applyTheme(next);
     emit();

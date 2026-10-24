@@ -217,15 +217,17 @@ export function reportDocument({
     </div>
     <div class="pad">
       <header class="brand">
-        <div>
-          <div class="brand-mark">${escapeHtml(siteConfig.name)}</div>
-          <div class="brand-sub">${escapeHtml(siteConfig.tagline)}</div>
+        <div style="display:flex;align-items:center;gap:14px">
+          <img src="/products/Hydra_Mark.png" alt="${escapeHtml(siteConfig.name)}" width="72" height="72" style="display:block;width:72px;height:72px;object-fit:contain;background:#0c1222;border-radius:14px" />
+          <div>
+            <div class="brand-sub" style="font-size:15px;font-weight:750;color:var(--ink);letter-spacing:0.04em">${escapeHtml(siteConfig.legalName)}</div>
+            <div class="brand-sub">${escapeHtml(siteConfig.tagline)}</div>
+          </div>
         </div>
         <div class="company">
           <strong>${escapeHtml(siteConfig.legalName)}</strong>
           ${escapeHtml(companyInfo.registeredOffice)}<br/>
-          ${escapeHtml(siteConfig.email)} · ${escapeHtml(siteConfig.phone)}<br/>
-          TIN ${escapeHtml(companyInfo.tin)} · BIN ${escapeHtml(companyInfo.bin)}
+          ${escapeHtml(siteConfig.email)} · ${escapeHtml(siteConfig.phone)}
         </div>
       </header>
 

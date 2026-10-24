@@ -160,20 +160,19 @@ export function buildInvoiceEmailHtml(order: InvoiceOrder) {
     )
     .join("");
 
-  // Text lockup always renders; mark image is optional enhancement (no broken alt icon).
   const brandLockup = `
     <table role="presentation" cellpadding="0" cellspacing="0">
       <tr>
-        <td style="vertical-align:middle;padding-right:12px">
-          <img src="${escapeHtml(markUrl)}" width="44" height="44" alt=""
-               style="display:block;width:44px;height:44px;border:0;outline:none;border-radius:8px;background:#141c2e" />
+        <td style="vertical-align:middle;padding-right:14px">
+          <img src="${escapeHtml(markUrl)}" width="72" height="72" alt="${escapeHtml(siteConfig.name)}"
+               style="display:block;width:72px;height:72px;border:0;outline:none;border-radius:14px;background:#0c1222" />
         </td>
         <td style="vertical-align:middle">
-          <div style="font-family:Segoe UI,Helvetica,Arial,sans-serif;font-size:26px;font-weight:800;letter-spacing:0.14em;line-height:1;color:#ffffff">
-            HYDRA
+          <div style="font-family:Segoe UI,Helvetica,Arial,sans-serif;font-size:16px;font-weight:750;line-height:1.3;color:#ffffff">
+            ${escapeHtml(siteConfig.legalName)}
           </div>
-          <div style="margin-top:5px;font-family:Segoe UI,Helvetica,Arial,sans-serif;font-size:10px;font-weight:600;letter-spacing:0.28em;text-transform:uppercase;color:#8b9bb8">
-            Smart accessories
+          <div style="margin-top:6px;font-family:Segoe UI,Helvetica,Arial,sans-serif;font-size:13px;line-height:1.45;color:#c5d0e2">
+            ${escapeHtml(companyInfo.registeredOffice)}
           </div>
         </td>
       </tr>
@@ -327,8 +326,9 @@ export function buildInvoiceEmailHtml(order: InvoiceOrder) {
           <!-- Footer -->
           <tr>
             <td style="padding:20px 28px 26px;background:#0c1222;font-size:11px;line-height:1.6;color:#8b9bb8">
-              <div style="font-size:12px;font-weight:700;letter-spacing:0.12em;color:#ffffff;margin-bottom:8px">HYDRA</div>
-              ${escapeHtml(siteConfig.legalName)} · ${escapeHtml(companyInfo.registeredOffice)}<br/>
+              <img src="${escapeHtml(markUrl)}" width="36" height="36" alt="${escapeHtml(siteConfig.name)}" style="display:block;width:36px;height:36px;border:0;border-radius:8px;background:#0c1222;margin-bottom:10px" />
+              ${escapeHtml(siteConfig.legalName)}<br/>
+              ${escapeHtml(companyInfo.registeredOffice)}<br/>
               Support: ${escapeHtml(process.env.SMTP_REPLY_TO?.trim() || siteConfig.email)} · ${escapeHtml(siteConfig.phone)}<br/>
               Invoice ID is your courier reference — please keep this email.
             </td>
@@ -356,6 +356,8 @@ export function buildInvoiceEmailText(order: InvoiceOrder) {
     `Issued: ${formatReportDate(order.createdAt)}`,
     `Status: ${order.status}`,
     `Payment: ${paymentCopy(order)}`,
+    `Subtotal: ${formatReportMoney(order.subtotal)}`,
+    `Shipping: ${formatReportMoney(order.shippingFee)}`,
     `Total: ${formatReportMoney(order.total)}`,
     ``,
     `Items`,
@@ -372,6 +374,7 @@ export function buildInvoiceEmailText(order: InvoiceOrder) {
     `Track shipment: ${trackUrl}`,
     ``,
     `${siteConfig.legalName}`,
+    companyInfo.registeredOffice,
     `Support: ${process.env.SMTP_REPLY_TO?.trim() || siteConfig.email} · ${siteConfig.phone}`,
   ];
   return lines.join("\n");

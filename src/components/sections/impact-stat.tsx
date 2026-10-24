@@ -45,7 +45,7 @@ export function ImpactStat() {
           viewport={{ once: true, amount: 0.35 }}
           transition={{ duration: 0.85, ease: [0.16, 1, 0.3, 1] }}
         >
-          <CountUp to={50000} className="tabular-nums" />
+          <CountUp to={20000} className="tabular-nums" />
           <span>+</span>
         </motion.p>
         <motion.div
