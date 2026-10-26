@@ -34,11 +34,6 @@ export default async function AdminContentPage() {
             detail: "The scrolling bar above the menu. Edit it on this page.",
           },
           {
-            href: "/admin/content/sections/home.showcase",
-            title: "Homepage video cards",
-            detail: "Poster image and YouTube link for each card.",
-          },
-          {
             href: "/admin/content/sections/home.clarity",
             title: "Clarity you can feel",
             detail: "The two photos in the homepage compare slider.",
@@ -62,11 +57,6 @@ export default async function AdminContentPage() {
             href: "/admin/orders",
             title: "Orders",
             detail: "Tap an order block to open it.",
-          },
-          {
-            href: "/admin/content/sections/home.hero",
-            title: "Homepage hero",
-            detail: "The big slider at the top of the homepage.",
           },
         ].map((item) => (
           <Link

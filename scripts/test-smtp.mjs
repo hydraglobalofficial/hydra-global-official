@@ -3,7 +3,7 @@
  * Usage: pnpm mail:test
  * Never prints the password — only length + verify result.
  */
-import "dotenv/config";
+import "./load-dotenv.mjs";
 import nodemailer from "nodemailer";
 import { readSmtpPass } from "./smtp-pass.mjs";
 

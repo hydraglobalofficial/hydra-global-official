@@ -678,7 +678,7 @@ export function HomeHeroSectionEditor({ content }: { content: HomeHeroContent })
 
       <Section title="Bottom stats bar">
         <ListHeader
-          hint="Hardness / fit / trust strip under the hero (1–4)."
+          hint="Slim trust line directly under an image banner, or along the bottom of the split hero (1–4). A label of only “-” is hidden."
           addLabel="Add stat"
           canAdd={stats.length < 4}
           onAdd={() =>
@@ -707,7 +707,7 @@ export function HomeHeroSectionEditor({ content }: { content: HomeHeroContent })
 
       <Section title="Hero slides">
         <ListHeader
-          hint="Each slide has left copy + right stage. Blank slides skipped. Visual: phone / glass / privacy / custom image."
+          hint="Blank slides are skipped. Phone, glass and privacy keep the split layout. Custom hero image: 21:10 landscape (1920×910). Not 16:9 — that is too tall and will crop."
           addLabel="Add slide"
           canAdd={slides.length < 6}
           onAdd={() =>
@@ -774,7 +774,7 @@ export function HomeHeroSectionEditor({ content }: { content: HomeHeroContent })
                     <option value="image">Custom image</option>
                   </Select>
                 </Label>
-                <Label label="Custom image" hint="Upload from device (Cloudflare R2) or paste a URL. Required when visual is Custom image.">
+                <Label label="Custom image" hint="Ratio 21:10 — upload 1920×910 so it fills the banner. 16:9 will crop top and bottom.">
                   <ImageUrlField
                     name="slideImage"
                     defaultValue={slide.image}
@@ -1667,9 +1667,6 @@ export function ImpactLabSectionEditor({ content }: { content: ImpactLabContent 
                   <Input name="labLabel" defaultValue={card.label} placeholder="Drop-tested onto granite" maxLength={80} />
                 </Label>
               </div>
-              <Label label="Picture" hint="Optional. Leave empty to show just the words.">
-                <ImageUrlField name="labImage" defaultValue={card.image} folder="impact" placeholder="Upload a picture" />
-              </Label>
             </div>
           ))}
         </div>

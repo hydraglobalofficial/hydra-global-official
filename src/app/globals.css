@@ -588,7 +588,7 @@ html.light .admin-drawer-scrim {
 
 html.light .card-premium,
 html[data-theme="light"] .card-premium {
-  background: #ffffff !important;
+  background: #DCEEF9 !important;
   background-image: none !important;
   border: 1px solid #c5e0f3 !important;
   box-shadow:
@@ -1053,11 +1053,19 @@ html.light .card-premium,
 html[data-theme="light"] .card-premium,
 html.light .spotlight.card-premium,
 html[data-theme="light"] .spotlight.card-premium {
-  background: #ffffff !important;
+  background: #DCEEF9 !important;
   background-image: none !important;
   border: 1px solid #c5e0f3 !important;
   box-shadow: 0 1px 0 rgb(255 255 255 / 0.8), 0 12px 32px -24px rgb(30 64 120 / 0.22) !important;
   color: #0a0a0c !important;
+}
+
+html.light .bento-fill.spotlight.card-premium,
+html[data-theme="light"] .bento-fill.spotlight.card-premium {
+  background: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
 }
 
 /* Legacy hard-coded hero fill (stale bundles / hard refresh) */
@@ -1071,6 +1079,15 @@ html.light [aria-label="Featured collections"] > div.absolute.inset-0:first-chil
 html[data-theme="light"] [aria-label="Featured collections"] > div.absolute.inset-0:first-child {
   background-color: #ffffff !important;
   background-image: none !important;
+}
+
+html.light .hero-film,
+html[data-theme="light"] .hero-film,
+html.light .hydra-film-block,
+html[data-theme="light"] .hydra-film-block {
+  background: #000 !important;
+  background-image: none !important;
+  color: #fff !important;
 }
 
 html.light [aria-label="Featured collections"] .animate-hero-glow,

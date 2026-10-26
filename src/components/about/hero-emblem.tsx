@@ -6,7 +6,7 @@ import { HydraVideo } from "@/components/hydra/hydra-video";
 export function HeroEmblem() {
   return (
     <div className="relative mx-auto w-full max-w-lg overflow-hidden rounded-[1.75rem] bg-black">
-      <HydraVideo loop className="aspect-square w-full object-contain" />
+      <HydraVideo loop startAt={2} className="aspect-square w-full bg-black object-contain" />
     </div>
   );
 }

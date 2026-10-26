@@ -67,6 +67,7 @@ export function SplashScreen() {
     >
       <HydraVideo
         className="h-auto max-h-[86vh] w-[min(92vw,40rem)] object-contain"
+        startAt={2}
         onEnded={beginExit}
       />
     </motion.div>

@@ -581,7 +581,7 @@ export const SITE_SECTION_META = [
   {
     key: "home.hero",
     title: "Home · Hero slider",
-    description: "Homepage hero: slides, stage visuals/images, CTAs, quick links and bottom stats — edited separately.",
+    description: "Homepage hero: slides, stage visuals/images, CTAs, quick links and bottom stats. Custom banner: 21:10 (1920×910).",
   },
   {
     key: "about",
@@ -634,7 +634,7 @@ export const SITE_SECTION_META = [
   {
     key: "home.impactLab",
     title: "Impact lab cards",
-    description: "The four blocks under the dropping-phone animation. On a phone they sit two by two. Change the words and pictures here.",
+    description: "The four blocks under the Impact lab heading. On a phone they sit two by two. Change the words here.",
   },
   {
     key: "installation",

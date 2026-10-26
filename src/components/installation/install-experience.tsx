@@ -342,7 +342,7 @@ export function InstallExperience({ content }: { content: InstallationContent })
                 animate={{ opacity: 1, y: 0 }}
                 exit={reduce ? undefined : { opacity: 0, y: -10 }}
                 transition={{ duration: 0.35, ease }}
-                className="grid items-start gap-8 rounded-[1.75rem] border border-line bg-bg p-5 shadow-none md:p-7 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] lg:gap-10 lg:p-8 light:border-[#C5E0F3] light:bg-white"
+                className="grid items-start gap-8 rounded-[1.75rem] border border-line bg-bg p-5 shadow-none md:p-7 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] lg:gap-10 lg:p-8 light:border-[#C5E0F3] light:bg-[#DCEEF9]"
               >
                 <div className="flex min-h-0 flex-col justify-center lg:py-2">
                   <p className="font-mono text-[11px] uppercase tracking-[0.28em] text-muted">
@@ -383,7 +383,7 @@ export function InstallExperience({ content }: { content: InstallationContent })
       {walkthroughUrl ? <WalkthroughPlayer url={walkthroughUrl} reduce={reduce} /> : null}
 
       <section className="container-page grid gap-6 pb-24 lg:grid-cols-2">
-        <div className="rounded-[1.5rem] border border-line bg-bg p-6 md:p-8 light:border-[#C5E0F3] light:bg-white">
+        <div className="rounded-[1.5rem] border border-line bg-bg p-6 md:p-8 light:border-[#C5E0F3] light:bg-[#DCEEF9]">
           <p className="mb-5 flex items-center gap-2 text-sm font-medium">
             <Package size={16} className="text-accent" /> In every HYDRA box
           </p>
@@ -400,7 +400,7 @@ export function InstallExperience({ content }: { content: InstallationContent })
           </ul>
         </div>
 
-        <div className="rounded-[1.5rem] border border-line bg-bg p-6 md:p-8 light:border-[#C5E0F3] light:bg-white">
+        <div className="rounded-[1.5rem] border border-line bg-bg p-6 md:p-8 light:border-[#C5E0F3] light:bg-[#DCEEF9]">
           <p className="mb-5 text-sm font-medium">If something looks off</p>
           <div className="space-y-2">
             {content.troubleshooting.map((t) => (

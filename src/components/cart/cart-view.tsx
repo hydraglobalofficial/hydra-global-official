@@ -26,12 +26,12 @@ export function CartView() {
 
   return (
     <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_24rem] lg:gap-10">
-      <ul className="min-w-0 divide-y divide-line rounded-2xl border border-line bg-surface px-4 sm:rounded-3xl sm:px-6">
+      <ul className="min-w-0 divide-y divide-line rounded-2xl border border-line bg-surface px-4 sm:rounded-3xl sm:px-6 light:border-[#C5E0F3] light:bg-[#DCEEF9]">
         {lines.map((line) => (
           <CartLineItem key={`${line.productId}:${line.variantId}`} line={line} />
         ))}
       </ul>
-      <aside className="h-fit space-y-5 rounded-2xl border border-line bg-surface p-5 sm:space-y-6 sm:rounded-3xl sm:p-6 lg:sticky lg:top-28">
+      <aside className="h-fit space-y-5 rounded-2xl border border-line bg-surface p-5 sm:space-y-6 sm:rounded-3xl sm:p-6 lg:sticky lg:top-28 light:border-[#C5E0F3] light:bg-[#DCEEF9]">
         <h2 className="text-lg font-semibold">Order summary</h2>
         <div className="flex justify-between gap-3 text-sm">
           <span className="text-muted">Subtotal</span>

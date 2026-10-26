@@ -1,4 +1,4 @@
-/** Shared: read SMTP password from .env without $ variable expansion. */
+/** Shared: read SMTP password from `.env.local` / `.env` without $ expansion. */
 import fs from "fs";
 
 function normalize(raw) {
@@ -17,16 +17,18 @@ function normalize(raw) {
   return pass;
 }
 
-/** Prefer SMTP_PASSWORD over SMTP_PASS when both exist. */
+/** Prefer SMTP_PASSWORD over SMTP_PASS when both exist. `.env.local` wins. */
 export function readSmtpPass() {
   try {
-    if (!fs.existsSync(".env")) return normalize(process.env.SMTP_PASSWORD) || normalize(process.env.SMTP_PASS);
-    const text = fs.readFileSync(".env", "utf8");
-    for (const key of ["SMTP_PASSWORD", "SMTP_PASS"]) {
-      const match = text.match(new RegExp(`^${key}=(.*)$`, "m"));
-      if (!match) continue;
-      const pass = normalize(match[1]);
-      if (pass) return pass;
+    for (const name of [".env.local", ".env"]) {
+      if (!fs.existsSync(name)) continue;
+      const text = fs.readFileSync(name, "utf8");
+      for (const key of ["SMTP_PASSWORD", "SMTP_PASS"]) {
+        const match = text.match(new RegExp(`^${key}=(.*)$`, "m"));
+        if (!match) continue;
+        const pass = normalize(match[1]);
+        if (pass) return pass;
+      }
     }
   } catch {
     // fall through

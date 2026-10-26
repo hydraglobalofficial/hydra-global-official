@@ -1395,13 +1395,12 @@ export async function saveImpactLabSection(_prev: FormState, formData: FormData)
   try {
     const values = formData.getAll("labValue").map(String);
     const labels = formData.getAll("labLabel").map(String);
-    const images = formData.getAll("labImage").map(String);
     const data = normalizeImpactLabContent({
       eyebrow: clampText(formData.get("eyebrow"), 40),
       title: clampText(formData.get("title"), 80),
       titleMuted: clampText(formData.get("titleMuted"), 80),
       text: clampText(formData.get("text"), 280),
-      cards: values.map((value, i) => ({ value, label: labels[i] ?? "", image: images[i] ?? "" })),
+      cards: values.map((value, i) => ({ value, label: labels[i] ?? "", image: "" })),
     } satisfies ImpactLabContent);
     await db.siteSection.upsert({
       where: { key: "home.impactLab" },

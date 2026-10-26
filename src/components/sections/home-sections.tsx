@@ -20,11 +20,10 @@ export function ShopByDevice({
   devices: NavigationData["devices"];
   brands: BrandRecord[];
 }) {
-  const cards = brands.map((brand, i) => {
+  const cards = brands.map((brand) => {
     const models = devices.filter((d) => d.brand === brand.code);
     return {
       brand,
-      glow: i % 2 === 0 ? "bg-accent/30" : "bg-sky-500/15",
       count: models.length,
       models: models.slice(0, 4),
       latest: models[0]?.model ?? brand.label,
@@ -46,9 +45,7 @@ export function ShopByDevice({
                 href={`/shop/${card.brand.slug}`}
                 className="relative flex min-h-[20rem] flex-col gap-6 overflow-hidden p-5 sm:min-h-[22rem] sm:flex-row sm:items-center sm:gap-5 sm:p-7 md:min-h-[23rem] md:gap-6 md:p-8"
               >
-                <div
-                  className={`pointer-events-none absolute -right-10 top-1/3 size-[18rem] rounded-full ${card.glow} blur-[100px] opacity-40 transition-opacity duration-700 group-hover:opacity-75`}
-                />
+                <div className="pointer-events-none absolute -right-10 top-1/3 size-[18rem] rounded-full bg-[#C5E0F3]/70 blur-[100px] opacity-50 transition-opacity duration-700 group-hover:opacity-80" />
                 <div className="bg-dots pointer-events-none absolute inset-0 opacity-45 [mask-image:linear-gradient(to_bottom,#000_15%,transparent_80%)]" />
 
                 <div className="relative z-[1] flex min-w-0 flex-1 flex-col justify-center pr-1" style={{ minWidth: "12rem" }}>
@@ -63,13 +60,13 @@ export function ShopByDevice({
                     {card.models.map((m) => (
                       <span
                         key={m.slug}
-                        className="rounded-full border border-line bg-bg/40 px-2.5 py-1 text-[11px] text-muted backdrop-blur-sm sm:px-3 sm:text-xs light:border-[#C5E0F3] light:bg-white"
+                        className="rounded-full border border-line bg-bg/40 px-2.5 py-1 text-[11px] text-muted backdrop-blur-sm sm:px-3 sm:text-xs light:border-[#C5E0F3] light:bg-[#C5E0F3]"
                       >
                         {m.model}
                       </span>
                     ))}
                   </div>
-                  <span className="mt-5 inline-flex min-h-11 w-fit items-center gap-2 rounded-full border border-line-strong bg-bg/55 px-5 py-2.5 text-sm font-medium backdrop-blur-md transition-all group-hover:border-accent/45 group-hover:bg-accent/10 light:border-[#C5E0F3] light:bg-white">
+                  <span className="mt-5 inline-flex min-h-11 w-fit items-center gap-2 rounded-full border border-line-strong bg-bg/55 px-5 py-2.5 text-sm font-medium backdrop-blur-md transition-all group-hover:border-accent/45 group-hover:bg-accent/10 light:border-[#C5E0F3] light:bg-[#C5E0F3]">
                     Shop {card.brand.label}
                     <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
                   </span>
@@ -118,7 +115,7 @@ export function TechGrid({ content }: { content: TechContent }) {
                   className={`group relative flex h-full flex-col overflow-hidden rounded-[1.35rem] border p-5 sm:p-6 ${
                     photo
                       ? "min-h-[17.5rem] justify-between border-white/15 shadow-[0_22px_50px_-32px_rgba(15,23,42,0.7)]"
-                      : "border-line bg-surface light:border-[#C5E0F3] light:bg-white"
+                      : "border-line bg-surface light:border-[#C5E0F3] light:bg-[#DCEEF9]"
                   }`}
                 >
                   {photo ? (
@@ -153,7 +150,7 @@ export function TechGrid({ content }: { content: TechContent }) {
                         className={`rounded-full border px-2.5 py-1 font-mono text-[11px] tracking-wide backdrop-blur-sm ${
                           photo
                             ? "border-white/25 bg-black/35 text-white"
-                            : "border-line bg-surface-2 text-accent light:border-[#C5E0F3] light:bg-white"
+                            : "border-line bg-surface-2 text-accent light:border-[#C5E0F3] light:bg-[#C5E0F3]"
                         }`}
                       >
                         {card.stat}

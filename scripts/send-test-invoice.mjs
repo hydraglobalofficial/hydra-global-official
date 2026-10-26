@@ -2,7 +2,7 @@
  * Sends one real SMTP test message using current .env.
  * Usage: node scripts/send-test-invoice.mjs [to@email]
  */
-import "dotenv/config";
+import "./load-dotenv.mjs";
 import nodemailer from "nodemailer";
 import { readSmtpPass } from "./smtp-pass.mjs";
 

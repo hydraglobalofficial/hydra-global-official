@@ -101,7 +101,7 @@ export function CheckoutForm() {
     <form action={action} className="relative z-0 grid gap-8 lg:grid-cols-[minmax(0,1fr)_26rem] lg:gap-10" noValidate>
       <input type="hidden" name="lines" value={payload} />
 
-      <div className="min-w-0 overflow-hidden rounded-[1.35rem] border border-line bg-surface light:border-[#C5E0F3] light:bg-white sm:rounded-[1.75rem]">
+      <div className="min-w-0 overflow-hidden rounded-[1.35rem] border border-line bg-surface light:border-[#C5E0F3] light:bg-[#DCEEF9] sm:rounded-[1.75rem]">
         {/* 1 · Contact */}
         <section className="p-4 sm:p-7">
           <SectionTitle
@@ -282,7 +282,7 @@ export function CheckoutForm() {
         </section>
       </div>
 
-      <aside className="h-fit space-y-5 rounded-[1.35rem] border border-line bg-surface p-5 light:border-[#C5E0F3] light:bg-white sm:space-y-6 sm:rounded-[1.75rem] sm:p-6 lg:sticky lg:top-28">
+      <aside className="h-fit space-y-5 rounded-[1.35rem] border border-line bg-surface p-5 light:border-[#C5E0F3] light:bg-[#DCEEF9] sm:space-y-6 sm:rounded-[1.75rem] sm:p-6 lg:sticky lg:top-28">
         <h2 className="text-lg font-semibold tracking-tight">Order summary</h2>
         <ul className="max-h-72 space-y-4 overflow-y-auto overscroll-contain pr-1">
           {lines.map((l) => (

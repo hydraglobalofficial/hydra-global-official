@@ -144,7 +144,7 @@ export const getHomeHeroContent = unstable_cache(
       return defaultHomeHeroContent;
     }
   },
-  ["site-section-home-hero"],
+  ["site-section-home-hero-v10"],
   { tags: [CONTENT_TAG], revalidate: 3600 },
 );
 

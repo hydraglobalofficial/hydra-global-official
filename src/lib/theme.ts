@@ -29,8 +29,8 @@ html,html.light,html[data-theme="light"]{
   --color-muted:#3f3f46!important;
   --color-subtle:#52525b!important;
   --color-accent:#1e3a8a!important;
-  --hydra-card-top:#ffffff!important;
-  --hydra-card-bottom:#ffffff!important;
+  --hydra-card-top:#DCEEF9!important;
+  --hydra-card-bottom:#DCEEF9!important;
   --hydra-glass-top:#ffffff!important;
   --hydra-glass-bottom:#ffffff!important;
   --hydra-grid:transparent!important;
@@ -43,11 +43,17 @@ html body,html.light body,html[data-theme="light"] body{
 }
 html.light .card-premium,html[data-theme="light"] .card-premium,
 html.light .spotlight.card-premium,html[data-theme="light"] .spotlight.card-premium{
-  background:#ffffff!important;
+  background:#DCEEF9!important;
   background-image:none!important;
   border:1px solid #C5E0F3!important;
   box-shadow:0 1px 0 rgb(255 255 255/.8),0 14px 36px -24px rgb(30 64 120/.22)!important;
   color:#0a0a0c!important;
+}
+html.light .bento-fill.card-premium,html[data-theme="light"] .bento-fill.card-premium{
+  background:transparent!important;
+  background-image:none!important;
+  border:0!important;
+  box-shadow:none!important;
 }
 html.light .ambient-fx,html[data-theme="light"] .ambient-fx,
 html.light .hero-stage-glow,html.light .hero-stage-wash,html.light .hero-stage-grid,
@@ -64,9 +70,13 @@ html[data-theme="light"] .divider-glow,html[data-theme="light"] .ambient-fx{
   display:none!important;opacity:0!important;visibility:hidden!important;
 }
 html.light .hero-stage-bg,html[data-theme="light"] .hero-stage-bg,
-html.light [aria-label="Featured collections"]>div:first-child,
-html[data-theme="light"] [aria-label="Featured collections"]>div:first-child{
+html.light [aria-label="Featured collections"]>div:first-child:not(.hero-film),
+html[data-theme="light"] [aria-label="Featured collections"]>div:first-child:not(.hero-film){
   background:#ffffff!important;background-image:none!important;
+}
+html.light .hero-film,html[data-theme="light"] .hero-film,
+html.light .hydra-film-block,html[data-theme="light"] .hydra-film-block{
+  background:#000!important;background-image:none!important;color:#fff!important;
 }
 html.light .spotlight::before,html.light .spotlight::after,
 html[data-theme="light"] .spotlight::before,html[data-theme="light"] .spotlight::after{

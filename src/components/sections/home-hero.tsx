@@ -81,16 +81,25 @@ function HeroStagePager({
   paused,
   labels,
   onSelect,
+  film,
 }: {
   index: number;
   total: number;
   paused: boolean;
   labels: string[];
   onSelect: (i: number) => void;
+  film?: boolean;
 }) {
   return (
     <div className="pointer-events-auto w-[min(100%,12.5rem)] sm:w-[min(100%,14rem)]">
-      <div className="rounded-full border border-line bg-bg/80 px-2.5 py-1.5 shadow-[0_14px_40px_-18px_rgba(0,0,0,0.55)] backdrop-blur-md light:border-[#C5E0F3] light:bg-white light:shadow-[0_10px_28px_-16px_rgba(0,0,0,0.14)] sm:px-3 sm:py-2">
+      <div
+        className={cn(
+          "rounded-full border px-2.5 py-1.5 backdrop-blur-md sm:px-3 sm:py-2",
+          film
+            ? "border-white/25 bg-black/40 shadow-[0_14px_40px_-18px_rgba(0,0,0,0.65)]"
+            : "border-line bg-bg/80 shadow-[0_14px_40px_-18px_rgba(0,0,0,0.55)] light:border-[#C5E0F3] light:bg-white light:shadow-[0_10px_28px_-16px_rgba(0,0,0,0.14)]",
+        )}
+      >
         <div className="flex items-center justify-center gap-1.5 sm:gap-2">
           {Array.from({ length: total }, (_, i) => {
             const active = i === index;
@@ -103,14 +112,20 @@ function HeroStagePager({
                 aria-current={active ? "true" : undefined}
                 className={cn(
                   "relative overflow-hidden rounded-full transition-all duration-300",
-                  active ? "h-1.5 w-7 bg-fg/15 sm:h-2 sm:w-9" : "size-1.5 bg-fg/30 hover:bg-fg/55 sm:size-2",
+                  active
+                    ? film
+                      ? "h-1.5 w-7 bg-white/25 sm:h-2 sm:w-9"
+                      : "h-1.5 w-7 bg-fg/15 sm:h-2 sm:w-9"
+                    : film
+                      ? "size-1.5 bg-white/45 hover:bg-white sm:size-2"
+                      : "size-1.5 bg-fg/30 hover:bg-fg/55 sm:size-2",
                 )}
               >
                 {active && (
                   <span
                     key={`${index}-${paused ? "p" : "r"}`}
                     className={cn(
-                      "absolute inset-y-0 left-0 origin-left rounded-full bg-accent",
+                      cn("absolute inset-y-0 left-0 origin-left rounded-full", film ? "bg-white" : "bg-accent"),
                       paused ? "w-full" : "animate-hero-rail w-full",
                     )}
                     style={paused ? undefined : { animationDuration: `${SLIDE_MS}ms` }}
@@ -120,8 +135,8 @@ function HeroStagePager({
             );
           })}
         </div>
-        <p className="mt-0.5 text-center font-mono text-[9px] tabular-nums tracking-[0.2em] text-muted sm:mt-1 sm:text-[10px]">
-          <span className="text-fg">{String(index + 1).padStart(2, "0")}</span>
+        <p className={cn("mt-0.5 text-center font-mono text-[9px] tabular-nums tracking-[0.2em] sm:mt-1 sm:text-[10px]", film ? "text-white/70" : "text-muted")}>
+          <span className={film ? "text-white" : "text-fg"}>{String(index + 1).padStart(2, "0")}</span>
           <span className="mx-1 text-fg/25">/</span>
           {String(total).padStart(2, "0")}
         </p>
@@ -133,9 +148,11 @@ function HeroStagePager({
 function HeroSideArrow({
   dir,
   onClick,
+  film,
 }: {
   dir: "prev" | "next";
   onClick: () => void;
+  film?: boolean;
 }) {
   const Icon = dir === "prev" ? ChevronLeft : ChevronRight;
   return (
@@ -144,11 +161,11 @@ function HeroSideArrow({
       onClick={onClick}
       aria-label={dir === "prev" ? "Previous slide" : "Next slide"}
       className={cn(
-        "pointer-events-auto absolute top-1/2 z-30 grid size-11 place-items-center rounded-full",
-        "border border-line-strong bg-bg/90 text-fg backdrop-blur-md transition",
-        "hover:border-fg/35 hover:bg-surface hover:scale-105 active:scale-95",
-        "shadow-[0_12px_28px_-14px_rgba(0,0,0,0.55)] light:bg-white light:shadow-[0_10px_24px_-14px_rgba(0,0,0,0.14)]",
-        "sm:size-12",
+        "pointer-events-auto absolute top-1/2 z-30 grid size-11 place-items-center rounded-full backdrop-blur-md transition",
+        "hover:scale-105 active:scale-95 sm:size-12",
+        film
+          ? "border border-white/30 bg-black/35 text-white shadow-[0_12px_28px_-14px_rgba(0,0,0,0.65)] hover:bg-black/55"
+          : "border border-line-strong bg-bg/90 text-fg shadow-[0_12px_28px_-14px_rgba(0,0,0,0.55)] hover:border-fg/35 hover:bg-surface light:bg-white light:shadow-[0_10px_24px_-14px_rgba(0,0,0,0.14)]",
       )}
       style={{
         transform: "translateY(-50%)",
@@ -190,30 +207,119 @@ export function Hero({ content }: { content: HomeHeroContent }) {
 
   if (!slide) return null;
 
+  /** Custom image is the banner, same proportions as a full-bleed slideshow. */
+  const film = slide.visual === "image" && Boolean(slide.image);
+
   return (
     <section
-      className="relative isolate overflow-hidden sm:min-h-[calc(100svh-7.5rem)]"
+      className={cn(
+        "relative isolate overflow-hidden",
+        film
+          ? "flex h-[calc(100svh-6.5rem)] flex-col sm:h-[calc(100svh-7.5rem)] md:h-[calc(100svh-8rem)]"
+          : "sm:min-h-[calc(100svh-7.5rem)]",
+      )}
       aria-roledescription="carousel"
       aria-label="Featured collections"
+      onMouseEnter={film ? () => setPaused(true) : undefined}
+      onMouseLeave={film ? () => setPaused(false) : undefined}
     >
-      <div suppressHydrationWarning className="hero-stage-bg pointer-events-none absolute inset-0 bg-bg" data-hero-stage="v3" />
-      <div suppressHydrationWarning className="hero-stage-glow pointer-events-none absolute -right-[10%] top-[-5%] h-[90%] w-[70%] animate-hero-glow rounded-full bg-accent/25 blur-[120px] light:hidden" />
-      <div suppressHydrationWarning className="hero-stage-wash pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_20%_40%,rgba(255,255,255,0.04),transparent_55%)] light:hidden" />
-      <div suppressHydrationWarning className="hero-stage-grid bg-grid pointer-events-none absolute inset-0 opacity-30 light:hidden" />
-      <div suppressHydrationWarning className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-bg via-bg/80 to-transparent" />
+      {film ? (
+      <>
+        <div className="hero-film pointer-events-none relative min-h-0 w-full flex-1 overflow-hidden bg-black">
+          <AnimatePresence initial={false}>
+            <motion.div
+              key={slide.key}
+              className="absolute inset-0"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.55, ease }}
+            >
+              <Image
+                src={slide.image}
+                alt=""
+                fill
+                priority={safeIndex === 0}
+                sizes="100vw"
+                className={slide.key === "fit-banner" ? "object-contain object-center" : "object-cover object-center"}
+              />
+            </motion.div>
+          </AnimatePresence>
+          <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(0,0,0,0.55)_0%,rgba(0,0,0,0.22)_38%,transparent_68%)]" />
+          {slides.length > 1 && (
+            <>
+              <div className="hidden sm:contents">
+                <HeroSideArrow dir="prev" film onClick={() => go(-1)} />
+                <HeroSideArrow dir="next" film onClick={() => go(1)} />
+              </div>
+              <div className="pointer-events-auto absolute inset-x-0 bottom-3 z-30 flex justify-center sm:bottom-4">
+                <HeroStagePager
+                  film
+                  index={safeIndex}
+                  total={slides.length}
+                  paused={paused}
+                  labels={slides.map((s) => s.brand)}
+                  onSelect={setIndex}
+                />
+              </div>
+            </>
+          )}
+        </div>
+        {stats.length > 0 && (
+          <div className="relative z-20 shrink-0 border-t border-[#C5E0F3] bg-white">
+            <dl className="container-page flex items-center justify-center divide-x divide-[#C5E0F3] py-2.5 sm:py-3">
+              {stats.map((s, i) => {
+                const label = s.label.trim();
+                const showLabel = label.length > 0 && !/^[-–—.·]+$/.test(label);
+                return (
+                  <div key={`${s.value}-${i}`} className="flex min-w-0 items-baseline justify-center gap-1.5 px-3 sm:px-8">
+                    <dd className="truncate font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-fg sm:text-xs">
+                      {s.value}
+                    </dd>
+                    {showLabel && (
+                      <dt className="truncate text-[10px] uppercase tracking-[0.12em] text-subtle sm:text-[11px]">{label}</dt>
+                    )}
+                  </div>
+                );
+              })}
+            </dl>
+          </div>
+        )}
+      </>
+      ) : (
+        <>
+          <div suppressHydrationWarning className="hero-stage-bg pointer-events-none absolute inset-0 bg-bg" data-hero-stage="v3" />
+          <div suppressHydrationWarning className="hero-stage-glow pointer-events-none absolute -right-[10%] top-[-5%] h-[90%] w-[70%] animate-hero-glow rounded-full bg-accent/25 blur-[120px] light:hidden" />
+          <div suppressHydrationWarning className="hero-stage-wash pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_20%_40%,rgba(255,255,255,0.04),transparent_55%)] light:hidden" />
+          <div suppressHydrationWarning className="hero-stage-grid bg-grid pointer-events-none absolute inset-0 opacity-30 light:hidden" />
+          <div suppressHydrationWarning className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-bg via-bg/80 to-transparent" />
+        </>
+      )}
 
       {/*
-        DOM: writing first, image second.
-        Mobile: flex-col-reverse → image on top.
-        Large: flex-row → writing left, image right.
+        Split slides: writing first, stage second.
+        Film slides: the photo is the background; writing sits on the left.
       */}
-      <div className="container-page relative flex flex-col-reverse items-stretch gap-2 pb-20 pt-4 sm:gap-5 sm:pb-20 sm:pt-5 lg:flex-row lg:items-center lg:gap-6 lg:pb-16 lg:pt-0 xl:gap-8">
-        <div className="relative z-10 w-full max-w-xl shrink-0 space-y-4 sm:space-y-6 lg:space-y-7">
-          <div className="grid min-h-[8.5rem] sm:min-h-[12rem]">
+      <div
+        className={cn(
+          "z-10 flex",
+          film
+            ? cn(
+                "pointer-events-none absolute inset-x-0 top-0 items-end px-5 pb-16 sm:items-center sm:pb-0 sm:pl-[clamp(2.75rem,6.5vw,6rem)] sm:pr-[52%]",
+                stats.length > 0 ? "bottom-[3rem] sm:bottom-[3.25rem]" : "bottom-0",
+              )
+            : "container-page relative flex-col-reverse gap-2 pb-20 pt-4 sm:gap-5 sm:pb-20 sm:pt-5 lg:flex-row lg:items-center lg:gap-6 lg:pb-16 lg:pt-0 xl:gap-8",
+        )}
+      >
+        <div className={cn("relative z-10 w-full max-w-xl shrink-0 space-y-4 sm:space-y-6 lg:space-y-7", film && "pointer-events-auto max-w-none space-y-0")}>
+          <div className={cn("grid", film ? "min-h-0" : "min-h-[8.5rem] sm:min-h-[12rem]")}>
             <AnimatePresence initial={false} mode="popLayout">
               <motion.div
                 key={slide.key}
-                className="col-start-1 row-start-1 space-y-3 sm:space-y-7"
+                className={cn(
+                  "col-start-1 row-start-1",
+                  film ? "space-y-[clamp(0.7rem,0.45rem+0.9vw,1.35rem)] text-left" : "space-y-3 sm:space-y-7",
+                )}
                 initial="hidden"
                 animate="show"
                 exit="exit"
@@ -223,17 +329,20 @@ export function Hero({ content }: { content: HomeHeroContent }) {
               >
                 <motion.p
                   variants={item}
-                  className="flex flex-wrap items-center gap-x-2.5 gap-y-1 font-mono text-[10px] uppercase tracking-[0.22em] text-accent sm:text-[11px] sm:tracking-[0.25em]"
+                  className={cn(
+                    "flex flex-wrap items-center gap-x-2.5 gap-y-1 font-mono text-[10px] uppercase tracking-[0.22em] text-accent sm:text-[11px] sm:tracking-[0.25em]",
+                    film && "hidden",
+                  )}
                 >
                   <span>{slide.brand}</span>
                   {slides.length > 1 ? (
                     <>
-                      <span className="text-fg/25" aria-hidden>
+                      <span className={film ? "text-white/35" : "text-fg/25"} aria-hidden>
                         ·
                       </span>
-                      <span className="tabular-nums tracking-[0.18em] text-muted">
+                      <span className={cn("tabular-nums tracking-[0.18em]", film ? "text-white/60" : "text-muted")}>
                         {String(safeIndex + 1).padStart(2, "0")}
-                        <span className="mx-1 text-fg/25">/</span>
+                        <span className={cn("mx-1", film ? "text-white/35" : "text-fg/25")}>/</span>
                         {String(slides.length).padStart(2, "0")}
                       </span>
                     </>
@@ -242,120 +351,138 @@ export function Hero({ content }: { content: HomeHeroContent }) {
 
                 <motion.h1
                   variants={item}
-                  className="text-[clamp(2.15rem,9.5vw,2.85rem)] font-semibold leading-[0.98] tracking-tight text-balance sm:text-6xl md:text-7xl lg:text-[4.6rem] lg:leading-[0.96]"
+                  className={cn(
+                    "font-semibold tracking-tight text-balance",
+                    film
+                      ? "text-[clamp(2.05rem,0.45rem+4.7vw,4.85rem)] font-semibold leading-[1.02] tracking-[-0.035em] text-white drop-shadow-[0_2px_14px_rgba(0,0,0,0.75)]"
+                      : "text-[clamp(2.15rem,9.5vw,2.85rem)] leading-[0.98] sm:text-6xl md:text-7xl lg:text-[4.6rem] lg:leading-[0.96]",
+                  )}
                 >
                   {slide.title}
-                  <span className="block text-accent">{slide.titleAccent}</span>
+                  <span className={cn("block", film ? "text-white" : "text-accent")}>{slide.titleAccent}</span>
                 </motion.h1>
 
-                <motion.p variants={item} className="max-w-md text-[0.95rem] leading-relaxed text-muted sm:text-lg">
+                <motion.p
+                  variants={item}
+                  className={cn(
+                    film
+                      ? "line-clamp-2 max-w-[28rem] text-[clamp(0.95rem,0.82rem+0.32vw,1.125rem)] font-normal leading-snug text-white/90 drop-shadow-[0_2px_10px_rgba(0,0,0,0.7)]"
+                      : "max-w-md text-[0.95rem] leading-relaxed text-muted sm:text-lg",
+                  )}
+                >
                   {slide.text}
                 </motion.p>
 
                 <motion.div variants={item} className="flex flex-wrap items-center gap-2.5 sm:gap-3">
-                  <ButtonLink href={slide.primaryHref} size="lg" className="min-h-11 min-w-[9rem] text-[15px] sm:min-w-[9.5rem]">
-                    {slide.primaryLabel} <ArrowRight size={17} />
+                  <ButtonLink
+                    href={slide.primaryHref}
+                    size={film ? "sm" : "lg"}
+                    className={cn(
+                      !film && "min-h-11 min-w-[9rem] text-[15px] sm:min-w-[9.5rem]",
+                      film && "!h-10 !rounded-full !bg-white !px-5 !text-[13px] !font-medium !text-[#1a1028] hover:!bg-white/90 sm:!h-11 sm:!px-6 sm:!text-sm",
+                    )}
+                  >
+                    {slide.primaryLabel} {!film && <ArrowRight size={17} />}
                   </ButtonLink>
-                  <ButtonLink href={slide.secondaryHref} size="lg" variant="outline" className="min-h-11">
-                    {slide.secondaryLabel}
-                  </ButtonLink>
+                  {!film && (
+                    <ButtonLink href={slide.secondaryHref} size="lg" variant="outline" className="min-h-11">
+                      {slide.secondaryLabel}
+                    </ButtonLink>
+                  )}
                 </motion.div>
               </motion.div>
             </AnimatePresence>
           </div>
 
-          <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
+          {!film && <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
             <div className="flex items-center gap-3">
-              <Rating value={4.8} size={13} />
-              <p className="text-xs text-muted sm:text-sm">{social.ratingLabel}</p>
+              <Rating
+                value={4.8}
+                size={13}
+                starClassName={film ? "!text-white" : undefined}
+                trackClassName={film ? "!text-white/30" : undefined}
+              />
+              <p className={cn("text-xs sm:text-sm", film ? "text-white/75" : "text-muted")}>{social.ratingLabel}</p>
             </div>
-            <div className="hidden h-4 w-px bg-line sm:block" />
-            <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-subtle">
+            <div className={cn("hidden h-4 w-px sm:block", film ? "bg-white/25" : "bg-line")} />
+            <div className={cn("flex flex-wrap gap-x-4 gap-y-1 text-xs", film ? "text-white/70" : "text-subtle")}>
               {social.quickLinks.map((link) => (
-                <Link key={`${link.href}-${link.label}`} href={link.href} className="transition-colors hover:text-fg">
+                <Link
+                  key={`${link.href}-${link.label}`}
+                  href={link.href}
+                  className={cn("transition-colors", film ? "hover:text-white" : "hover:text-fg")}
+                >
                   {link.label}
                 </Link>
               ))}
             </div>
-          </div>
+          </div>}
         </div>
 
-        <div
-          className="relative mx-auto mt-1 w-full min-w-0 max-w-[34rem] sm:mt-0 lg:mx-0 lg:max-w-none lg:flex-1"
-          onMouseEnter={() => setPaused(true)}
-          onMouseLeave={() => setPaused(false)}
-          onFocusCapture={() => setPaused(true)}
-          onBlurCapture={() => setPaused(false)}
-        >
-          {slides.length > 1 && (
-            <>
-              <HeroSideArrow dir="prev" onClick={() => go(-1)} />
-              <HeroSideArrow dir="next" onClick={() => go(1)} />
-            </>
-          )}
-          <Stage>
-            <div
-              className={cn(
-                "relative mx-auto flex w-full max-w-full items-center justify-center overflow-visible pt-2 sm:pt-1 lg:pt-0",
-                slide.visual === "image" ? "min-h-[16rem]" : "aspect-[4/5]",
-              )}
-            >
-              {slide.visual !== "image" && (
+        {!film && (
+          <div
+            className="relative mx-auto mt-1 w-full min-w-0 max-w-[34rem] sm:mt-0 lg:mx-0 lg:max-w-none lg:flex-1"
+            onMouseEnter={() => setPaused(true)}
+            onMouseLeave={() => setPaused(false)}
+            onFocusCapture={() => setPaused(true)}
+            onBlurCapture={() => setPaused(false)}
+          >
+            {slides.length > 1 && (
+              <>
+                <HeroSideArrow dir="prev" onClick={() => go(-1)} />
+                <HeroSideArrow dir="next" onClick={() => go(1)} />
+              </>
+            )}
+            <Stage>
+              <div className="relative mx-auto flex aspect-[4/5] w-full max-w-full items-center justify-center overflow-visible pt-2 sm:pt-1 lg:pt-0">
                 <div aria-hidden className="hero-visual-shadow pointer-events-none absolute inset-x-[18%] bottom-[4%] h-20 rounded-[100%] bg-black/70 blur-3xl light:bg-black/8" />
-              )}
-
-              <div
-                className={cn(
-                  "relative z-[1] w-full max-w-full",
-                  slide.visual === "image" ? "" : "scale-[0.96] sm:scale-[1.03] lg:scale-105",
-                )}
-              >
-                <div className="grid">
-                  <AnimatePresence initial={false} mode="popLayout">
-                    <motion.div
-                      key={slide.key}
-                      className="col-start-1 row-start-1"
-                      initial={{ opacity: 0, scale: 0.96, y: 20 }}
-                      animate={{ opacity: 1, scale: 1, y: 0 }}
-                      exit={{ opacity: 0, scale: 1.02, y: -12 }}
-                      transition={{ duration: 0.45, ease }}
-                    >
-                      <SlideVisual slide={slide} priority={index === 0} />
-                    </motion.div>
-                  </AnimatePresence>
+                <div className="relative z-[1] w-full max-w-full scale-[0.96] sm:scale-[1.03] lg:scale-105">
+                  <div className="grid">
+                    <AnimatePresence initial={false} mode="popLayout">
+                      <motion.div
+                        key={slide.key}
+                        className="col-start-1 row-start-1"
+                        initial={{ opacity: 0, scale: 0.96, y: 20 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 1.02, y: -12 }}
+                        transition={{ duration: 0.45, ease }}
+                      >
+                        <SlideVisual slide={slide} priority={index === 0} />
+                      </motion.div>
+                    </AnimatePresence>
+                  </div>
                 </div>
               </div>
-            </div>
-          </Stage>
+            </Stage>
 
-          {slides.length > 1 && (
-            <div
-              className={cn(
-                "z-30 flex justify-center px-3",
-                slide.visual === "image"
-                  ? "relative mt-3"
-                  : "absolute inset-x-0 bottom-[3%] sm:bottom-[5%] lg:bottom-[6%]",
-              )}
-            >
-              <HeroStagePager
-                index={safeIndex}
-                total={slides.length}
-                paused={paused}
-                labels={slides.map((s) => s.brand)}
-                onSelect={setIndex}
-              />
-            </div>
-          )}
-        </div>
+            {slides.length > 1 && (
+              <div className="absolute inset-x-0 bottom-[3%] z-30 flex justify-center px-3 sm:bottom-[5%] lg:bottom-[6%]">
+                <HeroStagePager
+                  index={safeIndex}
+                  total={slides.length}
+                  paused={paused}
+                  labels={slides.map((s) => s.brand)}
+                  onSelect={setIndex}
+                />
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
+      {!film && (
       <div className="pointer-events-none absolute inset-x-0 bottom-0 z-20 pb-[env(safe-area-inset-bottom)]">
         <div className="container-page pointer-events-auto pb-4 pt-2 sm:pb-7">
           <div className="rounded-2xl border border-line bg-bg/70 px-2 py-2.5 backdrop-blur-xl sm:rounded-full sm:px-5 sm:py-3 light:border-[#C5E0F3] light:bg-white">
             <dl className="grid grid-cols-3 divide-x divide-line sm:flex sm:justify-center sm:divide-x">
               {stats.map((s, i) => (
                 <div key={`${s.value}-${i}`} className="flex min-w-0 flex-col items-center px-1.5 py-1 sm:flex-row sm:gap-2 sm:px-8">
-                  <dt className="order-2 max-w-full truncate text-center text-[9px] uppercase tracking-[0.12em] text-subtle sm:order-1 sm:text-xs sm:tracking-[0.14em]">
+                  <dt
+                    className={cn(
+                      "order-2 max-w-full truncate text-center text-[9px] uppercase tracking-[0.12em] sm:order-1 sm:text-xs sm:tracking-[0.14em]",
+                      "text-subtle",
+                    )}
+                  >
                     {s.label}
                   </dt>
                   <dd className="order-1 font-mono text-xs font-semibold tabular-nums sm:order-2 sm:text-base">
@@ -367,6 +494,7 @@ export function Hero({ content }: { content: HomeHeroContent }) {
           </div>
         </div>
       </div>
+      )}
     </section>
   );
 }

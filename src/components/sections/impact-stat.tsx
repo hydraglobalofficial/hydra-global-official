@@ -43,7 +43,7 @@ function ScatteredPhoto({ photo, index }: { photo: ImpactPhoto; index: number })
   return (
     <motion.figure
       className={cn(
-        "absolute rounded-[1.15rem] bg-white p-2 shadow-[0_28px_50px_-34px_rgba(15,23,42,0.45)] ring-1 ring-[#C5E0F3]",
+        "absolute overflow-hidden rounded-[1.15rem] bg-black shadow-[0_28px_50px_-34px_rgba(15,23,42,0.45)]",
         spot.className,
       )}
       initial={{ opacity: 0, y: 18 }}
@@ -51,8 +51,8 @@ function ScatteredPhoto({ photo, index }: { photo: ImpactPhoto; index: number })
       viewport={{ once: true, amount: 0.25 }}
       transition={{ duration: 0.75, delay: index * 0.06, ease: [0.16, 1, 0.3, 1] }}
     >
-      <div className="relative aspect-[4/5] overflow-hidden rounded-[0.8rem] bg-[#07080c]">
-        <Image src={photo.url} alt={photo.alt || "HYDRA"} fill sizes="180px" className="object-contain p-2" />
+      <div className="relative aspect-[4/5] overflow-hidden">
+        <Image src={photo.url} alt={photo.alt || "HYDRA"} fill sizes="180px" className="object-cover" />
       </div>
     </motion.figure>
   );

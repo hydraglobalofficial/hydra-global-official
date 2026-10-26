@@ -90,7 +90,19 @@ export function SectionHeading({
   );
 }
 
-export function Rating({ value, count, size = 14 }: { value: number; count?: number; size?: number }) {
+export function Rating({
+  value,
+  count,
+  size = 14,
+  starClassName,
+  trackClassName,
+}: {
+  value: number;
+  count?: number;
+  size?: number;
+  starClassName?: string;
+  trackClassName?: string;
+}) {
   return (
     <div className="flex items-center gap-2" aria-label={`Rated ${value.toFixed(1)} out of 5`}>
       <div className="flex">
@@ -98,9 +110,9 @@ export function Rating({ value, count, size = 14 }: { value: number; count?: num
           const fill = Math.min(1, Math.max(0, value - i));
           return (
             <span key={i} className="relative" style={{ width: size, height: size }}>
-              <Star className="absolute inset-0 text-white/15" size={size} fill="currentColor" strokeWidth={0} />
+              <Star className={cn("absolute inset-0 text-white/15", trackClassName)} size={size} fill="currentColor" strokeWidth={0} />
               <span className="absolute inset-0 overflow-hidden" style={{ width: `${fill * 100}%` }}>
-                <Star className="text-accent" size={size} fill="currentColor" strokeWidth={0} />
+                <Star className={cn("text-accent", starClassName)} size={size} fill="currentColor" strokeWidth={0} />
               </span>
             </span>
           );

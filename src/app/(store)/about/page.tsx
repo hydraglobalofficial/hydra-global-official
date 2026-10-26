@@ -39,31 +39,35 @@ export default async function AboutPage() {
   return (
     <>
       <section className="relative min-h-[min(92vh,52rem)] overflow-hidden">
-        <div className="container-page relative grid min-h-[min(72vh,40rem)] items-center gap-8 pb-8 pt-12 sm:gap-10 sm:pb-10 sm:pt-16 md:gap-14 md:pt-24 lg:grid-cols-[1.15fr_1fr] lg:rounded-[2rem] lg:bg-[#070b14] lg:px-10 lg:pb-14 lg:text-white">
-          <Reveal className="min-w-0 space-y-6 sm:space-y-7 md:space-y-8 lg:[&_h1]:text-white lg:[&_h1_span]:text-white lg:[&_p]:text-white/75">
+        <div className="hydra-film-block container-page relative grid min-h-[min(72vh,40rem)] items-center gap-8 rounded-[2rem] bg-black px-5 pb-10 pt-12 text-white sm:gap-10 sm:px-8 sm:pb-12 sm:pt-16 md:gap-14 md:pt-24 lg:grid-cols-[1.15fr_1fr] lg:px-10 lg:pb-14">
+          <div className="min-w-0 space-y-6 sm:space-y-7 md:space-y-8 [&_h1]:text-white [&_h1_span]:text-white [&_p]:text-white/75">
             <Eyebrow>{content.hero.eyebrow}</Eyebrow>
             <h1 className="text-balance text-[2.35rem] font-semibold tracking-tight sm:text-5xl md:text-7xl lg:text-[5.25rem] lg:leading-[0.95]">
               {content.hero.title}
               <br />
-              <span className="text-fg">{content.hero.titleAccent}</span>
+              <span className="text-white">{content.hero.titleAccent}</span>
             </h1>
-            <p className="max-w-xl text-base text-pretty leading-relaxed text-muted sm:text-lg md:text-xl">{content.hero.description}</p>
+            <p className="max-w-xl text-base text-pretty leading-relaxed text-white/70 sm:text-lg md:text-xl">{content.hero.description}</p>
             <div className="flex flex-wrap gap-3 pt-1">
-              <ButtonLink href="/shop" size="lg">
+              <ButtonLink
+                href="/shop"
+                size="lg"
+                className="border border-white/40 bg-transparent text-white shadow-none hover:border-white hover:bg-white/10"
+              >
                 Shop accessories <ArrowRight size={18} />
               </ButtonLink>
               {company.visible ? (
-                <ButtonLink href="#corporate" size="lg" variant="outline">
+                <ButtonLink href="#corporate" size="lg" variant="outline" className="border-white/35 text-white hover:border-white hover:bg-white/10">
                   Company information
                 </ButtonLink>
               ) : (
-                <ButtonLink href="/contact" size="lg" variant="outline">
+                <ButtonLink href="/contact" size="lg" variant="outline" className="border-white/35 text-white hover:border-white hover:bg-white/10">
                   Talk to us
                 </ButtonLink>
               )}
             </div>
-          </Reveal>
-          <div className="hydra-crest-on-dark rounded-[2rem] bg-[#070b14] px-3 py-4 lg:bg-transparent lg:p-0">
+          </div>
+          <div className="hydra-crest-on-dark rounded-[2rem] bg-black px-3 py-4 lg:bg-transparent lg:p-0">
             <HeroEmblem />
           </div>
         </div>

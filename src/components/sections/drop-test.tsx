@@ -71,7 +71,7 @@ export function DropTest({ content }: { content?: ImpactLabContent }) {
 
   return (
     <section className="container-page py-8 sm:py-14 md:py-16">
-      <div className="relative overflow-hidden rounded-[1.25rem] border border-line bg-surface px-3 pb-6 pt-8 sm:rounded-[2rem] sm:px-6 sm:pb-10 sm:pt-14 md:rounded-[2.5rem] md:px-12 md:pt-16 light:border-[#C5E0F3] light:bg-white">
+      <div className="relative overflow-hidden rounded-[1.25rem] border border-line bg-surface px-3 pb-6 pt-8 sm:rounded-[2rem] sm:px-6 sm:pb-10 sm:pt-14 md:rounded-[2.5rem] md:px-12 md:pt-16 light:border-[#C5E0F3] light:bg-[#DCEEF9]">
         <div className="relative mx-auto max-w-2xl text-center">
           <p className="font-mono text-[11px] uppercase tracking-[0.3em] text-accent">{section.eyebrow}</p>
           <h2 className="mt-3 text-[1.65rem] font-semibold tracking-tight text-balance sm:mt-4 sm:text-4xl md:text-5xl">
@@ -86,13 +86,13 @@ export function DropTest({ content }: { content?: ImpactLabContent }) {
             return (
               <motion.article
                 key={`${card.value}-${card.label}-${i}`}
-                className="flex min-w-0 flex-col overflow-hidden rounded-[1.2rem] border border-line bg-bg shadow-[0_18px_40px_-30px_rgba(15,23,42,0.35)] sm:rounded-[1.35rem] light:border-[#C5E0F3] light:bg-white"
+                className="flex min-w-0 flex-col overflow-hidden rounded-[1.2rem] border border-line bg-bg shadow-[0_18px_40px_-30px_rgba(15,23,42,0.35)] sm:rounded-[1.35rem] light:border-[#C5E0F3] light:bg-[#DCEEF9]"
                 initial={{ opacity: 0, y: 16 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.45 }}
                 transition={{ duration: 0.55, delay: i * 0.07, ease: [0.16, 1, 0.3, 1] }}
               >
-                <div className="grid place-items-center border-b border-line bg-[#f4f9fd] px-3 py-3 light:border-[#C5E0F3]">
+                <div className="grid place-items-center border-b border-line bg-[#f4f9fd] px-3 py-3 light:border-[#C5E0F3] light:bg-[#C5E0F3]">
                   <Mark />
                 </div>
                 <div className="flex flex-1 flex-col px-3 pb-4 pt-3.5 text-center sm:px-4 sm:pb-5 sm:pt-4">
