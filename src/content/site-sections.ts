@@ -99,8 +99,10 @@ export type HeroSlide = {
   secondaryLabel: string;
   secondaryHref: string;
   visual: HeroVisualKey;
-  /** Used when visual is `image` (public path or allowlisted host). */
+  /** Desktop / tablet banner when visual is `image` (public path or allowlisted host). */
   image: string;
+  /** Phone banner. Empty falls back to `image`. */
+  imageMobile: string;
 };
 
 export type HomeHeroContent = {
@@ -403,6 +405,7 @@ export const defaultHomeHeroContent: HomeHeroContent = {
       secondaryHref: "/about",
       visual: "phone",
       image: "",
+      imageMobile: "",
     },
     {
       key: "clarity",
@@ -416,6 +419,7 @@ export const defaultHomeHeroContent: HomeHeroContent = {
       secondaryHref: "/shop/iphone",
       visual: "glass",
       image: "",
+      imageMobile: "",
     },
     {
       key: "privacy",
@@ -429,6 +433,7 @@ export const defaultHomeHeroContent: HomeHeroContent = {
       secondaryHref: "/shop/samsung",
       visual: "privacy",
       image: "",
+      imageMobile: "",
     },
   ],
 };
@@ -513,6 +518,28 @@ export const defaultSocialContent: SocialContent = {
   x: "https://x.com/hydragloballtd",
 };
 
+/** Storefront tracking — GTM, pixels, Search Console. Empty IDs load nothing. */
+export type TrackingContent = {
+  gtmId: string;
+  metaPixelId: string;
+  tiktokPixelId: string;
+  ga4Id: string;
+  googleVerification: string;
+  bingVerification: string;
+  /** When true, scripts wait for the cookie banner. Off by default so ads fire. */
+  requireConsent: boolean;
+};
+
+export const defaultTrackingContent: TrackingContent = {
+  gtmId: "",
+  metaPixelId: "",
+  tiktokPixelId: "",
+  ga4Id: "",
+  googleVerification: "",
+  bingVerification: "",
+  requireConsent: false,
+};
+
 /** Homepage clarity slider. Empty images keep the built-in glass scene. */
 export type ClarityContent = {
   beforeImage: string;
@@ -581,7 +608,7 @@ export const SITE_SECTION_META = [
   {
     key: "home.hero",
     title: "Home · Hero slider",
-    description: "Homepage hero: slides, stage visuals/images, CTAs, quick links and bottom stats. Custom banner: 21:10 (1920×910).",
+    description: "Homepage hero: slides, stage visuals/images, CTAs, quick links and bottom stats. PC and mobile banners are 16:9 (1920×1080), never cropped.",
   },
   {
     key: "about",
@@ -610,6 +637,11 @@ export const SITE_SECTION_META = [
     key: "site.social",
     title: "Social links",
     description: "Facebook, Instagram, YouTube and X icons in the footer and on the contact page.",
+  },
+  {
+    key: "site.tracking",
+    title: "GTM & Pixel",
+    description: "Paste GTM, Google Analytics, or Meta Pixel. Publish to connect them to the store.",
   },
   {
     key: "site.currency",

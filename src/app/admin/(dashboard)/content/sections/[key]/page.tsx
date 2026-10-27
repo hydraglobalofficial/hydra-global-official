@@ -16,6 +16,7 @@ import {
   NewsletterSectionEditor,
   ShippingSectionEditor,
   SocialSectionEditor,
+  TrackingSectionEditor,
   ShowcaseSectionEditor,
   WhatsappWidgetSectionEditor,
 } from "@/components/admin/section-editors";
@@ -35,6 +36,7 @@ import {
   normalizeNewsletterContent,
   normalizeShippingContent,
   normalizeSocialContent,
+  normalizeTrackingContent,
   normalizeShowcaseContent,
   normalizeWhatsappWidgetContent,
 } from "@/lib/normalize-sections";
@@ -86,6 +88,9 @@ export default async function EditSiteSectionPage({ params }: Props) {
       )}
       {key === "site.social" && (
         <SocialSectionEditor content={normalizeSocialContent(row?.data)} />
+      )}
+      {key === "site.tracking" && (
+        <TrackingSectionEditor content={normalizeTrackingContent(row?.data)} />
       )}
       {key === "home.clarity" && (
         <ClaritySectionEditor content={normalizeClarityContent(row?.data)} />

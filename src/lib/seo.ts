@@ -26,6 +26,20 @@ export function organizationJsonLd(social: SocialContent = siteConfig.social): J
   };
 }
 
+export function websiteJsonLd(): Json {
+  return {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: siteConfig.name,
+    url: absoluteUrl("/"),
+    potentialAction: {
+      "@type": "SearchAction",
+      target: `${absoluteUrl("/search")}?q={search_term_string}`,
+      "query-input": "required name=search_term_string",
+    },
+  };
+}
+
 export function breadcrumbJsonLd(items: { name: string; path: string }[]): Json {
   return {
     "@context": "https://schema.org",

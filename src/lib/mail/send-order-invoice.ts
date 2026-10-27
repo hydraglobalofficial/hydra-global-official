@@ -18,6 +18,5 @@ export async function sendOrderInvoiceEmail(order: InvoiceOrder): Promise<MailRe
     subject,
     text: buildInvoiceEmailText(order),
     html: buildInvoiceEmailHtml(order),
-    replyTo: process.env.SMTP_REPLY_TO?.trim() || siteConfig.email,
   });
 }

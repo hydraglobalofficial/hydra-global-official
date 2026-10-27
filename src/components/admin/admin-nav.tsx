@@ -11,6 +11,7 @@ import {
   LayoutGrid,
   Package,
   ShoppingCart,
+  Tags,
   Star,
   Truck,
   Users,
@@ -47,6 +48,7 @@ const groups: { label: string; items: NavItem[] }[] = [
     label: "Site",
     items: [
       { href: "/admin/content", label: "Content", icon: FileText },
+      { href: "/admin/seo", label: "GTM & Pixel", icon: Tags },
       { href: "/admin/collections", label: "Collections", icon: LayoutGrid },
       { href: "/admin/about", label: "About", icon: BookOpen },
       { href: "/admin/installation", label: "Installation", icon: Wrench },

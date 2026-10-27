@@ -326,6 +326,40 @@ export default async function AdminContentPage() {
       <section className="mt-10 space-y-4">
         <div>
           <h2 className="flex items-center gap-2 font-medium">
+            <LayoutTemplate size={16} className="text-accent" /> GTM & Pixel
+          </h2>
+          <p className="mt-1 text-sm text-muted">
+            Google Tag Manager, Meta Pixel, Search Console. Sitemap is generated automatically.
+          </p>
+        </div>
+        {SITE_SECTION_META.filter((s) => s.key === "site.tracking").map((s) => (
+          <Link
+            key={s.key}
+            href="/admin/seo"
+            className="block rounded-2xl border border-white/10 bg-gradient-to-br from-white/[0.04] via-white/[0.02] to-transparent p-5 transition-colors hover:border-accent/35"
+          >
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <p className="text-[10px] font-medium uppercase tracking-[0.18em] text-accent">Global · Analytics</p>
+                <p className="mt-1 text-base font-medium">{s.title}</p>
+                <p className="mt-1 text-sm text-muted">{s.description}</p>
+                <p className="mt-2 text-xs text-subtle">
+                  {sectionUpdated.has(s.key)
+                    ? `Updated ${formatDate(sectionUpdated.get(s.key)!)}`
+                    : "Paste GTM-… and Pixel IDs to start tracking"}
+                </p>
+              </div>
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-white/10 px-3 py-1.5 text-xs text-muted">
+                <Pencil size={12} /> Edit
+              </span>
+            </div>
+          </Link>
+        ))}
+      </section>
+
+      <section className="mt-10 space-y-4">
+        <div>
+          <h2 className="flex items-center gap-2 font-medium">
             <LayoutTemplate size={16} className="text-accent" /> Social links
           </h2>
           <p className="mt-1 text-sm text-muted">
@@ -472,6 +506,7 @@ export default async function AdminContentPage() {
               s.key !== "installation" &&
               s.key !== "site.whatsapp" &&
               s.key !== "site.social" &&
+              s.key !== "site.tracking" &&
               s.key !== "home.clarity" &&
               s.key !== "home.impact" &&
               s.key !== "home.impactLab" &&

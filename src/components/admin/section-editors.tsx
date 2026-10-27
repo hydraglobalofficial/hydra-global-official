@@ -16,6 +16,7 @@ import {
   saveNewsletterSection,
   saveShippingSection,
   saveSocialSection,
+  saveTrackingSection,
   saveShowcaseSection,
   saveWhatsappWidgetSection,
 } from "@/server/actions/admin";
@@ -32,6 +33,7 @@ import type {
   NewsletterContent,
   ShippingContent,
   SocialContent,
+  TrackingContent,
   ShowcaseContent,
   WhatsappWidgetContent,
 } from "@/content/site-sections";
@@ -600,6 +602,7 @@ const emptyHeroSlide: {
   secondaryHref: string;
   visual: HeroVisualKey;
   image: string;
+  imageMobile: string;
 } = {
   key: "",
   brand: "",
@@ -612,6 +615,7 @@ const emptyHeroSlide: {
   secondaryHref: "/about",
   visual: "phone",
   image: "",
+  imageMobile: "",
 };
 
 type HeroSlideDraft = typeof emptyHeroSlide & { uid: string };
@@ -620,7 +624,7 @@ export function HomeHeroSectionEditor({ content }: { content: HomeHeroContent })
   const [state, action, pending] = useActionState(saveHomeHeroSection, initialFormState);
   const [slides, setSlides] = useState<HeroSlideDraft[]>(() =>
     (Array.isArray(content?.slides) && content.slides.length > 0 ? content.slides : [{ ...emptyHeroSlide }]).map(
-      (s) => ({ ...s, uid: rowKey() }),
+      (s) => ({ ...emptyHeroSlide, ...s, uid: rowKey() }),
     ),
   );
   const [stats, setStats] = useState(() =>
@@ -707,7 +711,7 @@ export function HomeHeroSectionEditor({ content }: { content: HomeHeroContent })
 
       <Section title="Hero slides">
         <ListHeader
-          hint="Blank slides are skipped. Phone, glass and privacy keep the split layout. Custom hero image: 21:10 landscape (1920×910). Not 16:9 — that is too tall and will crop."
+          hint="Empty optional fields stay empty on the site. Clearing description hides it — the slide is not deleted. Upload a PC image and a separate mobile image so neither is cropped."
           addLabel="Add slide"
           canAdd={slides.length < 6}
           onAdd={() =>
@@ -746,7 +750,7 @@ export function HomeHeroSectionEditor({ content }: { content: HomeHeroContent })
                   <Input name="slideTitleAccent" defaultValue={slide.titleAccent} placeholder="More clarity." />
                 </Label>
               </div>
-              <Label label="Supporting text">
+              <Label label="Supporting text" hint="Optional. Leave blank to hide this line on the storefront.">
                 <Textarea name="slideText" defaultValue={slide.text} className="min-h-20" />
               </Label>
               <div className="grid gap-3 sm:grid-cols-2">
@@ -765,22 +769,20 @@ export function HomeHeroSectionEditor({ content }: { content: HomeHeroContent })
                   <Input name="slideSecondaryHref" defaultValue={slide.secondaryHref} placeholder="/shop/iphone" />
                 </Label>
               </div>
+              <Label label="Stage visual">
+                <Select name="slideVisual" defaultValue={slide.visual}>
+                  <option value="phone">Phone (default)</option>
+                  <option value="glass">Clarity glass lift</option>
+                  <option value="privacy">Privacy glass</option>
+                  <option value="image">Custom image</option>
+                </Select>
+              </Label>
               <div className="grid gap-3 sm:grid-cols-2">
-                <Label label="Stage visual">
-                  <Select name="slideVisual" defaultValue={slide.visual}>
-                    <option value="phone">Phone (default)</option>
-                    <option value="glass">Clarity glass lift</option>
-                    <option value="privacy">Privacy glass</option>
-                    <option value="image">Custom image</option>
-                  </Select>
+                <Label label="PC image" hint="16:9 · 1920×1080">
+                  <ImageUrlField name="slideImage" defaultValue={slide.image} folder="hero" />
                 </Label>
-                <Label label="Custom image" hint="Ratio 21:10 — upload 1920×910 so it fills the banner. 16:9 will crop top and bottom.">
-                  <ImageUrlField
-                    name="slideImage"
-                    defaultValue={slide.image}
-                    folder="hero"
-                    placeholder="/products/glass-clear.jpg"
-                  />
+                <Label label="Mobile image" hint="16:9 · 1920×1080 · optional">
+                  <ImageUrlField name="slideImageMobile" defaultValue={slide.imageMobile} folder="hero" />
                 </Label>
               </div>
             </div>
@@ -1155,8 +1157,15 @@ export function InstallationSectionEditor({ content }: { content: InstallationCo
       : [emptyTrouble()],
   );
 
+  const installState = JSON.stringify({
+    steps: steps.map(({ title, body, tip, image }) => ({ title, body, tip, image })),
+    kit: kit.map((item) => item.value),
+    troubleshooting: troubles.map(({ problem, fix }) => ({ problem, fix })),
+  });
+
   return (
     <form action={action} className="space-y-5">
+      <input type="hidden" name="installState" value={installState} />
       <Section title="Hero">
         <p className="text-xs text-subtle">
           One shared guide for Apple & Samsung — no separate brand pages needed.
@@ -1208,9 +1217,13 @@ export function InstallationSectionEditor({ content }: { content: InstallationCo
               <div key={item.key} className="flex gap-2">
                 <Input
                   name="kitItem"
-                  defaultValue={item.value}
+                  value={item.value}
                   placeholder={`Item ${i + 1}`}
                   className="flex-1"
+                  onChange={(e) => {
+                    const v = e.target.value;
+                    setKit((prev) => prev.map((row) => (row.key === item.key ? { ...row, value: v } : row)));
+                  }}
                 />
                 <RemoveBtn
                   label={`Remove kit item ${i + 1}`}
@@ -1225,7 +1238,7 @@ export function InstallationSectionEditor({ content }: { content: InstallationCo
       <Section title="Steps">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <p className="text-xs text-subtle">
-            Add or remove steps anytime. Each step can have a still image. The walkthrough video is set once above. Empty rows are skipped on publish.
+            Only the field you change is published. Everything else stays as it is.
           </p>
           <Button
             type="button"
@@ -1247,12 +1260,15 @@ export function InstallationSectionEditor({ content }: { content: InstallationCo
                 </p>
                 <RemoveBtn
                   label={`Remove step ${i + 1}`}
-                  onClick={() => setSteps((prev) => prev.filter((s) => s.key !== step.key))}
+                  disabled={steps.length <= 1}
+                  onClick={() =>
+                    setSteps((prev) => (prev.length <= 1 ? prev : prev.filter((s) => s.key !== step.key)))
+                  }
                 />
               </div>
               <Input
                 name="stepTitle"
-                defaultValue={step.title}
+                value={step.title}
                 placeholder="Step title"
                 onChange={(e) => {
                   const v = e.target.value;
@@ -1261,7 +1277,7 @@ export function InstallationSectionEditor({ content }: { content: InstallationCo
               />
               <Textarea
                 name="stepBody"
-                defaultValue={step.body}
+                value={step.body}
                 className="min-h-20"
                 placeholder="What to do"
                 onChange={(e) => {
@@ -1271,7 +1287,7 @@ export function InstallationSectionEditor({ content }: { content: InstallationCo
               />
               <Input
                 name="stepTip"
-                defaultValue={step.tip}
+                value={step.tip}
                 placeholder="Optional tip"
                 onChange={(e) => {
                   const v = e.target.value;
@@ -1284,6 +1300,9 @@ export function InstallationSectionEditor({ content }: { content: InstallationCo
                   defaultValue={step.image}
                   folder="content"
                   placeholder="/products/glass-clear.jpg"
+                  onValueChange={(url) =>
+                    setSteps((prev) => prev.map((s) => (s.key === step.key ? { ...s, image: url } : s)))
+                  }
                 />
               </Label>
             </div>
@@ -1321,7 +1340,7 @@ export function InstallationSectionEditor({ content }: { content: InstallationCo
               </div>
               <Input
                 name="troubleProblem"
-                defaultValue={t.problem}
+                value={t.problem}
                 placeholder="Problem"
                 onChange={(e) => {
                   const v = e.target.value;
@@ -1330,7 +1349,7 @@ export function InstallationSectionEditor({ content }: { content: InstallationCo
               />
               <Textarea
                 name="troubleFix"
-                defaultValue={t.fix}
+                value={t.fix}
                 className="min-h-16"
                 placeholder="Fix"
                 onChange={(e) => {
@@ -1721,6 +1740,114 @@ export function ClaritySectionEditor({ content }: { content: ClarityContent }) {
       <FormMessage status={state.status} message={state.message} toast />
       <Button type="submit" disabled={pending}>
         {pending && <Loader2 size={16} className="animate-spin" />} Publish both images
+      </Button>
+    </form>
+  );
+}
+
+function TrackingStatus({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-xl border border-line bg-surface-2 px-3 py-2">
+      <p className="text-[10px] uppercase tracking-[0.14em] text-subtle">{label}</p>
+      <p className={`mt-1 font-mono text-sm ${value ? "text-emerald-600" : "text-muted"}`}>
+        {value || "Not connected"}
+      </p>
+    </div>
+  );
+}
+
+export function TrackingSectionEditor({ content }: { content: TrackingContent }) {
+  const [state, action, pending] = useActionState(saveTrackingSection, initialFormState);
+
+  return (
+    <form action={action} className="space-y-5">
+      <Section title="Connected to the store">
+        <p className="text-sm text-muted">
+          Paste the ID or the full code Google / Facebook gives you. Publish — it loads on every store page.
+        </p>
+        <div className="grid gap-2 sm:grid-cols-3">
+          <TrackingStatus label="GTM" value={content.gtmId} />
+          <TrackingStatus label="Google Analytics" value={content.ga4Id} />
+          <TrackingStatus label="Meta Pixel" value={content.metaPixelId} />
+        </div>
+      </Section>
+
+      <Section title="Google Tag Manager">
+        <Label
+          label="GTM code"
+          hint="Paste GTM-XXXXXXX, or the whole GTM script. We pull the ID and attach it to the site."
+        >
+          <Textarea
+            name="gtmId"
+            defaultValue={content.gtmId}
+            placeholder={"GTM-XXXXXXX\nor paste the full Google Tag Manager snippet"}
+            className="min-h-32 font-mono text-xs"
+            autoComplete="off"
+          />
+        </Label>
+      </Section>
+
+      <Section title="Google Analytics">
+        <Label
+          label="GA4 code"
+          hint="Paste G-XXXXXXXX, or the full gtag snippet. Skip this if GA4 already lives inside GTM."
+        >
+          <Textarea
+            name="ga4Id"
+            defaultValue={content.ga4Id}
+            placeholder={"G-XXXXXXXX\nor paste the full Google Analytics snippet"}
+            className="min-h-32 font-mono text-xs"
+            autoComplete="off"
+          />
+        </Label>
+      </Section>
+
+      <Section title="Meta Pixel">
+        <Label
+          label="Pixel code"
+          hint="Paste the numeric Pixel ID, or the full Facebook Pixel script from Events Manager."
+        >
+          <Textarea
+            name="metaPixelId"
+            defaultValue={content.metaPixelId}
+            placeholder={"1234567890\nor paste the full Meta Pixel snippet"}
+            className="min-h-32 font-mono text-xs"
+            autoComplete="off"
+          />
+        </Label>
+      </Section>
+
+      <Section title="Optional">
+        <Label label="TikTok Pixel" hint="ID or full TikTok snippet.">
+          <Textarea
+            name="tiktokPixelId"
+            defaultValue={content.tiktokPixelId}
+            placeholder="CXXXXXXXXXXXXXXX"
+            className="min-h-24 font-mono text-xs"
+            autoComplete="off"
+          />
+        </Label>
+        <Label label="Google Search Console" hint="Verification code or the full meta tag.">
+          <Textarea
+            name="googleVerification"
+            defaultValue={content.googleVerification}
+            placeholder='google-site-verification=… or <meta name="google-site-verification" content="…">'
+            className="min-h-24 font-mono text-xs"
+            autoComplete="off"
+          />
+        </Label>
+        <Label label="Bing Webmaster" hint="Optional.">
+          <Input name="bingVerification" defaultValue={content.bingVerification} placeholder="msvalidate.01 code" autoComplete="off" />
+        </Label>
+        <label className="flex items-start gap-3 text-sm text-muted">
+          <input type="checkbox" name="requireConsent" defaultChecked={content.requireConsent} className="mt-1" />
+          <span>Ask visitors before loading these scripts. Leave off so they connect immediately.</span>
+        </label>
+      </Section>
+
+      <FormMessage status={state.status} message={state.message} toast />
+      <Button type="submit" disabled={pending}>
+        {pending && <Loader2 size={16} className="animate-spin" />} Connect to site
       </Button>
     </form>
   );

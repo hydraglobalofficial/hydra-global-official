@@ -49,6 +49,18 @@ html.light .spotlight.card-premium,html[data-theme="light"] .spotlight.card-prem
   box-shadow:0 1px 0 rgb(255 255 255/.8),0 14px 36px -24px rgb(30 64 120/.22)!important;
   color:#0a0a0c!important;
 }
+html.light .card-premium.product-card,html[data-theme="light"] .card-premium.product-card{
+  background:transparent!important;
+  background-image:none!important;
+}
+html.light .install-media-card,html[data-theme="light"] .install-media-card{
+  background:#ffffff!important;
+  background-image:none!important;
+}
+html.light .admin-drawer-panel,html[data-theme="light"] .admin-drawer-panel{
+  background:#ffffff!important;
+  color:#0a0a0c!important;
+}
 html.light .bento-fill.card-premium,html[data-theme="light"] .bento-fill.card-premium{
   background:transparent!important;
   background-image:none!important;

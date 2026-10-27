@@ -28,7 +28,7 @@ export function ProductCard({ product, priority }: { product: ProductCardData; p
     >
       <Link
         href={`/product/${product.slug}`}
-        className="card-premium group flex h-full min-w-0 flex-col overflow-hidden rounded-2xl sm:rounded-3xl"
+        className="card-premium product-card group flex h-full min-w-0 flex-col overflow-hidden rounded-2xl sm:rounded-3xl"
       >
         <div className="relative aspect-square overflow-hidden bg-transparent">
           <ProductImage

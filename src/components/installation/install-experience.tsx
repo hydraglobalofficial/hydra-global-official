@@ -129,29 +129,25 @@ function StepStage({
       initial={reduce ? false : { opacity: 0, scale: 1.04 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.55, ease }}
-      className="install-media-card relative aspect-[4/5] overflow-hidden rounded-[1.6rem] border border-line bg-[#07070a] shadow-none md:aspect-[5/6] lg:min-h-[26rem] lg:aspect-auto"
+      className="install-media-card relative aspect-video w-full overflow-hidden rounded-[1.25rem] border border-line bg-white shadow-none sm:rounded-[1.6rem]"
     >
       {image ? (
         <Image
           src={image}
           alt=""
           fill
-          sizes="(min-width:1024px) 42vw, 90vw"
-          className="object-contain p-8 md:p-10"
+          sizes="(min-width:1024px) 42vw, 92vw"
+          className="object-cover object-center"
           priority={stepIndex === 0}
         />
       ) : (
         <div className="absolute inset-0 flex items-center justify-center">
-          <span className="font-mono text-7xl font-semibold tabular-nums text-white/[0.07]">
+          <span className="font-mono text-7xl font-semibold tabular-nums text-fg/10">
             {String(stepIndex + 1).padStart(2, "0")}
           </span>
         </div>
       )}
 
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-black/55 to-transparent" />
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-black/50 to-transparent" />
-
-      {/* Top bar on the image: back · counter · forward */}
       <div
         className="absolute inset-x-3 top-3 z-10 flex items-center justify-between gap-2 sm:inset-x-4 sm:top-4"
         role="group"
@@ -163,17 +159,17 @@ function StepStage({
           disabled={atStart}
           aria-label="Previous step"
           className={cn(
-            "grid size-11 shrink-0 place-items-center rounded-full border border-white/20 bg-black/55 text-white backdrop-blur-md transition",
-            "hover:bg-black/75 hover:border-white/35",
+            "grid size-11 shrink-0 place-items-center rounded-full border border-line bg-white/90 text-fg backdrop-blur-md transition",
+            "hover:border-fg/30 hover:bg-white",
             "disabled:cursor-not-allowed disabled:opacity-35",
           )}
         >
           <ChevronLeft size={20} strokeWidth={2.25} />
         </button>
 
-        <p className="rounded-full border border-white/15 bg-black/55 px-3.5 py-2 font-mono text-[11px] tabular-nums tracking-[0.16em] text-white backdrop-blur-md sm:px-4 sm:text-[12px]">
+        <p className="rounded-full border border-line bg-white/90 px-3.5 py-2 font-mono text-[11px] tabular-nums tracking-[0.16em] text-fg backdrop-blur-md sm:px-4 sm:text-[12px]">
           {String(stepIndex + 1).padStart(2, "0")}
-          <span className="mx-1.5 text-white/45">/</span>
+          <span className="mx-1.5 text-subtle">/</span>
           {String(total).padStart(2, "0")}
         </p>
 
@@ -183,8 +179,8 @@ function StepStage({
           disabled={atEnd}
           aria-label="Next step"
           className={cn(
-            "grid size-11 shrink-0 place-items-center rounded-full border border-white/20 bg-black/55 text-white backdrop-blur-md transition",
-            "hover:bg-black/75 hover:border-white/35",
+            "grid size-11 shrink-0 place-items-center rounded-full border border-line bg-white/90 text-fg backdrop-blur-md transition",
+            "hover:border-fg/30 hover:bg-white",
             "disabled:cursor-not-allowed disabled:opacity-35",
           )}
         >
@@ -256,35 +252,35 @@ export function InstallExperience({ content }: { content: InstallationContent })
 
   return (
     <div className="relative overflow-hidden">
-      <section className="container-page relative pt-10 pb-12 md:pt-16 md:pb-16">
+      <section className="container-page relative pt-5 pb-4 md:pt-16 md:pb-16">
         <motion.div
           className="mx-auto max-w-3xl text-center"
           initial={reduce ? false : { opacity: 0, y: 18 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.65, ease }}
         >
-          <p className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.28em] text-fg">
+          <p className="inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.24em] text-fg md:text-[11px] md:tracking-[0.28em]">
             <span className="size-1.5 rounded-full bg-fg" />
             {content.eyebrow}
           </p>
-          <h1 className="mt-5 text-3xl font-semibold tracking-tight text-balance text-fg sm:text-4xl md:text-6xl">
+          <h1 className="mt-2 text-[1.65rem] font-semibold leading-tight tracking-tight text-balance text-fg sm:text-4xl md:mt-5 md:text-6xl">
             {content.title}{" "}
             <span className="text-fg">{content.titleAccent}</span>
           </h1>
-          <p className="mx-auto mt-4 max-w-2xl text-sm text-pretty text-muted sm:mt-5 sm:text-base md:text-lg">{content.intro}</p>
-          <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-            <span className="inline-flex items-center gap-2 rounded-full border border-line-strong bg-surface-3 px-4 py-2 font-mono text-[11px] uppercase tracking-[0.16em] text-fg">
-              <Smartphone size={13} className="shrink-0 text-fg" /> {content.brandsNote}
+          <p className="mx-auto mt-2 hidden max-w-2xl text-pretty text-muted sm:mt-5 sm:block sm:text-base md:text-lg">{content.intro}</p>
+          <div className="mt-3 flex flex-wrap items-center justify-center gap-1.5 md:mt-8 md:gap-3">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-line-strong bg-surface-3 px-2.5 py-1 font-mono text-[9px] uppercase tracking-[0.12em] text-fg md:gap-2 md:px-4 md:py-2 md:text-[11px] md:tracking-[0.16em]">
+              <Smartphone size={12} className="shrink-0 text-fg" /> {content.brandsNote}
             </span>
-            <span className="inline-flex items-center gap-2 rounded-full border border-line bg-surface-3 px-4 py-2 font-mono text-[11px] uppercase tracking-[0.16em] text-fg">
-              <Clock size={13} className="shrink-0 text-fg" /> {content.duration} · {content.steps.length} steps
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-line bg-surface-3 px-2.5 py-1 font-mono text-[9px] uppercase tracking-[0.12em] text-fg md:gap-2 md:px-4 md:py-2 md:text-[11px] md:tracking-[0.16em]">
+              <Clock size={12} className="shrink-0 text-fg" /> {content.duration} · {content.steps.length} steps
             </span>
           </div>
         </motion.div>
       </section>
 
       <section className="container-page relative pb-16 md:pb-20">
-        <div className="mb-8 h-1 w-full overflow-hidden rounded-full bg-line">
+        <div className="mb-4 h-1 w-full overflow-hidden rounded-full bg-line md:mb-8">
           <motion.div
             className="h-full rounded-full bg-fg light:bg-fg"
             animate={{ width: `${progress}%` }}
@@ -342,30 +338,8 @@ export function InstallExperience({ content }: { content: InstallationContent })
                 animate={{ opacity: 1, y: 0 }}
                 exit={reduce ? undefined : { opacity: 0, y: -10 }}
                 transition={{ duration: 0.35, ease }}
-                className="grid items-start gap-8 rounded-[1.75rem] border border-line bg-bg p-5 shadow-none md:p-7 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] lg:gap-10 lg:p-8 light:border-[#C5E0F3] light:bg-[#DCEEF9]"
+                className="grid items-start gap-3 rounded-[1.25rem] border border-line bg-bg p-3 shadow-none sm:rounded-[1.75rem] md:gap-7 md:p-7 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] lg:gap-10 lg:p-8 light:border-[#C5E0F3] light:bg-[#DCEEF9]"
               >
-                <div className="flex min-h-0 flex-col justify-center lg:py-2">
-                  <p className="font-mono text-[11px] uppercase tracking-[0.28em] text-muted">
-                    Step {String(active + 1).padStart(2, "0")}
-                    <span className="mx-2 text-subtle">/</span>
-                    <span className="text-subtle">{String(content.steps.length).padStart(2, "0")}</span>
-                  </p>
-                  <h2 className="mt-3 text-3xl font-semibold tracking-tight text-balance md:text-4xl">{step.title}</h2>
-                  <p className="mt-4 text-base leading-relaxed text-pretty text-muted md:text-[1.05rem]">{step.body}</p>
-                  {step.tip ? (
-                    <p className="mt-6 flex items-start gap-3 rounded-2xl border border-line bg-surface-3 p-4 text-sm text-fg">
-                      <Lightbulb size={18} className="mt-0.5 shrink-0 text-fg" />
-                      <span>{step.tip}</span>
-                    </p>
-                  ) : null}
-
-                  {active >= content.steps.length - 1 ? (
-                    <p className="mt-8 inline-flex items-center gap-2 text-sm text-success">
-                      <CheckCircle2 size={16} /> Done — enjoy your armor
-                    </p>
-                  ) : null}
-                </div>
-
                 <StepStage
                   stepIndex={active}
                   total={content.steps.length}
@@ -374,6 +348,28 @@ export function InstallExperience({ content }: { content: InstallationContent })
                   onPrev={() => setActive((i) => Math.max(0, i - 1))}
                   onNext={() => setActive((i) => Math.min(content.steps.length - 1, i + 1))}
                 />
+
+                <div className="flex min-h-0 flex-col justify-center lg:order-first lg:py-2">
+                  <p className="font-mono text-[11px] uppercase tracking-[0.28em] text-muted">
+                    Step {String(active + 1).padStart(2, "0")}
+                    <span className="mx-2 text-subtle">/</span>
+                    <span className="text-subtle">{String(content.steps.length).padStart(2, "0")}</span>
+                  </p>
+                  <h2 className="mt-1.5 text-xl font-semibold tracking-tight text-balance sm:mt-3 sm:text-3xl md:text-4xl">{step.title}</h2>
+                  <p className="mt-2 text-[13px] leading-snug text-pretty text-muted sm:mt-4 sm:text-base sm:leading-relaxed md:text-[1.05rem]">{step.body}</p>
+                  {step.tip ? (
+                    <p className="mt-4 flex items-start gap-3 rounded-2xl border border-line bg-surface-3 p-4 text-sm text-fg sm:mt-6">
+                      <Lightbulb size={18} className="mt-0.5 shrink-0 text-fg" />
+                      <span>{step.tip}</span>
+                    </p>
+                  ) : null}
+
+                  {active >= content.steps.length - 1 ? (
+                    <p className="mt-6 inline-flex items-center gap-2 text-sm text-success sm:mt-8">
+                      <CheckCircle2 size={16} /> Done — enjoy your armor
+                    </p>
+                  ) : null}
+                </div>
               </motion.article>
             </AnimatePresence>
           </div>

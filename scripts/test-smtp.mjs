@@ -44,6 +44,7 @@ const transport = nodemailer.createTransport({
   port,
   secure,
   auth: { user, pass },
+  authMethod: "LOGIN",
   requireTLS: !secure && port === 587,
   tls: { minVersion: "TLSv1.2" },
   connectionTimeout: 15_000,

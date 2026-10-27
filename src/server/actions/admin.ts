@@ -25,6 +25,7 @@ import type {
   ShowcaseContent,
   ShippingContent,
   SocialContent,
+  TrackingContent,
   WhatsappWidgetContent,
 } from "@/content/site-sections";
 import { clampText, safeInternalHref, safeMediaUrl, safeSlug, safeSocialUrl, safeVideoUrl } from "@/lib/content-safety";
@@ -38,10 +39,12 @@ import {
   normalizeHomeHeroContent,
   normalizeHowItWorksContent,
   normalizeTechContent,
+  mergeInstallationContent,
   normalizeInstallationContent,
   normalizeNewsletterContent,
   normalizeShippingContent,
   normalizeSocialContent,
+  normalizeTrackingContent,
   normalizeShowcaseContent,
   normalizeWhatsappWidgetContent,
 } from "@/lib/normalize-sections";
@@ -1103,53 +1106,51 @@ export async function saveHowItWorksSection(_prev: FormState, formData: FormData
 export async function saveInstallationSection(_prev: FormState, formData: FormData): Promise<FormState> {
   await requireAdmin();
   try {
+    const existing = await db.siteSection.findUnique({
+      where: { key: "installation" },
+      select: { data: true },
+    });
+    const previous = normalizeInstallationContent(existing?.data ?? {});
+
+    let editor: Record<string, unknown> = {};
+    try {
+      const raw = formData.get("installState");
+      if (typeof raw === "string" && raw.trim()) editor = JSON.parse(raw) as Record<string, unknown>;
+    } catch {
+      editor = {};
+    }
+
     const titles = formData.getAll("stepTitle").map(String);
     const bodies = formData.getAll("stepBody").map(String);
     const tips = formData.getAll("stepTip").map(String);
     const images = formData.getAll("stepImage").map(String);
-    const steps = titles
-      .map((title, i) => ({
-        title: clampText(title, 100),
-        body: clampText(bodies[i], 600),
-        tip: clampText(tips[i], 240, ""),
-        image: safeMediaUrl(images[i], ""),
-      }))
-      .filter((s) => s.title && s.body)
-      .slice(0, 16)
-      .map((s) => ({
-        title: s.title,
-        body: s.body,
-        ...(s.tip ? { tip: s.tip } : {}),
-        ...(s.image ? { image: s.image } : {}),
-      }));
+    const count = Math.max(titles.length, bodies.length, tips.length, images.length);
+    const formSteps = Array.from({ length: count }, (_, i) => ({
+      title: clampText(titles[i], 100, ""),
+      body: clampText(bodies[i], 600, ""),
+      tip: clampText(tips[i], 240, ""),
+      image: safeMediaUrl(images[i], ""),
+    })).filter((s) => s.title || s.body || s.image);
 
-    const problems = formData.getAll("troubleProblem").map(String);
-    const fixes = formData.getAll("troubleFix").map(String);
-    const troubleshooting = problems
-      .map((problem, i) => ({
-        problem: clampText(problem, 120),
-        fix: clampText(fixes[i], 400),
-      }))
-      .filter((t) => t.problem && t.fix)
-      .slice(0, 12);
+    const incoming: InstallationContent = {
+      eyebrow: clampText(formData.get("eyebrow"), 60, previous.eyebrow),
+      title: clampText(formData.get("title"), 80, previous.title),
+      titleAccent: clampText(formData.get("titleAccent"), 80, previous.titleAccent),
+      intro: clampText(formData.get("intro"), 500, previous.intro),
+      duration: clampText(formData.get("duration"), 40, previous.duration),
+      videoUrl: formData.has("videoUrl") ? safeVideoUrl(formData.get("videoUrl"), "") : previous.videoUrl,
+      brandsNote: clampText(formData.get("brandsNote"), 80, previous.brandsNote),
+      kit: Array.isArray(editor.kit) ? (editor.kit as string[]) : linesFrom(formData, "kitItem").slice(0, 20),
+      steps: Array.isArray(editor.steps) ? (editor.steps as InstallationContent["steps"]) : formSteps,
+      troubleshooting: Array.isArray(editor.troubleshooting)
+        ? (editor.troubleshooting as InstallationContent["troubleshooting"])
+        : previous.troubleshooting,
+    };
 
-    const title = clampText(formData.get("title"), 80);
-    if (!title || steps.length === 0) {
-      return { status: "error", message: "Title and at least one install step are required." };
+    const data = mergeInstallationContent(incoming, previous);
+    if (!data.title) {
+      return { status: "error", message: "Title is required." };
     }
-
-    const data = normalizeInstallationContent({
-      eyebrow: clampText(formData.get("eyebrow"), 60),
-      title,
-      titleAccent: clampText(formData.get("titleAccent"), 80),
-      intro: clampText(formData.get("intro"), 500),
-      duration: clampText(formData.get("duration"), 40),
-      videoUrl: safeVideoUrl(formData.get("videoUrl"), ""),
-      brandsNote: clampText(formData.get("brandsNote"), 80),
-      kit: linesFrom(formData, "kitItem").slice(0, 20),
-      steps,
-      troubleshooting,
-    } satisfies InstallationContent);
 
     await db.siteSection.upsert({
       where: { key: "installation" },
@@ -1341,6 +1342,60 @@ export async function saveSocialSection(_prev: FormState, formData: FormData): P
   }
 }
 
+export async function saveTrackingSection(_prev: FormState, formData: FormData): Promise<FormState> {
+  await requireAdmin();
+  try {
+    const data = normalizeTrackingContent({
+      gtmId: String(formData.get("gtmId") ?? ""),
+      metaPixelId: String(formData.get("metaPixelId") ?? ""),
+      tiktokPixelId: String(formData.get("tiktokPixelId") ?? ""),
+      ga4Id: String(formData.get("ga4Id") ?? ""),
+      googleVerification: String(formData.get("googleVerification") ?? ""),
+      bingVerification: String(formData.get("bingVerification") ?? ""),
+      requireConsent: formData.get("requireConsent") === "on",
+    } satisfies TrackingContent);
+
+    if (String(formData.get("gtmId") ?? "").trim() && !data.gtmId) {
+      return { status: "error", message: "GTM ID must look like GTM-XXXXXXX." };
+    }
+    if (String(formData.get("metaPixelId") ?? "").trim() && !data.metaPixelId) {
+      return { status: "error", message: "Meta Pixel ID must be digits only." };
+    }
+    if (String(formData.get("ga4Id") ?? "").trim() && !data.ga4Id) {
+      return { status: "error", message: "GA4 ID must look like G-XXXXXXXX." };
+    }
+    if (String(formData.get("tiktokPixelId") ?? "").trim() && !data.tiktokPixelId) {
+      return { status: "error", message: "TikTok Pixel ID looks invalid." };
+    }
+    if (String(formData.get("googleVerification") ?? "").trim() && !data.googleVerification) {
+      return { status: "error", message: "Paste the Google Search Console verification code or the full meta tag." };
+    }
+
+    await db.siteSection.upsert({
+      where: { key: "site.tracking" },
+      create: { key: "site.tracking", title: "GTM & Pixel", data },
+      update: { data, title: "GTM & Pixel" },
+    });
+    updateTag(CONTENT_TAG);
+    revalidatePath("/", "layout");
+    revalidatePath("/sitemap.xml");
+    revalidatePath("/robots.txt");
+    revalidatePath("/admin/seo");
+    revalidatePath("/admin/content/sections/site.tracking");
+    await bumpAdminContentHub();
+    const connected = [data.gtmId && `GTM ${data.gtmId}`, data.ga4Id && `Analytics ${data.ga4Id}`, data.metaPixelId && `Pixel ${data.metaPixelId}`]
+      .filter(Boolean)
+      .join(" · ");
+    return {
+      status: "success",
+      message: connected ? `Connected to the store: ${connected}` : "Saved. Paste a GTM, Analytics, or Pixel code to connect.",
+    };
+  } catch (error) {
+    console.error("[saveTrackingSection]", error);
+    return { status: "error", message: "Could not publish tracking." };
+  }
+}
+
 export async function saveClaritySection(_prev: FormState, formData: FormData): Promise<FormState> {
   await requireAdmin();
   try {
@@ -1481,6 +1536,7 @@ export async function saveHomeHeroSection(_prev: FormState, formData: FormData):
     const secondaryHrefs = formData.getAll("slideSecondaryHref").map(String);
     const visuals = formData.getAll("slideVisual").map(String);
     const images = formData.getAll("slideImage").map(String);
+    const imagesMobile = formData.getAll("slideImageMobile").map(String);
 
     const slides = keys
       .map((_, i) => {
@@ -1498,8 +1554,9 @@ export async function saveHomeHeroSection(_prev: FormState, formData: FormData):
           ? (visualRaw as HeroVisualKey)
           : "phone";
         const image = safeMediaUrl(images[i], "");
-        if (!key && !brand && !title) return null;
-        if (!key || !brand || !title || !titleAccent || !text || !primaryLabel || !secondaryLabel) return null;
+        const imageMobile = safeMediaUrl(imagesMobile[i], "");
+        const blank = !brand && !title && !titleAccent && !text && !primaryLabel && !image && !imageMobile;
+        if (!key || blank) return null;
         if (visual === "image" && !image) return null;
         return {
           key,
@@ -1513,6 +1570,7 @@ export async function saveHomeHeroSection(_prev: FormState, formData: FormData):
           secondaryHref,
           visual,
           image,
+          imageMobile,
         };
       })
       .filter((row): row is NonNullable<typeof row> => !!row)

@@ -17,6 +17,7 @@ import {
   Package,
   ShoppingCart,
   Star,
+  Tags,
   Truck,
   Users,
   Wrench,
@@ -55,6 +56,7 @@ const groups: { label: string; items: NavItem[] }[] = [
     label: "Site",
     items: [
       { href: "/admin/content", label: "Content", icon: FileText },
+      { href: "/admin/seo", label: "GTM & Pixel", icon: Tags },
       { href: "/admin/collections", label: "Collections", icon: LayoutGrid },
       { href: "/admin/about", label: "About", icon: BookOpen },
       { href: "/admin/installation", label: "Installation", icon: Wrench },
@@ -62,9 +64,6 @@ const groups: { label: string; items: NavItem[] }[] = [
     ],
   },
 ];
-
-const PANEL_BG = "#070a12";
-const SCRIM_BG = "rgba(0,0,0,0.78)";
 
 function MobileNavLink({
   href,
@@ -162,28 +161,21 @@ export function AdminMobileChrome({
             <button
               type="button"
               className="admin-drawer-scrim absolute inset-0"
-              style={{ backgroundColor: SCRIM_BG }}
               aria-label="Close menu"
               onClick={close}
             />
-            <aside
-              className="admin-drawer-panel absolute inset-y-0 left-0 flex w-[min(312px,88vw)] max-w-full flex-col border-r border-white/10 shadow-2xl shadow-black/60"
-              style={{ backgroundColor: PANEL_BG }}
-            >
-              <div
-                className="admin-drawer-panel flex items-center justify-between gap-3 border-b border-white/[0.08] px-4 py-3.5"
-                style={{ backgroundColor: PANEL_BG }}
-              >
+            <aside className="admin-drawer-panel absolute inset-y-0 left-0 flex w-[min(312px,88vw)] max-w-full flex-col border-r border-line bg-bg text-fg shadow-2xl shadow-black/20">
+              <div className="admin-drawer-panel flex items-center justify-between gap-3 border-b border-line bg-bg px-4 py-3.5">
                 <div className="min-w-0">
-                  <p id={titleId} className="text-sm font-semibold tracking-tight text-white">
+                  <p id={titleId} className="text-sm font-semibold tracking-tight text-fg">
                     Admin menu
                   </p>
-                  <div className="mt-0.5 text-[11px] text-zinc-400">{attention}</div>
+                  <div className="mt-0.5 text-[11px] text-muted">{attention}</div>
                 </div>
                 <button
                   type="button"
                   onClick={close}
-                  className="grid size-9 shrink-0 place-items-center rounded-lg border border-white/[0.1] text-zinc-300 hover:text-white"
+                  className="grid size-9 shrink-0 place-items-center rounded-lg border border-line text-muted transition-colors hover:text-fg"
                   aria-label="Close menu"
                 >
                   <X size={16} />
@@ -191,13 +183,12 @@ export function AdminMobileChrome({
               </div>
 
               <nav
-                className="admin-drawer-panel min-h-0 flex-1 space-y-5 overflow-y-auto overscroll-contain px-2.5 py-4"
-                style={{ backgroundColor: PANEL_BG }}
+                className="admin-drawer-panel min-h-0 flex-1 space-y-5 overflow-y-auto overscroll-contain bg-bg px-2.5 py-4"
                 aria-label="Admin"
               >
                 {groups.map((group) => (
                   <div key={group.label}>
-                    <p className="mb-1.5 px-3 font-mono text-[10px] uppercase tracking-[0.22em] text-zinc-500">
+                    <p className="mb-1.5 px-3 font-mono text-[10px] uppercase tracking-[0.22em] text-subtle">
                       {group.label}
                     </p>
                     <div className="space-y-0.5">
@@ -215,16 +206,13 @@ export function AdminMobileChrome({
                 ))}
               </nav>
 
-              <div
-                className="admin-drawer-panel border-t border-white/[0.08] p-3"
-                style={{ backgroundColor: PANEL_BG }}
-              >
+              <div className="admin-drawer-panel border-t border-line bg-bg p-3">
                 <Link
                   href="/"
                   target="_blank"
                   prefetch={false}
                   onClick={close}
-                  className="mb-2 flex items-center gap-2.5 rounded-xl px-3 py-2 text-[13px] text-zinc-500 transition-colors hover:bg-white/[0.03] hover:text-zinc-200"
+                  className="mb-2 flex items-center gap-2.5 rounded-xl px-3 py-2 text-[13px] text-muted transition-colors hover:bg-surface-2 hover:text-fg"
                 >
                   <ExternalLink size={14} />
                   View store

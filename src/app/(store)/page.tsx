@@ -9,8 +9,8 @@ import { SectionDivider } from "@/components/ui/section-divider";
 import { ShopByDevice } from "@/components/sections/home-sections";
 import { CollectionBento } from "@/components/sections/collection-bento";
 import { HomeBelowFold } from "@/components/sections/home-below-fold";
-import { HydraRise } from "@/components/hydra/hydra-rise-lazy";
-import { JsonLd, organizationJsonLd } from "@/lib/seo";
+import { HydraRise } from "@/components/hydra/hydra-rise";
+import { JsonLd, organizationJsonLd, websiteJsonLd } from "@/lib/seo";
 import { getFeaturedProducts, getNavigationData } from "@/server/queries/catalog";
 import { defaultCollectionsContent, defaultHomeHeroContent } from "@/content/site-sections";
 import {
@@ -48,13 +48,18 @@ export default async function HomePage() {
 
   return (
     <>
-      <JsonLd data={organizationJsonLd(social)} />
+      <JsonLd data={[organizationJsonLd(social), websiteJsonLd()]} />
       <Hero content={heroContent} />
       <div id="explore" className="mt-16 scroll-mt-24">
         <BrandMarquee />
       </div>
 
-      <HydraRise />
+      <HydraRise
+        eyebrow="Unleashed"
+        title="Meet the"
+        titleAccent="HYDRA."
+        description="Technology within reach. Accessories for iPhone and Samsung Galaxy, shipped worldwide."
+      />
 
       <Reveal className="container-page pt-16">
         <DeviceFinder devices={nav.devices} brands={nav.brands} />

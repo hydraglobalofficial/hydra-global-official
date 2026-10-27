@@ -24,6 +24,7 @@ import {
   type ImpactLabContent,
   type ShippingContent,
   type SocialContent,
+  type TrackingContent,
   type ShowcaseContent,
   type ShowcaseVideoItem,
   type WhatsappWidgetContent,
@@ -298,44 +299,49 @@ export function normalizeWhatsappWidgetContent(raw: unknown): WhatsappWidgetCont
   };
 }
 
+function parseInstallSteps(raw: unknown): InstallationContent["steps"] {
+  if (!Array.isArray(raw)) return [];
+  return raw
+    .map((row) => {
+      if (!isRecord(row)) return null;
+      const title = clampText(row.title, 100, "");
+      const body = clampText(row.body, 600, "");
+      const tip = clampText(row.tip, 240, "");
+      const image = safeMediaUrl(row.image, "");
+      if (!title && !body && !image) return null;
+      return {
+        title,
+        body,
+        ...(tip ? { tip } : {}),
+        ...(image ? { image } : {}),
+      };
+    })
+    .filter((row): row is InstallationContent["steps"][number] => !!row)
+    .slice(0, 16);
+}
+
+function parseInstallTroubles(raw: unknown): InstallationContent["troubleshooting"] {
+  if (!Array.isArray(raw)) return [];
+  return raw
+    .map((row) => {
+      if (!isRecord(row)) return null;
+      const problem = clampText(row.problem, 120, "");
+      const fix = clampText(row.fix, 400, "");
+      return problem || fix ? { problem, fix } : null;
+    })
+    .filter((row): row is InstallationContent["troubleshooting"][number] => !!row)
+    .slice(0, 12);
+}
+
+/** Read path: saved CMS as-is. Seed defaults only when a field was never stored. */
 export function normalizeInstallationContent(raw: unknown): InstallationContent {
   const data = isRecord(raw) ? raw : {};
   const defaults = defaultInstallationContent;
-
-  const steps = Array.isArray(data.steps)
-    ? data.steps
-        .map((row, index) => {
-          if (!isRecord(row)) return null;
-          const title = clampText(row.title, 100);
-          const body = clampText(row.body, 600);
-          if (!title || !body) return null;
-          const tip = clampText(row.tip, 240, "");
-          const fallback = defaults.steps[index];
-          const image = safeMediaUrl(row.image, "") || fallback?.image || "";
-          return {
-            title,
-            body,
-            ...(tip ? { tip } : {}),
-            ...(image ? { image } : {}),
-          };
-        })
-        .filter((row): row is InstallationContent["steps"][number] => !!row)
-        .slice(0, 10)
-    : [];
-
+  const steps = Array.isArray(data.steps) ? parseInstallSteps(data.steps) : defaults.steps;
   const troubleshooting = Array.isArray(data.troubleshooting)
-    ? data.troubleshooting
-        .map((row) => {
-          if (!isRecord(row)) return null;
-          const problem = clampText(row.problem, 120);
-          const fix = clampText(row.fix, 400);
-          return problem && fix ? { problem, fix } : null;
-        })
-        .filter((row): row is InstallationContent["troubleshooting"][number] => !!row)
-        .slice(0, 10)
-    : [];
-
-  const kit = asStringArray(data.kit, 12, 80);
+    ? parseInstallTroubles(data.troubleshooting)
+    : defaults.troubleshooting;
+  const kit = Array.isArray(data.kit) ? asStringArray(data.kit, 20, 80) : defaults.kit;
 
   return {
     eyebrow: clampText(data.eyebrow, 60, defaults.eyebrow),
@@ -343,11 +349,37 @@ export function normalizeInstallationContent(raw: unknown): InstallationContent 
     titleAccent: clampText(data.titleAccent, 80, defaults.titleAccent),
     intro: clampText(data.intro, 500, defaults.intro),
     duration: clampText(data.duration, 40, defaults.duration),
-    videoUrl: safeVideoUrl(data.videoUrl, "") || defaults.videoUrl,
+    videoUrl: "videoUrl" in data ? safeVideoUrl(data.videoUrl, "") : defaults.videoUrl,
     brandsNote: clampText(data.brandsNote, 80, defaults.brandsNote),
-    kit: kit.length > 0 ? kit : defaults.kit,
+    kit,
     steps: steps.length > 0 ? steps : defaults.steps,
-    troubleshooting: troubleshooting.length > 0 ? troubleshooting : defaults.troubleshooting,
+    troubleshooting,
+  };
+}
+
+/** Publish path: keep the live guide; only overwrite fields the editor actually sent. */
+export function mergeInstallationContent(
+  incoming: unknown,
+  previous: InstallationContent,
+): InstallationContent {
+  const data = isRecord(incoming) ? incoming : {};
+  const steps = parseInstallSteps(data.steps);
+  const troubleshooting = Array.isArray(data.troubleshooting)
+    ? parseInstallTroubles(data.troubleshooting)
+    : previous.troubleshooting;
+  const kit = Array.isArray(data.kit) ? asStringArray(data.kit, 20, 80) : previous.kit;
+
+  return {
+    eyebrow: clampText(data.eyebrow, 60, previous.eyebrow),
+    title: clampText(data.title, 80, previous.title),
+    titleAccent: clampText(data.titleAccent, 80, previous.titleAccent),
+    intro: clampText(data.intro, 500, previous.intro),
+    duration: clampText(data.duration, 40, previous.duration),
+    videoUrl: "videoUrl" in data ? safeVideoUrl(data.videoUrl, "") : previous.videoUrl,
+    brandsNote: clampText(data.brandsNote, 80, previous.brandsNote),
+    kit,
+    steps: steps.length > 0 ? steps : previous.steps,
+    troubleshooting,
   };
 }
 
@@ -377,7 +409,7 @@ export function normalizeCollectionsContent(raw: unknown): CollectionsContent {
   };
 }
 
-function normalizeHeroSlide(row: unknown, fallback?: HeroSlide): HeroSlide | null {
+function normalizeHeroSlide(row: unknown): HeroSlide | null {
   if (!isRecord(row)) return null;
   const key = safeSlug(row.key) || clampText(row.key, 40).toLowerCase().replace(/[^a-z0-9-]+/g, "-");
   const brand = clampText(row.brand, 40);
@@ -390,11 +422,11 @@ function normalizeHeroSlide(row: unknown, fallback?: HeroSlide): HeroSlide | nul
   const secondaryHref = safeInternalHref(row.secondaryHref, "/shop");
   const visual = normalizeHeroVisual(row.visual);
   const image = safeMediaUrl(row.image, "");
+  const imageMobile = safeMediaUrl(row.imageMobile, "");
 
-  if (!key || !brand || !title || !titleAccent || !text || !primaryLabel || !secondaryLabel) {
-    return fallback ?? null;
-  }
-  if (visual === "image" && !image) return fallback ?? null;
+  const blank = !brand && !title && !titleAccent && !text && !primaryLabel && !image && !imageMobile;
+  if (!key || blank) return null;
+  if (visual === "image" && !image) return null;
 
   return {
     key,
@@ -408,6 +440,7 @@ function normalizeHeroSlide(row: unknown, fallback?: HeroSlide): HeroSlide | nul
     secondaryHref,
     visual,
     image,
+    imageMobile,
   };
 }
 
@@ -458,6 +491,58 @@ export function normalizeSocialContent(raw: unknown): SocialContent {
     instagram: safeSocialUrl("instagram", data.instagram, defaults.instagram),
     youtube: safeSocialUrl("youtube", data.youtube, defaults.youtube),
     x: safeSocialUrl("x", data.x, defaults.x),
+  };
+}
+
+function snippetText(raw: unknown) {
+  if (typeof raw !== "string") return "";
+  return raw.trim().slice(0, 12_000);
+}
+
+function sanitizeGtmId(raw: unknown) {
+  const match = snippetText(raw).match(/GTM-[A-Z0-9]+/i);
+  return match ? match[0].toUpperCase() : "";
+}
+
+function sanitizeGa4Id(raw: unknown) {
+  const match = snippetText(raw).match(/(?:^|[^A-Z0-9-])(G-[A-Z0-9]{6,12})\b/i);
+  return match ? match[1].toUpperCase() : "";
+}
+
+function sanitizeMetaPixelId(raw: unknown) {
+  const text = snippetText(raw);
+  const fromInit = text.match(/fbq\s*\(\s*['"]init['"]\s*,\s*['"](\d{5,20})['"]/i);
+  if (fromInit?.[1]) return fromInit[1];
+  const fromTr = text.match(/facebook\.com\/tr\?id=(\d{5,20})/i);
+  if (fromTr?.[1]) return fromTr[1];
+  const digits = text.replace(/\s/g, "");
+  return /^\d{5,20}$/.test(digits) ? digits : "";
+}
+
+function sanitizeTiktokPixelId(raw: unknown) {
+  const text = snippetText(raw);
+  const fromLoad = text.match(/ttq\.load\s*\(\s*['"]([A-Z0-9]{10,30})['"]/i);
+  if (fromLoad?.[1]) return fromLoad[1];
+  return /^[A-Z0-9]{10,30}$/i.test(text) ? text : "";
+}
+
+function sanitizeVerification(raw: unknown) {
+  const text = snippetText(raw);
+  const tagged = text.match(/content\s*=\s*["']([^"']+)["']/i);
+  const value = (tagged?.[1] || text).trim();
+  return /^[A-Za-z0-9_-]{8,120}$/.test(value) ? value : "";
+}
+
+export function normalizeTrackingContent(raw: unknown): TrackingContent {
+  const data = isRecord(raw) ? raw : {};
+  return {
+    gtmId: sanitizeGtmId(data.gtmId),
+    metaPixelId: sanitizeMetaPixelId(data.metaPixelId),
+    tiktokPixelId: sanitizeTiktokPixelId(data.tiktokPixelId),
+    ga4Id: sanitizeGa4Id(data.ga4Id),
+    googleVerification: sanitizeVerification(data.googleVerification),
+    bingVerification: sanitizeVerification(data.bingVerification),
+    requireConsent: data.requireConsent === true || data.requireConsent === "true" || data.requireConsent === "on",
   };
 }
 
@@ -568,7 +653,7 @@ export function normalizeHomeHeroContent(raw: unknown): HomeHeroContent {
 
   const slides = Array.isArray(data.slides)
     ? data.slides
-        .map((row, i) => normalizeHeroSlide(row, defaults.slides[i]))
+        .map((row) => normalizeHeroSlide(row))
         .filter((row): row is HeroSlide => !!row)
         .slice(0, 6)
     : [];

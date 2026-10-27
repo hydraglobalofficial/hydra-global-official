@@ -63,11 +63,18 @@ export function ImageUrlsField({
 
   function onPick(files: FileList | null) {
     if (!files?.length) return;
+    const picked = Array.from(files);
+    const tooBig = picked.find((file) => file.size > IMAGE_MAX_BYTES);
+    if (tooBig) {
+      setMessage("One image is larger than 8MB. Export a smaller JPG and try again.");
+      if (fileRef.current) fileRef.current.value = "";
+      return;
+    }
     setMessage(null);
     startTransition(async () => {
       const added: string[] = [];
       try {
-        for (const file of Array.from(files)) {
+        for (const file of picked) {
           added.push(await uploadFile(file, folder));
         }
         sync([...urls, ...added]);
@@ -178,7 +185,7 @@ export function ImageUrlsField({
         <input
           ref={fileRef}
           type="file"
-          accept="image/jpeg,image/png,image/webp,image/avif,image/gif"
+          accept=".jpg,.jpeg,.png,.webp"
           multiple
           className="sr-only"
           onChange={(e) => onPick(e.target.files)}
@@ -218,7 +225,20 @@ type SingleProps = {
   folder?: string;
   placeholder?: string;
   required?: boolean;
+  /** Shown on the upload card, e.g. "16:9 · 1920×1080". */
+  sizeHint?: string;
+  onValueChange?: (url: string) => void;
 };
+
+const IMAGE_MAX_BYTES = 8 * 1024 * 1024;
+const IMAGE_ACCEPT = ".jpg,.jpeg,.png,.webp";
+
+function isAllowedLocalImage(file: File) {
+  return (
+    ["image/jpeg", "image/jpg", "image/png", "image/webp"].includes(file.type) ||
+    /\.(jpe?g|png|webp)$/i.test(file.name)
+  );
+}
 
 /** Single URL input + local file picker that uploads to Cloudflare R2. */
 export function ImageUrlField({
@@ -226,8 +246,10 @@ export function ImageUrlField({
   name,
   defaultValue = "",
   folder = "content",
-  placeholder = "Upload from device → Cloudflare R2",
+  placeholder = "Upload from computer",
   required,
+  sizeHint,
+  onValueChange,
 }: SingleProps) {
   const autoId = useId();
   const id = idProp ?? autoId;
@@ -235,31 +257,52 @@ export function ImageUrlField({
   const fileRef = useRef<HTMLInputElement>(null);
   const [preview, setPreview] = useState(defaultValue);
   const [message, setMessage] = useState<string | null>(null);
-  const [pending, startTransition] = useTransition();
+  const [pending, setPending] = useState(false);
 
-  function onPick(files: FileList | null) {
+  async function onPick(files: FileList | null) {
     const file = files?.[0];
     if (!file) return;
-    setMessage(null);
-    startTransition(async () => {
-      try {
-        const url = await uploadFile(file, folder);
-        if (inputRef.current) {
-          inputRef.current.value = url;
-          inputRef.current.dispatchEvent(new Event("input", { bubbles: true }));
-        }
-        setPreview(url);
-        setMessage("Uploaded to Cloudflare R2.");
-      } catch (err) {
-        setMessage(err instanceof Error ? err.message : "Upload failed.");
-      } finally {
-        if (fileRef.current) fileRef.current.value = "";
+    if (fileRef.current) fileRef.current.value = "";
+
+    if (!isAllowedLocalImage(file)) {
+      setMessage("Use a JPG, PNG or WebP file.");
+      return;
+    }
+    if (file.size > IMAGE_MAX_BYTES) {
+      setMessage("Image is too large (max 8MB). Export 1920×1080 JPG and try again.");
+      return;
+    }
+
+    setMessage("Uploading…");
+    setPending(true);
+    const ctrl = new AbortController();
+    const timer = window.setTimeout(() => ctrl.abort(), 45_000);
+    try {
+      const body = new FormData();
+      body.set("file", file);
+      body.set("folder", folder);
+      body.set("kind", "image");
+      const res = await fetch("/api/admin/upload", { method: "POST", body, signal: ctrl.signal });
+      const data = (await res.json()) as UploadOk & UploadErr;
+      if (!res.ok || !data.url) throw new Error(data.error || "Upload failed.");
+      if (inputRef.current) {
+        inputRef.current.value = data.url;
+        inputRef.current.dispatchEvent(new Event("input", { bubbles: true }));
       }
-    });
+      setPreview(data.url);
+      onValueChange?.(data.url);
+      setMessage("Uploaded.");
+    } catch (err) {
+      const aborted = err instanceof DOMException && err.name === "AbortError";
+      setMessage(aborted ? "Upload timed out. Try a smaller JPG." : err instanceof Error ? err.message : "Upload failed.");
+    } finally {
+      window.clearTimeout(timer);
+      setPending(false);
+    }
   }
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-1.5">
       <div className="flex gap-2">
         <Input
           ref={inputRef}
@@ -269,14 +312,18 @@ export function ImageUrlField({
           placeholder={placeholder}
           required={required}
           className="font-mono text-xs"
-          onChange={(e) => setPreview(e.currentTarget.value)}
+          onChange={(e) => {
+            const next = e.currentTarget.value;
+            setPreview(next);
+            onValueChange?.(next);
+          }}
         />
         <input
           ref={fileRef}
           type="file"
-          accept="image/jpeg,image/png,image/webp,image/avif,image/gif"
+          accept={IMAGE_ACCEPT}
           className="sr-only"
-          onChange={(e) => onPick(e.target.files)}
+          onChange={(e) => void onPick(e.target.files)}
         />
         <Button
           type="button"
@@ -285,7 +332,7 @@ export function ImageUrlField({
           className="shrink-0"
           disabled={pending}
           onClick={() => fileRef.current?.click()}
-          aria-label="Upload image from device"
+          aria-label="Upload image from computer"
         >
           {pending ? <Loader2 size={14} className="animate-spin" /> : <ImagePlus size={14} />}
         </Button>
@@ -295,30 +342,26 @@ export function ImageUrlField({
           <img
             src={preview}
             alt=""
-            className="h-20 w-20 rounded-xl border border-line object-cover"
+            className="h-14 w-14 rounded-lg border border-line object-cover"
             onError={() => setPreview("")}
           />
           <button
             type="button"
-            className="absolute -right-2 -top-2 grid size-6 place-items-center rounded-full border border-line bg-surface text-muted hover:text-danger"
-            onClick={async () => {
-              const { confirmDelete } = await import("@/lib/swal");
-              const result = await confirmDelete({
-                title: "Clear this image?",
-                text: "You can upload another one after clearing.",
-                confirmText: "Yes, clear",
-              });
-              if (!result.isConfirmed) return;
+            className="absolute -right-1.5 -top-1.5 grid size-5 place-items-center rounded-full border border-line bg-surface text-muted hover:text-danger"
+            onClick={() => {
               setPreview("");
+              setMessage(null);
               if (inputRef.current) inputRef.current.value = "";
+              onValueChange?.("");
             }}
             aria-label="Clear image"
           >
-            <Trash2 size={12} />
+            <Trash2 size={10} />
           </button>
         </div>
       ) : null}
       {message ? <p className="text-xs text-muted">{message}</p> : null}
+      {sizeHint && !message ? <p className="text-[11px] text-subtle">{sizeHint}</p> : null}
     </div>
   );
 }

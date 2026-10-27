@@ -14,6 +14,7 @@ import {
   defaultNewsletterContent,
   defaultShippingContent,
   defaultSocialContent,
+  defaultTrackingContent,
   defaultShowcaseContent,
   defaultWhatsappWidgetContent,
   type AboutContent,
@@ -27,6 +28,7 @@ import {
   type NewsletterContent,
   type ShippingContent,
   type SocialContent,
+  type TrackingContent,
   type ShowcaseContent,
   type WhatsappWidgetContent,
 } from "@/content/site-sections";
@@ -46,6 +48,7 @@ import {
   normalizeNewsletterContent,
   normalizeShippingContent,
   normalizeSocialContent,
+  normalizeTrackingContent,
   normalizeShowcaseContent,
   normalizeWhatsappWidgetContent,
 } from "@/lib/normalize-sections";
@@ -144,7 +147,7 @@ export const getHomeHeroContent = unstable_cache(
       return defaultHomeHeroContent;
     }
   },
-  ["site-section-home-hero-v10"],
+  ["site-section-home-hero-v13"],
   { tags: [CONTENT_TAG], revalidate: 3600 },
 );
 
@@ -170,7 +173,7 @@ export const getInstallationContent = unstable_cache(
       return defaultInstallationContent;
     }
   },
-  ["site-section-installation-v4"],
+  ["site-section-installation-v6"],
   { tags: [CONTENT_TAG], revalidate: 3600 },
 );
 
@@ -199,6 +202,35 @@ export const getShippingContent = unstable_cache(
   ["site-section-shipping-v1"],
   { tags: [CONTENT_TAG], revalidate: 60 },
 );
+
+export const getTrackingContent = unstable_cache(
+  async (): Promise<TrackingContent> => {
+    const envFallback = {
+      gtmId: process.env.NEXT_PUBLIC_GTM_ID,
+      metaPixelId: process.env.NEXT_PUBLIC_META_PIXEL_ID,
+      ga4Id: process.env.NEXT_PUBLIC_GA4_ID,
+      tiktokPixelId: process.env.NEXT_PUBLIC_TIKTOK_PIXEL_ID,
+    };
+    try {
+      const row = await db.siteSection.findUnique({ where: { key: "site.tracking" }, select: { data: true } });
+      const stored = row?.data && typeof row.data === "object" && !Array.isArray(row.data) ? row.data : {};
+      return normalizeTrackingContent({ ...defaultTrackingContent, ...stored, ...pickFilled(envFallback, stored) });
+    } catch {
+      return normalizeTrackingContent({ ...defaultTrackingContent, ...envFallback });
+    }
+  },
+  ["site-section-tracking-v1"],
+  { tags: [CONTENT_TAG], revalidate: 3600 },
+);
+
+function pickFilled(env: Record<string, string | undefined>, stored: Record<string, unknown>) {
+  const next: Record<string, unknown> = {};
+  for (const [key, value] of Object.entries(env)) {
+    const current = stored[key];
+    if (!current && value) next[key] = value;
+  }
+  return next;
+}
 
 export const getSocialContent = unstable_cache(
   async (): Promise<SocialContent> => {

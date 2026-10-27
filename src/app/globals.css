@@ -547,9 +547,16 @@ html[data-theme="dark"] .admin-card {
 }
 .admin-drawer-panel {
   background-color: var(--color-bg);
+  color: var(--color-fg);
 }
-html.light .admin-drawer-scrim {
+html.light .admin-drawer-scrim,
+html[data-theme="light"] .admin-drawer-scrim {
   background-color: rgb(0 0 0 / 0.4);
+}
+html.light .admin-drawer-panel,
+html[data-theme="light"] .admin-drawer-panel {
+  background-color: #ffffff !important;
+  color: #0a0a0c !important;
 }
 
 @utility admin-aurora {
@@ -595,6 +602,12 @@ html[data-theme="light"] .card-premium {
     0 1px 0 rgb(255 255 255 / 0.8),
     0 14px 36px -24px rgb(30 64 120 / 0.22) !important;
   color: #0a0a0c !important;
+}
+
+html.light .card-premium.product-card,
+html[data-theme="light"] .card-premium.product-card {
+  background: transparent !important;
+  background-image: none !important;
 }
 
 html.light .spotlight::before,
@@ -1049,6 +1062,12 @@ html[data-theme="light"] .install-step-active {
   box-shadow: none !important;
 }
 
+html.light .install-media-card,
+html[data-theme="light"] .install-media-card {
+  background: #ffffff !important;
+  background-image: none !important;
+}
+
 html.light .card-premium,
 html[data-theme="light"] .card-premium,
 html.light .spotlight.card-premium,
@@ -1058,6 +1077,12 @@ html[data-theme="light"] .spotlight.card-premium {
   border: 1px solid #c5e0f3 !important;
   box-shadow: 0 1px 0 rgb(255 255 255 / 0.8), 0 12px 32px -24px rgb(30 64 120 / 0.22) !important;
   color: #0a0a0c !important;
+}
+
+html.light .card-premium.product-card,
+html[data-theme="light"] .card-premium.product-card {
+  background: transparent !important;
+  background-image: none !important;
 }
 
 html.light .bento-fill.spotlight.card-premium,
