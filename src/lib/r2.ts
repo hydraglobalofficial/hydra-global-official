@@ -78,6 +78,19 @@ export function r2PublicHostname() {
 let client: S3Client | null = null;
 let clientKey = "";
 
+function friendlyR2Error(error: unknown) {
+  const name = error && typeof error === "object" && "name" in error ? String(error.name) : "";
+  const message = error instanceof Error ? error.message : "R2 upload failed.";
+  if (/AccessDenied|Forbidden|403/i.test(`${name} ${message}`)) {
+    return (
+      "Cloudflare R2 denied the upload (AccessDenied). The API token can see the bucket but cannot write. " +
+      "In Cloudflare → R2 → Manage R2 API Tokens, create a new token with Object Read & Write for this bucket, " +
+      "then put the new Access Key ID and Secret in R2_ACCESS_KEY_ID / R2_SECRET_ACCESS_KEY and restart."
+    );
+  }
+  return message;
+}
+
 function getClient() {
   const accountId = resolveR2AccountId();
   if (!accountId || !r2Configured()) {
@@ -139,15 +152,19 @@ async function putToR2(input: {
   const key = buildObjectKey(input.folder ?? "products", ext);
   const body = Buffer.isBuffer(input.body) ? input.body : Buffer.from(input.body);
 
-  await getClient().send(
-    new PutObjectCommand({
-      Bucket: env("R2_BUCKET"),
-      Key: key,
-      Body: body,
-      ContentType: input.contentType,
-      CacheControl: "public, max-age=31536000, immutable",
-    }),
-  );
+  try {
+    await getClient().send(
+      new PutObjectCommand({
+        Bucket: env("R2_BUCKET"),
+        Key: key,
+        Body: body,
+        ContentType: input.contentType,
+        CacheControl: "public, max-age=31536000, immutable",
+      }),
+    );
+  } catch (error) {
+    throw new Error(friendlyR2Error(error));
+  }
 
   return {
     key,

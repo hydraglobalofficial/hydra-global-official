@@ -229,7 +229,7 @@ export function Hero({ content }: { content: HomeHeroContent }) {
     >
       {film ? (
       <>
-        <div className="hero-film pointer-events-none relative aspect-video w-full overflow-hidden bg-black md:aspect-auto md:h-[calc(100svh-8rem)]">
+        <div className="hero-film pointer-events-none relative aspect-video w-full overflow-hidden bg-black">
           <AnimatePresence initial={false}>
             <motion.div
               key={slide.key}
@@ -245,7 +245,7 @@ export function Hero({ content }: { content: HomeHeroContent }) {
                 fill
                 priority={safeIndex === 0}
                 sizes="100vw"
-                className="object-contain object-center md:hidden"
+                className="object-cover object-center md:hidden"
               />
               <Image
                 src={slide.image}

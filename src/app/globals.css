@@ -1106,6 +1106,11 @@ html[data-theme="light"] [aria-label="Featured collections"] > div.absolute.inse
   background-image: none !important;
 }
 
+.hero-film {
+  aspect-ratio: 16 / 9 !important;
+  height: auto !important;
+}
+
 html.light .hero-film,
 html[data-theme="light"] .hero-film,
 html.light .hydra-film-block,

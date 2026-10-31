@@ -86,6 +86,7 @@ html.light [aria-label="Featured collections"]>div:first-child:not(.hero-film),
 html[data-theme="light"] [aria-label="Featured collections"]>div:first-child:not(.hero-film){
   background:#ffffff!important;background-image:none!important;
 }
+.hero-film{aspect-ratio:16/9!important;height:auto!important}
 html.light .hero-film,html[data-theme="light"] .hero-film,
 html.light .hydra-film-block,html[data-theme="light"] .hydra-film-block{
   background:#000!important;background-image:none!important;color:#fff!important;
