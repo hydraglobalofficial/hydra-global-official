@@ -43,12 +43,12 @@ export function ShopByDevice({
             <SpotlightCard className="group h-full overflow-hidden">
               <Link
                 href={`/shop/${card.brand.slug}`}
-                className="relative flex min-h-[20rem] flex-col gap-6 overflow-hidden p-5 sm:min-h-[22rem] sm:flex-row sm:items-center sm:gap-5 sm:p-7 md:min-h-[23rem] md:gap-6 md:p-8"
+                className="relative grid h-full min-h-[20rem] grid-cols-1 items-center gap-6 overflow-hidden p-5 sm:min-h-[22rem] sm:grid-cols-[minmax(0,1fr)_12.5rem] sm:gap-5 sm:p-7 md:min-h-[23rem] md:gap-6 md:p-8"
               >
                 <div className="pointer-events-none absolute -right-10 top-1/3 size-[18rem] rounded-full bg-[#C5E0F3]/70 blur-[100px] opacity-50 transition-opacity duration-700 group-hover:opacity-80" />
                 <div className="bg-dots pointer-events-none absolute inset-0 opacity-45 [mask-image:linear-gradient(to_bottom,#000_15%,transparent_80%)]" />
 
-                <div className="relative z-[1] flex min-w-0 flex-1 flex-col justify-center pr-1" style={{ minWidth: "12rem" }}>
+                <div className="relative z-[1] flex min-w-0 flex-col justify-center pr-1">
                   <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-accent sm:text-[11px] sm:tracking-[0.25em]">
                     {card.count} models supported
                   </p>

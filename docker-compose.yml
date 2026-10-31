@@ -1,0 +1,29 @@
+# VPS Postgres — data lives on RAID when POSTGRES_DATA_DIR is set.
+# App process stays on the host (systemd / pnpm start:vps).
+#
+#   cp .env.example .env     # set POSTGRES_PASSWORD + DATABASE_URL to 127.0.0.1
+#   docker compose up -d postgres
+#
+# RAID example in .env:
+#   POSTGRES_DATA_DIR=/mnt/raid/hydra/postgres
+#   UPLOAD_DIR=/mnt/raid/hydra/uploads
+#   STORAGE_DRIVER=local
+
+services:
+  postgres:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-hydra}
+      POSTGRES_USER: ${POSTGRES_USER:-hydra}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - ${POSTGRES_DATA_DIR:-./data/postgres}:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U hydra -d hydra"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 10s

@@ -17,6 +17,16 @@ pnpm db:seed              # demo catalog, pages, sections, orders, owner account
 pnpm dev                  # http://localhost:3000
 ```
 
+## Deploy to a VPS (RAID disk + local Postgres)
+
+Uploads write to the server disk. The database is Postgres on the same box. Step-by-step: [`deploy/README.md`](deploy/README.md).
+
+```bash
+docker compose up -d postgres   # data dir: POSTGRES_DATA_DIR (RAID)
+# .env: STORAGE_DRIVER=local  UPLOAD_DIR=/mnt/raid/hydra/uploads
+pnpm install && pnpm db:deploy && pnpm build && pnpm start:vps
+```
+
 ## Deploy to Vercel
 
 1. Push the repo to GitHub and import it in Vercel. The Next.js framework and pnpm are detected automatically.
@@ -90,11 +100,11 @@ src/
 - **Site sections:** About + home blocks (collections, how-it-works, newsletter) are editable JSON in admin (`SiteSection`), with safe href/image validation on save and normalize-on-read.
 - **Reports:** Admin can download HTML/CSV order and product statements from the orders and products screens.
 - **Caching:** catalog pages use ISR and tag-based revalidation. Admin uses a versioned cache-aside layer (`src/lib/admin-cache.ts`) on Upstash Redis with tag invalidation, hit metadata, and Overview → Purge cache. Rate limits also use Redis. Without `UPSTASH_REDIS_*`, both fall back to process memory.
-- **Media:** Admin product + CMS image fields can upload from the device to Cloudflare R2 (`POST /api/admin/upload`). Set `R2_*` in `.env` (see `.env.example`). Public URLs are validated via `safeMediaUrl` and allowed in `next/image` remotePatterns.
+- **Media:** Admin **Upload from device** (`POST /api/admin/upload`) writes to the VPS disk when `STORAGE_DRIVER=local` (files under `UPLOAD_DIR`, public URL `/media/...`). Set `STORAGE_DRIVER=r2` plus `R2_*` only if you still want Cloudflare R2. Public URLs are validated via `safeMediaUrl`.
 - **Security:** bcrypt passwords, an HS256 JWT session cookie, Zod on storefront inputs, honeypot fields, rate limiting, and strict security headers.
 - **Analytics:** GTM and Meta Pixel load only after cookie consent (`NEXT_PUBLIC_GTM_ID`, `NEXT_PUBLIC_META_PIXEL_ID`).
 
-## Cloudflare R2 setup
+## Cloudflare R2 setup (optional)
 
 1. In Cloudflare → R2 → create a bucket (e.g. `hydra-media`).
 2. **Settings → Public access:** enable `r2.dev` subdomain, or attach a custom domain.

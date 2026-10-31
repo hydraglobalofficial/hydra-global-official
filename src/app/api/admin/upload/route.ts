@@ -1,19 +1,19 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { getSession } from "@/lib/auth/session";
 import { rateLimit } from "@/lib/rate-limit";
+import { isAllowedImageType, isAllowedVideoType } from "@/lib/r2";
 import {
-  isAllowedImageType,
-  isAllowedVideoType,
-  R2_MAX_BYTES,
-  R2_VIDEO_MAX_BYTES,
-  r2Configured,
-  uploadImageToR2,
-  uploadVideoToR2,
-} from "@/lib/r2";
+  MEDIA_MAX_BYTES,
+  MEDIA_VIDEO_MAX_BYTES,
+  storageConfigured,
+  storageDriver,
+  uploadImage,
+  uploadVideo,
+} from "@/lib/storage";
 
 export const runtime = "nodejs";
 
-/** All admin media folders publish to Cloudflare R2 (device → R2 public URL). */
+/** Admin media folders — local RAID disk or Cloudflare R2, from STORAGE_DRIVER. */
 const FOLDERS = new Set([
   "products",
   "content",
@@ -52,20 +52,20 @@ export async function POST(request: NextRequest) {
   const isVideo =
     kindRaw === "video" || isAllowedVideoType(file.type) || /\.(mp4|webm|mov)$/i.test(file.name);
 
-  if (!r2Configured()) {
+  if (!storageConfigured()) {
     return NextResponse.json(
       {
         error:
-          "Cloudflare R2 is not configured. Set R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY, R2_BUCKET, and R2_PUBLIC_URL.",
+          "File storage is not configured. Set STORAGE_DRIVER=local and UPLOAD_DIR, or fill R2_* for Cloudflare.",
       },
       { status: 503 },
     );
   }
 
   if (isVideo) {
-    if (file.size > R2_VIDEO_MAX_BYTES) {
+    if (file.size > MEDIA_VIDEO_MAX_BYTES) {
       return NextResponse.json(
-        { error: `Video must be ${R2_VIDEO_MAX_BYTES / (1024 * 1024)}MB or smaller.` },
+        { error: `Video must be ${MEDIA_VIDEO_MAX_BYTES / (1024 * 1024)}MB or smaller.` },
         { status: 400 },
       );
     }
@@ -73,9 +73,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Only MP4, WebM or MOV videos are allowed." }, { status: 400 });
     }
   } else {
-    if (file.size > R2_MAX_BYTES) {
+    if (file.size > MEDIA_MAX_BYTES) {
       return NextResponse.json(
-        { error: `Image must be ${R2_MAX_BYTES / (1024 * 1024)}MB or smaller.` },
+        { error: `Image must be ${MEDIA_MAX_BYTES / (1024 * 1024)}MB or smaller.` },
         { status: 400 },
       );
     }
@@ -93,13 +93,13 @@ export async function POST(request: NextRequest) {
   try {
     const buffer = Buffer.from(await file.arrayBuffer());
     const uploaded = isVideo
-      ? await uploadVideoToR2({
+      ? await uploadVideo({
           body: buffer,
           contentType: file.type,
           filename: file.name,
           folder,
         })
-      : await uploadImageToR2({
+      : await uploadImage({
           body: buffer,
           contentType: file.type,
           filename: file.name,
@@ -110,6 +110,7 @@ export async function POST(request: NextRequest) {
       key: uploaded.key,
       bytes: uploaded.bytes,
       contentType: uploaded.contentType,
+      driver: storageDriver(),
     });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Upload failed.";
@@ -123,9 +124,10 @@ export async function GET() {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
   return NextResponse.json({
-    configured: r2Configured(),
-    maxBytes: R2_MAX_BYTES,
-    videoMaxBytes: R2_VIDEO_MAX_BYTES,
+    configured: storageConfigured(),
+    driver: storageDriver(),
+    maxBytes: MEDIA_MAX_BYTES,
+    videoMaxBytes: MEDIA_VIDEO_MAX_BYTES,
     accept: "image/jpeg,image/png,image/webp,image/avif,image/gif",
     videoAccept: "video/mp4,video/webm,video/quicktime",
   });

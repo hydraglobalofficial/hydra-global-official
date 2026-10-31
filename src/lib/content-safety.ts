@@ -21,14 +21,38 @@ export function safeInternalHref(raw: unknown, fallback = "/"): string {
   return href;
 }
 
-function r2PublicHost(): string {
-  const base = process.env.R2_PUBLIC_URL?.trim();
+function hostnameFromEnv(name: string): string {
+  const base = process.env[name]?.trim();
   if (!base) return "";
   try {
     return new URL(base).hostname.toLowerCase();
   } catch {
     return "";
   }
+}
+
+function r2PublicHost(): string {
+  return hostnameFromEnv("R2_PUBLIC_URL");
+}
+
+function siteHost(): string {
+  return hostnameFromEnv("NEXT_PUBLIC_SITE_URL");
+}
+
+function isAllowedMediaHost(host: string) {
+  const configuredR2 = r2PublicHost();
+  const configuredSite = siteHost();
+  return (
+    host === "i.ibb.co" ||
+    host === "ibb.co" ||
+    host === "imagebb.com" ||
+    host.endsWith(".ibb.co") ||
+    host.endsWith(".imagebb.com") ||
+    host.endsWith(".r2.dev") ||
+    host.endsWith(".amazonaws.com") ||
+    (configuredR2 !== "" && host === configuredR2) ||
+    (configuredSite !== "" && host === configuredSite)
+  );
 }
 
 /** Local /public paths or allowlisted remote image hosts (see next.config.ts). */
@@ -42,19 +66,14 @@ export function safeMediaUrl(raw: unknown, fallback = ""): string {
   }
   try {
     const parsed = new URL(url);
-    if (parsed.protocol !== "https:") return fallback;
+    if (parsed.protocol !== "https:" && parsed.protocol !== "http:") return fallback;
+    if (parsed.protocol === "http:" && parsed.hostname !== "localhost" && parsed.hostname !== "127.0.0.1") {
+      return fallback;
+    }
     const host = parsed.hostname.toLowerCase();
-    const configuredR2 = r2PublicHost();
-    const allowed =
-      host === "i.ibb.co" ||
-      host === "ibb.co" ||
-      host === "imagebb.com" ||
-      host.endsWith(".ibb.co") ||
-      host.endsWith(".imagebb.com") ||
-      host.endsWith(".r2.dev") ||
-      host.endsWith(".amazonaws.com") ||
-      (configuredR2 !== "" && host === configuredR2);
-    return allowed ? parsed.toString() : fallback;
+    return isAllowedMediaHost(host) || host === "localhost" || host === "127.0.0.1"
+      ? parsed.toString()
+      : fallback;
   } catch {
     return fallback;
   }
@@ -87,11 +106,8 @@ export function safeVideoUrl(raw: unknown, fallback = ""): string {
     if (host === "drive.google.com" || host === "docs.google.com") {
       return parsed.toString();
     }
-    const configuredR2 = r2PublicHost();
     const allowed =
-      host.endsWith(".r2.dev") ||
-      host.endsWith(".amazonaws.com") ||
-      (configuredR2 !== "" && host === configuredR2);
+      isAllowedMediaHost(host) || host === "localhost" || host === "127.0.0.1";
     return allowed ? parsed.toString() : fallback;
   } catch {
     return fallback;

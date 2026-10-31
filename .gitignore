@@ -47,3 +47,7 @@ next-env.d.ts
 /src/generated/
 
 !.env.example
+
+# VPS / local disk uploads (RAID mount or ./uploads)
+/uploads
+/data

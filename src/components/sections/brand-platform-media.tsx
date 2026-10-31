@@ -41,13 +41,12 @@ export function BrandPlatformMedia({
 
   return (
     <div
-      className={cn("relative z-[1] mx-auto flex shrink-0 items-center justify-center sm:mx-0", className)}
-      style={{ width: "min(100%, 12.5rem)", flex: "0 0 auto" }}
+      className={cn(
+        "relative z-[1] mx-auto flex h-[16.75rem] w-full max-w-[12.5rem] items-center justify-center justify-self-center overflow-hidden sm:mx-0 sm:justify-self-end",
+        className,
+      )}
     >
-      <div
-        className="relative w-full transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:-translate-y-2 group-hover:rotate-[-2deg]"
-        style={{ aspectRatio: "3 / 4" }}
-      >
+      <div className="relative h-full w-full transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:-translate-y-2 group-hover:rotate-[-2deg]">
         <div
           className="pointer-events-none absolute inset-x-[12%] bottom-[2%] h-7 rounded-[100%] bg-black/25 blur-xl light:bg-slate-900/12"
           aria-hidden

@@ -126,7 +126,7 @@ export function isAllowedVideoType(type: string) {
   return ALLOWED_VIDEO_TYPES.has(type.toLowerCase());
 }
 
-function extensionFor(type: string, filename?: string) {
+export function extensionFor(type: string, filename?: string) {
   const mapped = ALLOWED_TYPES.get(type.toLowerCase()) ?? ALLOWED_VIDEO_TYPES.get(type.toLowerCase());
   if (mapped) return mapped;
   const fromName = filename?.split(".").pop()?.toLowerCase();
@@ -136,7 +136,7 @@ function extensionFor(type: string, filename?: string) {
   return "bin";
 }
 
-function buildObjectKey(folder: string, ext: string) {
+export function buildObjectKey(folder: string, ext: string) {
   const stamp = new Date().toISOString().slice(0, 10);
   const safeFolder = folder.replace(/[^a-z0-9/_-]/gi, "").replace(/^\/+|\/+$/g, "") || "uploads";
   return `${safeFolder}/${stamp}/${randomUUID()}.${ext}`;

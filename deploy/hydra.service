@@ -1,0 +1,17 @@
+[Unit]
+Description=HYDRA storefront
+After=network.target docker.service
+Wants=docker.service
+
+[Service]
+Type=simple
+WorkingDirectory=/var/www/hydra-global
+Environment=NODE_ENV=production
+EnvironmentFile=/var/www/hydra-global/.env
+ExecStart=/usr/bin/pnpm start:vps
+Restart=on-failure
+RestartSec=4
+TimeoutStartSec=90
+
+[Install]
+WantedBy=multi-user.target
