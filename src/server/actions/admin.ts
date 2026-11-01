@@ -923,8 +923,8 @@ export async function saveAboutSection(_prev: FormState, formData: FormData): Pr
 
     const heroTitle = clampText(formData.get("heroTitle"), 120);
     const manifestoText = clampText(formData.get("manifestoText"), 1200);
-    if (!heroTitle || !manifestoText || values.length === 0) {
-      return { status: "error", message: "Hero, manifesto and at least one value are required." };
+    if (!heroTitle || !manifestoText) {
+      return { status: "error", message: "Hero title and manifesto are required." };
     }
     const badDivisionLink = divisionTitles.some((title, i) => {
       const filled = title.trim() || (divisionTexts[i] ?? "").trim() || (divisionHrefs[i] ?? "").trim();
@@ -1077,8 +1077,8 @@ export async function saveHowItWorksSection(_prev: FormState, formData: FormData
       .slice(0, 8);
 
     const title = clampText(formData.get("title"), 120);
-    if (!title || steps.length === 0) {
-      return { status: "error", message: "Title and at least one step are required." };
+    if (!title) {
+      return { status: "error", message: "Title is required." };
     }
 
     const data = normalizeHowItWorksContent({
@@ -1207,13 +1207,15 @@ export async function saveWhatsappWidgetSection(_prev: FormState, formData: Form
   try {
     const names = formData.getAll("staffName").map(String);
     const images = formData.getAll("staffImage").map(String);
-    const staff = images
-      .map((image, i) => ({
-        name: clampText(names[i], 60),
-        image: safeMediaUrl(image, ""),
-      }))
-      // Staff float: real face photos only — never product catalog paths.
-      .filter((row) => !!row.image && !row.image.startsWith("/products/"))
+    const staffCount = Math.max(names.length, images.length);
+    const staff = Array.from({ length: staffCount }, (_, i) => {
+      const image = safeMediaUrl(images[i], "");
+      return {
+        name: clampText(names[i], 60, ""),
+        image: image.startsWith("/products/") ? "" : image,
+      };
+    })
+      .filter((row) => row.name || row.image)
       .slice(0, 6);
 
     const data = normalizeWhatsappWidgetContent({
@@ -1223,10 +1225,6 @@ export async function saveWhatsappWidgetSection(_prev: FormState, formData: Form
       rotateSeconds: Number(formData.get("rotateSeconds") ?? 3),
       staff,
     } satisfies WhatsappWidgetContent);
-
-    if (data.enabled && staff.length === 0) {
-      return { status: "error", message: "Add at least one staff photo, or turn the widget off." };
-    }
 
     await db.siteSection.upsert({
       where: { key: "site.whatsapp" },
@@ -1426,8 +1424,9 @@ export async function saveImpactSection(_prev: FormState, formData: FormData): P
   try {
     const urls = formData.getAll("impactImage").map(String);
     const alts = formData.getAll("impactAlt").map(String);
+    const count = Math.max(urls.length, alts.length);
     const data = normalizeImpactContent({
-      images: urls.map((url, i) => ({ url, alt: alts[i] ?? "" })),
+      images: Array.from({ length: count }, (_, i) => ({ url: urls[i] ?? "", alt: alts[i] ?? "" })),
     } satisfies ImpactContent);
     await db.siteSection.upsert({
       where: { key: "home.impact" },
@@ -1501,10 +1500,6 @@ export async function saveShowcaseSection(_prev: FormState, formData: FormData):
       videos,
     } satisfies ShowcaseContent);
 
-    if (data.videos.length === 0) {
-      return { status: "error", message: "Add at least one video card with title, caption, duration and poster." };
-    }
-
     await db.siteSection.upsert({
       where: { key: "home.showcase" },
       create: { key: "home.showcase", title: "Homepage video cards", data },
@@ -1540,7 +1535,7 @@ export async function saveHomeHeroSection(_prev: FormState, formData: FormData):
 
     const slides = keys
       .map((_, i) => {
-        const key = safeSlug(keys[i]) || clampText(keys[i], 40).toLowerCase().replace(/[^a-z0-9-]+/g, "-");
+        const typedKey = safeSlug(keys[i]) || clampText(keys[i], 40).toLowerCase().replace(/[^a-z0-9-]+/g, "-");
         const brand = clampText(brands[i], 40);
         const title = clampText(titles[i], 80);
         const titleAccent = clampText(accents[i], 80);
@@ -1556,6 +1551,7 @@ export async function saveHomeHeroSection(_prev: FormState, formData: FormData):
         const image = safeMediaUrl(images[i], "");
         const imageMobile = safeMediaUrl(imagesMobile[i], "");
         const blank = !brand && !title && !titleAccent && !text && !primaryLabel && !secondaryLabel && !image && !imageMobile;
+        const key = typedKey.replace(/^-|-$/g, "") || (blank ? "" : `slide-${i + 1}`);
         if (!key || blank) return null;
         return {
           key,
@@ -1575,27 +1571,23 @@ export async function saveHomeHeroSection(_prev: FormState, formData: FormData):
       .filter((row): row is NonNullable<typeof row> => !!row)
       .slice(0, 6);
 
-    if (slides.length === 0) {
-      return { status: "error", message: "Add at least one complete hero slide." };
-    }
-
     const statValues = formData.getAll("statValue").map(String);
     const statLabels = formData.getAll("statLabel").map(String);
-    const stats = statValues
-      .map((value, i) => ({
-        value: clampText(value, 24),
-        label: clampText(statLabels[i], 40),
-      }))
+    const statCount = Math.max(statValues.length, statLabels.length);
+    const stats = Array.from({ length: statCount }, (_, i) => ({
+      value: clampText(statValues[i], 24),
+      label: clampText(statLabels[i], 40),
+    }))
       .filter((row) => row.value || row.label)
       .slice(0, 4);
 
     const linkLabels = formData.getAll("linkLabel").map(String);
     const linkHrefs = formData.getAll("linkHref").map(String);
-    const quickLinks = linkLabels
-      .map((label, i) => ({
-        label: clampText(label, 40),
-        href: safeInternalHref(linkHrefs[i], ""),
-      }))
+    const linkCount = Math.max(linkLabels.length, linkHrefs.length);
+    const quickLinks = Array.from({ length: linkCount }, (_, i) => ({
+      label: clampText(linkLabels[i], 40),
+      href: safeInternalHref(linkHrefs[i], ""),
+    }))
       .filter((row) => row.label || row.href)
       .slice(0, 6);
 
@@ -1630,36 +1622,19 @@ export async function saveCollectionsSection(_prev: FormState, formData: FormDat
     const slugs = formData.getAll("itemSlug").map(String);
     const descriptions = formData.getAll("itemDescription").map(String);
     const images = formData.getAll("itemImage").map(String);
-    const badCard = names.some((name, i) => {
-      const rawName = name.trim();
-      const rawSlug = String(slugs[i] ?? "").trim();
-      const rawImage = String(images[i] ?? "").trim();
-      if (!rawName && !rawSlug && !rawImage) return false;
-      return !(clampText(rawName, 80) && safeSlug(rawSlug) && safeMediaUrl(rawImage));
-    });
-    if (badCard) {
-      return {
-        status: "error",
-        message: "Each card needs a valid slug (a-z0-9-), name, and image path/URL (local /… or allowlisted host).",
-      };
-    }
-
-    const items = names
-      .map((name, i) => ({
-        name: clampText(name, 80),
-        slug: safeSlug(slugs[i]),
-        description: clampText(descriptions[i], 240, ""),
-        image: safeMediaUrl(images[i]),
-      }))
-      .filter((item) => item.name && item.slug && item.image)
-      .slice(0, 5);
+    const cardCount = Math.max(names.length, slugs.length, descriptions.length, images.length);
+    const items = Array.from({ length: cardCount }, (_, i) => ({
+      name: clampText(names[i], 80, ""),
+      slug: safeSlug(slugs[i]),
+      description: clampText(descriptions[i], 240, ""),
+      image: safeMediaUrl(images[i], ""),
+    }))
+      .filter((item) => item.name || item.slug || item.description || item.image)
+      .slice(0, 8);
 
     const title = clampText(formData.get("title"), 120);
-    if (!title || items.length === 0) {
-      return {
-        status: "error",
-        message: "Title and at least one complete card (name, slug, image) are required.",
-      };
+    if (!title) {
+      return { status: "error", message: "Title is required." };
     }
 
     const data = normalizeCollectionsContent({

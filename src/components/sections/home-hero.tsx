@@ -4,13 +4,11 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
-import { AnimatePresence, motion, useMotionValue, useSpring, useTransform, type Variants } from "motion/react";
+import { AnimatePresence, motion, type Variants } from "motion/react";
 import { ButtonLink } from "@/components/ui/button";
 import { Rating } from "@/components/ui/primitives";
-import type { HeroSlide, HomeHeroContent } from "@/content/site-sections";
+import type { HomeHeroContent } from "@/content/site-sections";
 import { cn } from "@/lib/utils";
-import { PhoneVisual } from "./phone-visual";
-import { GlassLiftVisual, PrivacyVisual } from "./hero-visuals";
 
 const SLIDE_MS = 5500;
 const ease = [0.22, 1, 0.36, 1] as const;
@@ -27,57 +25,7 @@ const item: Variants = {
   exit: { opacity: 0, y: -10, transition: { duration: 0.2 } },
 };
 
-function SlideVisual({ slide, priority }: { slide: HeroSlide; priority?: boolean }) {
-  if (slide.visual === "image" && slide.image) {
-    return (
-      <div className="relative mx-auto w-full max-w-[36rem]">
-        <Image
-          src={slide.image}
-          alt={slide.brand}
-          width={1600}
-          height={1000}
-          sizes="(max-width: 1024px) 92vw, 36rem"
-          className="h-auto w-full rounded-[1.75rem] object-contain"
-          priority={priority}
-          loading="eager"
-        />
-      </div>
-    );
-  }
-  if (slide.visual === "glass") return <GlassLiftVisual />;
-  if (slide.visual === "privacy") return <PrivacyVisual />;
-  return <PhoneVisual />;
-}
-
-function Stage({ children }: { children: React.ReactNode }) {
-  const mx = useMotionValue(0);
-  const my = useMotionValue(0);
-  const rx = useSpring(useTransform(my, [-0.5, 0.5], [14, -14]), { stiffness: 140, damping: 18, mass: 0.55 });
-  const ry = useSpring(useTransform(mx, [-0.5, 0.5], [-18, 18]), { stiffness: 140, damping: 18, mass: 0.55 });
-
-  function track(clientX: number, clientY: number, rect: DOMRect) {
-    if (!rect.width || !rect.height) return;
-    mx.set((clientX - rect.left) / rect.width - 0.5);
-    my.set((clientY - rect.top) / rect.height - 0.5);
-  }
-
-  return (
-    <div
-      className="relative h-full w-full [perspective:1100px]"
-      onPointerMove={(e) => track(e.clientX, e.clientY, e.currentTarget.getBoundingClientRect())}
-      onPointerLeave={() => {
-        mx.set(0);
-        my.set(0);
-      }}
-    >
-      <motion.div className="h-full w-full [transform-style:preserve-3d]" style={{ rotateX: rx, rotateY: ry }}>
-        {children}
-      </motion.div>
-    </div>
-  );
-}
-
-/** Compact progress dots under the phone — arrows live on the sides. */
+/** Compact progress dots under the banner — arrows live on the sides. */
 function HeroStagePager({
   index,
   total,
@@ -210,8 +158,8 @@ export function Hero({ content }: { content: HomeHeroContent }) {
 
   if (!slide) return null;
 
-  /** Custom image is the banner — 16:9 on every breakpoint, never cropped. */
-  const film = slide.visual === "image" && Boolean(slide.image);
+  /** Uploaded image is the banner. The built-in 3D phone is never the fallback. */
+  const film = Boolean(slide.image?.trim());
   const mobileImage = slide.imageMobile?.trim() || slide.image;
 
   const hasTitle = Boolean(slide.title.trim() || slide.titleAccent.trim());
@@ -489,54 +437,11 @@ export function Hero({ content }: { content: HomeHeroContent }) {
           </div>}
         </div>
 
-        {!film && (
-          <div
-            className="relative mx-auto mt-1 w-full min-w-0 max-w-[34rem] sm:mt-0 lg:mx-0 lg:max-w-none lg:flex-1"
-            onMouseEnter={() => setPaused(true)}
-            onMouseLeave={() => setPaused(false)}
-            onFocusCapture={() => setPaused(true)}
-            onBlurCapture={() => setPaused(false)}
-          >
-            {slides.length > 1 && (
-              <>
-                <HeroSideArrow dir="prev" onClick={() => go(-1)} />
-                <HeroSideArrow dir="next" onClick={() => go(1)} />
-              </>
-            )}
-            <Stage>
-              <div className="relative mx-auto flex aspect-[4/5] w-full max-w-full items-center justify-center overflow-visible pt-2 sm:pt-1 lg:pt-0">
-                <div aria-hidden className="hero-visual-shadow pointer-events-none absolute inset-x-[18%] bottom-[4%] h-20 rounded-[100%] bg-black/70 blur-3xl light:bg-black/8" />
-                <div className="relative z-[1] w-full max-w-full scale-[0.96] sm:scale-[1.03] lg:scale-105">
-                  <div className="grid">
-                    <AnimatePresence initial={false} mode="popLayout">
-                      <motion.div
-                        key={slide.key}
-                        className="col-start-1 row-start-1"
-                        initial={{ opacity: 0, scale: 0.96, y: 20 }}
-                        animate={{ opacity: 1, scale: 1, y: 0 }}
-                        exit={{ opacity: 0, scale: 1.02, y: -12 }}
-                        transition={{ duration: 0.45, ease }}
-                      >
-                        <SlideVisual slide={slide} priority={index === 0} />
-                      </motion.div>
-                    </AnimatePresence>
-                  </div>
-                </div>
-              </div>
-            </Stage>
-
-            {slides.length > 1 && (
-              <div className="absolute inset-x-0 bottom-[3%] z-30 flex justify-center px-3 sm:bottom-[5%] lg:bottom-[6%]">
-                <HeroStagePager
-                  index={safeIndex}
-                  total={slides.length}
-                  paused={paused}
-                  labels={slides.map((s) => s.brand)}
-                  onSelect={setIndex}
-                />
-              </div>
-            )}
-          </div>
+        {slides.length > 1 && (
+          <>
+            <HeroSideArrow dir="prev" onClick={() => go(-1)} />
+            <HeroSideArrow dir="next" onClick={() => go(1)} />
+          </>
         )}
       </div>
       )}

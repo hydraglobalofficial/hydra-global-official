@@ -66,7 +66,7 @@ function TouchMark() {
 const MARKS = [DropMark, HardnessMark, StrengthMark, TouchMark];
 
 export function DropTest({ content }: { content?: ImpactLabContent }) {
-  const section = content?.cards?.length ? content : defaultImpactLabContent;
+  const section = content ?? defaultImpactLabContent;
   const cards = section.cards.slice(0, 4);
 
   return (

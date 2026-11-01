@@ -11,12 +11,11 @@ export function CollectionBento({ content }: { content?: CollectionsContent | nu
   const section = {
     ...defaultCollectionsContent,
     ...content,
-    items:
-      Array.isArray(content?.items) && content.items.length > 0
-        ? content.items
-        : defaultCollectionsContent.items,
   };
-  const items = section.items.slice(0, 8);
+  const source = content?.items;
+  const items = (Array.isArray(source) ? source : defaultCollectionsContent.items)
+    .filter((item) => item.slug && item.name && item.image)
+    .slice(0, 8);
 
   return (
     <section className="py-14 sm:py-20 md:py-24">

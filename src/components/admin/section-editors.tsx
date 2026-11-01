@@ -127,32 +127,18 @@ function EmptyHint({ children }: { children: ReactNode }) {
 
 export function AboutSectionEditor({ content }: { content: AboutContent }) {
   const [state, action, pending] = useActionState(saveAboutSection, initialFormState);
-  const [stats, setStats] = useState(() =>
-    toKeyed(content.stats.length > 0 ? content.stats : [{ value: "", label: "" }]),
-  );
+  const [stats, setStats] = useState(() => toKeyed(content.stats));
   const [missionBullets, setMissionBullets] = useState(() =>
-    toKeyed(
-      (content.mission.bullets.length > 0 ? content.mission.bullets : [""]).map((value) => ({ value })),
-    ),
+    toKeyed(content.mission.bullets.map((value) => ({ value }))),
   );
   const [visionBullets, setVisionBullets] = useState(() =>
-    toKeyed((content.vision.bullets.length > 0 ? content.vision.bullets : [""]).map((value) => ({ value }))),
+    toKeyed(content.vision.bullets.map((value) => ({ value }))),
   );
-  const [values, setValues] = useState(() =>
-    toKeyed(content.values.length > 0 ? content.values : [{ title: "", keyword: "", text: "" }]),
-  );
-  const [divisions, setDivisions] = useState(() =>
-    toKeyed(content.divisions.length > 0 ? content.divisions : [{ title: "", text: "", href: "" }]),
-  );
-  const [journey, setJourney] = useState(() =>
-    toKeyed(content.journey.length > 0 ? content.journey : [{ year: "", title: "", text: "", future: false }]),
-  );
-  const [commitments, setCommitments] = useState(() =>
-    toKeyed(content.company.commitments.length > 0 ? content.company.commitments : [{ title: "", text: "" }]),
-  );
-  const [facts, setFacts] = useState(() =>
-    toKeyed(content.company.facts.length > 0 ? content.company.facts : [{ label: "", value: "" }]),
-  );
+  const [values, setValues] = useState(() => toKeyed(content.values));
+  const [divisions, setDivisions] = useState(() => toKeyed(content.divisions));
+  const [journey, setJourney] = useState(() => toKeyed(content.journey));
+  const [commitments, setCommitments] = useState(() => toKeyed(content.company.commitments));
+  const [facts, setFacts] = useState(() => toKeyed(content.company.facts));
 
   return (
     <form action={action} className="space-y-5">
@@ -484,9 +470,7 @@ export function AboutSectionEditor({ content }: { content: AboutContent }) {
 
 export function HowItWorksSectionEditor({ content }: { content: HowItWorksContent }) {
   const [state, action, pending] = useActionState(saveHowItWorksSection, initialFormState);
-  const [steps, setSteps] = useState(() =>
-    toKeyed(content.steps.length > 0 ? content.steps : [{ title: "", text: "" }]),
-  );
+  const [steps, setSteps] = useState(() => toKeyed(content.steps));
 
   return (
     <form action={action} className="space-y-5">
@@ -499,7 +483,7 @@ export function HowItWorksSectionEditor({ content }: { content: HowItWorksConten
       </Section>
       <Section title="Steps">
         <ListHeader
-          hint="Add or remove steps (1–8). Empty rows are skipped on publish."
+          hint="Add or remove steps (up to 8). Removed steps stay removed."
           addLabel="Add step"
           canAdd={steps.length < 8}
           onAdd={() =>
@@ -613,7 +597,7 @@ const emptyHeroSlide: {
   primaryHref: "/shop",
   secondaryLabel: "",
   secondaryHref: "/about",
-  visual: "phone",
+  visual: "image",
   image: "",
   imageMobile: "",
 };
@@ -623,23 +607,15 @@ type HeroSlideDraft = typeof emptyHeroSlide & { uid: string };
 export function HomeHeroSectionEditor({ content }: { content: HomeHeroContent }) {
   const [state, action, pending] = useActionState(saveHomeHeroSection, initialFormState);
   const [slides, setSlides] = useState<HeroSlideDraft[]>(() =>
-    (Array.isArray(content?.slides) && content.slides.length > 0 ? content.slides : [{ ...emptyHeroSlide }]).map(
-      (s) => ({ ...emptyHeroSlide, ...s, uid: rowKey() }),
-    ),
+    (Array.isArray(content?.slides) ? content.slides : []).map((s) => ({
+      ...emptyHeroSlide,
+      ...s,
+      uid: rowKey(),
+    })),
   );
-  const [stats, setStats] = useState(() =>
-    toKeyed(
-      Array.isArray(content?.stats) && content.stats.length > 0
-        ? content.stats
-        : [{ value: "", label: "" }],
-    ),
-  );
+  const [stats, setStats] = useState(() => toKeyed(Array.isArray(content?.stats) ? content.stats : []));
   const [quickLinks, setQuickLinks] = useState(() =>
-    toKeyed(
-      Array.isArray(content?.quickLinks) && content.quickLinks.length > 0
-        ? content.quickLinks
-        : [{ label: "", href: "" }],
-    ),
+    toKeyed(Array.isArray(content?.quickLinks) ? content.quickLinks : []),
   );
 
   return (
@@ -771,10 +747,10 @@ export function HomeHeroSectionEditor({ content }: { content: HomeHeroContent })
               </div>
               <Label label="Stage visual">
                 <Select name="slideVisual" defaultValue={slide.visual}>
-                  <option value="phone">Phone (default)</option>
+                  <option value="image">Uploaded image</option>
+                  <option value="phone">Built-in phone</option>
                   <option value="glass">Clarity glass lift</option>
                   <option value="privacy">Privacy glass</option>
-                  <option value="image">Custom image</option>
                 </Select>
               </Label>
               <div className="grid gap-3 sm:grid-cols-2">
@@ -822,13 +798,7 @@ const MAX_WHATSAPP_STAFF = 6;
 
 export function WhatsappWidgetSectionEditor({ content }: { content: WhatsappWidgetContent }) {
   const [state, action, pending] = useActionState(saveWhatsappWidgetSection, initialFormState);
-  const [staff, setStaff] = useState(() =>
-    toKeyed(
-      content.staff.length > 0
-        ? content.staff
-        : [{ name: "", image: "" }],
-    ),
-  );
+  const [staff, setStaff] = useState(() => toKeyed(content.staff));
 
   return (
     <form action={action} className="max-w-2xl space-y-5">
@@ -925,13 +895,9 @@ function emptyShowcaseVideo() {
 
 export function ShowcaseSectionEditor({ content }: { content: ShowcaseContent }) {
   const [state, action, pending] = useActionState(saveShowcaseSection, initialFormState);
-  const [videos, setVideos] = useState(() => {
-    const rows =
-      content.videos.length > 0
-        ? content.videos.map((v) => ({ ...v, key: `v-${Math.random().toString(36).slice(2, 9)}` }))
-        : [emptyShowcaseVideo(), emptyShowcaseVideo(), emptyShowcaseVideo()];
-    return rows;
-  });
+  const [videos, setVideos] = useState(() =>
+    content.videos.map((v) => ({ ...v, key: `v-${Math.random().toString(36).slice(2, 9)}` })),
+  );
 
   return (
     <form action={action} className="space-y-5">
@@ -1026,13 +992,7 @@ export function ShowcaseSectionEditor({ content }: { content: ShowcaseContent })
 
 export function CollectionsSectionEditor({ content }: { content: CollectionsContent }) {
   const [state, action, pending] = useActionState(saveCollectionsSection, initialFormState);
-  const [items, setItems] = useState(() =>
-    toKeyed(
-      Array.isArray(content?.items) && content.items.length > 0
-        ? content.items
-        : [{ slug: "", name: "", description: "", image: "" }],
-    ),
-  );
+  const [items, setItems] = useState(() => toKeyed(Array.isArray(content?.items) ? content.items : []));
 
   return (
     <form action={action} className="space-y-5">
@@ -1133,28 +1093,22 @@ const MAX_KIT_ITEMS = 20;
 
 export function InstallationSectionEditor({ content }: { content: InstallationContent }) {
   const [state, action, pending] = useActionState(saveInstallationSection, initialFormState);
-  const [kit, setKit] = useState(() =>
-    toKeyed((content.kit.length > 0 ? content.kit : [""]).map((value) => ({ value }))),
-  );
+  const [kit, setKit] = useState(() => toKeyed(content.kit.map((value) => ({ value }))));
   const [steps, setSteps] = useState<InstallStepDraft[]>(() =>
-    content.steps.length > 0
-      ? content.steps.map((s) => ({
-          key: crypto.randomUUID(),
-          title: s.title,
-          body: s.body,
-          tip: s.tip ?? "",
-          image: s.image ?? "",
-        }))
-      : [emptyStep(), emptyStep()],
+    content.steps.map((s) => ({
+      key: crypto.randomUUID(),
+      title: s.title,
+      body: s.body,
+      tip: s.tip ?? "",
+      image: s.image ?? "",
+    })),
   );
   const [troubles, setTroubles] = useState<TroubleDraft[]>(() =>
-    content.troubleshooting.length > 0
-      ? content.troubleshooting.map((t) => ({
-          key: crypto.randomUUID(),
-          problem: t.problem,
-          fix: t.fix,
-        }))
-      : [emptyTrouble()],
+    content.troubleshooting.map((t) => ({
+      key: crypto.randomUUID(),
+      problem: t.problem,
+      fix: t.fix,
+    })),
   );
 
   const installState = JSON.stringify({
@@ -1260,10 +1214,7 @@ export function InstallationSectionEditor({ content }: { content: InstallationCo
                 </p>
                 <RemoveBtn
                   label={`Remove step ${i + 1}`}
-                  disabled={steps.length <= 1}
-                  onClick={() =>
-                    setSteps((prev) => (prev.length <= 1 ? prev : prev.filter((s) => s.key !== step.key)))
-                  }
+                  onClick={() => setSteps((prev) => prev.filter((s) => s.key !== step.key))}
                 />
               </div>
               <Input
@@ -1597,13 +1548,7 @@ const MAX_IMPACT_PHOTOS = 10;
 
 export function ImpactSectionEditor({ content }: { content: ImpactContent }) {
   const [state, action, pending] = useActionState(saveImpactSection, initialFormState);
-  const [images, setImages] = useState(() =>
-    toKeyed(
-      content.images.length > 0
-        ? content.images
-        : [{ url: "", alt: "" }],
-    ),
-  );
+  const [images, setImages] = useState(() => toKeyed(content.images));
 
   return (
     <form action={action} className="space-y-5">
@@ -1649,14 +1594,14 @@ export function ImpactSectionEditor({ content }: { content: ImpactContent }) {
 
 export function ImpactLabSectionEditor({ content }: { content: ImpactLabContent }) {
   const [state, action, pending] = useActionState(saveImpactLabSection, initialFormState);
-  const cards = content.cards.length > 0 ? content.cards : [{ value: "", label: "", image: "" }];
+  const [cards, setCards] = useState(() => toKeyed(content.cards));
 
   return (
     <form action={action} className="space-y-5">
       <Section title="Heading">
         <p className="text-sm text-muted">
-          These four blocks sit under the Impact lab heading. On a phone they show two per row. Each card draws its own
-          diagram for the stat — drop, hardness, strength, or touch.
+          These blocks sit under the Impact lab heading. On a phone they show two per row. Each card draws its own
+          diagram for the stat — drop, hardness, strength, or touch. Add or remove a block; the removed one does not come back.
         </p>
         <Label label="Small label">
           <Input name="eyebrow" defaultValue={content.eyebrow} required />
@@ -1673,11 +1618,28 @@ export function ImpactLabSectionEditor({ content }: { content: ImpactLabContent 
           <Textarea name="text" defaultValue={content.text} className="min-h-20" required />
         </Label>
       </Section>
-      <Section title="Four blocks">
+      <Section title="Blocks">
+        <ListHeader
+          hint="Up to 4. A removed block stays removed."
+          addLabel="Add block"
+          canAdd={cards.length < 4}
+          onAdd={() =>
+            setCards((prev) =>
+              prev.length >= 4 ? prev : [...prev, { key: rowKey(), value: "", label: "", image: "" }],
+            )
+          }
+        />
+        {cards.length === 0 ? <EmptyHint>No blocks — click Add block.</EmptyHint> : null}
         <div className="space-y-4">
           {cards.slice(0, 4).map((card, i) => (
-            <div key={i} className="space-y-3 rounded-2xl border border-line p-4">
-              <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-subtle">Block {i + 1}</p>
+            <div key={card.key} className="space-y-3 rounded-2xl border border-line p-4">
+              <div className="flex items-center justify-between gap-2">
+                <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-subtle">Block {i + 1}</p>
+                <RemoveBtn
+                  label={`Remove block ${i + 1}`}
+                  onClick={() => setCards((prev) => prev.filter((row) => row.key !== card.key))}
+                />
+              </div>
               <div className="grid gap-3 sm:grid-cols-2">
                 <Label label="Big text">
                   <Input name="labValue" defaultValue={card.value} placeholder="2 m" maxLength={16} />

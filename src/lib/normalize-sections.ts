@@ -306,12 +306,10 @@ export function normalizeWhatsappWidgetContent(raw: unknown): WhatsappWidgetCont
         .map((row) => {
           if (!isRecord(row)) return null;
           const image = safeMediaUrl(row.image, "");
-          // Product catalog images must never appear on the WhatsApp staff float.
-          if (!image || image.startsWith("/products/")) return null;
-          return {
-            name: clampText(row.name, 60, ""),
-            image,
-          };
+          const name = clampText(row.name, 60, "");
+          const photo = image.startsWith("/products/") ? "" : image;
+          if (!name && !photo) return null;
+          return { name, image: photo };
         })
         .filter((row): row is WhatsappWidgetContent["staff"][number] => !!row)
         .slice(0, 6)
@@ -417,10 +415,11 @@ export function normalizeCollectionsContent(raw: unknown): CollectionsContent {
         .map((row) => {
           if (!isRecord(row)) return null;
           const slug = safeSlug(row.slug);
-          const name = clampText(row.name, 80);
+          const name = clampText(row.name, 80, "");
           const description = clampText(row.description, 240, "");
-          const image = safeMediaUrl(row.image);
-          return slug && name && image ? { slug, name, description, image } : null;
+          const image = safeMediaUrl(row.image, "");
+          if (!slug && !name && !description && !image) return null;
+          return { slug, name, description, image };
         })
         .filter((row): row is CollectionsContent["items"][number] => !!row)
         .slice(0, 8)

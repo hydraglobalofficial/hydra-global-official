@@ -58,7 +58,7 @@ export function ImageUrlsField({
   }
 
   function removeAt(index: number) {
-    sync(urls.filter((_, i) => i !== index));
+    setUrls((current) => current.filter((_, i) => i !== index));
   }
 
   function onPick(files: FileList | null) {
