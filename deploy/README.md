@@ -1,30 +1,53 @@
-# Deploy HYDRA on a VPS
+# Fresh VPS install
 
-Uploads go to the VPS disk (RAID). Postgres also runs on the VPS. Cloudflare R2 is not required.
+Ubuntu 22.04 or 24.04. One public IPv4. Domain DNS already points at that IP.
 
-## 1. Put the code on the server
+The app listens on `127.0.0.1:3000` only. Nginx is the public door (80/443). Postgres stays on `127.0.0.1:5432`. Uploads sit on disk. Redis is Upstash (HTTPS), not a Redis package on the box. Production login and checkout refuse to run if the Upstash URL and token are empty.
+
+## 0. DNS
+
+At the domain host, both records must be the VPS address before TLS:
+
+- `A` `hydraglobalofficial.com` → VPS IP
+- `A` `www` → VPS IP
+
+## 1. SSH in as root
 
 ```bash
-sudo mkdir -p /var/www
-sudo git clone <your-repo-url> /var/www/hydra-global
+ssh root@YOUR_VPS_IP
+apt-get update && apt-get upgrade -y
+```
+
+## 2. Code
+
+```bash
+mkdir -p /var/www
+git clone https://github.com/mahafujriyan/hydra-global.git /var/www/hydra-global
 cd /var/www/hydra-global
+bash deploy/setup.sh
 ```
 
-Or rsync from your PC:
+`setup.sh` installs git, Nginx, Docker, Node 22, pnpm 8.15.9, creates the `hydra` system user, and creates `/mnt/raid/hydra/postgres` and `/mnt/raid/hydra/uploads`.
+
+No RAID disk yet? Use the system disk:
 
 ```bash
-rsync -av --exclude node_modules --exclude .next --exclude .git --exclude .env.local ./ user@VPS:/var/www/hydra-global/
+mkdir -p /var/lib/hydra/postgres /var/lib/hydra/uploads
 ```
 
-## 2. RAID folders + env
+and set `POSTGRES_DATA_DIR` and `UPLOAD_DIR` to those paths in the next step.
+
+## 3. Environment
 
 ```bash
-sudo mkdir -p /mnt/raid/hydra/postgres /mnt/raid/hydra/uploads
-sudo chmod 775 /mnt/raid/hydra/uploads
+cd /var/www/hydra-global
 cp .env.example .env
+node -e "console.log(require('crypto').randomBytes(32).toString('base64url'))"
 ```
 
-In `.env` set at least:
+Run that node command twice. First value is `AUTH_SECRET`. Second is `ADMIN_MASTER_KEY`.
+
+Edit `.env` and set at least:
 
 ```
 NEXT_PUBLIC_SITE_URL="https://www.hydraglobalofficial.com"
@@ -34,59 +57,119 @@ POSTGRES_PASSWORD="YOUR_DB_PASSWORD"
 POSTGRES_DATA_DIR="/mnt/raid/hydra/postgres"
 STORAGE_DRIVER="local"
 UPLOAD_DIR="/mnt/raid/hydra/uploads"
-AUTH_SECRET="32+ random chars"
-ADMIN_MASTER_KEY="16+ random chars"
+AUTH_SECRET="paste-first-random"
+ADMIN_MASTER_KEY="paste-second-random"
+SEED_ADMIN_PASSWORD="a-long-password-you-will-type-at-login"
+UPSTASH_REDIS_REST_URL="https://....upstash.io"
+UPSTASH_REDIS_REST_TOKEN="paste-from-upstash"
 ```
 
-Leave `R2_*` empty. Change the RAID root if your extra disk is mounted somewhere else (`df -h`).
+`YOUR_DB_PASSWORD` must be the same in `DATABASE_URL`, `DIRECT_URL`, and `POSTGRES_PASSWORD`.
 
-## 3. Database
+Upstash: [console.upstash.com](https://console.upstash.com) → Create database → REST API → copy **UPSTASH_REDIS_REST_URL** and **UPSTASH_REDIS_REST_TOKEN**. Leave `R2_*` empty when uploads stay on this disk.
+
+SMTP, Pathao, and pixels can stay empty until the store is up. Do not set `ADMIN_REGISTRATION_ENABLED=1`.
 
 ```bash
+chown hydra:hydra /var/www/hydra-global/.env
+chmod 600 /var/www/hydra-global/.env
+chown -R hydra:hydra /mnt/raid/hydra/uploads
+chown -R 999:999 /mnt/raid/hydra/postgres
+```
+
+## 4. Postgres
+
+```bash
+cd /var/www/hydra-global
 docker compose up -d postgres
+docker compose ps
 ```
 
-Already have Postgres on the box? Skip compose and point `DATABASE_URL` / `DIRECT_URL` at that instance instead.
+Wait until the postgres service is healthy. It is bound to `127.0.0.1:5432` only.
 
-## 4. App
+## 5. Build
 
 ```bash
-corepack enable
-corepack prepare pnpm@8.15.9 --activate
-pnpm install
-pnpm db:deploy
-pnpm db:seed          # first time only
-pnpm build
-pnpm start:vps        # or systemd below
+cd /var/www/hydra-global
+chown -R hydra:hydra /var/www/hydra-global
+sudo -u hydra pnpm install
+sudo -u hydra pnpm db:deploy
+sudo -u hydra pnpm db:seed
+sudo -u hydra pnpm build
 ```
 
-Admin login after seed: `admin@hydra.com.bd` / the `SEED_ADMIN_PASSWORD` you set in `.env`.
+Seed once. Admin is `admin@hydra.com.bd` (or `SEED_ADMIN_EMAIL`) and the `SEED_ADMIN_PASSWORD` you set. Do not seed again on later deploys.
 
-## 5. Nginx + systemd
+## 6. systemd
 
 ```bash
-sudo cp deploy/hydra.service /etc/systemd/system/hydra.service
-sudo cp deploy/nginx.conf /etc/nginx/sites-available/hydra
-sudo ln -sf /etc/nginx/sites-available/hydra /etc/nginx/sites-enabled/hydra
-sudo nginx -t && sudo systemctl reload nginx
-sudo systemctl daemon-reload
-sudo systemctl enable --now hydra
+cp deploy/hydra.service /etc/systemd/system/hydra.service
+systemctl daemon-reload
+systemctl enable --now hydra
+systemctl status hydra --no-pager
 ```
 
-Then attach TLS (`certbot --nginx`).
+The process must say it is listening on `127.0.0.1:3000`. If `pnpm` is not at `/usr/bin/pnpm`, run `command -v pnpm` and put that path in `ExecStart`.
 
-## After each code update
+## 7. Nginx
+
+```bash
+cp deploy/nginx.conf /etc/nginx/sites-available/hydra
+ln -sf /etc/nginx/sites-available/hydra /etc/nginx/sites-enabled/hydra
+rm -f /etc/nginx/sites-enabled/default
+nginx -t && systemctl reload nginx
+```
+
+`deploy/nginx.conf` already sets `X-Real-IP` from the real connection and proxies to `127.0.0.1:3000`. Change `server_name` in that file if the domain is different, then copy it again.
+
+Open the site on port 80 in a browser. You should see the store.
+
+## 8. Firewall
+
+```bash
+ufw allow OpenSSH
+ufw allow 80/tcp
+ufw allow 443/tcp
+ufw --force enable
+ufw status
+```
+
+Do not allow `3000` or `5432`.
+
+## 9. TLS
+
+```bash
+apt-get install -y certbot python3-certbot-nginx
+certbot --nginx -d hydraglobalofficial.com -d www.hydraglobalofficial.com
+```
+
+Certbot edits the Nginx site and installs a renew timer. Check with `certbot renew --dry-run`.
+
+## 10. Confirm
+
+- `https://www.hydraglobalofficial.com` loads.
+- `https://www.hydraglobalofficial.com/admin/login` loads.
+- Log in with the seed email and `SEED_ADMIN_PASSWORD`.
+- Upload one image in admin. The file should appear under `UPLOAD_DIR` and the page should use `/media/...`.
+
+## Later updates
 
 ```bash
 cd /var/www/hydra-global
 git pull
-pnpm install
-pnpm build
-sudo systemctl restart hydra
+sudo -u hydra pnpm install
+sudo -u hydra pnpm build
+systemctl restart hydra
 ```
 
-`start:vps` / the systemd `ExecStartPre` runs `prisma migrate deploy` so schema updates apply automatically.
+`pnpm start:vps` runs `prisma migrate deploy` before the server, so schema updates apply on restart. Do not run `pnpm db:seed` again.
 
-## Uploads
+## If it does not start
 
-Admin **Upload from device** writes to `UPLOAD_DIR` and serves files at `/media/...`. Keep that folder on RAID so images survive OS reinstalls. Do not put `uploads/` in git.
+```bash
+journalctl -u hydra -n 80 --no-pager
+docker compose logs postgres --tail 50
+nginx -t
+```
+
+Login error that mentions Redis: `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN` are empty or wrong, and `NODE_ENV=production`. Fix `.env`, then `systemctl restart hydra`.

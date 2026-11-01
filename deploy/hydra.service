@@ -5,13 +5,16 @@ Wants=docker.service
 
 [Service]
 Type=simple
+User=hydra
+Group=hydra
 WorkingDirectory=/var/www/hydra-global
 Environment=NODE_ENV=production
 EnvironmentFile=/var/www/hydra-global/.env
 ExecStart=/usr/bin/pnpm start:vps
 Restart=on-failure
 RestartSec=4
-TimeoutStartSec=90
+TimeoutStartSec=120
+NoNewPrivileges=true
 
 [Install]
 WantedBy=multi-user.target

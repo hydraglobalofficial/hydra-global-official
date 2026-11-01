@@ -7,7 +7,7 @@
     "build": "next build",
     "vercel-build": "prisma migrate deploy && next build",
     "start": "next start",
-    "start:vps": "prisma migrate deploy && next start",
+    "start:vps": "prisma migrate deploy && next start -H 127.0.0.1 -p 3000",
     "lint": "eslint",
     "typecheck": "next typegen && tsc --noEmit",
     "postinstall": "prisma generate",
