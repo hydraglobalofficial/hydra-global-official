@@ -1,22 +1,105 @@
 import "server-only";
-import { Redis } from "@upstash/redis";
+import { Redis as UpstashRedis } from "@upstash/redis";
+import IoRedis from "ioredis";
 
 type MemoryEntry = { value: string; expiresAt: number };
+
+/** Small surface used by rate limits, sessions, and the admin cache. */
+type Store = {
+  get(key: string): Promise<string | null>;
+  set(key: string, value: string, ttlSeconds: number): Promise<void>;
+  del(keys: string[]): Promise<void>;
+  incr(key: string): Promise<number>;
+  expire(key: string, ttlSeconds: number): Promise<void>;
+  sadd(key: string, member: string): Promise<void>;
+  smembers(key: string): Promise<string[]>;
+};
 
 const memory = new Map<string, MemoryEntry>();
 const PREFIX = "hydra:";
 
-let client: Redis | null | undefined;
+let client: Store | null | undefined;
 
-function createClient(): Redis | null {
-  const url = process.env.UPSTASH_REDIS_REST_URL?.trim();
-  const token = process.env.UPSTASH_REDIS_REST_TOKEN?.trim();
-  if (!url || !token) return null;
-  return new Redis({ url, token });
+function asString(value: unknown): string | null {
+  if (value == null) return null;
+  if (typeof value === "string") return value;
+  if (typeof value === "number" || typeof value === "boolean") return String(value);
+  return JSON.stringify(value);
 }
 
-/** Shared Upstash Redis client. Returns null when env is not configured (dev fallback). */
-export function getRedis(): Redis | null {
+function upstashStore(url: string, token: string): Store {
+  const redis = new UpstashRedis({ url, token });
+  return {
+    async get(key) {
+      return asString(await redis.get(key));
+    },
+    async set(key, value, ttlSeconds) {
+      await redis.set(key, value, { ex: Math.max(1, Math.floor(ttlSeconds)) });
+    },
+    async del(keys) {
+      if (keys.length) await redis.del(...keys);
+    },
+    async incr(key) {
+      return redis.incr(key);
+    },
+    async expire(key, ttlSeconds) {
+      await redis.expire(key, Math.max(1, Math.floor(ttlSeconds)));
+    },
+    async sadd(key, member) {
+      await redis.sadd(key, member);
+    },
+    async smembers(key) {
+      return (await redis.smembers(key)).map(String);
+    },
+  };
+}
+
+function localStore(url: string): Store {
+  const redis = new IoRedis(url, {
+    maxRetriesPerRequest: 1,
+    enableOfflineQueue: false,
+    lazyConnect: true,
+    connectTimeout: 2_000,
+  });
+  redis.on("error", (error) => {
+    console.error("[redis]", error.message);
+  });
+  return {
+    async get(key) {
+      return redis.get(key);
+    },
+    async set(key, value, ttlSeconds) {
+      await redis.set(key, value, "EX", Math.max(1, Math.floor(ttlSeconds)));
+    },
+    async del(keys) {
+      if (keys.length) await redis.del(...keys);
+    },
+    async incr(key) {
+      return redis.incr(key);
+    },
+    async expire(key, ttlSeconds) {
+      await redis.expire(key, Math.max(1, Math.floor(ttlSeconds)));
+    },
+    async sadd(key, member) {
+      await redis.sadd(key, member);
+    },
+    async smembers(key) {
+      return redis.smembers(key);
+    },
+  };
+}
+
+function createClient(): Store | null {
+  const upstashUrl = process.env.UPSTASH_REDIS_REST_URL?.trim();
+  const upstashToken = process.env.UPSTASH_REDIS_REST_TOKEN?.trim();
+  if (upstashUrl && upstashToken) return upstashStore(upstashUrl, upstashToken);
+  const localUrl = process.env.REDIS_URL?.trim();
+  if (localUrl) return localStore(localUrl);
+  return null;
+}
+
+/** Upstash when those two vars are set, otherwise REDIS_URL (VPS redis-server). */
+export function getRedis(): Store | null {
   if (client === undefined) client = createClient();
   return client;
 }
@@ -55,7 +138,7 @@ export async function redisGetStrict(key: string): Promise<string | null> {
   const prod = process.env.NODE_ENV === "production";
   if (!redis) return prod ? null : memoryGet(k(key));
   try {
-    const value = await redis.get<string>(k(key));
+    const value = await redis.get(k(key));
     return value ?? null;
   } catch (error) {
     console.error("[redisGetStrict]", error);
@@ -67,7 +150,7 @@ export async function redisGet(key: string): Promise<string | null> {
   const redis = getRedis();
   if (!redis) return memoryGet(k(key));
   try {
-    const value = await redis.get<string>(k(key));
+    const value = await redis.get(k(key));
     return value ?? null;
   } catch (error) {
     console.error("[redisGet]", error);
@@ -85,7 +168,7 @@ export async function redisSetStrict(key: string, value: string, ttlSeconds: num
     return true;
   }
   try {
-    await redis.set(k(key), value, { ex: Math.max(1, Math.floor(ttlSeconds)) });
+    await redis.set(k(key), value, Math.max(1, Math.floor(ttlSeconds)));
     return true;
   } catch (error) {
     console.error("[redisSetStrict]", error);
@@ -101,7 +184,7 @@ export async function redisSet(key: string, value: string, ttlSeconds: number): 
     return;
   }
   try {
-    await redis.set(k(key), value, { ex: Math.max(1, Math.floor(ttlSeconds)) });
+    await redis.set(k(key), value, Math.max(1, Math.floor(ttlSeconds)));
   } catch (error) {
     console.error("[redisSet]", error);
     memorySet(k(key), value, ttlSeconds);
@@ -120,7 +203,7 @@ export async function redisDel(...keys: string[]): Promise<void> {
     return;
   }
   try {
-    await redis.del(...namespaced);
+    await redis.del(namespaced);
   } catch (error) {
     console.error("[redisDel]", error);
     for (const key of namespaced) {
@@ -182,7 +265,7 @@ export async function redisSMembers(key: string): Promise<string[]> {
   const fullKey = k(key);
   if (!redis) return [...(memorySets.get(fullKey) ?? [])];
   try {
-    return (await redis.smembers(fullKey)).map(String);
+    return await redis.smembers(fullKey);
   } catch (error) {
     console.error("[redisSMembers]", error);
     return [...(memorySets.get(fullKey) ?? [])];

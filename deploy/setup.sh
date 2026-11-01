@@ -13,7 +13,7 @@ if [[ "${EUID}" -ne 0 ]]; then
 fi
 
 apt-get update
-apt-get install -y ca-certificates curl gnupg git nginx
+apt-get install -y ca-certificates curl gnupg git nginx redis-server
 
 if ! command -v docker >/dev/null 2>&1; then
   curl -fsSL https://get.docker.com | sh
@@ -26,6 +26,14 @@ fi
 
 corepack enable
 corepack prepare pnpm@8.15.9 --activate
+
+# Redis stays on localhost. Do not open 6379 to the internet.
+if [[ -f /etc/redis/redis.conf ]]; then
+  sed -i 's/^bind .*/bind 127.0.0.1 ::1/' /etc/redis/redis.conf || true
+  sed -i 's/^supervised .*/supervised systemd/' /etc/redis/redis.conf || true
+fi
+systemctl enable --now redis-server || systemctl enable --now redis
+systemctl restart redis-server || systemctl restart redis
 
 if ! id -u "${APP_USER}" >/dev/null 2>&1; then
   useradd --system --create-home --shell /usr/sbin/nologin "${APP_USER}"

@@ -27,8 +27,8 @@ export function AdminCacheBadge({
       )}
       title={
         redis
-          ? "Admin data is cached in Upstash Redis across instances"
-          : "UPSTASH_REDIS_* not set — using process memory (fine for local)"
+          ? "Admin data is cached in Redis"
+          : "REDIS_URL is not set — using process memory (fine for local)"
       }
     >
       {redis ? <Zap size={11} /> : <Database size={11} />}

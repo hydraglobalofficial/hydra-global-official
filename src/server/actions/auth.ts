@@ -38,7 +38,7 @@ export async function login(_prev: FormState, formData: FormData): Promise<FormS
 
   const sv = await issueAdminSessionVersion(user.id);
   if (!sv) {
-    return { status: "error", message: "Sign-in needs Redis. Set the Upstash URL and token, then try again." };
+    return { status: "error", message: "Sign-in needs Redis. Set REDIS_URL or the Upstash URL and token, then try again." };
   }
   await createSession({ userId: user.id, role: user.role, name: user.name, sv });
   const next = String(formData.get("next") ?? "");
@@ -91,7 +91,7 @@ export async function register(_prev: FormState, formData: FormData): Promise<Fo
 
   const sv = await issueAdminSessionVersion(user.id);
   if (!sv) {
-    return { status: "error", message: "Sign-in needs Redis. Set the Upstash URL and token, then try again." };
+    return { status: "error", message: "Sign-in needs Redis. Set REDIS_URL or the Upstash URL and token, then try again." };
   }
   await createSession({ userId: user.id, role: user.role, name: user.name, sv });
   redirect("/admin");

@@ -2,7 +2,7 @@
 
 Ubuntu 22.04 or 24.04. One public IPv4. Domain DNS already points at that IP.
 
-The app listens on `127.0.0.1:3000` only. Nginx is the public door (80/443). Postgres stays on `127.0.0.1:5432`. Uploads sit on disk. Redis is Upstash (HTTPS), not a Redis package on the box. Production login and checkout refuse to run if the Upstash URL and token are empty.
+The app listens on `127.0.0.1:3000` only. Nginx is the public door (80/443). Postgres stays on `127.0.0.1:5432`. Redis stays on `127.0.0.1:6379`. Uploads sit on disk. Production login and checkout refuse to run if Redis is not reachable.
 
 ## 0. DNS
 
@@ -27,7 +27,7 @@ cd /var/www/hydra-global
 bash deploy/setup.sh
 ```
 
-`setup.sh` installs git, Nginx, Docker, Node 22, pnpm 8.15.9, creates the `hydra` system user, and creates `/mnt/raid/hydra/postgres` and `/mnt/raid/hydra/uploads`.
+`setup.sh` installs git, Nginx, Docker, Node 22, pnpm 8.15.9, and Redis. It creates the `hydra` system user, and creates `/mnt/raid/hydra/postgres` and `/mnt/raid/hydra/uploads`. Redis listens on localhost only.
 
 No RAID disk yet? Use the system disk:
 
@@ -60,13 +60,12 @@ UPLOAD_DIR="/mnt/raid/hydra/uploads"
 AUTH_SECRET="paste-first-random"
 ADMIN_MASTER_KEY="paste-second-random"
 SEED_ADMIN_PASSWORD="a-long-password-you-will-type-at-login"
-UPSTASH_REDIS_REST_URL="https://....upstash.io"
-UPSTASH_REDIS_REST_TOKEN="paste-from-upstash"
+REDIS_URL="redis://127.0.0.1:6379"
 ```
 
 `YOUR_DB_PASSWORD` must be the same in `DATABASE_URL`, `DIRECT_URL`, and `POSTGRES_PASSWORD`.
 
-Upstash: [console.upstash.com](https://console.upstash.com) → Create database → REST API → copy **UPSTASH_REDIS_REST_URL** and **UPSTASH_REDIS_REST_TOKEN**. Leave `R2_*` empty when uploads stay on this disk.
+Leave `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN` empty when Redis is on this VPS. Leave `R2_*` empty when uploads stay on this disk.
 
 SMTP, Pathao, and pixels can stay empty until the store is up. Do not set `ADMIN_REGISTRATION_ENABLED=1`.
 
@@ -172,4 +171,4 @@ docker compose logs postgres --tail 50
 nginx -t
 ```
 
-Login error that mentions Redis: `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN` are empty or wrong, and `NODE_ENV=production`. Fix `.env`, then `systemctl restart hydra`.
+Login error that mentions Redis: `redis-cli ping` should print `PONG`, and `.env` should contain `REDIS_URL="redis://127.0.0.1:6379"`. Then `systemctl restart hydra`.
