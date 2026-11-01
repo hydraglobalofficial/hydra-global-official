@@ -2,6 +2,8 @@ import "server-only";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { cache } from "react";
+import { db } from "@/lib/db";
+import { adminSessionVersionMatches } from "@/lib/auth/session-store";
 import {
   SESSION_COOKIE,
   SESSION_TTL_SECONDS,
@@ -36,7 +38,18 @@ export async function destroySession() {
 
 export const getSession = cache(async () => {
   const token = (await cookies()).get(SESSION_COOKIE)?.value;
-  return verifySession(token);
+  const payload = await verifySession(token);
+  if (!payload) return null;
+
+  const user = await db.user.findUnique({
+    where: { id: payload.userId },
+    select: { id: true, role: true, name: true },
+  });
+  if (!user || (user.role !== "OWNER" && user.role !== "STAFF")) return null;
+  if (user.role !== payload.role) return null;
+  if (!(await adminSessionVersionMatches(user.id, payload.sv))) return null;
+
+  return { userId: user.id, role: user.role, name: user.name, sv: payload.sv };
 });
 
 /** Proxy only does an optimistic check; every admin page and action must call this. */

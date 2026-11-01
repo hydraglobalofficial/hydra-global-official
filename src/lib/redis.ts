@@ -49,6 +49,20 @@ function memorySet(key: string, value: string, ttlSeconds: number) {
   }
 }
 
+/** Like redisGet, but production does not read the in-memory fallback. */
+export async function redisGetStrict(key: string): Promise<string | null> {
+  const redis = getRedis();
+  const prod = process.env.NODE_ENV === "production";
+  if (!redis) return prod ? null : memoryGet(k(key));
+  try {
+    const value = await redis.get<string>(k(key));
+    return value ?? null;
+  } catch (error) {
+    console.error("[redisGetStrict]", error);
+    return prod ? null : memoryGet(k(key));
+  }
+}
+
 export async function redisGet(key: string): Promise<string | null> {
   const redis = getRedis();
   if (!redis) return memoryGet(k(key));
@@ -58,6 +72,25 @@ export async function redisGet(key: string): Promise<string | null> {
   } catch (error) {
     console.error("[redisGet]", error);
     return memoryGet(k(key));
+  }
+}
+
+/** Like redisSet, but production reports failure instead of writing only to memory. */
+export async function redisSetStrict(key: string, value: string, ttlSeconds: number): Promise<boolean> {
+  const redis = getRedis();
+  const prod = process.env.NODE_ENV === "production";
+  if (!redis) {
+    if (prod) return false;
+    memorySet(k(key), value, ttlSeconds);
+    return true;
+  }
+  try {
+    await redis.set(k(key), value, { ex: Math.max(1, Math.floor(ttlSeconds)) });
+    return true;
+  } catch (error) {
+    console.error("[redisSetStrict]", error);
+    if (!prod) memorySet(k(key), value, ttlSeconds);
+    return !prod;
   }
 }
 
@@ -156,19 +189,28 @@ export async function redisSMembers(key: string): Promise<string[]> {
   }
 }
 
-/** Fixed-window counter for rate limiting. Returns the new count. */
-export async function redisIncr(key: string, windowSeconds: number): Promise<number> {
+function memoryIncr(fullKey: string, windowSeconds: number) {
+  const raw = memoryGet(fullKey);
+  const count = raw ? Number(raw) + 1 : 1;
+  if (!raw) memorySet(fullKey, "1", windowSeconds);
+  else {
+    const hit = memory.get(fullKey);
+    if (hit) hit.value = String(count);
+  }
+  return count;
+}
+
+/**
+ * Fixed-window counter. Production never falls back to process memory:
+ * a missing or failed Redis returns null so callers can reject the request.
+ */
+export async function redisIncr(key: string, windowSeconds: number): Promise<number | null> {
   const redis = getRedis();
   const fullKey = k(key);
+  const prod = process.env.NODE_ENV === "production";
   if (!redis) {
-    const raw = memoryGet(fullKey);
-    const count = raw ? Number(raw) + 1 : 1;
-    if (!raw) memorySet(fullKey, "1", windowSeconds);
-    else {
-      const hit = memory.get(fullKey);
-      if (hit) hit.value = String(count);
-    }
-    return count;
+    if (prod) return null;
+    return memoryIncr(fullKey, windowSeconds);
   }
   try {
     const count = await redis.incr(fullKey);
@@ -176,13 +218,7 @@ export async function redisIncr(key: string, windowSeconds: number): Promise<num
     return count;
   } catch (error) {
     console.error("[redisIncr]", error);
-    const raw = memoryGet(fullKey);
-    const count = raw ? Number(raw) + 1 : 1;
-    if (!raw) memorySet(fullKey, "1", windowSeconds);
-    else {
-      const hit = memory.get(fullKey);
-      if (hit) hit.value = String(count);
-    }
-    return count;
+    if (prod) return null;
+    return memoryIncr(fullKey, windowSeconds);
   }
 }

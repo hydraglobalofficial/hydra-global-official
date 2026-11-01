@@ -2,6 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { getSession } from "@/lib/auth/session";
 import { rateLimit } from "@/lib/rate-limit";
 import { isAllowedImageType, isAllowedVideoType } from "@/lib/r2";
+import { sniffMedia } from "@/lib/media-sniff";
 import {
   MEDIA_MAX_BYTES,
   MEDIA_VIDEO_MAX_BYTES,
@@ -92,16 +93,23 @@ export async function POST(request: NextRequest) {
 
   try {
     const buffer = Buffer.from(await file.arrayBuffer());
-    const uploaded = isVideo
+    const sniffed = sniffMedia(buffer);
+    if (!sniffed || (isVideo ? sniffed.kind !== "video" : sniffed.kind !== "image")) {
+      return NextResponse.json(
+        { error: "The file contents do not match an allowed image or video." },
+        { status: 400 },
+      );
+    }
+    const uploaded = sniffed.kind === "video"
       ? await uploadVideo({
           body: buffer,
-          contentType: file.type,
+          contentType: sniffed.contentType,
           filename: file.name,
           folder,
         })
       : await uploadImage({
           body: buffer,
-          contentType: file.type,
+          contentType: sniffed.contentType,
           filename: file.name,
           folder,
         });

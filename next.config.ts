@@ -1,16 +1,5 @@
 import type { NextConfig } from "next";
 
-const securityHeaders = [
-  { key: "X-Content-Type-Options", value: "nosniff" },
-  { key: "X-Frame-Options", value: "DENY" },
-  { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
-  { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
-  { key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains; preload" },
-  { key: "Cross-Origin-Opener-Policy", value: "same-origin" },
-  { key: "Cross-Origin-Resource-Policy", value: "same-site" },
-  { key: "X-DNS-Prefetch-Control", value: "off" },
-];
-
 function r2PublicHostname() {
   const base = process.env.R2_PUBLIC_URL?.trim();
   if (!base) return null;
@@ -20,6 +9,61 @@ function r2PublicHostname() {
     return null;
   }
 }
+
+function contentSecurityPolicy() {
+  const scriptSrc = [
+    "'self'",
+    "'unsafe-inline'",
+    "https://www.googletagmanager.com",
+    "https://www.google-analytics.com",
+    "https://connect.facebook.net",
+    "https://analytics.tiktok.com",
+  ];
+  if (process.env.NODE_ENV !== "production") scriptSrc.push("'unsafe-eval'");
+  const imgSrc = [
+    "'self'",
+    "data:",
+    "blob:",
+    "https://*.r2.dev",
+    "https://*.amazonaws.com",
+    "https://i.ibb.co",
+    "https://ibb.co",
+    "https://*.ibb.co",
+    "https://imagebb.com",
+    "https://*.imagebb.com",
+    "https://www.google-analytics.com",
+    "https://www.googletagmanager.com",
+    "https://www.facebook.com",
+  ];
+  const r2 = r2PublicHostname();
+  if (r2) imgSrc.push(`https://${r2}`);
+  return [
+    "default-src 'self'",
+    `script-src ${scriptSrc.join(" ")}`,
+    "style-src 'self' 'unsafe-inline'",
+    `img-src ${imgSrc.join(" ")}`,
+    "font-src 'self' data:",
+    "connect-src 'self' https://www.google-analytics.com https://www.googletagmanager.com https://connect.facebook.net https://www.facebook.com https://analytics.tiktok.com https://*.r2.cloudflarestorage.com",
+    "frame-src https://www.googletagmanager.com https://www.youtube.com https://www.youtube-nocookie.com",
+    `media-src 'self' blob: https://*.r2.dev https://www.youtube.com${r2 ? ` https://${r2}` : ""}`,
+    "object-src 'none'",
+    "base-uri 'self'",
+    "form-action 'self'",
+    "frame-ancestors 'none'",
+  ].join("; ");
+}
+
+const securityHeaders = [
+  { key: "X-Content-Type-Options", value: "nosniff" },
+  { key: "X-Frame-Options", value: "DENY" },
+  { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+  { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
+  { key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains; preload" },
+  { key: "Cross-Origin-Opener-Policy", value: "same-origin" },
+  { key: "Cross-Origin-Resource-Policy", value: "same-site" },
+  { key: "X-DNS-Prefetch-Control", value: "off" },
+  { key: "Content-Security-Policy", value: contentSecurityPolicy() },
+];
 
 const r2Host = r2PublicHostname();
 

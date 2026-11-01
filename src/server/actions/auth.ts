@@ -4,7 +4,8 @@ import bcrypt from "bcryptjs";
 import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
 import { verifyAdminMasterKey } from "@/lib/auth/master-key";
-import { createSession, destroySession } from "@/lib/auth/session";
+import { createSession, destroySession, getSession } from "@/lib/auth/session";
+import { issueAdminSessionVersion, revokeAdminSessions } from "@/lib/auth/session-store";
 import { rateLimit } from "@/lib/rate-limit";
 import { loginSchema, registerSchema, invalid, type FormState } from "@/lib/validations";
 
@@ -35,7 +36,11 @@ export async function login(_prev: FormState, formData: FormData): Promise<FormS
     return { status: "error", message: "Invalid username/email or password." };
   }
 
-  await createSession({ userId: user.id, role: user.role, name: user.name });
+  const sv = await issueAdminSessionVersion(user.id);
+  if (!sv) {
+    return { status: "error", message: "Sign-in needs Redis. Set the Upstash URL and token, then try again." };
+  }
+  await createSession({ userId: user.id, role: user.role, name: user.name, sv });
   const next = String(formData.get("next") ?? "");
   redirect(next.startsWith("/admin") && !next.startsWith("//") ? next : "/admin");
 }
@@ -84,11 +89,17 @@ export async function register(_prev: FormState, formData: FormData): Promise<Fo
     return { status: "error", message: "Account created but is not an admin role." };
   }
 
-  await createSession({ userId: user.id, role: user.role, name: user.name });
+  const sv = await issueAdminSessionVersion(user.id);
+  if (!sv) {
+    return { status: "error", message: "Sign-in needs Redis. Set the Upstash URL and token, then try again." };
+  }
+  await createSession({ userId: user.id, role: user.role, name: user.name, sv });
   redirect("/admin");
 }
 
 export async function logout() {
+  const session = await getSession();
+  if (session) await revokeAdminSessions(session.userId);
   await destroySession();
   redirect("/admin/login");
 }

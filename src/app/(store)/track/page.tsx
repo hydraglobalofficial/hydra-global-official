@@ -5,6 +5,7 @@ import { ButtonLink } from "@/components/ui/button";
 import { PageHeader } from "@/components/ui/primitives";
 import { db } from "@/lib/db";
 import { verifyOrderAccess } from "@/lib/order-access";
+import { rateLimit } from "@/lib/rate-limit";
 import { formatDate, formatPrice } from "@/lib/utils";
 import { siteConfig } from "@/config/site";
 
@@ -44,6 +45,18 @@ export default async function TrackOrderPage({ searchParams }: PageProps<"/track
   const token = typeof params.t === "string" ? params.t.trim() : "";
   const emailRaw = typeof params.email === "string" ? params.email.trim() : "";
   const attempted = Boolean(query);
+  if (attempted) {
+    const limited = await rateLimit("track", 10, 60_000);
+    if (!limited.ok) {
+      return (
+        <PageHeader
+          eyebrow="Order tracking"
+          title="Track your order"
+          description="Too many lookups. Wait a minute, then use the link from your confirmation email."
+        />
+      );
+    }
+  }
 
   // Never return an order on invoice ID alone — requires HMAC token (email link) or matching checkout email.
   const candidate = query

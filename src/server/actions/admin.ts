@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { revalidatePath, updateTag } from "next/cache";
 import { z } from "zod";
 import { db, withTransaction } from "@/lib/db";
+import { revokeAdminSessions } from "@/lib/auth/session-store";
 import { requireAdmin } from "@/lib/auth/session";
 import { invalid, productSchema, type FormState } from "@/lib/validations";
 import { slugify } from "@/lib/utils";
@@ -778,6 +779,7 @@ export async function deleteAdmin(formData: FormData) {
     if (ownerCount <= 1) return;
   }
 
+  await revokeAdminSessions(id);
   await db.user.delete({ where: { id } });
   await invalidateAdminCache();
   revalidatePath("/admin/team");

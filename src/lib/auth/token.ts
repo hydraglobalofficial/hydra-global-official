@@ -8,6 +8,8 @@ export type SessionPayload = {
   userId: string;
   role: "OWNER" | "STAFF";
   name: string;
+  /** Redis session generation. A new login replaces it and kills older cookies. */
+  sv: string;
 };
 
 function secretKey() {
@@ -37,7 +39,13 @@ export async function verifySession(token: string | undefined): Promise<SessionP
     });
     if (payload.role !== "OWNER" && payload.role !== "STAFF") return null;
     if (!payload.sub || !payload.jti) return null;
-    return { userId: String(payload.userId), role: payload.role, name: String(payload.name) };
+    if (typeof payload.sv !== "string" || payload.sv.length < 16) return null;
+    return {
+      userId: String(payload.userId),
+      role: payload.role,
+      name: String(payload.name),
+      sv: payload.sv,
+    };
   } catch {
     return null;
   }

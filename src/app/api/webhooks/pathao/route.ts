@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { safeEqualString } from "@/lib/auth/master-key";
 import { db } from "@/lib/db";
 
 /**
@@ -18,7 +19,7 @@ export async function POST(request: Request) {
     request.headers.get("x-pathao-signature") ||
     request.headers.get("authorization")?.replace(/^Bearer\s+/i, "") ||
     "";
-  if (header !== secret) {
+  if (!header || !safeEqualString(header, secret)) {
     return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 });
   }
 
@@ -70,5 +71,5 @@ export async function POST(request: Request) {
     },
   });
 
-  return NextResponse.json({ ok: true, matched: true, order: order.number });
+  return NextResponse.json({ ok: true, matched: true });
 }
