@@ -28,7 +28,9 @@ export default async function AdminInstallationPage() {
           </Link>
         }
       />
-      <InstallationSectionEditor content={normalizeInstallationContent(row?.data)} />
+      <div key={JSON.stringify(row?.data ?? null)}>
+        <InstallationSectionEditor content={normalizeInstallationContent(row?.data)} />
+      </div>
     </div>
   );
 }

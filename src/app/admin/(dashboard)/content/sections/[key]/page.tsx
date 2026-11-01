@@ -62,6 +62,7 @@ export default async function EditSiteSectionPage({ params }: Props) {
       </Link>
       <AdminHeader eyebrow="Site sections" title={meta.title} description={meta.description} />
 
+      <div key={JSON.stringify(row?.data ?? null)}>
       {key === "home.hero" && <HomeHeroSectionEditor content={normalizeHomeHeroContent(row?.data)} />}
       {key === "about" && <AboutSectionEditor content={normalizeAboutContent(row?.data)} />}
       {key === "home.collections" && (
@@ -104,6 +105,7 @@ export default async function EditSiteSectionPage({ params }: Props) {
       {key === "installation" && (
         <InstallationSectionEditor content={normalizeInstallationContent(row?.data)} />
       )}
+      </div>
     </>
   );
 }

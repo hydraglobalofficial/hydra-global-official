@@ -28,7 +28,9 @@ export default async function AdminSeoPage() {
           </Link>
         }
       />
-      <TrackingSectionEditor content={normalizeTrackingContent(row?.data)} />
+      <div key={JSON.stringify(row?.data ?? null)}>
+        <TrackingSectionEditor content={normalizeTrackingContent(row?.data)} />
+      </div>
     </div>
   );
 }

@@ -52,25 +52,28 @@ function SlideVisual({ slide, priority }: { slide: HeroSlide; priority?: boolean
 function Stage({ children }: { children: React.ReactNode }) {
   const mx = useMotionValue(0);
   const my = useMotionValue(0);
-  const rx = useSpring(useTransform(my, [-0.5, 0.5], [4, -4]), { stiffness: 70, damping: 22, mass: 0.8 });
-  const ry = useSpring(useTransform(mx, [-0.5, 0.5], [-5, 5]), { stiffness: 70, damping: 22, mass: 0.8 });
+  const rx = useSpring(useTransform(my, [-0.5, 0.5], [14, -14]), { stiffness: 140, damping: 18, mass: 0.55 });
+  const ry = useSpring(useTransform(mx, [-0.5, 0.5], [-18, 18]), { stiffness: 140, damping: 18, mass: 0.55 });
+
+  function track(clientX: number, clientY: number, rect: DOMRect) {
+    if (!rect.width || !rect.height) return;
+    mx.set((clientX - rect.left) / rect.width - 0.5);
+    my.set((clientY - rect.top) / rect.height - 0.5);
+  }
 
   return (
-    <motion.div
-      className="relative h-full w-full [perspective:1600px]"
-      onMouseMove={(e) => {
-        const r = e.currentTarget.getBoundingClientRect();
-        mx.set((e.clientX - r.left) / r.width - 0.5);
-        my.set((e.clientY - r.top) / r.height - 0.5);
-      }}
-      onMouseLeave={() => {
+    <div
+      className="relative h-full w-full [perspective:1100px]"
+      onPointerMove={(e) => track(e.clientX, e.clientY, e.currentTarget.getBoundingClientRect())}
+      onPointerLeave={() => {
         mx.set(0);
         my.set(0);
       }}
-      style={{ rotateX: rx, rotateY: ry }}
     >
-      {children}
-    </motion.div>
+      <motion.div className="h-full w-full [transform-style:preserve-3d]" style={{ rotateX: rx, rotateY: ry }}>
+        {children}
+      </motion.div>
+    </div>
   );
 }
 

@@ -77,7 +77,7 @@ export function ImageUrlsField({
         for (const file of picked) {
           added.push(await uploadFile(file, folder));
         }
-        sync([...urls, ...added]);
+        setUrls((current) => [...current, ...added]);
         setMessage(
           added.length === 1
             ? "Uploaded to Cloudflare R2."
@@ -308,7 +308,7 @@ export function ImageUrlField({
           ref={inputRef}
           id={id}
           name={name}
-          defaultValue={defaultValue}
+          value={preview}
           placeholder={placeholder}
           required={required}
           className="font-mono text-xs"
@@ -412,7 +412,7 @@ export function VideoUrlField({
           ref={inputRef}
           id={id}
           name={name}
-          defaultValue={defaultValue}
+          value={value}
           placeholder={placeholder}
           className="font-mono text-xs"
           onChange={(e) => setValue(e.currentTarget.value)}

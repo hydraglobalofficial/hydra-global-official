@@ -57,6 +57,26 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return !!value && typeof value === "object" && !Array.isArray(value);
 }
 
+function hasOwn(data: Record<string, unknown>, key: string) {
+  return Object.prototype.hasOwnProperty.call(data, key) && data[key] != null;
+}
+
+/** Saved blank stays blank. Seed copy is used only when that field was never stored. */
+function textField(data: Record<string, unknown>, key: string, max: number, fallback = "") {
+  if (!hasOwn(data, key)) return clampText(fallback, max);
+  return clampText(data[key], max, "");
+}
+
+function hrefField(data: Record<string, unknown>, key: string, fallback = "") {
+  if (!hasOwn(data, key)) return fallback;
+  return safeInternalHref(data[key], "");
+}
+
+function mediaField(data: Record<string, unknown>, key: string, fallback = "") {
+  if (!hasOwn(data, key)) return fallback;
+  return safeMediaUrl(data[key], "");
+}
+
 export function normalizeAboutContent(raw: unknown): AboutContent {
   const data = isRecord(raw) ? raw : {};
   const hero = isRecord(data.hero) ? data.hero : {};
@@ -74,7 +94,8 @@ export function normalizeAboutContent(raw: unknown): AboutContent {
           if (!isRecord(row)) return null;
           const value = clampText(row.value, 24);
           const label = clampText(row.label, 80);
-          return value && label ? { value, label } : null;
+          if (!value && !label) return null;
+          return { value, label };
         })
         .filter((row): row is { value: string; label: string } => !!row)
         .slice(0, 8)
@@ -87,7 +108,8 @@ export function normalizeAboutContent(raw: unknown): AboutContent {
           const title = clampText(row.title, 80);
           const keyword = clampText(row.keyword, 40);
           const text = clampText(row.text, 600);
-          return title && keyword && text ? { title, keyword, text } : null;
+          if (!title && !keyword && !text) return null;
+          return { title, keyword, text };
         })
         .filter((row): row is AboutContent["values"][number] => !!row)
         .slice(0, 12)
@@ -100,7 +122,8 @@ export function normalizeAboutContent(raw: unknown): AboutContent {
           const title = clampText(row.title, 80);
           const text = clampText(row.text, 400);
           const href = safeInternalHref(row.href, "");
-          return title && text && href ? { title, text, href } : null;
+          if (!title && !text && !href) return null;
+          return { title, text, href };
         })
         .filter((row): row is AboutContent["divisions"][number] => !!row)
         .slice(0, 6)
@@ -113,7 +136,7 @@ export function normalizeAboutContent(raw: unknown): AboutContent {
           const year = clampText(row.year, 24);
           const title = clampText(row.title, 120);
           const text = clampText(row.text, 600);
-          if (!year || !title || !text) return [];
+          if (!year && !title && !text) return [];
           const item: AboutContent["journey"][number] = { year, title, text };
           if (row.future === true) item.future = true;
           return [item];
@@ -123,40 +146,40 @@ export function normalizeAboutContent(raw: unknown): AboutContent {
 
   return {
     hero: {
-      eyebrow: clampText(hero.eyebrow, 60, defaultAboutContent.hero.eyebrow),
-      title: clampText(hero.title, 120, defaultAboutContent.hero.title),
-      titleAccent: clampText(hero.titleAccent, 80, defaultAboutContent.hero.titleAccent),
-      description: clampText(hero.description, 800, defaultAboutContent.hero.description),
+      eyebrow: textField(hero, "eyebrow", 60, defaultAboutContent.hero.eyebrow),
+      title: textField(hero, "title", 120, defaultAboutContent.hero.title),
+      titleAccent: textField(hero, "titleAccent", 80, defaultAboutContent.hero.titleAccent),
+      description: textField(hero, "description", 800, defaultAboutContent.hero.description),
     },
-    stats: stats.length > 0 ? stats : defaultAboutContent.stats,
+    stats: Array.isArray(data.stats) ? stats : defaultAboutContent.stats,
     manifesto: {
-      text: clampText(manifesto.text, 1200, defaultAboutContent.manifesto.text),
-      highlight: asStringArray(manifesto.highlight, 24, 40),
+      text: textField(manifesto, "text", 1200, defaultAboutContent.manifesto.text),
+      highlight: Array.isArray(manifesto.highlight)
+        ? asStringArray(manifesto.highlight, 24, 40)
+        : defaultAboutContent.manifesto.highlight,
     },
     mission: {
-      title: clampText(mission.title, 80, defaultAboutContent.mission.title),
-      body: clampText(mission.body, 800, defaultAboutContent.mission.body),
-      bullets: (() => {
-        const bullets = asStringArray(mission.bullets, 8, 200);
-        return bullets.length > 0 ? bullets : defaultAboutContent.mission.bullets;
-      })(),
+      title: textField(mission, "title", 80, defaultAboutContent.mission.title),
+      body: textField(mission, "body", 800, defaultAboutContent.mission.body),
+      bullets: Array.isArray(mission.bullets)
+        ? asStringArray(mission.bullets, 8, 200)
+        : defaultAboutContent.mission.bullets,
     },
     vision: {
-      title: clampText(vision.title, 80, defaultAboutContent.vision.title),
-      body: clampText(vision.body, 800, defaultAboutContent.vision.body),
-      bullets: (() => {
-        const bullets = asStringArray(vision.bullets, 8, 200);
-        return bullets.length > 0 ? bullets : defaultAboutContent.vision.bullets;
-      })(),
+      title: textField(vision, "title", 80, defaultAboutContent.vision.title),
+      body: textField(vision, "body", 800, defaultAboutContent.vision.body),
+      bullets: Array.isArray(vision.bullets)
+        ? asStringArray(vision.bullets, 8, 200)
+        : defaultAboutContent.vision.bullets,
     },
     valuesIntro: {
-      title: clampText(valuesIntro.title, 80, defaultAboutContent.valuesIntro.title),
-      titleMuted: clampText(valuesIntro.titleMuted, 80, defaultAboutContent.valuesIntro.titleMuted),
-      description: clampText(valuesIntro.description, 400, defaultAboutContent.valuesIntro.description),
+      title: textField(valuesIntro, "title", 80, defaultAboutContent.valuesIntro.title),
+      titleMuted: textField(valuesIntro, "titleMuted", 80, defaultAboutContent.valuesIntro.titleMuted),
+      description: textField(valuesIntro, "description", 400, defaultAboutContent.valuesIntro.description),
     },
-    values: values.length > 0 ? values : defaultAboutContent.values,
-    divisions: divisions.length > 0 ? divisions : defaultAboutContent.divisions,
-    journey: journey.length > 0 ? journey : defaultAboutContent.journey,
+    values: Array.isArray(data.values) ? values : defaultAboutContent.values,
+    divisions: Array.isArray(data.divisions) ? divisions : defaultAboutContent.divisions,
+    journey: Array.isArray(data.journey) ? journey : defaultAboutContent.journey,
     company: (() => {
       const defaults = defaultAboutContent.company;
       const commitments = Array.isArray(company.commitments)
@@ -165,66 +188,69 @@ export function normalizeAboutContent(raw: unknown): AboutContent {
               if (!isRecord(row)) return null;
               const title = clampText(row.title, 80);
               const text = clampText(row.text, 240);
-              return title && text ? { title, text } : null;
+              if (!title && !text) return null;
+              return { title, text };
             })
             .filter((row): row is AboutContent["company"]["commitments"][number] => !!row)
             .slice(0, 8)
-        : [];
+        : defaults.commitments;
       const facts = Array.isArray(company.facts)
         ? company.facts
             .map((row) => {
               if (!isRecord(row)) return null;
               const label = clampText(row.label, 80);
               const value = clampText(row.value, 200);
-              return label && value ? { label, value } : null;
+              if (!label && !value) return null;
+              return { label, value };
             })
             .filter((row): row is AboutContent["company"]["facts"][number] => !!row)
             .slice(0, 16)
         : defaults.facts;
       return {
-        visible: company.visible !== false,
-        eyebrow: clampText(company.eyebrow, 60, defaults.eyebrow),
-        title: clampText(company.title, 120, defaults.title),
-        titleMuted: clampText(company.titleMuted, 80, defaults.titleMuted),
-        description: clampText(company.description, 600, defaults.description),
-        ctaLabel: clampText(company.ctaLabel, 60, defaults.ctaLabel),
-        ctaHref: safeInternalHref(company.ctaHref, defaults.ctaHref),
-        sheetTitle: clampText(company.sheetTitle, 80, defaults.sheetTitle),
-        sheetBadge: clampText(company.sheetBadge, 40, defaults.sheetBadge),
-        commitments: commitments.length > 0 ? commitments : defaults.commitments,
+        visible: hasOwn(company, "visible") ? company.visible !== false && company.visible !== "false" : defaults.visible,
+        eyebrow: textField(company, "eyebrow", 60, defaults.eyebrow),
+        title: textField(company, "title", 120, defaults.title),
+        titleMuted: textField(company, "titleMuted", 80, defaults.titleMuted),
+        description: textField(company, "description", 600, defaults.description),
+        ctaLabel: textField(company, "ctaLabel", 60, defaults.ctaLabel),
+        ctaHref: hrefField(company, "ctaHref", defaults.ctaHref),
+        sheetTitle: textField(company, "sheetTitle", 80, defaults.sheetTitle),
+        sheetBadge: textField(company, "sheetBadge", 40, defaults.sheetBadge),
+        commitments,
         facts,
       };
     })(),
     careers: {
-      title: clampText(careers.title, 120, defaultAboutContent.careers.title),
-      text: clampText(careers.text, 400, defaultAboutContent.careers.text),
-      cta: clampText(careers.cta, 60, defaultAboutContent.careers.cta),
+      title: textField(careers, "title", 120, defaultAboutContent.careers.title),
+      text: textField(careers, "text", 400, defaultAboutContent.careers.text),
+      cta: textField(careers, "cta", 60, defaultAboutContent.careers.cta),
     },
     partner: {
-      title: clampText(partner.title, 120, defaultAboutContent.partner.title),
-      text: clampText(partner.text, 400, defaultAboutContent.partner.text),
-      cta: clampText(partner.cta, 60, defaultAboutContent.partner.cta),
+      title: textField(partner, "title", 120, defaultAboutContent.partner.title),
+      text: textField(partner, "text", 400, defaultAboutContent.partner.text),
+      cta: textField(partner, "cta", 60, defaultAboutContent.partner.cta),
     },
   };
 }
 
 export function normalizeTechContent(raw: unknown): TechContent {
   const data = isRecord(raw) ? raw : {};
-  const incoming = Array.isArray(data.cards) ? data.cards : [];
-  const cards = defaultTechContent.cards.map((fallback, i) => {
-    const row = isRecord(incoming[i]) ? incoming[i] : {};
-    return {
-      title: clampText(row.title, 80, fallback.title),
-      text: clampText(row.text, 280, fallback.text),
-      stat: clampText(row.stat, 24, fallback.stat),
-      image: safeMediaUrl(row.image, fallback.image),
-    };
-  });
+  const cards = Array.isArray(data.cards)
+    ? data.cards.slice(0, 6).map((row) => {
+        const item = isRecord(row) ? row : {};
+        return {
+          title: clampText(item.title, 80, ""),
+          text: clampText(item.text, 280, ""),
+          stat: clampText(item.stat, 24, ""),
+          image: safeMediaUrl(item.image, ""),
+        };
+      })
+    : defaultTechContent.cards;
   return {
-    eyebrow: clampText(data.eyebrow, 40, defaultTechContent.eyebrow),
-    title: clampText(data.title, 80, defaultTechContent.title),
-    titleMuted: clampText(data.titleMuted, 80, defaultTechContent.titleMuted),
-    description: clampText(data.description, 240, defaultTechContent.description),
+    eyebrow: textField(data, "eyebrow", 40, defaultTechContent.eyebrow),
+    title: textField(data, "title", 80, defaultTechContent.title),
+    titleMuted: textField(data, "titleMuted", 80, defaultTechContent.titleMuted),
+    description: textField(data, "description", 240, defaultTechContent.description),
     cards,
   };
 }
@@ -237,27 +263,28 @@ export function normalizeHowItWorksContent(raw: unknown): HowItWorksContent {
           if (!isRecord(row)) return null;
           const title = clampText(row.title, 80);
           const text = clampText(row.text, 400);
-          return title && text ? { title, text } : null;
+          if (!title && !text) return null;
+          return { title, text };
         })
         .filter((row): row is HowItWorksContent["steps"][number] => !!row)
         .slice(0, 8)
     : [];
 
   return {
-    eyebrow: clampText(data.eyebrow, 60, defaultHowItWorksContent.eyebrow),
-    title: clampText(data.title, 120, defaultHowItWorksContent.title),
-    titleMuted: clampText(data.titleMuted, 80, defaultHowItWorksContent.titleMuted),
-    steps: steps.length > 0 ? steps : defaultHowItWorksContent.steps,
+    eyebrow: textField(data, "eyebrow", 60, defaultHowItWorksContent.eyebrow),
+    title: textField(data, "title", 120, defaultHowItWorksContent.title),
+    titleMuted: textField(data, "titleMuted", 80, defaultHowItWorksContent.titleMuted),
+    steps: Array.isArray(data.steps) ? steps : defaultHowItWorksContent.steps,
   };
 }
 
 export function normalizeNewsletterContent(raw: unknown): NewsletterContent {
   const data = isRecord(raw) ? raw : {};
   return {
-    eyebrow: clampText(data.eyebrow, 60, defaultNewsletterContent.eyebrow),
-    title: clampText(data.title, 80, defaultNewsletterContent.title),
-    titleAccent: clampText(data.titleAccent, 40, defaultNewsletterContent.titleAccent),
-    description: clampText(data.description, 400, defaultNewsletterContent.description),
+    eyebrow: textField(data, "eyebrow", 60, defaultNewsletterContent.eyebrow),
+    title: textField(data, "title", 80, defaultNewsletterContent.title),
+    titleAccent: textField(data, "titleAccent", 40, defaultNewsletterContent.titleAccent),
+    description: textField(data, "description", 400, defaultNewsletterContent.description),
   };
 }
 
@@ -292,8 +319,8 @@ export function normalizeWhatsappWidgetContent(raw: unknown): WhatsappWidgetCont
 
   return {
     enabled: data.enabled !== false && data.enabled !== "false" && data.enabled !== 0,
-    phone: digitsOnly(data.phone, defaultWhatsappWidgetContent.phone),
-    message: clampText(data.message, 200, defaultWhatsappWidgetContent.message),
+    phone: hasOwn(data, "phone") ? digitsOnly(data.phone, "") : defaultWhatsappWidgetContent.phone,
+    message: textField(data, "message", 200, defaultWhatsappWidgetContent.message),
     rotateSeconds,
     staff,
   };
@@ -344,15 +371,15 @@ export function normalizeInstallationContent(raw: unknown): InstallationContent 
   const kit = Array.isArray(data.kit) ? asStringArray(data.kit, 20, 80) : defaults.kit;
 
   return {
-    eyebrow: clampText(data.eyebrow, 60, defaults.eyebrow),
-    title: clampText(data.title, 80, defaults.title),
-    titleAccent: clampText(data.titleAccent, 80, defaults.titleAccent),
-    intro: clampText(data.intro, 500, defaults.intro),
-    duration: clampText(data.duration, 40, defaults.duration),
-    videoUrl: "videoUrl" in data ? safeVideoUrl(data.videoUrl, "") : defaults.videoUrl,
-    brandsNote: clampText(data.brandsNote, 80, defaults.brandsNote),
+    eyebrow: textField(data, "eyebrow", 60, defaults.eyebrow),
+    title: textField(data, "title", 80, defaults.title),
+    titleAccent: textField(data, "titleAccent", 80, defaults.titleAccent),
+    intro: textField(data, "intro", 500, defaults.intro),
+    duration: textField(data, "duration", 40, defaults.duration),
+    videoUrl: hasOwn(data, "videoUrl") ? safeVideoUrl(data.videoUrl, "") : defaults.videoUrl,
+    brandsNote: textField(data, "brandsNote", 80, defaults.brandsNote),
     kit,
-    steps: steps.length > 0 ? steps : defaults.steps,
+    steps,
     troubleshooting,
   };
 }
@@ -370,15 +397,15 @@ export function mergeInstallationContent(
   const kit = Array.isArray(data.kit) ? asStringArray(data.kit, 20, 80) : previous.kit;
 
   return {
-    eyebrow: clampText(data.eyebrow, 60, previous.eyebrow),
-    title: clampText(data.title, 80, previous.title),
-    titleAccent: clampText(data.titleAccent, 80, previous.titleAccent),
-    intro: clampText(data.intro, 500, previous.intro),
-    duration: clampText(data.duration, 40, previous.duration),
-    videoUrl: "videoUrl" in data ? safeVideoUrl(data.videoUrl, "") : previous.videoUrl,
-    brandsNote: clampText(data.brandsNote, 80, previous.brandsNote),
+    eyebrow: textField(data, "eyebrow", 60, previous.eyebrow),
+    title: textField(data, "title", 80, previous.title),
+    titleAccent: textField(data, "titleAccent", 80, previous.titleAccent),
+    intro: textField(data, "intro", 500, previous.intro),
+    duration: textField(data, "duration", 40, previous.duration),
+    videoUrl: hasOwn(data, "videoUrl") ? safeVideoUrl(data.videoUrl, "") : previous.videoUrl,
+    brandsNote: textField(data, "brandsNote", 80, previous.brandsNote),
     kit,
-    steps: steps.length > 0 ? steps : previous.steps,
+    steps: Array.isArray(data.steps) ? steps : previous.steps,
     troubleshooting,
   };
 }
@@ -400,12 +427,12 @@ export function normalizeCollectionsContent(raw: unknown): CollectionsContent {
     : [];
 
   return {
-    eyebrow: clampText(data.eyebrow, 60, defaultCollectionsContent.eyebrow),
-    title: clampText(data.title, 120, defaultCollectionsContent.title),
-    titleMuted: clampText(data.titleMuted, 80, defaultCollectionsContent.titleMuted),
-    ctaLabel: clampText(data.ctaLabel, 40, defaultCollectionsContent.ctaLabel),
-    ctaHref: safeInternalHref(data.ctaHref, defaultCollectionsContent.ctaHref),
-    items: items.length > 0 ? items : defaultCollectionsContent.items,
+    eyebrow: textField(data, "eyebrow", 60, defaultCollectionsContent.eyebrow),
+    title: textField(data, "title", 120, defaultCollectionsContent.title),
+    titleMuted: textField(data, "titleMuted", 80, defaultCollectionsContent.titleMuted),
+    ctaLabel: textField(data, "ctaLabel", 40, defaultCollectionsContent.ctaLabel),
+    ctaHref: hrefField(data, "ctaHref", defaultCollectionsContent.ctaHref),
+    items: Array.isArray(data.items) ? items : defaultCollectionsContent.items,
   };
 }
 
@@ -417,16 +444,15 @@ function normalizeHeroSlide(row: unknown): HeroSlide | null {
   const titleAccent = clampText(row.titleAccent, 80);
   const text = clampText(row.text, 280);
   const primaryLabel = clampText(row.primaryLabel, 40);
-  const primaryHref = safeInternalHref(row.primaryHref, "/shop");
+  const primaryHref = safeInternalHref(row.primaryHref, "");
   const secondaryLabel = clampText(row.secondaryLabel, 40);
-  const secondaryHref = safeInternalHref(row.secondaryHref, "/shop");
+  const secondaryHref = safeInternalHref(row.secondaryHref, "");
   const visual = normalizeHeroVisual(row.visual);
   const image = safeMediaUrl(row.image, "");
   const imageMobile = safeMediaUrl(row.imageMobile, "");
 
-  const blank = !brand && !title && !titleAccent && !text && !primaryLabel && !image && !imageMobile;
+  const blank = !brand && !title && !titleAccent && !text && !primaryLabel && !secondaryLabel && !image && !imageMobile;
   if (!key || blank) return null;
-  if (visual === "image" && !image) return null;
 
   return {
     key,
@@ -450,29 +476,28 @@ export function normalizeShowcaseContent(raw: unknown): ShowcaseContent {
 
   const videos: ShowcaseVideoItem[] = Array.isArray(data.videos)
     ? data.videos
-        .map((row, i) => {
+        .map((row) => {
           if (!isRecord(row)) return null;
-          const fallback = defaults.videos[i];
-          const title = clampText(row.title, 100, fallback?.title ?? "");
-          const caption = clampText(row.caption, 200, fallback?.caption ?? "");
-          const duration = clampText(row.duration, 40, fallback?.duration ?? "");
-          const poster = safeMediaUrl(row.poster, fallback?.poster ?? "");
+          const title = clampText(row.title, 100, "");
+          const caption = clampText(row.caption, 200, "");
+          const duration = clampText(row.duration, 40, "");
+          const poster = safeMediaUrl(row.poster, "");
           const videoUrl = safeYoutubeUrl(row.videoUrl, "") || safeYoutubeUrl(row.youtubeId, "");
-          const href = safeInternalHref(row.href, fallback?.href ?? "/shop");
-          if (!title || !caption || !duration || !poster) return null;
+          const href = safeInternalHref(row.href, "");
+          if (!title && !caption && !duration && !poster && !videoUrl) return null;
           return { title, caption, duration, poster, videoUrl, href };
         })
         .filter((row): row is ShowcaseVideoItem => !!row)
         .slice(0, 6)
-    : [];
+    : defaults.videos;
 
   return {
-    eyebrow: clampText(data.eyebrow, 60, defaults.eyebrow),
-    title: clampText(data.title, 80, defaults.title),
-    titleMuted: clampText(data.titleMuted, 80, defaults.titleMuted),
-    channelLabel: clampText(data.channelLabel, 40, defaults.channelLabel),
-    channelHref: clampText(data.channelHref, 240, defaults.channelHref) || defaults.channelHref,
-    videos: videos.length > 0 ? videos : defaults.videos,
+    eyebrow: textField(data, "eyebrow", 60, defaults.eyebrow),
+    title: textField(data, "title", 80, defaults.title),
+    titleMuted: textField(data, "titleMuted", 80, defaults.titleMuted),
+    channelLabel: textField(data, "channelLabel", 40, defaults.channelLabel),
+    channelHref: textField(data, "channelHref", 240, defaults.channelHref),
+    videos,
   };
 }
 
@@ -483,14 +508,25 @@ export function normalizeShippingContent(raw: unknown): ShippingContent {
   return { mode, amount: mode === "free" ? 0 : amount };
 }
 
+function socialField(
+  data: Record<string, unknown>,
+  key: "facebook" | "instagram" | "youtube" | "x",
+  fallback: string,
+) {
+  if (!hasOwn(data, key)) return fallback;
+  const raw = typeof data[key] === "string" ? data[key].trim() : "";
+  if (!raw) return "";
+  return safeSocialUrl(key, raw, "");
+}
+
 export function normalizeSocialContent(raw: unknown): SocialContent {
   const data = isRecord(raw) ? raw : {};
   const defaults = defaultSocialContent;
   return {
-    facebook: safeSocialUrl("facebook", data.facebook, defaults.facebook),
-    instagram: safeSocialUrl("instagram", data.instagram, defaults.instagram),
-    youtube: safeSocialUrl("youtube", data.youtube, defaults.youtube),
-    x: safeSocialUrl("x", data.x, defaults.x),
+    facebook: socialField(data, "facebook", defaults.facebook),
+    instagram: socialField(data, "instagram", defaults.instagram),
+    youtube: socialField(data, "youtube", defaults.youtube),
+    x: socialField(data, "x", defaults.x),
   };
 }
 
@@ -554,12 +590,12 @@ export function normalizeImpactContent(raw: unknown): ImpactContent {
           if (!isRecord(row)) return null;
           const url = safeMediaUrl(row.url, "");
           if (!url) return null;
-          return { url, alt: clampText(row.alt, 80, "HYDRA") || "HYDRA" };
+          return { url, alt: clampText(row.alt, 80, "") };
         })
         .filter((row): row is ImpactContent["images"][number] => !!row)
         .slice(0, 10)
-    : [];
-  return { images: images.length > 0 ? images : defaultImpactContent.images };
+    : defaultImpactContent.images;
+  return { images };
 }
 
 export function normalizeImpactLabContent(raw: unknown): ImpactLabContent {
@@ -567,37 +603,33 @@ export function normalizeImpactLabContent(raw: unknown): ImpactLabContent {
   const defaults = defaultImpactLabContent;
   const cards = Array.isArray(data.cards)
     ? data.cards
-        .map((row, index) => {
+        .map((row) => {
           if (!isRecord(row)) return null;
-          const fallback = defaults.cards[index];
-          const value = clampText(row.value, 16, fallback?.value ?? "");
-          const label = clampText(row.label, 80, fallback?.label ?? "");
-          if (!value && !label) return null;
-          return {
-            value: value || fallback?.value || "",
-            label: label || fallback?.label || "",
-            image: safeMediaUrl(row.image, ""),
-          };
+          const value = clampText(row.value, 16, "");
+          const label = clampText(row.label, 80, "");
+          const image = safeMediaUrl(row.image, "");
+          if (!value && !label && !image) return null;
+          return { value, label, image };
         })
         .filter((row): row is ImpactLabContent["cards"][number] => !!row)
         .slice(0, 4)
-    : [];
+    : defaults.cards;
   return {
-    eyebrow: clampText(data.eyebrow, 40, defaults.eyebrow) || defaults.eyebrow,
-    title: clampText(data.title, 80, defaults.title) || defaults.title,
-    titleMuted: clampText(data.titleMuted, 80, defaults.titleMuted) || defaults.titleMuted,
-    text: clampText(data.text, 280, defaults.text) || defaults.text,
-    cards: cards.length > 0 ? cards : defaults.cards,
+    eyebrow: textField(data, "eyebrow", 40, defaults.eyebrow),
+    title: textField(data, "title", 80, defaults.title),
+    titleMuted: textField(data, "titleMuted", 80, defaults.titleMuted),
+    text: textField(data, "text", 280, defaults.text),
+    cards,
   };
 }
 
 export function normalizeClarityContent(raw: unknown): ClarityContent {
   const data = isRecord(raw) ? raw : {};
   return {
-    beforeImage: safeMediaUrl(data.beforeImage, ""),
-    afterImage: safeMediaUrl(data.afterImage, ""),
-    beforeLabel: clampText(data.beforeLabel, 40, defaultClarityContent.beforeLabel) || defaultClarityContent.beforeLabel,
-    afterLabel: clampText(data.afterLabel, 40, defaultClarityContent.afterLabel) || defaultClarityContent.afterLabel,
+    beforeImage: mediaField(data, "beforeImage"),
+    afterImage: mediaField(data, "afterImage"),
+    beforeLabel: textField(data, "beforeLabel", 40, defaultClarityContent.beforeLabel),
+    afterLabel: textField(data, "afterLabel", 40, defaultClarityContent.afterLabel),
   };
 }
 
@@ -633,7 +665,8 @@ export function normalizeHomeHeroContent(raw: unknown): HomeHeroContent {
           if (!isRecord(row)) return null;
           const value = clampText(row.value, 24);
           const label = clampText(row.label, 40);
-          return value && label ? { value, label } : null;
+          if (!value && !label) return null;
+          return { value, label };
         })
         .filter((row): row is HomeHeroContent["stats"][number] => !!row)
         .slice(0, 4)
@@ -645,7 +678,8 @@ export function normalizeHomeHeroContent(raw: unknown): HomeHeroContent {
           if (!isRecord(row)) return null;
           const label = clampText(row.label, 40);
           const href = safeInternalHref(row.href, "");
-          return label && href ? { label, href } : null;
+          if (!label && !href) return null;
+          return { label, href };
         })
         .filter((row): row is HomeHeroContent["quickLinks"][number] => !!row)
         .slice(0, 6)
@@ -659,9 +693,9 @@ export function normalizeHomeHeroContent(raw: unknown): HomeHeroContent {
     : [];
 
   return {
-    ratingLabel: clampText(data.ratingLabel, 80, defaults.ratingLabel),
-    quickLinks: quickLinks.length > 0 ? quickLinks : defaults.quickLinks,
-    stats: stats.length > 0 ? stats : defaults.stats,
-    slides: slides.length > 0 ? slides : defaults.slides,
+    ratingLabel: textField(data, "ratingLabel", 80, defaults.ratingLabel),
+    quickLinks: Array.isArray(data.quickLinks) ? quickLinks : defaults.quickLinks,
+    stats: Array.isArray(data.stats) ? stats : defaults.stats,
+    slides: Array.isArray(data.slides) ? slides : defaults.slides,
   };
 }

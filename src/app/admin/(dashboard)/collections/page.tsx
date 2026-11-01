@@ -28,7 +28,9 @@ export default async function AdminCollectionsPage() {
           </Link>
         }
       />
-      <CollectionsSectionEditor content={normalizeCollectionsContent(row?.data)} />
+      <div key={JSON.stringify(row?.data ?? null)}>
+        <CollectionsSectionEditor content={normalizeCollectionsContent(row?.data)} />
+      </div>
     </div>
   );
 }

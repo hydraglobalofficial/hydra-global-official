@@ -867,7 +867,7 @@ function pairsFrom(formData: FormData, a: string, b: string) {
   const right = formData.getAll(b).map(String);
   return left
     .map((value, i) => ({ value: value.trim(), label: (right[i] ?? "").trim() }))
-    .filter((row) => row.value && row.label);
+    .filter((row) => row.value || row.label);
 }
 
 export async function saveAboutSection(_prev: FormState, formData: FormData): Promise<FormState> {
@@ -892,7 +892,7 @@ export async function saveAboutSection(_prev: FormState, formData: FormData): Pr
         keyword: clampText(valueKeywords[i], 40),
         text: clampText(valueTexts[i], 600),
       }))
-      .filter((v) => v.title && v.keyword && v.text)
+      .filter((v) => v.title || v.keyword || v.text)
       .slice(0, 12);
 
     const divisionTitles = formData.getAll("divisionTitle").map(String);
@@ -904,7 +904,7 @@ export async function saveAboutSection(_prev: FormState, formData: FormData): Pr
         text: clampText(divisionTexts[i], 400),
         href: safeInternalHref(divisionHrefs[i], ""),
       }))
-      .filter((d) => d.title && d.text && d.href)
+      .filter((d) => d.title || d.text || d.href)
       .slice(0, 6);
 
     const journeyYears = formData.getAll("journeyYear").map(String);
@@ -918,7 +918,7 @@ export async function saveAboutSection(_prev: FormState, formData: FormData): Pr
         text: clampText(journeyTexts[i], 600),
         ...(journeyFuture[i] === "yes" ? { future: true as const } : {}),
       }))
-      .filter((j) => j.year && j.title && j.text)
+      .filter((j) => j.year || j.title || j.text)
       .slice(0, 12);
 
     const heroTitle = clampText(formData.get("heroTitle"), 120);
@@ -942,7 +942,7 @@ export async function saveAboutSection(_prev: FormState, formData: FormData): Pr
         title: clampText(title, 80),
         text: clampText(commitmentTexts[i], 240),
       }))
-      .filter((row) => row.title && row.text)
+      .filter((row) => row.title || row.text)
       .slice(0, 8);
 
     const factLabels = formData.getAll("companyFactLabel").map(String);
@@ -952,7 +952,7 @@ export async function saveAboutSection(_prev: FormState, formData: FormData): Pr
         label: clampText(label, 80),
         value: clampText(factValues[i], 200),
       }))
-      .filter((row) => row.label && row.value)
+      .filter((row) => row.label || row.value)
       .slice(0, 16);
 
     const data = normalizeAboutContent({
@@ -1073,7 +1073,7 @@ export async function saveHowItWorksSection(_prev: FormState, formData: FormData
         title: clampText(title, 80),
         text: clampText(texts[i], 400),
       }))
-      .filter((s) => s.title && s.text)
+      .filter((s) => s.title || s.text)
       .slice(0, 8);
 
     const title = clampText(formData.get("title"), 120);
@@ -1133,13 +1133,13 @@ export async function saveInstallationSection(_prev: FormState, formData: FormDa
     })).filter((s) => s.title || s.body || s.image);
 
     const incoming: InstallationContent = {
-      eyebrow: clampText(formData.get("eyebrow"), 60, previous.eyebrow),
-      title: clampText(formData.get("title"), 80, previous.title),
-      titleAccent: clampText(formData.get("titleAccent"), 80, previous.titleAccent),
-      intro: clampText(formData.get("intro"), 500, previous.intro),
-      duration: clampText(formData.get("duration"), 40, previous.duration),
+      eyebrow: clampText(formData.get("eyebrow"), 60, ""),
+      title: clampText(formData.get("title"), 80, ""),
+      titleAccent: clampText(formData.get("titleAccent"), 80, ""),
+      intro: clampText(formData.get("intro"), 500, ""),
+      duration: clampText(formData.get("duration"), 40, ""),
       videoUrl: formData.has("videoUrl") ? safeVideoUrl(formData.get("videoUrl"), "") : previous.videoUrl,
-      brandsNote: clampText(formData.get("brandsNote"), 80, previous.brandsNote),
+      brandsNote: clampText(formData.get("brandsNote"), 80, ""),
       kit: Array.isArray(editor.kit) ? (editor.kit as string[]) : linesFrom(formData, "kitItem").slice(0, 20),
       steps: Array.isArray(editor.steps) ? (editor.steps as InstallationContent["steps"]) : formSteps,
       troubleshooting: Array.isArray(editor.troubleshooting)
@@ -1546,18 +1546,17 @@ export async function saveHomeHeroSection(_prev: FormState, formData: FormData):
         const titleAccent = clampText(accents[i], 80);
         const text = clampText(texts[i], 280);
         const primaryLabel = clampText(primaryLabels[i], 40);
-        const primaryHref = safeInternalHref(primaryHrefs[i], "/shop");
+        const primaryHref = safeInternalHref(primaryHrefs[i], "");
         const secondaryLabel = clampText(secondaryLabels[i], 40);
-        const secondaryHref = safeInternalHref(secondaryHrefs[i], "/shop");
+        const secondaryHref = safeInternalHref(secondaryHrefs[i], "");
         const visualRaw = String(visuals[i] ?? "phone");
         const visual: HeroVisualKey = HERO_VISUALS.has(visualRaw as HeroVisualKey)
           ? (visualRaw as HeroVisualKey)
           : "phone";
         const image = safeMediaUrl(images[i], "");
         const imageMobile = safeMediaUrl(imagesMobile[i], "");
-        const blank = !brand && !title && !titleAccent && !text && !primaryLabel && !image && !imageMobile;
+        const blank = !brand && !title && !titleAccent && !text && !primaryLabel && !secondaryLabel && !image && !imageMobile;
         if (!key || blank) return null;
-        if (visual === "image" && !image) return null;
         return {
           key,
           brand,
@@ -1587,7 +1586,7 @@ export async function saveHomeHeroSection(_prev: FormState, formData: FormData):
         value: clampText(value, 24),
         label: clampText(statLabels[i], 40),
       }))
-      .filter((row) => row.value && row.label)
+      .filter((row) => row.value || row.label)
       .slice(0, 4);
 
     const linkLabels = formData.getAll("linkLabel").map(String);
@@ -1597,11 +1596,11 @@ export async function saveHomeHeroSection(_prev: FormState, formData: FormData):
         label: clampText(label, 40),
         href: safeInternalHref(linkHrefs[i], ""),
       }))
-      .filter((row) => row.label && row.href)
+      .filter((row) => row.label || row.href)
       .slice(0, 6);
 
     const data = normalizeHomeHeroContent({
-      ratingLabel: clampText(formData.get("ratingLabel"), 80) || "20,000+ owners · worldwide",
+      ratingLabel: clampText(formData.get("ratingLabel"), 80, ""),
       quickLinks,
       stats,
       slides,
@@ -1667,7 +1666,7 @@ export async function saveCollectionsSection(_prev: FormState, formData: FormDat
       eyebrow: clampText(formData.get("eyebrow"), 60),
       title,
       titleMuted: clampText(formData.get("titleMuted"), 80),
-      ctaLabel: clampText(formData.get("ctaLabel"), 40) || "All products",
+      ctaLabel: clampText(formData.get("ctaLabel"), 40, ""),
       ctaHref: safeInternalHref(formData.get("ctaHref"), "/shop"),
       items,
     } satisfies CollectionsContent);

@@ -535,7 +535,7 @@ export function HowItWorksSectionEditor({ content }: { content: HowItWorksConten
 
 export function TechSectionEditor({ content }: { content: TechContent }) {
   const [state, action, pending] = useActionState(saveTechSection, initialFormState);
-  const cards = content.cards.slice(0, 6);
+  const cards = Array.from({ length: 6 }, (_, i) => content.cards[i] ?? { title: "", text: "", stat: "", image: "" });
 
   return (
     <form action={action} className="space-y-5">

@@ -28,7 +28,9 @@ export default async function AdminAboutPage() {
           </Link>
         }
       />
-      <AboutSectionEditor content={normalizeAboutContent(row?.data)} />
+      <div key={JSON.stringify(row?.data ?? null)}>
+        <AboutSectionEditor content={normalizeAboutContent(row?.data)} />
+      </div>
     </div>
   );
 }
