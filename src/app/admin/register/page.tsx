@@ -1,9 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { notFound } from "next/navigation";
 import { LogoMark } from "@/components/layout/logo";
 import { RegisterForm } from "@/components/admin/register-form";
-import { db } from "@/lib/db";
 
 export const metadata: Metadata = { title: "Admin register", robots: { index: false, follow: false } };
 
@@ -135,11 +133,7 @@ html.light .hydra-login .admin-auth-alt a,
 html[data-theme="light"] .hydra-login .admin-auth-alt a { color: #2563eb; }
 `;
 
-export default async function AdminRegisterPage() {
-  const adminCount = await db.user.count({ where: { role: { in: ["OWNER", "STAFF"] } } });
-  const open = adminCount === 0 || process.env.ADMIN_REGISTRATION_ENABLED === "1";
-  if (!open) notFound();
-
+export default function AdminRegisterPage() {
   return (
     <>
       <style dangerouslySetInnerHTML={{ __html: authCss }} />

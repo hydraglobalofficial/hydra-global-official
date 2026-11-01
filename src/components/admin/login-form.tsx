@@ -40,8 +40,7 @@ export function LoginForm({ next }: { next?: string }) {
       </button>
 
       <p className="admin-auth-alt">
-        Need an account?{" "}
-        <Link href="/admin/register">Register with master key</Link>
+        Need an account? <Link href="/admin/register">Register with master key</Link>
       </p>
     </form>
   );

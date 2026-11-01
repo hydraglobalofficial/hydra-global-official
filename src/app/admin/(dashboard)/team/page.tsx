@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Plus, Shield, Trash2, Users } from "lucide-react";
 import { AdminHeader, Card, Panel, StatusBadge, Table } from "@/components/admin/admin-ui";
+import { ChangePasswordForm } from "@/components/admin/change-password-form";
 import { ConfirmDeleteForm } from "@/components/admin/confirm-delete-form";
 import { requireAdmin } from "@/lib/auth/session";
 import { db } from "@/lib/db";
@@ -11,7 +12,6 @@ export const metadata = { title: "Team" };
 
 export default async function AdminTeamPage() {
   const session = await requireAdmin();
-  const isOwner = session.role === "OWNER";
   const admins = await db.user.findMany({
     where: { role: { in: ["OWNER", "STAFF"] } },
     select: { id: true, name: true, username: true, email: true, role: true, createdAt: true },
@@ -20,13 +20,10 @@ export default async function AdminTeamPage() {
 
   const owners = admins.filter((a) => a.role === "OWNER").length;
   const staff = admins.filter((a) => a.role === "STAFF").length;
-  const registrationOpen = process.env.ADMIN_REGISTRATION_ENABLED === "1";
 
   function canRemove(admin: (typeof admins)[number]) {
-    if (!isOwner) return false;
     if (admin.id === session.userId) return false;
-    if (admin.role === "OWNER" && owners <= 1) return false;
-    return true;
+    return admins.length > 1;
   }
 
   return (
@@ -34,20 +31,14 @@ export default async function AdminTeamPage() {
       <AdminHeader
         eyebrow="Access"
         title="Admin team"
-        description={
-          registrationOpen
-            ? "People who can sign in to the HYDRA control room. New staff register with the master key."
-            : "People who can sign in to the HYDRA control room. Set ADMIN_REGISTRATION_ENABLED=1 to allow new admins."
-        }
+        description="People who can sign in to the HYDRA control room. The master key can create as many admins as you need."
         action={
-          registrationOpen ? (
-            <Link
-              href="/admin/register"
-              className="inline-flex items-center gap-1.5 rounded-full border border-white/12 bg-white/[0.04] px-3.5 py-2 text-sm transition-colors hover:border-accent/40 hover:bg-accent/10"
-            >
-              <Plus size={14} /> Add admin
-            </Link>
-          ) : undefined
+          <Link
+            href="/admin/register"
+            className="inline-flex items-center gap-1.5 rounded-full border border-white/12 bg-white/[0.04] px-3.5 py-2 text-sm transition-colors hover:border-accent/40 hover:bg-accent/10"
+          >
+            <Plus size={14} /> Add admin
+          </Link>
         }
       />
 
@@ -76,7 +67,7 @@ export default async function AdminTeamPage() {
                 <th>Email</th>
                 <th>Role</th>
                 <th>Joined</th>
-                {isOwner && <th className="w-20 text-right"> </th>}
+                <th className="w-24 text-right"> </th>
               </tr>
             </thead>
             <tbody>
@@ -101,30 +92,28 @@ export default async function AdminTeamPage() {
                     <StatusBadge status={a.role} />
                   </td>
                   <td className="text-xs text-subtle">{formatDate(a.createdAt)}</td>
-                  {isOwner && (
-                    <td className="text-right">
-                      {canRemove(a) ? (
-                        <ConfirmDeleteForm
-                          action={deleteAdmin}
-                          title={`Remove ${a.name}?`}
-                          text={`@${a.username} will lose admin access immediately.`}
-                          confirmText="Yes, remove"
-                          className="inline"
+                  <td className="text-right">
+                    {canRemove(a) ? (
+                      <ConfirmDeleteForm
+                        action={deleteAdmin}
+                        title={`Remove ${a.name}?`}
+                        text={`@${a.username} will lose admin access immediately.`}
+                        confirmText="Yes, remove"
+                        className="inline"
+                      >
+                        <input type="hidden" name="id" value={a.id} />
+                        <button
+                          type="submit"
+                          className="inline-flex items-center gap-1 rounded-full border border-danger/30 px-2.5 py-1.5 text-xs text-danger hover:bg-danger/10"
+                          title={`Remove ${a.name}`}
                         >
-                          <input type="hidden" name="id" value={a.id} />
-                          <button
-                            type="submit"
-                            className="inline-flex items-center gap-1 rounded-full border border-danger/30 px-2.5 py-1.5 text-xs text-danger hover:bg-danger/10"
-                            title={`Remove ${a.name}`}
-                          >
-                            <Trash2 size={12} /> Delete
-                          </button>
-                        </ConfirmDeleteForm>
-                      ) : (
-                        <span className="text-[11px] text-subtle">—</span>
-                      )}
-                    </td>
-                  )}
+                          <Trash2 size={12} /> Delete
+                        </button>
+                      </ConfirmDeleteForm>
+                    ) : (
+                      <span className="text-[11px] text-subtle">—</span>
+                    )}
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -168,14 +157,23 @@ export default async function AdminTeamPage() {
         </ul>
       </Panel>
 
+      <Panel title="Your password" icon={<Shield size={14} className="text-accent" />}>
+        <div className="p-4 sm:p-5">
+          <p className="mb-4 text-sm text-muted">
+            This updates only the password for the account you are signed in with. Name, email, username, and role stay the same.
+          </p>
+          <ChangePasswordForm />
+        </div>
+      </Panel>
+
       <Card className="flex items-start gap-3 p-5">
         <Shield size={18} className="mt-0.5 shrink-0 text-accent" />
         <div className="text-sm leading-relaxed text-muted">
           <p className="font-medium text-fg">How access works</p>
           <p className="mt-1">
-            First account registered with the master key becomes <span className="text-fg">OWNER</span>. Later accounts
-            become <span className="text-fg">STAFF</span>. Only OWNER and STAFF can open <code className="text-accent">/admin</code>.
-            Owners can remove other admins (not themselves, and not the last owner).
+            The master key can open as many admin accounts as you want. Each one signs in with the owner role.
+            Changing a password does not change that person's name, email, or role. Delete removes another admin.
+            You cannot delete yourself, or the last remaining admin.
           </p>
         </div>
       </Card>

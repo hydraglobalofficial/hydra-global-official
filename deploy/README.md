@@ -45,7 +45,7 @@ cp .env.example .env
 node -e "console.log(require('crypto').randomBytes(32).toString('base64url'))"
 ```
 
-Run that node command twice. First value is `AUTH_SECRET`. Second is `ADMIN_MASTER_KEY`.
+Run that node command twice. First value is `AUTH_SECRET`. Second is `ADMIN_MASTER_KEY`. The same master key can create as many admin accounts as you want.
 
 Edit `.env` and set at least:
 
@@ -67,7 +67,7 @@ REDIS_URL="redis://127.0.0.1:6379"
 
 Leave `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN` empty when Redis is on this VPS. Leave `R2_*` empty when uploads stay on this disk.
 
-SMTP, Pathao, and pixels can stay empty until the store is up. Do not set `ADMIN_REGISTRATION_ENABLED=1`.
+SMTP, Pathao, and pixels can stay empty until the store is up. Leave `ADMIN_REGISTRATION_ENABLED` empty. New admins are created at `/admin/register` with `ADMIN_MASTER_KEY`.
 
 ```bash
 chown hydra:hydra /var/www/hydra-global/.env

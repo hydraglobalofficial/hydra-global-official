@@ -764,7 +764,7 @@ export async function deleteInquiry(formData: FormData) {
 }
 
 export async function deleteAdmin(formData: FormData) {
-  const session = await requireAdmin(["OWNER"]);
+  const session = await requireAdmin();
   const id = z.string().min(1).parse(formData.get("id"));
   if (id === session.userId) return;
 
@@ -774,10 +774,10 @@ export async function deleteAdmin(formData: FormData) {
   });
   if (!target || (target.role !== "OWNER" && target.role !== "STAFF")) return;
 
-  if (target.role === "OWNER") {
-    const ownerCount = await db.user.count({ where: { role: "OWNER" } });
-    if (ownerCount <= 1) return;
-  }
+  const others = await db.user.count({
+    where: { id: { not: id }, role: { in: ["OWNER", "STAFF"] } },
+  });
+  if (others < 1) return;
 
   await revokeAdminSessions(id);
   await db.user.delete({ where: { id } });

@@ -7,7 +7,7 @@ import { verifyAdminMasterKey } from "@/lib/auth/master-key";
 import { createSession, destroySession, getSession } from "@/lib/auth/session";
 import { issueAdminSessionVersion, revokeAdminSessions } from "@/lib/auth/session-store";
 import { rateLimit } from "@/lib/rate-limit";
-import { loginSchema, registerSchema, invalid, type FormState } from "@/lib/validations";
+import { changePasswordSchema, loginSchema, registerSchema, invalid, type FormState } from "@/lib/validations";
 
 const BCRYPT_COST = 12;
 
@@ -46,14 +46,8 @@ export async function login(_prev: FormState, formData: FormData): Promise<FormS
 }
 
 export async function register(_prev: FormState, formData: FormData): Promise<FormState> {
-  const limited = await rateLimit("admin-register", 3, 60 * 60_000);
+  const limited = await rateLimit("admin-register", 30, 60 * 60_000);
   if (!limited.ok) return { status: "error", message: "Too many registration attempts. Try again later." };
-
-  const adminCount = await db.user.count({ where: { role: { in: ["OWNER", "STAFF"] } } });
-  // First owner bootstrap always allowed; later accounts need an explicit env flag.
-  if (adminCount > 0 && process.env.ADMIN_REGISTRATION_ENABLED !== "1") {
-    return { status: "error", message: "Admin registration is disabled." };
-  }
 
   const parsed = registerSchema.safeParse(Object.fromEntries(formData));
   if (!parsed.success) return invalid(parsed.error);
@@ -72,7 +66,7 @@ export async function register(_prev: FormState, formData: FormData): Promise<Fo
     return { status: "error", message: "Username or email is already registered." };
   }
 
-  const role = adminCount === 0 ? "OWNER" : "STAFF";
+  const role = "OWNER" as const;
   const passwordHash = await bcrypt.hash(parsed.data.password, BCRYPT_COST);
 
   const user = await db.user.create({
@@ -95,6 +89,37 @@ export async function register(_prev: FormState, formData: FormData): Promise<Fo
   }
   await createSession({ userId: user.id, role: user.role, name: user.name, sv });
   redirect("/admin");
+}
+
+export async function changeOwnPassword(_prev: FormState, formData: FormData): Promise<FormState> {
+  const session = await getSession();
+  if (!session) return { status: "error", message: "Sign in again." };
+
+  const limited = await rateLimit("admin-password", 5, 15 * 60_000);
+  if (!limited.ok) return { status: "error", message: "Too many attempts. Try again in 15 minutes." };
+
+  const parsed = changePasswordSchema.safeParse(Object.fromEntries(formData));
+  if (!parsed.success) return invalid(parsed.error);
+
+  const user = await db.user.findUnique({
+    where: { id: session.userId },
+    select: { id: true, passwordHash: true, role: true, name: true },
+  });
+  if (!user || user.role !== session.role) {
+    return { status: "error", message: "Sign in again." };
+  }
+
+  const matches = await bcrypt.compare(parsed.data.currentPassword, user.passwordHash);
+  if (!matches) return { status: "error", message: "Current password is wrong." };
+
+  await db.user.update({
+    where: { id: user.id },
+    data: { passwordHash: await bcrypt.hash(parsed.data.password, BCRYPT_COST) },
+  });
+
+  const sv = await issueAdminSessionVersion(user.id);
+  if (sv) await createSession({ userId: user.id, role: user.role, name: user.name, sv });
+  return { status: "success", message: "Password updated. Your name, email, and role are unchanged." };
 }
 
 export async function logout() {
