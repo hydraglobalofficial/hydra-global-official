@@ -11,6 +11,7 @@ import {
 } from "../src/content/site-sections";
 import { defaultInstallationContent } from "../src/content/installation";
 import { defaultBrandSeeds } from "../src/config/site";
+import { policyPages } from "../src/content/policies";
 
 if (process.env.NODE_ENV === "production" && process.env.SEED_FORCE !== "1") {
   console.error("Refusing to reset a production database. Set SEED_FORCE=1 if you really mean it.");
@@ -380,93 +381,12 @@ const reviewPool = [
 
 // ─── Content ─────────────────────────────────────────────────────────────────
 
-const pages = [
-  {
-    slug: "returns",
-    title: "Returns",
-    summary: "Changed your mind? Return unopened products within 7 days.",
-    body: `## 7-day returns
-Unopened products in original packaging can be returned within **7 days** of delivery for a full refund.
-
-## Wrong model?
-If you ordered the wrong model and haven't opened the inner seal, we'll exchange it free of charge in hub cities.
-
-## How it works
-- Submit a return request via Contact Support
-- We confirm eligibility within one business day
-- Hub cities: we arrange pickup; elsewhere we share courier instructions
-- Refunds are issued within 5 business days to your original payment method`,
-  },
-  {
-    slug: "privacy-policy",
-    title: "Privacy Policy",
-    summary: "How HYDRA collects, uses and protects your personal information.",
-    body: `## Information we collect
-- Contact details you provide at checkout: name, phone, email and delivery address
-- Order history and support requests
-- Anonymous analytics, only after you accept cookies
-
-## How we use it
-We use your information to fulfil orders, provide support, prevent counterfeiting and — only if you subscribe — send marketing emails.
-
-## Sharing
-We share delivery details with courier partners solely to deliver your order. We **never** sell your data.
-
-## Your rights
-You can request a copy or deletion of your data at any time by emailing support@hydraglobal.com.`,
-  },
-  {
-    slug: "terms",
-    title: "Terms & Conditions",
-    summary: "The rules for using the HYDRA storefront and purchasing HYDRA products.",
-    body: `## Orders
-All orders are subject to availability and confirmation. We may cancel orders with incorrect pricing or suspected fraud and will notify you immediately.
-
-## Pricing
-Prices are listed in USD and may include applicable taxes. Shipping fees are shown at checkout.
-
-## Authorized sales
-HYDRA products are sold only through the official HYDRA storefront and authorized resellers.
-
-## Liability
-HYDRA protectors reduce the risk of screen damage but cannot guarantee protection against every impact. Our liability is limited to the purchase price of the product.`,
-  },
-  {
-    slug: "shipping-policy",
-    title: "Shipping Policy",
-    summary: "Delivery times, fees and worldwide coverage.",
-    body: `## Delivery times
-- **Express hubs:** 2–4 business days
-- **Standard worldwide:** 4–8 business days
-
-## Fees
-- Express hubs: $8
-- Standard: $14
-- **Free delivery** on orders over $80
-
-## Pay on delivery
-Available in selected markets. Please keep the exact amount ready where COD is offered.
-
-## Tracking
-You'll receive email updates with tracking details once your order ships.`,
-  },
-  {
-    slug: "return-policy",
-    title: "Return & Replacement Policy",
-    summary: "Our commitment when something isn't right.",
-    body: `## Returns
-Unopened products may be returned within 7 days of delivery for a full refund.
-
-## Replacements
-If a product arrives damaged or defective, contact support with your order number and a photo — we'll arrange a replacement.
-
-## Condition
-Returned items must include original packaging and tags in sellable condition.
-
-## Refund method
-Refunds are processed within 5 business days to your original payment method.`,
-  },
-];
+const pages = policyPages.map((page) => ({
+  slug: page.slug,
+  title: page.title,
+  summary: page.summary,
+  body: page.body,
+}));
 
 const announcements = [
   { message: "Free worldwide shipping on orders over $80", href: "/shop" },

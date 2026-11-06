@@ -9,22 +9,22 @@ export const faqGroups: FaqGroup[] = [
       {
         question: "How long does delivery take?",
         answer:
-          "Express hub cities usually arrive in 2–4 business days. Standard shipping elsewhere typically takes 4–8 business days through our courier partners.",
+          "HYDRA delivers within Bangladesh. The estimate for your area is shared at checkout or by support. Courier delays can still happen.",
       },
       {
         question: "How much is shipping?",
         answer:
-          "Express hubs ship from $8 and standard shipping from $14. Orders over $80 ship free worldwide.",
+          "The delivery charge for your address is shown before you confirm the order. Any free-delivery offer states its own conditions.",
       },
       {
         question: "Which payment methods do you accept?",
         answer:
-          "Pay on delivery is available in selected markets today. Card and online wallet payments are rolling out next.",
+          "Cash on Delivery is available, and supported online payments are shown at checkout.",
       },
       {
         question: "Can I change or cancel my order?",
         answer:
-          "Yes — contact support with your order number before it ships and we'll update or cancel it at no cost.",
+          "Contact support with your order number before the order is dispatched. After dispatch, cancellation may no longer be possible.",
       },
     ],
   },
@@ -60,7 +60,7 @@ export const faqGroups: FaqGroup[] = [
       {
         question: "What is your return policy?",
         answer:
-          "Unopened products can be returned within 7 days of delivery for a full refund. Contact support if a product arrives damaged or defective.",
+          "Contact us within 3 days of delivery if the product is damaged, defective, incorrect, incomplete, or different from its description. We do not accept returns only for a change of mind.",
       },
       {
         question: "How do I request a replacement?",

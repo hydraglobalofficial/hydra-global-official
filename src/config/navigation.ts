@@ -12,7 +12,6 @@ export const primaryNav: NavLink[] = [
 export const supportNav: NavLink[] = [
   { label: "Track order", href: "/track", description: "Status by invoice ID" },
   { label: "FAQ", href: "/support/faq", description: "Quick answers to common questions" },
-  { label: "Returns", href: "/support/returns", description: "7-day hassle-free returns" },
   { label: "Contact Support", href: "/support/contact", description: "Talk to a real person" },
 ];
 
@@ -31,7 +30,6 @@ export const footerNav: { title: string; links: NavLink[] }[] = [
       { label: "Track order", href: "/track" },
       { label: "FAQ", href: "/support/faq" },
       { label: "Installation", href: "/installation" },
-      { label: "Returns", href: "/support/returns" },
       { label: "Contact Support", href: "/support/contact" },
     ],
   },
@@ -47,8 +45,8 @@ export const footerNav: { title: string; links: NavLink[] }[] = [
     links: [
       { label: "Privacy Policy", href: "/legal/privacy-policy" },
       { label: "Terms & Conditions", href: "/legal/terms" },
-      { label: "Shipping Policy", href: "/legal/shipping-policy" },
-      { label: "Return & Replacement", href: "/legal/return-policy" },
+      { label: "Shipping & Delivery", href: "/legal/shipping-policy" },
+      { label: "Returns & Refunds", href: "/legal/return-policy" },
     ],
   },
 ];

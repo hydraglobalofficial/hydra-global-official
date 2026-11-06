@@ -25,7 +25,7 @@ const heroStats = [
 const selfHelp = [
   { icon: BookOpen, title: "FAQ", text: "Delivery, payments and compatibility answers.", href: "/support/faq" },
   { icon: Wrench, title: "Installation", text: "Step-by-step, bubble-free fitting guides.", href: "/installation" },
-  { icon: RotateCcw, title: "Returns", text: "7-day hassle-free returns and replacements.", href: "/support/returns" },
+  { icon: RotateCcw, title: "Returns & refunds", text: "Damaged, incorrect or incomplete orders.", href: "/legal/return-policy" },
 ];
 
 const businessPerks = [

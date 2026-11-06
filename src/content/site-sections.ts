@@ -318,9 +318,9 @@ export const defaultHowItWorksContent: HowItWorksContent = {
   titleMuted: "armored.",
   steps: [
     { title: "Pick your armor", text: "Choose your exact model and finish. Every cut is device-specific." },
-    { title: "Ship worldwide", text: "Express hubs in 2–4 days; standard delivery elsewhere. Pay on delivery where available." },
+    { title: "Delivered in Bangladesh", text: "We confirm the order, then hand it to our courier. Pay on delivery where available." },
     { title: "Install in 2 minutes", text: "Alignment frame and clean kit included. Bubble-free, first time." },
-    { title: "We've got your back", text: "7-day returns on unopened items and clear support if something isn't right." },
+    { title: "We've got your back", text: "Damaged, incorrect or incomplete orders can be reviewed within 3 days of delivery." },
   ],
 };
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type TouchEvent } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
@@ -133,6 +133,7 @@ export function Hero({ content }: { content: HomeHeroContent }) {
   const [index, setIndex] = useState(0);
   /** Pause only while hovering the phone stage / controls — not the whole hero. */
   const [paused, setPaused] = useState(false);
+  const touchStart = useRef<{ x: number; y: number } | null>(null);
   const safeIndex = slides.length ? ((index % slides.length) + slides.length) % slides.length : 0;
   const slide = slides[safeIndex] ?? slides[0];
   const stats = content.stats;
@@ -140,6 +141,28 @@ export function Hero({ content }: { content: HomeHeroContent }) {
   const go = useCallback(
     (dir: 1 | -1) => setIndex((i) => (i + dir + slides.length) % slides.length),
     [slides.length],
+  );
+
+  const onTouchStart = useCallback((event: TouchEvent) => {
+    const point = event.changedTouches[0];
+    if (!point) return;
+    touchStart.current = { x: point.clientX, y: point.clientY };
+  }, []);
+
+  const onTouchEnd = useCallback(
+    (event: TouchEvent) => {
+      const start = touchStart.current;
+      touchStart.current = null;
+      if (!start || slides.length < 2) return;
+      const point = event.changedTouches[0];
+      if (!point) return;
+      const dx = point.clientX - start.x;
+      const dy = point.clientY - start.y;
+      // Vertical movement scrolls the page. Only a clear sideways swipe changes the slide.
+      if (Math.abs(dx) < 48 || Math.abs(dx) < Math.abs(dy)) return;
+      go(dx < 0 ? 1 : -1);
+    },
+    [go, slides.length],
   );
 
   useEffect(() => {
@@ -180,7 +203,11 @@ export function Hero({ content }: { content: HomeHeroContent }) {
     >
       {film ? (
       <>
-        <div className="hero-film pointer-events-none relative aspect-video w-full overflow-hidden bg-black">
+        <div
+          className="hero-film relative aspect-video w-full touch-pan-y overflow-hidden bg-black"
+          onTouchStart={onTouchStart}
+          onTouchEnd={onTouchEnd}
+        >
           <AnimatePresence initial={false}>
             <motion.div
               key={slide.key}

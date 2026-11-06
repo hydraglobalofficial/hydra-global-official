@@ -32,10 +32,22 @@ export const metadata: Metadata = {
     type: "website",
     siteName: siteConfig.name,
     locale: "en_US",
+    url: "/",
     title: `${siteConfig.name} — ${siteConfig.tagline}`,
     description: siteConfig.description,
+    images: [
+      {
+        url: "/og.jpg",
+        width: 1200,
+        height: 630,
+        alt: `${siteConfig.name} — ${siteConfig.tagline}`,
+      },
+    ],
   },
-  twitter: { card: "summary_large_image" },
+  twitter: {
+    card: "summary_large_image",
+    images: ["/og.jpg"],
+  },
   alternates: { canonical: "/" },
   appleWebApp: {
     capable: true,

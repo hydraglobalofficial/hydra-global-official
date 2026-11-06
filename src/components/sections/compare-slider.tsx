@@ -24,12 +24,25 @@ export function CompareSlider({ before, after, beforeLabel = "Before", afterLabe
   return (
     <div
       ref={ref}
-      className="relative aspect-[16/10] w-full max-w-full cursor-ew-resize touch-none select-none overflow-hidden rounded-2xl border border-line sm:rounded-3xl"
+      className="relative aspect-[16/10] w-full max-w-full cursor-ew-resize touch-pan-y select-none overflow-hidden rounded-2xl border border-line sm:rounded-3xl"
       onPointerDown={(e) => {
-        e.currentTarget.setPointerCapture(e.pointerId);
-        update(e.clientX);
+        const el = e.currentTarget;
+        el.dataset.x = String(e.clientX);
+        el.dataset.y = String(e.clientY);
+        delete el.dataset.lock;
       }}
-      onPointerMove={(e) => e.buttons === 1 && update(e.clientX)}
+      onPointerMove={(e) => {
+        if (e.buttons !== 1) return;
+        const el = e.currentTarget;
+        const dx = e.clientX - Number(el.dataset.x);
+        const dy = e.clientY - Number(el.dataset.y);
+        if (!el.dataset.lock) {
+          if (Math.abs(dx) < 8 && Math.abs(dy) < 8) return;
+          el.dataset.lock = Math.abs(dx) > Math.abs(dy) ? "x" : "y";
+          if (el.dataset.lock === "x") el.setPointerCapture(e.pointerId);
+        }
+        if (el.dataset.lock === "x") update(e.clientX);
+      }}
     >
       <div className="absolute inset-0">{before}</div>
       <div className="absolute inset-0" style={{ clipPath: `inset(0 0 0 ${pos}%)` }}>

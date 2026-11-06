@@ -2,13 +2,14 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { CmsPage } from "@/components/content/cms-page";
+import { getPolicy } from "@/content/policies";
 import { cn } from "@/lib/utils";
 
 const legalPages = {
   "privacy-policy": "Privacy Policy",
   terms: "Terms & Conditions",
-  "shipping-policy": "Shipping Policy",
-  "return-policy": "Return & Replacement Policy",
+  "shipping-policy": "Shipping & Delivery",
+  "return-policy": "Returns & Refunds",
 } as const;
 
 type LegalSlug = keyof typeof legalPages;
@@ -24,7 +25,7 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: PageProps<"/legal/[slug]">): Promise<Metadata> {
   const { slug } = await params;
   if (!isLegalSlug(slug)) return {};
-  return { title: legalPages[slug], alternates: { canonical: `/legal/${slug}` } };
+  return { title: getPolicy(slug)?.title ?? legalPages[slug], alternates: { canonical: `/legal/${slug}` } };
 }
 
 export default async function LegalPage({ params }: PageProps<"/legal/[slug]">) {

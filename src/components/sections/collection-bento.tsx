@@ -37,7 +37,7 @@ export function CollectionBento({ content }: { content?: CollectionsContent | nu
           }
         />
       </div>
-      <div className="no-scrollbar flex snap-x snap-mandatory gap-3 overflow-x-auto overscroll-x-contain scroll-pl-4 px-4 pb-1 touch-pan-x md:hidden">
+      <div className="no-scrollbar flex snap-x snap-mandatory gap-3 overflow-x-auto overscroll-x-contain scroll-pl-4 px-4 pb-1 md:hidden">
         {items.map((c, i) => (
           <CollectionCard
             key={`${c.slug}-${i}`}

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowUpRight, Building2, HelpCircle, MessageCircle, PackageSearch, RefreshCcw, Wrench } from "lucide-react";
+import { ArrowUpRight, Building2, HelpCircle, MessageCircle, PackageSearch, Wrench } from "lucide-react";
 import { PageHeader } from "@/components/ui/primitives";
 import { siteConfig } from "@/config/site";
 import { faqGroups } from "@/content/faq";
@@ -15,7 +15,6 @@ const topics = [
   { href: "/track", icon: PackageSearch, title: "Track order", text: "Status by invoice ID from your confirmation email." },
   { href: "/support/faq", icon: HelpCircle, title: "FAQ", text: "Delivery, compatibility, payments and more." },
   { href: "/installation", icon: Wrench, title: "Installation", text: "Guided, bubble-free fitting for every device." },
-  { href: "/support/returns", icon: RefreshCcw, title: "Returns", text: "7-day returns and replacements." },
   { href: "/contact", icon: Building2, title: "Business enquiries", text: "Wholesale, corporate and partnership requests." },
   { href: "/support/contact", icon: MessageCircle, title: "Contact support", text: `Real humans, ${siteConfig.hours}.` },
 ];
