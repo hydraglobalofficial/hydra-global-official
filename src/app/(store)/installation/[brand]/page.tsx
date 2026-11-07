@@ -1,6 +1,6 @@
 import { permanentRedirect } from "next/navigation";
 
-export const dynamicParams = false;
+export const dynamicParams = true;
 
 /** Legacy brand-split URLs — install is one shared guide now. */
 export function generateStaticParams() {
