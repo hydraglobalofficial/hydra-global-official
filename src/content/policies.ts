@@ -16,89 +16,130 @@ export const policyPages: PolicyPage[] = [
     updated,
     body: `**Last Updated: 4 November 2026**
 
-At HYDRA, we respect your privacy. This Privacy Policy explains how we collect, use, store and share personal information when you visit https://www.hydraglobalofficial.com or buy a product from us.
+At HYDRA, your privacy matters to us. We respect your personal information and are committed to handling it responsibly.
 
-## 1. Who we are
+This Privacy Policy explains what information we collect, how we use it, when we share it and how we protect it when you visit our website or purchase our products.
 
-HYDRA sells mobile accessories through our website. For privacy questions, you can reach us at:
+By using our website, you acknowledge this Privacy Policy. Where consent is required, we will request it separately.
 
-- Email: support@hydraglobal.com
-- Phone / WhatsApp: 01635-992804
-- Address: Boxnagar, Sarulia, Demra, Dhaka 1361, Bangladesh
+## 1. Information We Collect
 
-## 2. Information we collect
+When you use our website or place an order, we may collect the following information:
 
-We collect information you give us, and a limited amount of technical information from your browser.
+**Personal Information**
 
-**Information you provide**
+- Full name
+- Phone number
+- Email address
+- Billing and delivery address
 
-- Name, phone number, email address and delivery address
-- Order details, including the product and device model you select
-- Messages you send to support, including photographs or videos of a product issue
-- Payment status for online payments. We do not store full card numbers on our servers
+**Order Information**
 
-**Information collected automatically**
+- Products purchased
+- Device models selected
+- Order history
+- Order number and transaction references
 
-- Pages you visit, device type, browser type and approximate location derived from your IP address
-- Cookie and analytics data, where you have allowed it
+**Payment Information**
 
-## 3. How we use information
+When you make a payment, the relevant payment provider may process payment details. We may receive transaction references, payment status and other information necessary to confirm your payment.
 
-We use personal information to:
+We do not intend to store your full payment card details on our website.
 
-- Accept, prepare, deliver and support your order
-- Confirm Cash on Delivery orders and contact you about delivery
-- Respond to return, replacement, refund and other support requests
-- Prevent fraud and keep the website secure
-- Improve the website and understand which products are useful
-- Send marketing messages only if you choose to receive them
+**Technical Information**
 
-## 4. Cookies and analytics
+When you browse our website, certain technical information may be collected, including:
 
-The website may use cookies and similar tools to remember your cart, keep you signed in where relevant, and measure how the site is used.
+- IP address
+- Browser and device information
+- Website activity and visited pages
+- Cookies and similar technologies
 
-You can control cookies through your browser settings. Blocking some cookies may limit parts of the checkout experience.
+## 2. How We Use Your Information
 
-## 5. When we share information
+We use collected information for legitimate business purposes, including:
 
-We share information only as needed to run the store:
+- Processing and delivering your orders.
+- Confirming payments and managing transactions.
+- Contacting you about orders, delivery updates and customer support.
+- Handling returns, replacements and refunds.
+- Improving our website, products and services.
+- Preventing fraudulent or unauthorized transactions.
+- Maintaining business, accounting and legal records.
+- Sending promotional messages where you have given the required consent.
 
-- Courier partners receive your name, phone number and delivery address so they can deliver the order
-- Payment providers receive the details required to process a payment you choose to make
-- Service providers who host the website, send email or store files may process information on our instructions
+We do not use your personal information for purposes unrelated to the reasons explained in this policy without an appropriate legal basis.
 
-We do not sell your personal information.
+## 3. Sharing Your Information
 
-## 6. How long we keep information
+We do not sell your personal information to third parties.
 
-We keep order and support records for as long as needed to complete the order, handle returns, meet accounting and legal duties, and resolve disputes. When information is no longer needed for those purposes, we delete it or keep it in a form that does not identify you.
+We may share relevant information with trusted service providers when necessary to operate our business, including:
 
-## 7. Security
+- **Delivery and courier companies:** To deliver your orders.
+- **Payment service providers:** To process and verify payments.
+- **Website hosting and technical service providers:** To maintain and operate our website.
+- **Analytics and advertising providers:** To understand website performance and improve marketing, where these services are enabled.
+- **Government and legal authorities:** When disclosure is required by applicable law or a valid legal request.
 
-We use reasonable technical and organisational measures to protect personal information. No website or transmission can be guaranteed completely secure. Please use a current browser and keep your own devices protected.
+These parties should only receive information necessary to perform their services or meet their legal obligations.
 
-## 8. Your choices and requests
+## 4. Cookies and Similar Technologies
 
-You may ask us to:
+Our website may use cookies and similar technologies to:
 
-- Tell you what personal information we hold about you
-- Correct information that is inaccurate
-- Delete information we no longer need to keep
-- Stop marketing messages
+- Keep essential website functions working.
+- Remember certain preferences.
+- Understand how visitors use our website.
+- Improve website performance.
+- Support advertising and marketing activities, where enabled.
 
-Contact us using the details in section 1. We may need your order number to find the right record.
+You can manage or disable cookies through your browser settings. Disabling certain cookies may affect some website features.
 
-## 9. Children
+Where required, we will obtain consent before using non-essential cookies.
 
-Our website is meant for people who can place an order. We do not knowingly collect personal information from children.
+## 5. Data Security
 
-## 10. Changes to this policy
+We take reasonable technical and organizational measures to protect your personal information against unauthorized access, alteration, disclosure, loss or misuse.
 
-We may update this Privacy Policy when our website, services or legal duties change. The new version will be published on this page with a revised Last Updated date.
+However, no internet transmission or electronic storage system can be guaranteed to be completely secure.
 
-## 11. Contact
+If a personal data incident occurs, we will take appropriate steps in accordance with applicable legal requirements.
 
-Questions about this Privacy Policy can be sent through our [contact page](/contact) or to support@hydraglobal.com.`,
+## 6. Data Retention
+
+We retain personal information only for as long as reasonably necessary for the purposes described in this policy, including order fulfilment, customer support, accounting, dispute resolution and legal compliance.
+
+When information is no longer required, we will take appropriate steps to delete, destroy or anonymize it, subject to applicable legal retention requirements.
+
+## 7. Your Privacy Rights
+
+Subject to applicable law, you may have the right to:
+
+- Request access to your personal information.
+- Request correction of inaccurate or incomplete information.
+- Request deletion of personal information where legally permitted.
+- Withdraw consent where processing is based on consent.
+- Ask how your information is being used.
+- Raise concerns about how your personal information is handled.
+
+To exercise these rights, contact us using the details below. We may need to verify your identity before processing your request.
+
+## 8. Children's Privacy
+
+Our website is intended for a general audience and is not designed to knowingly collect personal information directly from children without the required authorization.
+
+If you believe a child has provided personal information to us improperly, please contact us so we can review the matter.
+
+## 9. Changes to This Privacy Policy
+
+We may update this Privacy Policy from time to time to reflect changes in our business, website features, services or legal requirements.
+
+Any updates will be published on this page with a revised Last Updated date.
+
+## 10. Contact Us
+
+If you have questions about this Privacy Policy or how we handle your personal information, please contact **Hydra Support**.`,
   },
   {
     slug: "terms",
